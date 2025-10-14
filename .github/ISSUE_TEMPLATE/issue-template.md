@@ -1,7 +1,7 @@
 ---
 name: Issue Template
 about: 해당 템플릿을 활용하여 이슈를 등록합니다
-title: "[Type] 이슈명 작성"
+title: ''
 labels: ''
 assignees: ''
 
