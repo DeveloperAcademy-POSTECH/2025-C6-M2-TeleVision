@@ -24,14 +24,14 @@
 			containerPortal = 145E0F452E9C0F3900CE6C97 /* Project object */;
 			proxyType = 1;
 			remoteGlobalIDString = 145E0F4C2E9C0F3900CE6C97;
-			remoteInfo = TeleVision;
+			remoteInfo = Hippo;
 		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		145E0F4D2E9C0F3900CE6C97 /* TeleVision.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = TeleVision.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		145E0F4D2E9C0F3900CE6C97 /* HippoVision.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = HippoVision.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		145E0F512E9C0F3900CE6C97 /* RealityKitContent */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = RealityKitContent; sourceTree = "<group>"; };
-		145E0F612E9C0F3B00CE6C97 /* TeleVisionTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = TeleVisionTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		145E0F612E9C0F3B00CE6C97 /* HippoVisionTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = HippoVisionTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		145E0F742E9C0F5400CE6C97 /* AppModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppModel.swift; sourceTree = "<group>"; };
 		145E0F752E9C0F5400CE6C97 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		145E0F762E9C0F5400CE6C97 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -65,9 +65,9 @@
 		145E0F442E9C0F3900CE6C97 = {
 			isa = PBXGroup;
 			children = (
-				145E0F7B2E9C0F5400CE6C97 /* TeleVision */,
+				145E0F7B2E9C0F5400CE6C97 /* Hippo */,
 				145E0F502E9C0F3900CE6C97 /* Packages */,
-				145E0F842E9C0F5B00CE6C97 /* TeleVisionTests */,
+				145E0F842E9C0F5B00CE6C97 /* HippoTests */,
 				145E0F4E2E9C0F3900CE6C97 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -75,8 +75,8 @@
 		145E0F4E2E9C0F3900CE6C97 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				145E0F4D2E9C0F3900CE6C97 /* TeleVision.app */,
-				145E0F612E9C0F3B00CE6C97 /* TeleVisionTests.xctest */,
+				145E0F4D2E9C0F3900CE6C97 /* HippoVision.app */,
+				145E0F612E9C0F3B00CE6C97 /* HippoVisionTests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -89,7 +89,7 @@
 			path = Packages;
 			sourceTree = "<group>";
 		};
-		145E0F7B2E9C0F5400CE6C97 /* TeleVision */ = {
+		145E0F7B2E9C0F5400CE6C97 /* Hippo */ = {
 			isa = PBXGroup;
 			children = (
 				145E0F862E9C0F6500CE6C97 /* Application */,
@@ -98,15 +98,15 @@
 				145E0F882E9C0F8600CE6C97 /* Core */,
 				145E0F872E9C0F7700CE6C97 /* Features */,
 			);
-			path = TeleVision;
+			path = Hippo;
 			sourceTree = "<group>";
 		};
-		145E0F842E9C0F5B00CE6C97 /* TeleVisionTests */ = {
+		145E0F842E9C0F5B00CE6C97 /* HippoTests */ = {
 			isa = PBXGroup;
 			children = (
 				145E0F832E9C0F5B00CE6C97 /* TeleVisionTests.swift */,
 			);
-			path = TeleVisionTests;
+			path = HippoTests;
 			sourceTree = "<group>";
 		};
 		145E0F862E9C0F6500CE6C97 /* Application */ = {
@@ -163,9 +163,9 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		145E0F4C2E9C0F3900CE6C97 /* TeleVision */ = {
+		145E0F4C2E9C0F3900CE6C97 /* HippoVision */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 145E0F682E9C0F3B00CE6C97 /* Build configuration list for PBXNativeTarget "TeleVision" */;
+			buildConfigurationList = 145E0F682E9C0F3B00CE6C97 /* Build configuration list for PBXNativeTarget "HippoVision" */;
 			buildPhases = (
 				145E0F492E9C0F3900CE6C97 /* Sources */,
 				145E0F4A2E9C0F3900CE6C97 /* Frameworks */,
@@ -175,17 +175,17 @@
 			);
 			dependencies = (
 			);
-			name = TeleVision;
+			name = HippoVision;
 			packageProductDependencies = (
 				145E0F522E9C0F3900CE6C97 /* RealityKitContent */,
 			);
-			productName = TeleVision;
-			productReference = 145E0F4D2E9C0F3900CE6C97 /* TeleVision.app */;
+			productName = Hippo;
+			productReference = 145E0F4D2E9C0F3900CE6C97 /* HippoVision.app */;
 			productType = "com.apple.product-type.application";
 		};
-		145E0F602E9C0F3B00CE6C97 /* TeleVisionTests */ = {
+		145E0F602E9C0F3B00CE6C97 /* HippoVisionTests */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 145E0F6D2E9C0F3B00CE6C97 /* Build configuration list for PBXNativeTarget "TeleVisionTests" */;
+			buildConfigurationList = 145E0F6D2E9C0F3B00CE6C97 /* Build configuration list for PBXNativeTarget "HippoVisionTests" */;
 			buildPhases = (
 				145E0F5D2E9C0F3B00CE6C97 /* Sources */,
 				145E0F5E2E9C0F3B00CE6C97 /* Frameworks */,
@@ -196,11 +196,11 @@
 			dependencies = (
 				145E0F632E9C0F3B00CE6C97 /* PBXTargetDependency */,
 			);
-			name = TeleVisionTests;
+			name = HippoVisionTests;
 			packageProductDependencies = (
 			);
-			productName = TeleVisionTests;
-			productReference = 145E0F612E9C0F3B00CE6C97 /* TeleVisionTests.xctest */;
+			productName = HippoTests;
+			productReference = 145E0F612E9C0F3B00CE6C97 /* HippoVisionTests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
 		};
 /* End PBXNativeTarget section */
@@ -222,7 +222,7 @@
 					};
 				};
 			};
-			buildConfigurationList = 145E0F482E9C0F3900CE6C97 /* Build configuration list for PBXProject "TeleVision" */;
+			buildConfigurationList = 145E0F482E9C0F3900CE6C97 /* Build configuration list for PBXProject "Hippo" */;
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (
@@ -236,8 +236,8 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				145E0F4C2E9C0F3900CE6C97 /* TeleVision */,
-				145E0F602E9C0F3B00CE6C97 /* TeleVisionTests */,
+				145E0F4C2E9C0F3900CE6C97 /* HippoVision */,
+				145E0F602E9C0F3B00CE6C97 /* HippoVisionTests */,
 			);
 		};
 /* End PBXProject section */
@@ -287,7 +287,7 @@
 /* Begin PBXTargetDependency section */
 		145E0F632E9C0F3B00CE6C97 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 145E0F4C2E9C0F3900CE6C97 /* TeleVision */;
+			target = 145E0F4C2E9C0F3900CE6C97 /* HippoVision */;
 			targetProxy = 145E0F622E9C0F3B00CE6C97 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
@@ -300,16 +300,17 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = 4FCV7BL65G;
+				DEVELOPMENT_TEAM = NB42482NDH;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = "$(TARGET_NAME)/Info.plist";
+				INFOPLIST_FILE = "$(TARGET_NAME)/Resources/Info.plist";
+				INFOPLIST_KEY_CFBundleDisplayName = Hippo;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = org.ada.TeleVision;
+				PRODUCT_BUNDLE_IDENTIFIER = com.television.hippo.vision;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
 				SUPPORTED_PLATFORMS = "xros xrsimulator";
@@ -329,16 +330,17 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = 4FCV7BL65G;
+				DEVELOPMENT_TEAM = NB42482NDH;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = "$(TARGET_NAME)/Info.plist";
+				INFOPLIST_FILE = "$(TARGET_NAME)/Resources/Info.plist";
+				INFOPLIST_KEY_CFBundleDisplayName = Hippo;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = org.ada.TeleVision;
+				PRODUCT_BUNDLE_IDENTIFIER = com.television.hippo.vision;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
 				SUPPORTED_PLATFORMS = "xros xrsimulator";
@@ -481,7 +483,7 @@
 				DEVELOPMENT_TEAM = 4FCV7BL65G;
 				GENERATE_INFOPLIST_FILE = YES;
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = org.ada.TeleVisionTests;
+				PRODUCT_BUNDLE_IDENTIFIER = com.television.hippo.visionTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				STRING_CATALOG_GENERATE_SYMBOLS = NO;
 				SUPPORTED_PLATFORMS = "xros xrsimulator";
@@ -490,7 +492,7 @@
 				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = 7;
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/TeleVision.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/TeleVision";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Hippo.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Hippo";
 				XROS_DEPLOYMENT_TARGET = 26.0;
 			};
 			name = Debug;
@@ -504,7 +506,7 @@
 				DEVELOPMENT_TEAM = 4FCV7BL65G;
 				GENERATE_INFOPLIST_FILE = YES;
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = org.ada.TeleVisionTests;
+				PRODUCT_BUNDLE_IDENTIFIER = com.television.hippo.visionTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				STRING_CATALOG_GENERATE_SYMBOLS = NO;
 				SUPPORTED_PLATFORMS = "xros xrsimulator";
@@ -513,7 +515,7 @@
 				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = 7;
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/TeleVision.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/TeleVision";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Hippo.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Hippo";
 				XROS_DEPLOYMENT_TARGET = 26.0;
 			};
 			name = Release;
@@ -521,7 +523,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		145E0F482E9C0F3900CE6C97 /* Build configuration list for PBXProject "TeleVision" */ = {
+		145E0F482E9C0F3900CE6C97 /* Build configuration list for PBXProject "Hippo" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				145E0F6B2E9C0F3B00CE6C97 /* Debug */,
@@ -530,7 +532,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		145E0F682E9C0F3B00CE6C97 /* Build configuration list for PBXNativeTarget "TeleVision" */ = {
+		145E0F682E9C0F3B00CE6C97 /* Build configuration list for PBXNativeTarget "HippoVision" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				145E0F692E9C0F3B00CE6C97 /* Debug */,
@@ -539,7 +541,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		145E0F6D2E9C0F3B00CE6C97 /* Build configuration list for PBXNativeTarget "TeleVisionTests" */ = {
+		145E0F6D2E9C0F3B00CE6C97 /* Build configuration list for PBXNativeTarget "HippoVisionTests" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				145E0F6E2E9C0F3B00CE6C97 /* Debug */,
