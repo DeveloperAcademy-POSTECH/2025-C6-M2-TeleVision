@@ -6,6 +6,10 @@ public struct PatientID: Codable, Hashable, Sendable {
     public init(value: String = UUID().uuidString) {
         self.value = value
     }
+
+    public nonisolated static func == (lhs: PatientID, rhs: PatientID) -> Bool {
+        lhs.value == rhs.value
+    }
 }
 
 public enum Sex: String, Codable, Sendable {

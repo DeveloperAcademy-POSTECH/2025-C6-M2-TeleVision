@@ -9,15 +9,11 @@ public protocol PatientLocalDataSource: Sendable {
 
 // MARK: - JSON Implementation
 public actor PatientLocalDataSourceJSON: PatientLocalDataSource {
-    private let fileManager: FileManager
     private let storageURL: URL
 
-    // Init performs FileManager path lookups and directory creation, which may be main-actor annotated.
-    // Restrict just the initializer to the main actor.
-    @MainActor
+    // Init performs FileManager path lookups and directory creation.
+    // FileManager is not stored since it's not Sendable - we use FileManager.default directly
     public init(fileManager: FileManager = .default) {
-        self.fileManager = fileManager
-
         // Store in Application Support directory
         let appSupport = fileManager.urls(for: .applicationSupportDirectory, in: .userDomainMask).first!
         let appDirectory = appSupport.appendingPathComponent("Hippo", isDirectory: true)
@@ -29,7 +25,8 @@ public actor PatientLocalDataSourceJSON: PatientLocalDataSource {
     }
 
     public func fetchAll() async throws -> [Patient] {
-        guard fileManager.fileExists(atPath: storageURL.path) else {
+        // Use FileManager.default directly instead of storing it
+        guard FileManager.default.fileExists(atPath: storageURL.path) else {
             return []
         }
 

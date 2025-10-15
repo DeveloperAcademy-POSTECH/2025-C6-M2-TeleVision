@@ -6,6 +6,10 @@ public struct CaseID: Codable, Hashable, Sendable {
     public init(value: String = UUID().uuidString) {
         self.value = value
     }
+
+    public nonisolated static func == (lhs: CaseID, rhs: CaseID) -> Bool {
+        lhs.value == rhs.value
+    }
 }
 
 public struct Case: Codable, Sendable, Identifiable, Equatable {
