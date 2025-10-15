@@ -6,6 +6,10 @@ public struct ModelID: Codable, Hashable, Sendable {
     public init(value: String = UUID().uuidString) {
         self.value = value
     }
+
+    public nonisolated static func == (lhs: ModelID, rhs: ModelID) -> Bool {
+        lhs.value == rhs.value
+    }
 }
 
 public enum ModelFormat: String, Codable, Sendable {

@@ -6,7 +6,7 @@ public struct PatientState: Equatable, Sendable {
     public var isLoading: Bool
     public var alert: String?
 
-    public init(
+    public nonisolated init(
         items: [Patient] = [],
         isLoading: Bool = false,
         alert: String? = nil

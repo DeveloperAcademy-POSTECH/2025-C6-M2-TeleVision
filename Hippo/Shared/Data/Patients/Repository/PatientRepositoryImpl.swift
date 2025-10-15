@@ -16,13 +16,13 @@ public actor PatientRepositoryImpl: PatientRepository {
         self.remoteDataSource = remoteDataSource
     }
 
-    // Convenience initializer that constructs default dependencies on the main actor,
-    // then forwards to the designated initializer above.
-    @MainActor
-    public convenience init() {
+    // Default initializer that constructs default dependencies.
+    // Not marked as convenience because actors don't support convenience initializers.
+    public init() {
         let local = PatientLocalDataSourceJSON()
         let remote = PatientRemoteDataSourceCloudKit()
-        self.init(localDataSource: local, remoteDataSource: remote)
+        self.localDataSource = local
+        self.remoteDataSource = remote
     }
 
     // MARK: - Patient Operations

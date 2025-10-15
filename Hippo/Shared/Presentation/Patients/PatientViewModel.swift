@@ -30,7 +30,7 @@ public final class PatientViewModel {
     // MARK: - State
     public var state: PatientState
 
-    public init(state: PatientState = PatientState()) {
+    public init(state: PatientState = PatientState(items: [], isLoading: false, alert: nil)) {
         self.state = state
     }
 
