@@ -1,0 +1,1036 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 77;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		145E0F532E9C0F3900CE6C97 /* RealityKitContent in Frameworks */ = {isa = PBXBuildFile; productRef = 145E0F522E9C0F3900CE6C97 /* RealityKitContent */; };
+		145E0F852E9C0F5B00CE6C97 /* TeleVisionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 145E0F832E9C0F5B00CE6C97 /* TeleVisionTests.swift */; };
+		C02FFA712E9FFF6F00F16742 /* ToggleImmersiveSpaceButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = C02FFA572E9FFF6F00F16742 /* ToggleImmersiveSpaceButton.swift */; };
+		C02FFA722E9FFF6F00F16742 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C02FFA532E9FFF6F00F16742 /* ContentView.swift */; };
+		C02FFA752E9FFF6F00F16742 /* HippoVisionApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = C02FFA4F2E9FFF6F00F16742 /* HippoVisionApp.swift */; };
+		C02FFA762E9FFF6F00F16742 /* HippoMacApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = C02FFA4C2E9FFF6F00F16742 /* HippoMacApp.swift */; };
+		C02FFA792E9FFF6F00F16742 /* AppModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = C02FFA6A2E9FFF6F00F16742 /* AppModel.swift */; };
+		C02FFA7A2E9FFF6F00F16742 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C02FFA552E9FFF6F00F16742 /* ContentView.swift */; };
+		C02FFA7B2E9FFF6F00F16742 /* ImmersiveView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C02FFA562E9FFF6F00F16742 /* ImmersiveView.swift */; };
+		C02FFA802E9FFF6F00F16742 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C02FFA532E9FFF6F00F16742 /* ContentView.swift */; };
+		C02FFA842E9FFF6F00F16742 /* HippoMacApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = C02FFA4C2E9FFF6F00F16742 /* HippoMacApp.swift */; };
+		C02FFA872E9FFF6F00F16742 /* AppModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = C02FFA6A2E9FFF6F00F16742 /* AppModel.swift */; };
+		C02FFA8D2E9FFF6F00F16742 /* MacAssets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = C02FFA5A2E9FFF6F00F16742 /* MacAssets.xcassets */; };
+		C02FFA932E9FFF6F00F16742 /* VisionAssets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = C02FFA5B2E9FFF6F00F16742 /* VisionAssets.xcassets */; };
+		C02FFA952E9FFF6F00F16742 /* ToggleImmersiveSpaceButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = C02FFA572E9FFF6F00F16742 /* ToggleImmersiveSpaceButton.swift */; };
+		C02FFA992E9FFF6F00F16742 /* HippoVisionApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = C02FFA4F2E9FFF6F00F16742 /* HippoVisionApp.swift */; };
+		C02FFA9D2E9FFF6F00F16742 /* AppModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = C02FFA6A2E9FFF6F00F16742 /* AppModel.swift */; };
+		C02FFA9E2E9FFF6F00F16742 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C02FFA552E9FFF6F00F16742 /* ContentView.swift */; };
+		C02FFA9F2E9FFF6F00F16742 /* ImmersiveView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C02FFA562E9FFF6F00F16742 /* ImmersiveView.swift */; };
+		C04677B92EA006FB00D160DA /* Dependencies in Frameworks */ = {isa = PBXBuildFile; productRef = C04677B82EA006FB00D160DA /* Dependencies */; };
+		C04677BB2EA006FB00D160DA /* DependenciesTestSupport in Frameworks */ = {isa = PBXBuildFile; productRef = C04677BA2EA006FB00D160DA /* DependenciesTestSupport */; };
+		C04677BD2EA0070D00D160DA /* Dependencies in Frameworks */ = {isa = PBXBuildFile; productRef = C04677BC2EA0070D00D160DA /* Dependencies */; };
+		C04678022EA00B1F00D160DA /* ModelFile.swift in Sources */ = {isa = PBXBuildFile; fileRef = C04677F32EA00B1F00D160DA /* ModelFile.swift */; };
+		C04678032EA00B1F00D160DA /* AttachModelToCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = C04677F82EA00B1F00D160DA /* AttachModelToCase.swift */; };
+		C04678042EA00B1F00D160DA /* DeletePatient.swift in Sources */ = {isa = PBXBuildFile; fileRef = C04677FA2EA00B1F00D160DA /* DeletePatient.swift */; };
+		C04678052EA00B1F00D160DA /* RemoveModelFromCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = C04677FD2EA00B1F00D160DA /* RemoveModelFromCase.swift */; };
+		C04678062EA00B1F00D160DA /* UpsertPatient.swift in Sources */ = {isa = PBXBuildFile; fileRef = C04677FF2EA00B1F00D160DA /* UpsertPatient.swift */; };
+		C04678072EA00B1F00D160DA /* Case.swift in Sources */ = {isa = PBXBuildFile; fileRef = C04677F22EA00B1F00D160DA /* Case.swift */; };
+		C04678082EA00B1F00D160DA /* Patient.swift in Sources */ = {isa = PBXBuildFile; fileRef = C04677F42EA00B1F00D160DA /* Patient.swift */; };
+		C04678092EA00B1F00D160DA /* DeleteCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = C04677F92EA00B1F00D160DA /* DeleteCase.swift */; };
+		C046780A2EA00B1F00D160DA /* UpsertCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = C04677FE2EA00B1F00D160DA /* UpsertCase.swift */; };
+		C046780B2EA00B1F00D160DA /* GetPatient.swift in Sources */ = {isa = PBXBuildFile; fileRef = C04677FB2EA00B1F00D160DA /* GetPatient.swift */; };
+		C046780C2EA00B1F00D160DA /* ListPatients.swift in Sources */ = {isa = PBXBuildFile; fileRef = C04677FC2EA00B1F00D160DA /* ListPatients.swift */; };
+		C046780D2EA00B1F00D160DA /* PatientRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = C04677F62EA00B1F00D160DA /* PatientRepository.swift */; };
+		C046780E2EA00B1F00D160DA /* ModelFile.swift in Sources */ = {isa = PBXBuildFile; fileRef = C04677F32EA00B1F00D160DA /* ModelFile.swift */; };
+		C046780F2EA00B1F00D160DA /* AttachModelToCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = C04677F82EA00B1F00D160DA /* AttachModelToCase.swift */; };
+		C04678102EA00B1F00D160DA /* DeletePatient.swift in Sources */ = {isa = PBXBuildFile; fileRef = C04677FA2EA00B1F00D160DA /* DeletePatient.swift */; };
+		C04678112EA00B1F00D160DA /* RemoveModelFromCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = C04677FD2EA00B1F00D160DA /* RemoveModelFromCase.swift */; };
+		C04678122EA00B1F00D160DA /* UpsertPatient.swift in Sources */ = {isa = PBXBuildFile; fileRef = C04677FF2EA00B1F00D160DA /* UpsertPatient.swift */; };
+		C04678132EA00B1F00D160DA /* Case.swift in Sources */ = {isa = PBXBuildFile; fileRef = C04677F22EA00B1F00D160DA /* Case.swift */; };
+		C04678142EA00B1F00D160DA /* Patient.swift in Sources */ = {isa = PBXBuildFile; fileRef = C04677F42EA00B1F00D160DA /* Patient.swift */; };
+		C04678152EA00B1F00D160DA /* DeleteCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = C04677F92EA00B1F00D160DA /* DeleteCase.swift */; };
+		C04678162EA00B1F00D160DA /* UpsertCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = C04677FE2EA00B1F00D160DA /* UpsertCase.swift */; };
+		C04678172EA00B1F00D160DA /* GetPatient.swift in Sources */ = {isa = PBXBuildFile; fileRef = C04677FB2EA00B1F00D160DA /* GetPatient.swift */; };
+		C04678182EA00B1F00D160DA /* ListPatients.swift in Sources */ = {isa = PBXBuildFile; fileRef = C04677FC2EA00B1F00D160DA /* ListPatients.swift */; };
+		C04678192EA00B1F00D160DA /* PatientRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = C04677F62EA00B1F00D160DA /* PatientRepository.swift */; };
+		C046781A2EA00B1F00D160DA /* ModelFile.swift in Sources */ = {isa = PBXBuildFile; fileRef = C04677F32EA00B1F00D160DA /* ModelFile.swift */; };
+		C046781B2EA00B1F00D160DA /* AttachModelToCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = C04677F82EA00B1F00D160DA /* AttachModelToCase.swift */; };
+		C046781C2EA00B1F00D160DA /* DeletePatient.swift in Sources */ = {isa = PBXBuildFile; fileRef = C04677FA2EA00B1F00D160DA /* DeletePatient.swift */; };
+		C046781D2EA00B1F00D160DA /* RemoveModelFromCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = C04677FD2EA00B1F00D160DA /* RemoveModelFromCase.swift */; };
+		C046781E2EA00B1F00D160DA /* UpsertPatient.swift in Sources */ = {isa = PBXBuildFile; fileRef = C04677FF2EA00B1F00D160DA /* UpsertPatient.swift */; };
+		C046781F2EA00B1F00D160DA /* Case.swift in Sources */ = {isa = PBXBuildFile; fileRef = C04677F22EA00B1F00D160DA /* Case.swift */; };
+		C04678202EA00B1F00D160DA /* Patient.swift in Sources */ = {isa = PBXBuildFile; fileRef = C04677F42EA00B1F00D160DA /* Patient.swift */; };
+		C04678212EA00B1F00D160DA /* DeleteCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = C04677F92EA00B1F00D160DA /* DeleteCase.swift */; };
+		C04678222EA00B1F00D160DA /* UpsertCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = C04677FE2EA00B1F00D160DA /* UpsertCase.swift */; };
+		C04678232EA00B1F00D160DA /* GetPatient.swift in Sources */ = {isa = PBXBuildFile; fileRef = C04677FB2EA00B1F00D160DA /* GetPatient.swift */; };
+		C04678242EA00B1F00D160DA /* ListPatients.swift in Sources */ = {isa = PBXBuildFile; fileRef = C04677FC2EA00B1F00D160DA /* ListPatients.swift */; };
+		C04678252EA00B1F00D160DA /* PatientRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = C04677F62EA00B1F00D160DA /* PatientRepository.swift */; };
+		C046782F2EA00B3A00D160DA /* PatientRepositoryImpl.swift in Sources */ = {isa = PBXBuildFile; fileRef = C046782C2EA00B3A00D160DA /* PatientRepositoryImpl.swift */; };
+		C04678302EA00B3A00D160DA /* PatientRemoteDataSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = C04678282EA00B3A00D160DA /* PatientRemoteDataSource.swift */; };
+		C04678312EA00B3A00D160DA /* PatientLocalDataSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = C04678262EA00B3A00D160DA /* PatientLocalDataSource.swift */; };
+		C04678322EA00B3A00D160DA /* PatientRepositoryImpl.swift in Sources */ = {isa = PBXBuildFile; fileRef = C046782C2EA00B3A00D160DA /* PatientRepositoryImpl.swift */; };
+		C04678332EA00B3A00D160DA /* PatientRemoteDataSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = C04678282EA00B3A00D160DA /* PatientRemoteDataSource.swift */; };
+		C04678342EA00B3A00D160DA /* PatientLocalDataSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = C04678262EA00B3A00D160DA /* PatientLocalDataSource.swift */; };
+		C04678352EA00B3A00D160DA /* PatientRepositoryImpl.swift in Sources */ = {isa = PBXBuildFile; fileRef = C046782C2EA00B3A00D160DA /* PatientRepositoryImpl.swift */; };
+		C04678362EA00B3A00D160DA /* PatientRemoteDataSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = C04678282EA00B3A00D160DA /* PatientRemoteDataSource.swift */; };
+		C04678372EA00B3A00D160DA /* PatientLocalDataSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = C04678262EA00B3A00D160DA /* PatientLocalDataSource.swift */; };
+		C046783B2EA00B4A00D160DA /* PatientState.swift in Sources */ = {isa = PBXBuildFile; fileRef = C04678382EA00B4A00D160DA /* PatientState.swift */; };
+		C046783C2EA00B4A00D160DA /* PatientViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = C04678392EA00B4A00D160DA /* PatientViewModel.swift */; };
+		C046783D2EA00B4A00D160DA /* PatientState.swift in Sources */ = {isa = PBXBuildFile; fileRef = C04678382EA00B4A00D160DA /* PatientState.swift */; };
+		C046783E2EA00B4A00D160DA /* PatientViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = C04678392EA00B4A00D160DA /* PatientViewModel.swift */; };
+		C046783F2EA00B4A00D160DA /* PatientState.swift in Sources */ = {isa = PBXBuildFile; fileRef = C04678382EA00B4A00D160DA /* PatientState.swift */; };
+		C04678402EA00B4A00D160DA /* PatientViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = C04678392EA00B4A00D160DA /* PatientViewModel.swift */; };
+		C04678432EA00C1B00D160DA /* PatientView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C04678412EA00C1B00D160DA /* PatientView.swift */; };
+		C04678442EA00C1B00D160DA /* PatientView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C04678412EA00C1B00D160DA /* PatientView.swift */; };
+		C04678472EA00C2700D160DA /* PatientView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C04678452EA00C2700D160DA /* PatientView.swift */; };
+		C04678482EA00C2700D160DA /* PatientView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C04678452EA00C2700D160DA /* PatientView.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		145E0F622E9C0F3B00CE6C97 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 145E0F452E9C0F3900CE6C97 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 145E0F4C2E9C0F3900CE6C97;
+			remoteInfo = Hippo;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		145E0F4D2E9C0F3900CE6C97 /* HippoVision.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = HippoVision.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		145E0F512E9C0F3900CE6C97 /* RealityKitContent */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = RealityKitContent; sourceTree = "<group>"; };
+		145E0F612E9C0F3B00CE6C97 /* HippoVisionTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = HippoVisionTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		145E0F832E9C0F5B00CE6C97 /* TeleVisionTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TeleVisionTests.swift; sourceTree = "<group>"; };
+		C02FFA4C2E9FFF6F00F16742 /* HippoMacApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HippoMacApp.swift; sourceTree = "<group>"; };
+		C02FFA4D2E9FFF6F00F16742 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		C02FFA4F2E9FFF6F00F16742 /* HippoVisionApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HippoVisionApp.swift; sourceTree = "<group>"; };
+		C02FFA502E9FFF6F00F16742 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		C02FFA532E9FFF6F00F16742 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
+		C02FFA552E9FFF6F00F16742 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
+		C02FFA562E9FFF6F00F16742 /* ImmersiveView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImmersiveView.swift; sourceTree = "<group>"; };
+		C02FFA572E9FFF6F00F16742 /* ToggleImmersiveSpaceButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ToggleImmersiveSpaceButton.swift; sourceTree = "<group>"; };
+		C02FFA5A2E9FFF6F00F16742 /* MacAssets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = MacAssets.xcassets; sourceTree = "<group>"; };
+		C02FFA5B2E9FFF6F00F16742 /* VisionAssets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = VisionAssets.xcassets; sourceTree = "<group>"; };
+		C02FFA6A2E9FFF6F00F16742 /* AppModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppModel.swift; sourceTree = "<group>"; };
+		C04677F22EA00B1F00D160DA /* Case.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Case.swift; sourceTree = "<group>"; };
+		C04677F32EA00B1F00D160DA /* ModelFile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModelFile.swift; sourceTree = "<group>"; };
+		C04677F42EA00B1F00D160DA /* Patient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Patient.swift; sourceTree = "<group>"; };
+		C04677F62EA00B1F00D160DA /* PatientRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PatientRepository.swift; sourceTree = "<group>"; };
+		C04677F82EA00B1F00D160DA /* AttachModelToCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AttachModelToCase.swift; sourceTree = "<group>"; };
+		C04677F92EA00B1F00D160DA /* DeleteCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeleteCase.swift; sourceTree = "<group>"; };
+		C04677FA2EA00B1F00D160DA /* DeletePatient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeletePatient.swift; sourceTree = "<group>"; };
+		C04677FB2EA00B1F00D160DA /* GetPatient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GetPatient.swift; sourceTree = "<group>"; };
+		C04677FC2EA00B1F00D160DA /* ListPatients.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ListPatients.swift; sourceTree = "<group>"; };
+		C04677FD2EA00B1F00D160DA /* RemoveModelFromCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RemoveModelFromCase.swift; sourceTree = "<group>"; };
+		C04677FE2EA00B1F00D160DA /* UpsertCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UpsertCase.swift; sourceTree = "<group>"; };
+		C04677FF2EA00B1F00D160DA /* UpsertPatient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UpsertPatient.swift; sourceTree = "<group>"; };
+		C04678262EA00B3A00D160DA /* PatientLocalDataSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PatientLocalDataSource.swift; sourceTree = "<group>"; };
+		C04678282EA00B3A00D160DA /* PatientRemoteDataSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PatientRemoteDataSource.swift; sourceTree = "<group>"; };
+		C046782C2EA00B3A00D160DA /* PatientRepositoryImpl.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PatientRepositoryImpl.swift; sourceTree = "<group>"; };
+		C04678382EA00B4A00D160DA /* PatientState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PatientState.swift; sourceTree = "<group>"; };
+		C04678392EA00B4A00D160DA /* PatientViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PatientViewModel.swift; sourceTree = "<group>"; };
+		C04678412EA00C1B00D160DA /* PatientView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PatientView.swift; sourceTree = "<group>"; };
+		C04678452EA00C2700D160DA /* PatientView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PatientView.swift; sourceTree = "<group>"; };
+		C05F32242E9FF303009C5974 /* HippoMac.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = HippoMac.app; sourceTree = BUILT_PRODUCTS_DIR; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		145E0F4A2E9C0F3900CE6C97 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				145E0F532E9C0F3900CE6C97 /* RealityKitContent in Frameworks */,
+				C04677B92EA006FB00D160DA /* Dependencies in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		145E0F5E2E9C0F3B00CE6C97 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				C04677BB2EA006FB00D160DA /* DependenciesTestSupport in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		C05F32212E9FF303009C5974 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				C04677BD2EA0070D00D160DA /* Dependencies in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		145E0F442E9C0F3900CE6C97 = {
+			isa = PBXGroup;
+			children = (
+				145E0F7B2E9C0F5400CE6C97 /* Hippo */,
+				145E0F502E9C0F3900CE6C97 /* Packages */,
+				145E0F842E9C0F5B00CE6C97 /* HippoTests */,
+				145E0F4E2E9C0F3900CE6C97 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		145E0F4E2E9C0F3900CE6C97 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				145E0F4D2E9C0F3900CE6C97 /* HippoVision.app */,
+				145E0F612E9C0F3B00CE6C97 /* HippoVisionTests.xctest */,
+				C05F32242E9FF303009C5974 /* HippoMac.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		145E0F502E9C0F3900CE6C97 /* Packages */ = {
+			isa = PBXGroup;
+			children = (
+				145E0F512E9C0F3900CE6C97 /* RealityKitContent */,
+			);
+			path = Packages;
+			sourceTree = "<group>";
+		};
+		145E0F7B2E9C0F5400CE6C97 /* Hippo */ = {
+			isa = PBXGroup;
+			children = (
+				C02FFA522E9FFF6F00F16742 /* Applications */,
+				C02FFA592E9FFF6F00F16742 /* Features */,
+				C02FFA5C2E9FFF6F00F16742 /* Resources */,
+				C02FFA6C2E9FFF6F00F16742 /* Shared */,
+			);
+			path = Hippo;
+			sourceTree = "<group>";
+		};
+		145E0F842E9C0F5B00CE6C97 /* HippoTests */ = {
+			isa = PBXGroup;
+			children = (
+				145E0F832E9C0F5B00CE6C97 /* TeleVisionTests.swift */,
+			);
+			path = HippoTests;
+			sourceTree = "<group>";
+		};
+		C02FFA4E2E9FFF6F00F16742 /* MacApp */ = {
+			isa = PBXGroup;
+			children = (
+				C02FFA4C2E9FFF6F00F16742 /* HippoMacApp.swift */,
+				C02FFA4D2E9FFF6F00F16742 /* Info.plist */,
+			);
+			path = MacApp;
+			sourceTree = "<group>";
+		};
+		C02FFA512E9FFF6F00F16742 /* VisionApp */ = {
+			isa = PBXGroup;
+			children = (
+				C02FFA4F2E9FFF6F00F16742 /* HippoVisionApp.swift */,
+				C02FFA502E9FFF6F00F16742 /* Info.plist */,
+			);
+			path = VisionApp;
+			sourceTree = "<group>";
+		};
+		C02FFA522E9FFF6F00F16742 /* Applications */ = {
+			isa = PBXGroup;
+			children = (
+				C02FFA4E2E9FFF6F00F16742 /* MacApp */,
+				C02FFA512E9FFF6F00F16742 /* VisionApp */,
+			);
+			path = Applications;
+			sourceTree = "<group>";
+		};
+		C02FFA542E9FFF6F00F16742 /* MacUI */ = {
+			isa = PBXGroup;
+			children = (
+				C02FFA532E9FFF6F00F16742 /* ContentView.swift */,
+				C04678462EA00C2700D160DA /* Patients */,
+			);
+			path = MacUI;
+			sourceTree = "<group>";
+		};
+		C02FFA582E9FFF6F00F16742 /* VisionUI */ = {
+			isa = PBXGroup;
+			children = (
+				C02FFA552E9FFF6F00F16742 /* ContentView.swift */,
+				C02FFA562E9FFF6F00F16742 /* ImmersiveView.swift */,
+				C02FFA572E9FFF6F00F16742 /* ToggleImmersiveSpaceButton.swift */,
+				C04678422EA00C1B00D160DA /* Patients */,
+			);
+			path = VisionUI;
+			sourceTree = "<group>";
+		};
+		C02FFA592E9FFF6F00F16742 /* Features */ = {
+			isa = PBXGroup;
+			children = (
+				C02FFA542E9FFF6F00F16742 /* MacUI */,
+				C02FFA582E9FFF6F00F16742 /* VisionUI */,
+			);
+			path = Features;
+			sourceTree = "<group>";
+		};
+		C02FFA5C2E9FFF6F00F16742 /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				C02FFA5A2E9FFF6F00F16742 /* MacAssets.xcassets */,
+				C02FFA5B2E9FFF6F00F16742 /* VisionAssets.xcassets */,
+			);
+			path = Resources;
+			sourceTree = "<group>";
+		};
+		C02FFA652E9FFF6F00F16742 /* Data */ = {
+			isa = PBXGroup;
+			children = (
+				C046782E2EA00B3A00D160DA /* Patients */,
+			);
+			path = Data;
+			sourceTree = "<group>";
+		};
+		C02FFA692E9FFF6F00F16742 /* Domain */ = {
+			isa = PBXGroup;
+			children = (
+				C04678012EA00B1F00D160DA /* Patients */,
+			);
+			path = Domain;
+			sourceTree = "<group>";
+		};
+		C02FFA6B2E9FFF6F00F16742 /* Presentation */ = {
+			isa = PBXGroup;
+			children = (
+				C02FFA6A2E9FFF6F00F16742 /* AppModel.swift */,
+				C046783A2EA00B4A00D160DA /* Patients */,
+			);
+			path = Presentation;
+			sourceTree = "<group>";
+		};
+		C02FFA6C2E9FFF6F00F16742 /* Shared */ = {
+			isa = PBXGroup;
+			children = (
+				C02FFA652E9FFF6F00F16742 /* Data */,
+				C02FFA692E9FFF6F00F16742 /* Domain */,
+				C02FFA6B2E9FFF6F00F16742 /* Presentation */,
+			);
+			path = Shared;
+			sourceTree = "<group>";
+		};
+		C04677F52EA00B1F00D160DA /* Entities */ = {
+			isa = PBXGroup;
+			children = (
+				C04677F22EA00B1F00D160DA /* Case.swift */,
+				C04677F32EA00B1F00D160DA /* ModelFile.swift */,
+				C04677F42EA00B1F00D160DA /* Patient.swift */,
+			);
+			path = Entities;
+			sourceTree = "<group>";
+		};
+		C04677F72EA00B1F00D160DA /* Repositories */ = {
+			isa = PBXGroup;
+			children = (
+				C04677F62EA00B1F00D160DA /* PatientRepository.swift */,
+			);
+			path = Repositories;
+			sourceTree = "<group>";
+		};
+		C04678002EA00B1F00D160DA /* UseCases */ = {
+			isa = PBXGroup;
+			children = (
+				C04677F82EA00B1F00D160DA /* AttachModelToCase.swift */,
+				C04677F92EA00B1F00D160DA /* DeleteCase.swift */,
+				C04677FA2EA00B1F00D160DA /* DeletePatient.swift */,
+				C04677FB2EA00B1F00D160DA /* GetPatient.swift */,
+				C04677FC2EA00B1F00D160DA /* ListPatients.swift */,
+				C04677FD2EA00B1F00D160DA /* RemoveModelFromCase.swift */,
+				C04677FE2EA00B1F00D160DA /* UpsertCase.swift */,
+				C04677FF2EA00B1F00D160DA /* UpsertPatient.swift */,
+			);
+			path = UseCases;
+			sourceTree = "<group>";
+		};
+		C04678012EA00B1F00D160DA /* Patients */ = {
+			isa = PBXGroup;
+			children = (
+				C04677F52EA00B1F00D160DA /* Entities */,
+				C04677F72EA00B1F00D160DA /* Repositories */,
+				C04678002EA00B1F00D160DA /* UseCases */,
+			);
+			path = Patients;
+			sourceTree = "<group>";
+		};
+		C04678272EA00B3A00D160DA /* Local */ = {
+			isa = PBXGroup;
+			children = (
+				C04678262EA00B3A00D160DA /* PatientLocalDataSource.swift */,
+			);
+			path = Local;
+			sourceTree = "<group>";
+		};
+		C04678292EA00B3A00D160DA /* Remote */ = {
+			isa = PBXGroup;
+			children = (
+				C04678282EA00B3A00D160DA /* PatientRemoteDataSource.swift */,
+			);
+			path = Remote;
+			sourceTree = "<group>";
+		};
+		C046782A2EA00B3A00D160DA /* DataSources */ = {
+			isa = PBXGroup;
+			children = (
+				C04678272EA00B3A00D160DA /* Local */,
+				C04678292EA00B3A00D160DA /* Remote */,
+			);
+			path = DataSources;
+			sourceTree = "<group>";
+		};
+		C046782D2EA00B3A00D160DA /* Repository */ = {
+			isa = PBXGroup;
+			children = (
+				C046782C2EA00B3A00D160DA /* PatientRepositoryImpl.swift */,
+			);
+			path = Repository;
+			sourceTree = "<group>";
+		};
+		C046782E2EA00B3A00D160DA /* Patients */ = {
+			isa = PBXGroup;
+			children = (
+				C046782A2EA00B3A00D160DA /* DataSources */,
+				C046782D2EA00B3A00D160DA /* Repository */,
+			);
+			path = Patients;
+			sourceTree = "<group>";
+		};
+		C046783A2EA00B4A00D160DA /* Patients */ = {
+			isa = PBXGroup;
+			children = (
+				C04678382EA00B4A00D160DA /* PatientState.swift */,
+				C04678392EA00B4A00D160DA /* PatientViewModel.swift */,
+			);
+			path = Patients;
+			sourceTree = "<group>";
+		};
+		C04678422EA00C1B00D160DA /* Patients */ = {
+			isa = PBXGroup;
+			children = (
+				C04678412EA00C1B00D160DA /* PatientView.swift */,
+			);
+			path = Patients;
+			sourceTree = "<group>";
+		};
+		C04678462EA00C2700D160DA /* Patients */ = {
+			isa = PBXGroup;
+			children = (
+				C04678452EA00C2700D160DA /* PatientView.swift */,
+			);
+			path = Patients;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		145E0F4C2E9C0F3900CE6C97 /* HippoVision */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 145E0F682E9C0F3B00CE6C97 /* Build configuration list for PBXNativeTarget "HippoVision" */;
+			buildPhases = (
+				145E0F492E9C0F3900CE6C97 /* Sources */,
+				145E0F4A2E9C0F3900CE6C97 /* Frameworks */,
+				145E0F4B2E9C0F3900CE6C97 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = HippoVision;
+			packageProductDependencies = (
+				145E0F522E9C0F3900CE6C97 /* RealityKitContent */,
+				C04677B82EA006FB00D160DA /* Dependencies */,
+			);
+			productName = Hippo;
+			productReference = 145E0F4D2E9C0F3900CE6C97 /* HippoVision.app */;
+			productType = "com.apple.product-type.application";
+		};
+		145E0F602E9C0F3B00CE6C97 /* HippoVisionTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 145E0F6D2E9C0F3B00CE6C97 /* Build configuration list for PBXNativeTarget "HippoVisionTests" */;
+			buildPhases = (
+				145E0F5D2E9C0F3B00CE6C97 /* Sources */,
+				145E0F5E2E9C0F3B00CE6C97 /* Frameworks */,
+				145E0F5F2E9C0F3B00CE6C97 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				145E0F632E9C0F3B00CE6C97 /* PBXTargetDependency */,
+			);
+			name = HippoVisionTests;
+			packageProductDependencies = (
+				C04677BA2EA006FB00D160DA /* DependenciesTestSupport */,
+			);
+			productName = HippoTests;
+			productReference = 145E0F612E9C0F3B00CE6C97 /* HippoVisionTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+		C05F32232E9FF303009C5974 /* HippoMac */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = C05F322E2E9FF304009C5974 /* Build configuration list for PBXNativeTarget "HippoMac" */;
+			buildPhases = (
+				C05F32202E9FF303009C5974 /* Sources */,
+				C05F32212E9FF303009C5974 /* Frameworks */,
+				C05F32222E9FF303009C5974 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = HippoMac;
+			packageProductDependencies = (
+				C04677BC2EA0070D00D160DA /* Dependencies */,
+			);
+			productName = HippoMac;
+			productReference = C05F32242E9FF303009C5974 /* HippoMac.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		145E0F452E9C0F3900CE6C97 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = 1;
+				LastSwiftUpdateCheck = 2600;
+				LastUpgradeCheck = 2600;
+				TargetAttributes = {
+					145E0F4C2E9C0F3900CE6C97 = {
+						CreatedOnToolsVersion = 26.0;
+					};
+					145E0F602E9C0F3B00CE6C97 = {
+						CreatedOnToolsVersion = 26.0;
+						TestTargetID = 145E0F4C2E9C0F3900CE6C97;
+					};
+					C05F32232E9FF303009C5974 = {
+						CreatedOnToolsVersion = 26.0;
+					};
+				};
+			};
+			buildConfigurationList = 145E0F482E9C0F3900CE6C97 /* Build configuration list for PBXProject "Hippo" */;
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = 145E0F442E9C0F3900CE6C97;
+			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				C04677B72EA006FB00D160DA /* XCRemoteSwiftPackageReference "swift-dependencies" */,
+			);
+			preferredProjectObjectVersion = 77;
+			productRefGroup = 145E0F4E2E9C0F3900CE6C97 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				145E0F4C2E9C0F3900CE6C97 /* HippoVision */,
+				145E0F602E9C0F3B00CE6C97 /* HippoVisionTests */,
+				C05F32232E9FF303009C5974 /* HippoMac */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		145E0F4B2E9C0F3900CE6C97 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				C02FFA932E9FFF6F00F16742 /* VisionAssets.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		145E0F5F2E9C0F3B00CE6C97 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		C05F32222E9FF303009C5974 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				C02FFA8D2E9FFF6F00F16742 /* MacAssets.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		145E0F492E9C0F3900CE6C97 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				C02FFA952E9FFF6F00F16742 /* ToggleImmersiveSpaceButton.swift in Sources */,
+				C046780E2EA00B1F00D160DA /* ModelFile.swift in Sources */,
+				C046780F2EA00B1F00D160DA /* AttachModelToCase.swift in Sources */,
+				C04678102EA00B1F00D160DA /* DeletePatient.swift in Sources */,
+				C04678112EA00B1F00D160DA /* RemoveModelFromCase.swift in Sources */,
+				C046782F2EA00B3A00D160DA /* PatientRepositoryImpl.swift in Sources */,
+				C04678302EA00B3A00D160DA /* PatientRemoteDataSource.swift in Sources */,
+				C04678312EA00B3A00D160DA /* PatientLocalDataSource.swift in Sources */,
+				C04678122EA00B1F00D160DA /* UpsertPatient.swift in Sources */,
+				C04678132EA00B1F00D160DA /* Case.swift in Sources */,
+				C04678432EA00C1B00D160DA /* PatientView.swift in Sources */,
+				C04678142EA00B1F00D160DA /* Patient.swift in Sources */,
+				C04678152EA00B1F00D160DA /* DeleteCase.swift in Sources */,
+				C04678162EA00B1F00D160DA /* UpsertCase.swift in Sources */,
+				C04678172EA00B1F00D160DA /* GetPatient.swift in Sources */,
+				C04678182EA00B1F00D160DA /* ListPatients.swift in Sources */,
+				C04678192EA00B1F00D160DA /* PatientRepository.swift in Sources */,
+				C02FFA992E9FFF6F00F16742 /* HippoVisionApp.swift in Sources */,
+				C02FFA9D2E9FFF6F00F16742 /* AppModel.swift in Sources */,
+				C02FFA9E2E9FFF6F00F16742 /* ContentView.swift in Sources */,
+				C02FFA9F2E9FFF6F00F16742 /* ImmersiveView.swift in Sources */,
+				C046783F2EA00B4A00D160DA /* PatientState.swift in Sources */,
+				C04678402EA00B4A00D160DA /* PatientViewModel.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		145E0F5D2E9C0F3B00CE6C97 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				C02FFA712E9FFF6F00F16742 /* ToggleImmersiveSpaceButton.swift in Sources */,
+				C04678022EA00B1F00D160DA /* ModelFile.swift in Sources */,
+				C04678032EA00B1F00D160DA /* AttachModelToCase.swift in Sources */,
+				C04678042EA00B1F00D160DA /* DeletePatient.swift in Sources */,
+				C04678052EA00B1F00D160DA /* RemoveModelFromCase.swift in Sources */,
+				C046783B2EA00B4A00D160DA /* PatientState.swift in Sources */,
+				C046783C2EA00B4A00D160DA /* PatientViewModel.swift in Sources */,
+				C04678062EA00B1F00D160DA /* UpsertPatient.swift in Sources */,
+				C04678072EA00B1F00D160DA /* Case.swift in Sources */,
+				C04678082EA00B1F00D160DA /* Patient.swift in Sources */,
+				C04678092EA00B1F00D160DA /* DeleteCase.swift in Sources */,
+				C046780A2EA00B1F00D160DA /* UpsertCase.swift in Sources */,
+				C046780B2EA00B1F00D160DA /* GetPatient.swift in Sources */,
+				C04678352EA00B3A00D160DA /* PatientRepositoryImpl.swift in Sources */,
+				C04678362EA00B3A00D160DA /* PatientRemoteDataSource.swift in Sources */,
+				C04678372EA00B3A00D160DA /* PatientLocalDataSource.swift in Sources */,
+				C046780C2EA00B1F00D160DA /* ListPatients.swift in Sources */,
+				C046780D2EA00B1F00D160DA /* PatientRepository.swift in Sources */,
+				C04678482EA00C2700D160DA /* PatientView.swift in Sources */,
+				C04678442EA00C1B00D160DA /* PatientView.swift in Sources */,
+				C02FFA722E9FFF6F00F16742 /* ContentView.swift in Sources */,
+				C02FFA752E9FFF6F00F16742 /* HippoVisionApp.swift in Sources */,
+				C02FFA762E9FFF6F00F16742 /* HippoMacApp.swift in Sources */,
+				C02FFA792E9FFF6F00F16742 /* AppModel.swift in Sources */,
+				C02FFA7A2E9FFF6F00F16742 /* ContentView.swift in Sources */,
+				C02FFA7B2E9FFF6F00F16742 /* ImmersiveView.swift in Sources */,
+				145E0F852E9C0F5B00CE6C97 /* TeleVisionTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		C05F32202E9FF303009C5974 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				C02FFA802E9FFF6F00F16742 /* ContentView.swift in Sources */,
+				C02FFA842E9FFF6F00F16742 /* HippoMacApp.swift in Sources */,
+				C02FFA872E9FFF6F00F16742 /* AppModel.swift in Sources */,
+				C04678322EA00B3A00D160DA /* PatientRepositoryImpl.swift in Sources */,
+				C04678332EA00B3A00D160DA /* PatientRemoteDataSource.swift in Sources */,
+				C04678342EA00B3A00D160DA /* PatientLocalDataSource.swift in Sources */,
+				C04678472EA00C2700D160DA /* PatientView.swift in Sources */,
+				C046781A2EA00B1F00D160DA /* ModelFile.swift in Sources */,
+				C046781B2EA00B1F00D160DA /* AttachModelToCase.swift in Sources */,
+				C046781C2EA00B1F00D160DA /* DeletePatient.swift in Sources */,
+				C046781D2EA00B1F00D160DA /* RemoveModelFromCase.swift in Sources */,
+				C046781E2EA00B1F00D160DA /* UpsertPatient.swift in Sources */,
+				C046783D2EA00B4A00D160DA /* PatientState.swift in Sources */,
+				C046783E2EA00B4A00D160DA /* PatientViewModel.swift in Sources */,
+				C046781F2EA00B1F00D160DA /* Case.swift in Sources */,
+				C04678202EA00B1F00D160DA /* Patient.swift in Sources */,
+				C04678212EA00B1F00D160DA /* DeleteCase.swift in Sources */,
+				C04678222EA00B1F00D160DA /* UpsertCase.swift in Sources */,
+				C04678232EA00B1F00D160DA /* GetPatient.swift in Sources */,
+				C04678242EA00B1F00D160DA /* ListPatients.swift in Sources */,
+				C04678252EA00B1F00D160DA /* PatientRepository.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		145E0F632E9C0F3B00CE6C97 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 145E0F4C2E9C0F3900CE6C97 /* HippoVision */;
+			targetProxy = 145E0F622E9C0F3B00CE6C97 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin XCBuildConfiguration section */
+		145E0F692E9C0F3B00CE6C97 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = "";
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "$(SRCROOT)/Hippo/Applications/VisionApp/Info.plist";
+				INFOPLIST_KEY_CFBundleDisplayName = Hippo;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.television.hippo.vision;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SUPPORTED_PLATFORMS = "xros xrsimulator";
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 7;
+			};
+			name = Debug;
+		};
+		145E0F6A2E9C0F3B00CE6C97 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = "";
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "$(SRCROOT)/Hippo/Applications/VisionApp/Info.plist";
+				INFOPLIST_KEY_CFBundleDisplayName = Hippo;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.television.hippo.vision;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SUPPORTED_PLATFORMS = "xros xrsimulator";
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 7;
+			};
+			name = Release;
+		};
+		145E0F6B2E9C0F3B00CE6C97 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEVELOPMENT_TEAM = 4FCV7BL65G;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = xros;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				XROS_DEPLOYMENT_TARGET = 26.0;
+			};
+			name = Debug;
+		};
+		145E0F6C2E9C0F3B00CE6C97 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEVELOPMENT_TEAM = 4FCV7BL65G;
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				SDKROOT = xros;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				VALIDATE_PRODUCT = YES;
+				XROS_DEPLOYMENT_TARGET = 26.0;
+			};
+			name = Release;
+		};
+		145E0F6E2E9C0F3B00CE6C97 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 4FCV7BL65G;
+				GENERATE_INFOPLIST_FILE = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.television.hippo.visionTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				STRING_CATALOG_GENERATE_SYMBOLS = NO;
+				SUPPORTED_PLATFORMS = "xros xrsimulator";
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 7;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Hippo.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Hippo";
+				XROS_DEPLOYMENT_TARGET = 26.0;
+			};
+			name = Debug;
+		};
+		145E0F6F2E9C0F3B00CE6C97 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 4FCV7BL65G;
+				GENERATE_INFOPLIST_FILE = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.television.hippo.visionTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				STRING_CATALOG_GENERATE_SYMBOLS = NO;
+				SUPPORTED_PLATFORMS = "xros xrsimulator";
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 7;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Hippo.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Hippo";
+				XROS_DEPLOYMENT_TARGET = 26.0;
+			};
+			name = Release;
+		};
+		C05F322F2E9FF304009C5974 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = NB42482NDH;
+				ENABLE_APP_SANDBOX = YES;
+				ENABLE_HARDENED_RUNTIME = YES;
+				ENABLE_PREVIEWS = YES;
+				ENABLE_USER_SELECTED_FILES = readonly;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "$(SRCROOT)/Hippo/Applications/MacApp/Info.plist";
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 26.0;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.television.hippo.mac;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				REGISTER_APP_GROUPS = YES;
+				SDKROOT = macosx;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+			};
+			name = Debug;
+		};
+		C05F32302E9FF304009C5974 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = NB42482NDH;
+				ENABLE_APP_SANDBOX = YES;
+				ENABLE_HARDENED_RUNTIME = YES;
+				ENABLE_PREVIEWS = YES;
+				ENABLE_USER_SELECTED_FILES = readonly;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "$(SRCROOT)/Hippo/Applications/MacApp/Info.plist";
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 26.0;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.television.hippo.mac;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				REGISTER_APP_GROUPS = YES;
+				SDKROOT = macosx;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		145E0F482E9C0F3900CE6C97 /* Build configuration list for PBXProject "Hippo" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				145E0F6B2E9C0F3B00CE6C97 /* Debug */,
+				145E0F6C2E9C0F3B00CE6C97 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		145E0F682E9C0F3B00CE6C97 /* Build configuration list for PBXNativeTarget "HippoVision" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				145E0F692E9C0F3B00CE6C97 /* Debug */,
+				145E0F6A2E9C0F3B00CE6C97 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		145E0F6D2E9C0F3B00CE6C97 /* Build configuration list for PBXNativeTarget "HippoVisionTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				145E0F6E2E9C0F3B00CE6C97 /* Debug */,
+				145E0F6F2E9C0F3B00CE6C97 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		C05F322E2E9FF304009C5974 /* Build configuration list for PBXNativeTarget "HippoMac" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				C05F322F2E9FF304009C5974 /* Debug */,
+				C05F32302E9FF304009C5974 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		C04677B72EA006FB00D160DA /* XCRemoteSwiftPackageReference "swift-dependencies" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/pointfreeco/swift-dependencies";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.10.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		145E0F522E9C0F3900CE6C97 /* RealityKitContent */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = RealityKitContent;
+		};
+		C04677B82EA006FB00D160DA /* Dependencies */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = C04677B72EA006FB00D160DA /* XCRemoteSwiftPackageReference "swift-dependencies" */;
+			productName = Dependencies;
+		};
+		C04677BA2EA006FB00D160DA /* DependenciesTestSupport */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = C04677B72EA006FB00D160DA /* XCRemoteSwiftPackageReference "swift-dependencies" */;
+			productName = DependenciesTestSupport;
+		};
+		C04677BC2EA0070D00D160DA /* Dependencies */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = C04677B72EA006FB00D160DA /* XCRemoteSwiftPackageReference "swift-dependencies" */;
+			productName = Dependencies;
+		};
+/* End XCSwiftPackageProductDependency section */
+	};
+	rootObject = 145E0F452E9C0F3900CE6C97 /* Project object */;
+}
