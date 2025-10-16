@@ -141,3 +141,20 @@ iOSInjectionProject/
 **/xcshareddata/WorkspaceSettings.xcsettings
 
 # End of https://www.toptal.com/developers/gitignore/api/xcode,macos,swift,swiftpackagemanager,cocoapods
+
+# Project specific
+.claude/
+*.md~
+*~
+.swiftpm/
+.vscode/
+*.xcworkspace/xcshareddata/swiftpm/
+*.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/
+
+# Local data files
+patients.json
+*.log
+
+# Backup files
+backup_*/
+*_backup_*/
