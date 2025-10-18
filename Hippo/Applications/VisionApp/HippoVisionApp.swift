@@ -17,6 +17,11 @@ struct HippoVisionApp: App {
                 .environment(appModel)
         }
 
+        WindowGroup(id: "patients") {
+            PatientView()
+        }
+        .defaultSize(width: 800, height: 600)
+
         ImmersiveSpace(id: appModel.immersiveSpaceID) {
             ImmersiveView()
                 .environment(appModel)
