@@ -2,17 +2,17 @@ import Foundation
 
 /// Repository interface for Patient domain operations
 public protocol PatientRepository: Sendable {
-    // Patient operations
-    func listPatients() async throws -> [Patient]
-    func getPatient(id: PatientID) async throws -> Patient
-    func upsertPatient(_ patient: Patient) async throws -> Patient
-    func deletePatient(id: PatientID) async throws
+  // Patient operations
+  func listPatients() async throws -> [Patient]
+  func getPatient(id: String) async throws -> Patient
+  func upsertPatient(_ patient: Patient) async throws -> Patient
+  func deletePatient(id: String) async throws
 
-    // Case operations
-    func upsertCase(patientID: PatientID, case: Case) async throws
-    func deleteCase(patientID: PatientID, caseID: CaseID) async throws
+  // Operation operations
+  func upsertOperation(patientID: String, operation: Operation) async throws
+  func deleteOperation(patientID: String, operationID: String) async throws
 
-    // Model operations
-    func attachModelToCase(patientID: PatientID, caseID: CaseID, file: ModelFile) async throws
-    func removeModelFromCase(patientID: PatientID, caseID: CaseID, modelID: ModelID) async throws
+  // OperationAsset operations
+  func attachAssetToOperation(patientID: String, operationID: String, asset: OperationAsset) async throws
+  func removeAssetFromOperation(patientID: String, operationID: String, assetID: String) async throws
 }
