@@ -1,4 +1,3 @@
-import Dependencies
 import Foundation
 
 public struct RemoveAssetFromOperation: Sendable {
@@ -21,24 +20,16 @@ public struct RemoveAssetFromOperation: Sendable {
   }
 
   public func run(_ input: Input) async throws {
-    try await repository.removeAssetFromOperation(
-      patientID: input.patientID,
-      operationID: input.operationID,
-      assetID: input.assetID
-    )
-  }
-}
+    // Get patient, remove asset, and update timestamp (business logic)
+    var patient = try await repository.getPatient(id: input.patientID)
 
-// MARK: - Dependency
-extension RemoveAssetFromOperation: DependencyKey {
-  public static let liveValue = RemoveAssetFromOperation(
-    repository: PatientRepositoryImpl()
-  )
-}
+    guard let operationIndex = patient.operations.firstIndex(where: { $0.id == input.operationID }) else {
+      throw UseCaseError.operationNotFound
+    }
 
-extension DependencyValues {
-  public var removeAssetFromOperation: RemoveAssetFromOperation {
-    get { self[RemoveAssetFromOperation.self] }
-    set { self[RemoveAssetFromOperation.self] = newValue }
+    patient.operations[operationIndex].operationAssets.removeAll { $0.id == input.assetID }
+
+    let updatedPatient = patient.withUpdatedTimestamp()
+    _ = try await repository.upsertPatient(updatedPatient)
   }
 }

@@ -1,4 +1,3 @@
-import Dependencies
 import Foundation
 
 public struct AttachAssetToOperation: Sendable {
@@ -21,24 +20,29 @@ public struct AttachAssetToOperation: Sendable {
   }
 
   public func run(_ input: Input) async throws {
-    try await repository.attachAssetToOperation(
-      patientID: input.patientID,
-      operationID: input.operationID,
-      asset: input.asset
-    )
+    // Get patient, attach asset, and update timestamp (business logic)
+    var patient = try await repository.getPatient(id: input.patientID)
+
+    guard let operationIndex = patient.operations.firstIndex(where: { $0.id == input.operationID }) else {
+      throw UseCaseError.operationNotFound
+    }
+
+    patient.operations[operationIndex].operationAssets.append(input.asset)
+
+    let updatedPatient = patient.withUpdatedTimestamp()
+    _ = try await repository.upsertPatient(updatedPatient)
   }
 }
 
-// MARK: - Dependency
-extension AttachAssetToOperation: DependencyKey {
-  public static let liveValue = AttachAssetToOperation(
-    repository: PatientRepositoryImpl()
-  )
-}
+// MARK: - Errors
 
-extension DependencyValues {
-  public var attachAssetToOperation: AttachAssetToOperation {
-    get { self[AttachAssetToOperation.self] }
-    set { self[AttachAssetToOperation.self] = newValue }
+public enum UseCaseError: Error, LocalizedError {
+  case operationNotFound
+
+  public var errorDescription: String? {
+    switch self {
+    case .operationNotFound:
+      return "Operation not found in patient's operations"
+    }
   }
 }

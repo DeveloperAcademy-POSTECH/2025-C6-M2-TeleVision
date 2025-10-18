@@ -37,4 +37,11 @@ public struct Patient: Identifiable, Codable, Equatable, Sendable {
     Calendar(identifier: .gregorian)
       .dateComponents([.year], from: birthDate, to: Date()).year ?? 0
   }
+
+  /// Create a copy with updated timestamp
+  public func withUpdatedTimestamp() -> Patient {
+    var copy = self
+    copy.updatedAt = Date()
+    return copy
+  }
 }
