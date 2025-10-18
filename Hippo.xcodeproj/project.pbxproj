@@ -7,8 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		145E0F532E9C0F3900CE6C97 /* RealityKitContent in Frameworks */ = {isa = PBXBuildFile; productRef = 145E0F522E9C0F3900CE6C97 /* RealityKitContent */; };
 		145E0F852E9C0F5B00CE6C97 /* TeleVisionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 145E0F832E9C0F5B00CE6C97 /* TeleVisionTests.swift */; };
+		146F102D2EA3AD1500DDDC35 /* HippoAssets in Frameworks */ = {isa = PBXBuildFile; productRef = 146F102C2EA3AD1500DDDC35 /* HippoAssets */; };
 		C02FFA712E9FFF6F00F16742 /* ToggleImmersiveSpaceButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = C02FFA572E9FFF6F00F16742 /* ToggleImmersiveSpaceButton.swift */; };
 		C02FFA722E9FFF6F00F16742 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C02FFA532E9FFF6F00F16742 /* ContentView.swift */; };
 		C02FFA752E9FFF6F00F16742 /* HippoVisionApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = C02FFA4F2E9FFF6F00F16742 /* HippoVisionApp.swift */; };
@@ -98,9 +98,9 @@
 
 /* Begin PBXFileReference section */
 		145E0F4D2E9C0F3900CE6C97 /* HippoVision.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = HippoVision.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		145E0F512E9C0F3900CE6C97 /* RealityKitContent */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = RealityKitContent; sourceTree = "<group>"; };
 		145E0F612E9C0F3B00CE6C97 /* HippoVisionTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = HippoVisionTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		145E0F832E9C0F5B00CE6C97 /* TeleVisionTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TeleVisionTests.swift; sourceTree = "<group>"; };
+		146F102A2EA3ACFD00DDDC35 /* HippoAssets */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = HippoAssets; sourceTree = "<group>"; };
 		C02FFA4C2E9FFF6F00F16742 /* HippoMacApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HippoMacApp.swift; sourceTree = "<group>"; };
 		C02FFA4D2E9FFF6F00F16742 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		C02FFA4F2E9FFF6F00F16742 /* HippoVisionApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HippoVisionApp.swift; sourceTree = "<group>"; };
@@ -139,7 +139,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				145E0F532E9C0F3900CE6C97 /* RealityKitContent in Frameworks */,
+				146F102D2EA3AD1500DDDC35 /* HippoAssets in Frameworks */,
 				C04677B92EA006FB00D160DA /* Dependencies in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -169,6 +169,7 @@
 				145E0F7B2E9C0F5400CE6C97 /* Hippo */,
 				145E0F502E9C0F3900CE6C97 /* Packages */,
 				145E0F842E9C0F5B00CE6C97 /* HippoTests */,
+				146F102B2EA3AD1500DDDC35 /* Frameworks */,
 				145E0F4E2E9C0F3900CE6C97 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -186,7 +187,7 @@
 		145E0F502E9C0F3900CE6C97 /* Packages */ = {
 			isa = PBXGroup;
 			children = (
-				145E0F512E9C0F3900CE6C97 /* RealityKitContent */,
+				146F102A2EA3ACFD00DDDC35 /* HippoAssets */,
 			);
 			path = Packages;
 			sourceTree = "<group>";
@@ -208,6 +209,13 @@
 				145E0F832E9C0F5B00CE6C97 /* TeleVisionTests.swift */,
 			);
 			path = HippoTests;
+			sourceTree = "<group>";
+		};
+		146F102B2EA3AD1500DDDC35 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Frameworks;
 			sourceTree = "<group>";
 		};
 		C02FFA4E2E9FFF6F00F16742 /* MacApp */ = {
@@ -437,8 +445,8 @@
 			);
 			name = HippoVision;
 			packageProductDependencies = (
-				145E0F522E9C0F3900CE6C97 /* RealityKitContent */,
 				C04677B82EA006FB00D160DA /* Dependencies */,
+				146F102C2EA3AD1500DDDC35 /* HippoAssets */,
 			);
 			productName = Hippo;
 			productReference = 145E0F4D2E9C0F3900CE6C97 /* HippoVision.app */;
@@ -668,7 +676,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = "";
+				DEVELOPMENT_TEAM = 4FCV7BL65G;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = "$(SRCROOT)/Hippo/Applications/VisionApp/Info.plist";
@@ -698,7 +706,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = "";
+				DEVELOPMENT_TEAM = 4FCV7BL65G;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = "$(SRCROOT)/Hippo/Applications/VisionApp/Info.plist";
@@ -1011,9 +1019,9 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
-		145E0F522E9C0F3900CE6C97 /* RealityKitContent */ = {
+		146F102C2EA3AD1500DDDC35 /* HippoAssets */ = {
 			isa = XCSwiftPackageProductDependency;
-			productName = RealityKitContent;
+			productName = HippoAssets;
 		};
 		C04677B82EA006FB00D160DA /* Dependencies */ = {
 			isa = XCSwiftPackageProductDependency;
