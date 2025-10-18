@@ -16,9 +16,14 @@ extension DependencyValues {
     set { self[GetPatient.self] = newValue }
   }
 
-  public var upsertPatient: UpsertPatient {
-    get { self[UpsertPatient.self] }
-    set { self[UpsertPatient.self] = newValue }
+  public var createPatient: CreatePatient {
+    get { self[CreatePatient.self] }
+    set { self[CreatePatient.self] = newValue }
+  }
+
+  public var updatePatient: UpdatePatient {
+    get { self[UpdatePatient.self] }
+    set { self[UpdatePatient.self] = newValue }
   }
 
   public var deletePatient: DeletePatient {
@@ -27,6 +32,11 @@ extension DependencyValues {
   }
 
   // MARK: - Operation Use Cases
+
+  public var createOperation: CreateOperation {
+    get { self[CreateOperation.self] }
+    set { self[CreateOperation.self] = newValue }
+  }
 
   public var upsertOperation: UpsertOperation {
     get { self[UpsertOperation.self] }
@@ -77,18 +87,6 @@ extension GetPatient: DependencyKey {
   }
 }
 
-extension UpsertPatient: DependencyKey {
-  public static var liveValue: UpsertPatient {
-    @Dependency(\.patientRepository) var repository
-    return UpsertPatient(repository: repository)
-  }
-
-  public static var testValue: UpsertPatient {
-    @Dependency(\.patientRepository) var repository
-    return UpsertPatient(repository: repository)
-  }
-}
-
 extension DeletePatient: DependencyKey {
   public static var liveValue: DeletePatient {
     @Dependency(\.patientRepository) var repository
@@ -98,6 +96,42 @@ extension DeletePatient: DependencyKey {
   public static var testValue: DeletePatient {
     @Dependency(\.patientRepository) var repository
     return DeletePatient(repository: repository)
+  }
+}
+
+extension CreatePatient: DependencyKey {
+  public static var liveValue: CreatePatient {
+    @Dependency(\.patientRepository) var repository
+    return CreatePatient(repository: repository)
+  }
+
+  public static var testValue: CreatePatient {
+    @Dependency(\.patientRepository) var repository
+    return CreatePatient(repository: repository)
+  }
+}
+
+extension UpdatePatient: DependencyKey {
+  public static var liveValue: UpdatePatient {
+    @Dependency(\.patientRepository) var repository
+    return UpdatePatient(repository: repository)
+  }
+
+  public static var testValue: UpdatePatient {
+    @Dependency(\.patientRepository) var repository
+    return UpdatePatient(repository: repository)
+  }
+}
+
+extension CreateOperation: DependencyKey {
+  public static var liveValue: CreateOperation {
+    @Dependency(\.patientRepository) var repository
+    return CreateOperation(repository: repository)
+  }
+
+  public static var testValue: CreateOperation {
+    @Dependency(\.patientRepository) var repository
+    return CreateOperation(repository: repository)
   }
 }
 

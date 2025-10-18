@@ -1,6 +1,7 @@
 import Dependencies
 import Foundation
 import Observation
+import os.log
 
 @MainActor
 @Observable
@@ -10,10 +11,16 @@ public final class PatientViewModel {
   @Dependency(\.listPatients) private var listPatients
 
   @ObservationIgnored
-  @Dependency(\.upsertPatient) private var upsertPatient
+  @Dependency(\.createPatient) private var createPatient
+
+  @ObservationIgnored
+  @Dependency(\.updatePatient) private var updatePatient
 
   @ObservationIgnored
   @Dependency(\.deletePatient) private var deletePatient
+
+  @ObservationIgnored
+  @Dependency(\.createOperation) private var createOperation
 
   @ObservationIgnored
   @Dependency(\.upsertOperation) private var upsertOperation
@@ -28,30 +35,35 @@ public final class PatientViewModel {
   @Dependency(\.removeAssetFromOperation) private var removeAssetFromOperation
 
   // MARK: - State
-  @ObservationIgnored
-  public let state = PatientState()
+  private let _state = PatientState()
+  public var state: PatientState { _state } // 읽기 전용, 관찰 가능
+
+  // MARK: - Logger
+  private let logger = Logger(subsystem: "com.television.hippo", category: "PatientViewModel")
 
   public init() {}
 
   // MARK: - Actions
 
   public func load() async {
-    state.isLoading = true
-    state.alert = nil
+    _state.isLoading = true
+    _state.alert = nil
 
     do {
       let patients = try await listPatients.run()
-      print("Loaded \(patients.count) patients from repository")
+      logger.debug("Loaded \(patients.count) patients from repository")
+
       let displayModels = patients.map { $0.toDisplayModel() }
-      print("Converted to \(displayModels.count) display models")
-      state.items = displayModels
-      print("State updated with \(state.items.count) items")
+      _state.items = displayModels
+
+      let itemCount = _state.items.count
+      logger.info("State updated with \(itemCount) items")
     } catch {
-      print("Failed to load patients: \(error)")
-      state.alert = "Failed to load patients: \(error.localizedDescription)"
+      logger.error("Failed to load patients: \(error.localizedDescription)")
+      _state.alert = "Failed to load patients: \(error.localizedDescription)"
     }
 
-    state.isLoading = false
+    _state.isLoading = false
   }
 
   public func create(
@@ -60,122 +72,187 @@ public final class PatientViewModel {
     gender: Gender,
     birthDate: Date
   ) async {
-    let newPatient = Patient(
-      patientNumber: patientNumber,
-      name: name,
-      gender: gender,
-      birthDate: birthDate
-    )
-
     do {
-      _ = try await upsertPatient.run(newPatient)
-      await load()
+      let command = try CreatePatientCommand(
+        patientNumber: patientNumber,
+        name: name,
+        gender: gender,
+        birthDate: birthDate
+      )
+
+      await executeWithErrorHandling(
+        operation: { [self] in
+          _ = try await self.createPatient.run(CreatePatient.Input(command: command))
+        },
+        errorMessage: "Failed to create patient"
+      )
+    } catch let validationError as ValidationError {
+      logger.warning("Validation failed: \(validationError.localizedDescription)")
+      _state.alert = validationError.localizedDescription
     } catch {
-      state.alert = "Failed to create patient: \(error.localizedDescription)"
+      logger.error("Unexpected error creating patient command: \(error.localizedDescription)")
+      _state.alert = "Failed to create patient: \(error.localizedDescription)"
     }
   }
 
-  public func update(_ patient: Patient) async {
+  public func update(
+    patientID: String,
+    patientNumber: String,
+    name: String,
+    gender: Gender,
+    birthDate: Date
+  ) async {
     do {
-      _ = try await upsertPatient.run(patient)
-      await load()
+      let command = try UpdatePatientCommand(
+        patientNumber: patientNumber,
+        name: name,
+        gender: gender,
+        birthDate: birthDate
+      )
+
+      await executeWithErrorHandling(
+        operation: { [self] in
+          _ = try await self.updatePatient.run(UpdatePatient.Input(patientID: patientID, command: command))
+        },
+        errorMessage: "Failed to update patient"
+      )
+    } catch let validationError as ValidationError {
+      logger.warning("Validation failed: \(validationError.localizedDescription)")
+      _state.alert = validationError.localizedDescription
     } catch {
-      state.alert = "Failed to update patient: \(error.localizedDescription)"
+      logger.error("Unexpected error updating patient: \(error.localizedDescription)")
+      _state.alert = "Failed to update patient: \(error.localizedDescription)"
     }
   }
 
   public func remove(patientID: String) async {
-    do {
-      try await deletePatient.run(patientID)
-      await load()
-    } catch {
-      state.alert = "Failed to delete patient: \(error.localizedDescription)"
-    }
+    await executeWithErrorHandling(
+      operation: { [self] in try await self.deletePatient.run(patientID) },
+      errorMessage: "Failed to delete patient"
+    )
   }
 
   // MARK: - Operation Management
 
   public func addOperation(
-    to patient: Patient,
+    toPatientID patientID: String,
     title: String,
     diagnosis: String,
     surgeon: String,
     date: Date,
-    details: String,
-    status: OperationStatus
+    details: String = "",
+    status: OperationStatus = .planned
   ) async {
-    let newOperation = Operation(
-      id: UUID().uuidString,
-      title: title,
-      diagnosis: diagnosis,
-      surgeon: surgeon,
-      date: date,
-      details: details,
-      status: status
-    )
-
     do {
-      try await upsertOperation.run(
-        UpsertOperation.Input(patientID: patient.id, operation: newOperation)
+      let command = try CreateOperationCommand(
+        title: title,
+        diagnosis: diagnosis,
+        surgeon: surgeon,
+        date: date,
+        details: details,
+        status: status
       )
-      await load()
+
+      await executeWithErrorHandling(
+        operation: { [self] in
+          try await self.createOperation.run(
+            CreateOperation.Input(patientID: patientID, command: command)
+          )
+        },
+        errorMessage: "Failed to add operation"
+      )
+    } catch let validationError as ValidationError {
+      logger.warning("Validation failed: \(validationError.localizedDescription)")
+      _state.alert = validationError.localizedDescription
     } catch {
-      state.alert = "Failed to add operation: \(error.localizedDescription)"
+      logger.error("Unexpected error creating operation command: \(error.localizedDescription)")
+      _state.alert = "Failed to add operation: \(error.localizedDescription)"
     }
   }
 
-  public func removeOperation(_ operation: Operation, from patient: Patient) async {
-    do {
-      try await deleteOperation.run(
-        DeleteOperation.Input(patientID: patient.id, operationID: operation.id)
-      )
-      await load()
-    } catch {
-      state.alert = "Failed to remove operation: \(error.localizedDescription)"
-    }
+  public func removeOperation(operationID: String, fromPatientID patientID: String) async {
+    await executeWithErrorHandling(
+      operation: { [self] in
+        try await self.deleteOperation.run(
+          DeleteOperation.Input(patientID: patientID, operationID: operationID)
+        )
+      },
+      errorMessage: "Failed to remove operation"
+    )
   }
 
   // MARK: - Asset Management
 
   public func attachAsset(
-    _ asset: OperationAsset,
-    toOperation operation: Operation,
-    in patient: Patient
+    toOperationID operationID: String,
+    inPatientID patientID: String,
+    name: String,
+    fileExtension: OperationAssetExtension,
+    fileURL: URL
   ) async {
     do {
-      try await attachAssetToOperation.run(
-        AttachAssetToOperation.Input(
-          patientID: patient.id,
-          operationID: operation.id,
-          asset: asset
-        )
+      let command = try AttachAssetCommand(
+        name: name,
+        fileExtension: fileExtension,
+        fileURL: fileURL
       )
-      await load()
+
+      await executeWithErrorHandling(
+        operation: { [self] in
+          try await self.attachAssetToOperation.run(
+            AttachAssetToOperation.Input(
+              patientID: patientID,
+              operationID: operationID,
+              command: command
+            )
+          )
+        },
+        errorMessage: "Failed to attach asset"
+      )
+    } catch let validationError as ValidationError {
+      logger.warning("Validation failed: \(validationError.localizedDescription)")
+      _state.alert = validationError.localizedDescription
     } catch {
-      state.alert = "Failed to attach asset: \(error.localizedDescription)"
+      logger.error("Unexpected error creating attach asset command: \(error.localizedDescription)")
+      _state.alert = "Failed to attach asset: \(error.localizedDescription)"
     }
   }
 
   public func removeAsset(
-    _ assetID: String,
-    fromOperation operation: Operation,
-    in patient: Patient
+    assetID: String,
+    fromOperationID operationID: String,
+    inPatientID patientID: String
   ) async {
-    do {
-      try await removeAssetFromOperation.run(
-        RemoveAssetFromOperation.Input(
-          patientID: patient.id,
-          operationID: operation.id,
-          assetID: assetID
+    await executeWithErrorHandling(
+      operation: { [self] in
+        try await self.removeAssetFromOperation.run(
+          RemoveAssetFromOperation.Input(
+            patientID: patientID,
+            operationID: operationID,
+            assetID: assetID
+          )
         )
-      )
-      await load()
-    } catch {
-      state.alert = "Failed to remove asset: \(error.localizedDescription)"
-    }
+      },
+      errorMessage: "Failed to remove asset"
+    )
   }
 
   public func dismissAlert() {
-    state.alert = nil
+    _state.alert = nil
+  }
+
+  // MARK: - Private Helpers
+
+  private func executeWithErrorHandling(
+    operation: @escaping () async throws -> Void,
+    errorMessage: String
+  ) async {
+    do {
+      try await operation()
+      await load()
+    } catch {
+      logger.error("\(errorMessage): \(error.localizedDescription)")
+      _state.alert = "\(errorMessage): \(error.localizedDescription)"
+    }
   }
 }
