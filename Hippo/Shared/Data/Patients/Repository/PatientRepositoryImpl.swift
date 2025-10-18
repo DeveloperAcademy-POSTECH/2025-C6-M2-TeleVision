@@ -1,7 +1,11 @@
 import Foundation
 
+// MARK: - PatientRepositoryImpl
+
 /// Repository implementation with offline-first strategy
-/// Fetches from local immediately, then syncs with remote in background
+/// - Local operations execute immediately on MainActor
+/// - Remote sync happens asynchronously in background
+/// - Follows actor isolation for thread-safe data access
 public actor PatientRepositoryImpl: PatientRepository {
   private let localDataSource: PatientLocalDataSource
   private let remoteDataSource: PatientRemoteDataSource
@@ -14,183 +18,134 @@ public actor PatientRepositoryImpl: PatientRepository {
     self.remoteDataSource = remoteDataSource
   }
 
-  public init() {
-    let local = PatientLocalDataSourceJSON()
-    let remote = PatientRemoteDataSourceCloudKit()
-    self.localDataSource = local
-    self.remoteDataSource = remote
-  }
-
   // MARK: - Patient Operations
 
   public func listPatients() async throws -> [Patient] {
-    let localPatients = try await localDataSource.fetchAll()
-
-    Task.detached { [weak self] in
-      await self?.syncFromRemote()
+    let patients = try await fetchFromLocal { dataSource in
+      try dataSource.listPatients()
     }
 
-    return localPatients.sorted { $0.updatedAt > $1.updatedAt }
+    backgroundSync()
+
+    return patients.sorted { $0.updatedAt > $1.updatedAt }
   }
 
   public func getPatient(id: String) async throws -> Patient {
-    let patients = try await localDataSource.fetchAll()
-    guard let patient = patients.first(where: { $0.id == id }) else {
+    let patient = try await fetchFromLocal { dataSource in
+      try dataSource.getPatient(id: id)
+    }
+
+    guard let patient else {
       throw RepositoryError.notFound
     }
+
     return patient
   }
 
   public func upsertPatient(_ patient: Patient) async throws -> Patient {
-    var patients = try await localDataSource.fetchAll()
-    var updatedPatient = patient
-    updatedPatient.updatedAt = Date()
-
-    if let index = patients.firstIndex(where: { $0.id == patient.id }) {
-      patients[index] = updatedPatient
-    } else {
-      patients.append(updatedPatient)
+    try await saveToLocal {
+      try $0.upsert(patient)
     }
 
-    try await localDataSource.saveAll(patients)
+    backgroundPush(patient)
 
-    Task.detached { [weak self, updatedPatient] in
-      try? await self?.remoteDataSource.push(updatedPatient)
-    }
-
-    return updatedPatient
+    return patient
   }
 
   public func deletePatient(id: String) async throws {
-    var patients = try await localDataSource.fetchAll()
-    patients.removeAll { $0.id == id }
-    try await localDataSource.saveAll(patients)
+    try await saveToLocal {
+      try $0.deletePatient(id: id)
+    }
 
-    Task.detached { [weak self, id] in
+    backgroundRemove(id: id)
+  }
+
+}
+
+// MARK: - Private Helpers (Data Source Access)
+
+private extension PatientRepositoryImpl {
+  /// Fetch data from local data source on MainActor
+  func fetchFromLocal<T>(
+    _ operation: @MainActor @escaping (PatientLocalDataSource) throws -> T
+  ) async throws -> T {
+    try await MainActor.run {
+      try operation(localDataSource)
+    }
+  }
+
+  /// Save data to local data source on MainActor
+  func saveToLocal(
+    _ operation: @MainActor @escaping (PatientLocalDataSource) throws -> Void
+  ) async throws {
+    try await MainActor.run {
+      try operation(localDataSource)
+    }
+  }
+}
+
+// MARK: - Private Helpers (Background Sync)
+
+private extension PatientRepositoryImpl {
+  /// Background sync from remote (fire-and-forget)
+  func backgroundSync() {
+    Task.detached { [weak self] in
+      await self?.syncFromRemote()
+    }
+  }
+
+  /// Background push to remote (fire-and-forget)
+  func backgroundPush(_ patient: Patient) {
+    Task.detached { [weak self] in
+      try? await self?.remoteDataSource.push(patient)
+    }
+  }
+
+  /// Background remove from remote (fire-and-forget)
+  func backgroundRemove(id: String) {
+    Task.detached { [weak self] in
       try? await self?.remoteDataSource.remove(id: id)
     }
   }
 
-  // MARK: - Operation Operations
-
-  public func upsertOperation(patientID: String, operation: Operation) async throws {
-    var patients = try await localDataSource.fetchAll()
-    guard let patientIndex = patients.firstIndex(where: { $0.id == patientID }) else {
-      throw RepositoryError.notFound
-    }
-
-    var patient = patients[patientIndex]
-
-    if let operationIndex = patient.operations.firstIndex(where: { $0.id == operation.id }) {
-      patient.operations[operationIndex] = operation
-    } else {
-      patient.operations.append(operation)
-    }
-
-    patient.updatedAt = Date()
-    patients[patientIndex] = patient
-
-    try await localDataSource.saveAll(patients)
-
-    Task.detached { [weak self, patient] in
-      try? await self?.remoteDataSource.push(patient)
-    }
-  }
-
-  public func deleteOperation(patientID: String, operationID: String) async throws {
-    var patients = try await localDataSource.fetchAll()
-    guard let patientIndex = patients.firstIndex(where: { $0.id == patientID }) else {
-      throw RepositoryError.notFound
-    }
-
-    var patient = patients[patientIndex]
-    patient.operations.removeAll { $0.id == operationID }
-    patient.updatedAt = Date()
-    patients[patientIndex] = patient
-
-    try await localDataSource.saveAll(patients)
-
-    Task.detached { [weak self, patient] in
-      try? await self?.remoteDataSource.push(patient)
-    }
-  }
-
-  // MARK: - OperationAsset Operations
-
-  public func attachAssetToOperation(patientID: String, operationID: String, asset: OperationAsset) async throws {
-    var patients = try await localDataSource.fetchAll()
-    guard let patientIndex = patients.firstIndex(where: { $0.id == patientID }) else {
-      throw RepositoryError.notFound
-    }
-
-    var patient = patients[patientIndex]
-    guard let operationIndex = patient.operations.firstIndex(where: { $0.id == operationID }) else {
-      throw RepositoryError.notFound
-    }
-
-    var operation = patient.operations[operationIndex]
-    operation.operationAssets.append(asset)
-    patient.operations[operationIndex] = operation
-    patient.updatedAt = Date()
-    patients[patientIndex] = patient
-
-    try await localDataSource.saveAll(patients)
-
-    Task.detached { [weak self, patient] in
-      try? await self?.remoteDataSource.push(patient)
-    }
-  }
-
-  public func removeAssetFromOperation(patientID: String, operationID: String, assetID: String) async throws {
-    var patients = try await localDataSource.fetchAll()
-    guard let patientIndex = patients.firstIndex(where: { $0.id == patientID }) else {
-      throw RepositoryError.notFound
-    }
-
-    var patient = patients[patientIndex]
-    guard let operationIndex = patient.operations.firstIndex(where: { $0.id == operationID }) else {
-      throw RepositoryError.notFound
-    }
-
-    var operation = patient.operations[operationIndex]
-    operation.operationAssets.removeAll { $0.id == assetID }
-    patient.operations[operationIndex] = operation
-    patient.updatedAt = Date()
-    patients[patientIndex] = patient
-
-    try await localDataSource.saveAll(patients)
-
-    Task.detached { [weak self, patient] in
-      try? await self?.remoteDataSource.push(patient)
-    }
-  }
-
-  // MARK: - Private Helpers
-
-  private func syncFromRemote() async {
+  /// Sync all patients from remote to local
+  /// Merges remote changes with local data based on updatedAt timestamp
+  func syncFromRemote() async {
     do {
       let remotePatients = try await remoteDataSource.pullAll()
-      var localPatients = try await localDataSource.fetchAll()
 
-      for remotePatient in remotePatients {
-        if let localIndex = localPatients.firstIndex(where: { $0.id == remotePatient.id }) {
-          if remotePatient.updatedAt > localPatients[localIndex].updatedAt {
-            localPatients[localIndex] = remotePatient
+      try await MainActor.run {
+        let localPatients = try localDataSource.listPatients()
+
+        for remotePatient in remotePatients {
+          let shouldUpdate = localPatients
+            .first(where: { $0.id == remotePatient.id })
+            .map { remotePatient.updatedAt > $0.updatedAt } ?? true
+
+          if shouldUpdate {
+            try localDataSource.upsert(remotePatient)
           }
-        } else {
-          localPatients.append(remotePatient)
         }
       }
-
-      try await localDataSource.saveAll(localPatients)
     } catch {
-      print("Background sync failed: \(error)")
+      // TODO: Implement proper error handling/retry mechanism
+      print("⚠️ Background sync failed: \(error.localizedDescription)")
     }
   }
 }
 
 // MARK: - Errors
-public enum RepositoryError: Error {
+
+public enum RepositoryError: Error, LocalizedError {
   case notFound
-  case syncFailed
+  case syncFailed(Error)
+
+  public var errorDescription: String? {
+    switch self {
+    case .notFound:
+      return "Patient not found"
+    case .syncFailed(let error):
+      return "Sync failed: \(error.localizedDescription)"
+    }
+  }
 }

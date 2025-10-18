@@ -49,13 +49,10 @@
 		C04678252EA00B1F00D160DA /* PatientRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = C04677F62EA00B1F00D160DA /* PatientRepository.swift */; };
 		C046782F2EA00B3A00D160DA /* PatientRepositoryImpl.swift in Sources */ = {isa = PBXBuildFile; fileRef = C046782C2EA00B3A00D160DA /* PatientRepositoryImpl.swift */; };
 		C04678302EA00B3A00D160DA /* PatientRemoteDataSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = C04678282EA00B3A00D160DA /* PatientRemoteDataSource.swift */; };
-		C04678312EA00B3A00D160DA /* PatientLocalDataSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = C04678262EA00B3A00D160DA /* PatientLocalDataSource.swift */; };
 		C04678322EA00B3A00D160DA /* PatientRepositoryImpl.swift in Sources */ = {isa = PBXBuildFile; fileRef = C046782C2EA00B3A00D160DA /* PatientRepositoryImpl.swift */; };
 		C04678332EA00B3A00D160DA /* PatientRemoteDataSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = C04678282EA00B3A00D160DA /* PatientRemoteDataSource.swift */; };
-		C04678342EA00B3A00D160DA /* PatientLocalDataSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = C04678262EA00B3A00D160DA /* PatientLocalDataSource.swift */; };
 		C04678352EA00B3A00D160DA /* PatientRepositoryImpl.swift in Sources */ = {isa = PBXBuildFile; fileRef = C046782C2EA00B3A00D160DA /* PatientRepositoryImpl.swift */; };
 		C04678362EA00B3A00D160DA /* PatientRemoteDataSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = C04678282EA00B3A00D160DA /* PatientRemoteDataSource.swift */; };
-		C04678372EA00B3A00D160DA /* PatientLocalDataSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = C04678262EA00B3A00D160DA /* PatientLocalDataSource.swift */; };
 		C046783B2EA00B4A00D160DA /* PatientState.swift in Sources */ = {isa = PBXBuildFile; fileRef = C04678382EA00B4A00D160DA /* PatientState.swift */; };
 		C046783C2EA00B4A00D160DA /* PatientViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = C04678392EA00B4A00D160DA /* PatientViewModel.swift */; };
 		C046783D2EA00B4A00D160DA /* PatientState.swift in Sources */ = {isa = PBXBuildFile; fileRef = C04678382EA00B4A00D160DA /* PatientState.swift */; };
@@ -114,6 +111,36 @@
 		C0F97AB02EA401160063E159 /* OperationDisplayModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0F97AA02EA401160063E159 /* OperationDisplayModel.swift */; };
 		C0F97AB12EA401160063E159 /* DisplayHelpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0F97A9E2EA401160063E159 /* DisplayHelpers.swift */; };
 		C0F97AB22EA401160063E159 /* OperationAssetDisplayModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0F97A9F2EA401160063E159 /* OperationAssetDisplayModel.swift */; };
+		C0F97ABE2EA41D4B0063E159 /* SDOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0F97AB72EA41D4B0063E159 /* SDOperation.swift */; };
+		C0F97ABF2EA41D4B0063E159 /* SDOperationRecording.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0F97AB92EA41D4B0063E159 /* SDOperationRecording.swift */; };
+		C0F97AC02EA41D4B0063E159 /* SwiftDataMappers.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0F97AB52EA41D4B0063E159 /* SwiftDataMappers.swift */; };
+		C0F97AC12EA41D4B0063E159 /* PatientLocalDataSourceSwiftData.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0F97ABC2EA41D4B0063E159 /* PatientLocalDataSourceSwiftData.swift */; };
+		C0F97AC22EA41D4B0063E159 /* SDOperationAsset.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0F97AB82EA41D4B0063E159 /* SDOperationAsset.swift */; };
+		C0F97AC32EA41D4B0063E159 /* PatientLocalDataSourceLegacyJSON.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0F97AB32EA41D4B0063E159 /* PatientLocalDataSourceLegacyJSON.swift */; };
+		C0F97AC42EA41D4B0063E159 /* SDPatient.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0F97ABA2EA41D4B0063E159 /* SDPatient.swift */; };
+		C0F97AC52EA41D4B0063E159 /* SDOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0F97AB72EA41D4B0063E159 /* SDOperation.swift */; };
+		C0F97AC62EA41D4B0063E159 /* SDOperationRecording.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0F97AB92EA41D4B0063E159 /* SDOperationRecording.swift */; };
+		C0F97AC72EA41D4B0063E159 /* SwiftDataMappers.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0F97AB52EA41D4B0063E159 /* SwiftDataMappers.swift */; };
+		C0F97AC82EA41D4B0063E159 /* PatientLocalDataSourceSwiftData.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0F97ABC2EA41D4B0063E159 /* PatientLocalDataSourceSwiftData.swift */; };
+		C0F97AC92EA41D4B0063E159 /* SDOperationAsset.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0F97AB82EA41D4B0063E159 /* SDOperationAsset.swift */; };
+		C0F97ACA2EA41D4B0063E159 /* PatientLocalDataSourceLegacyJSON.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0F97AB32EA41D4B0063E159 /* PatientLocalDataSourceLegacyJSON.swift */; };
+		C0F97ACB2EA41D4B0063E159 /* SDPatient.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0F97ABA2EA41D4B0063E159 /* SDPatient.swift */; };
+		C0F97ACC2EA41D4B0063E159 /* SDOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0F97AB72EA41D4B0063E159 /* SDOperation.swift */; };
+		C0F97ACD2EA41D4B0063E159 /* SDOperationRecording.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0F97AB92EA41D4B0063E159 /* SDOperationRecording.swift */; };
+		C0F97ACE2EA41D4B0063E159 /* SwiftDataMappers.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0F97AB52EA41D4B0063E159 /* SwiftDataMappers.swift */; };
+		C0F97ACF2EA41D4B0063E159 /* PatientLocalDataSourceSwiftData.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0F97ABC2EA41D4B0063E159 /* PatientLocalDataSourceSwiftData.swift */; };
+		C0F97AD02EA41D4B0063E159 /* SDOperationAsset.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0F97AB82EA41D4B0063E159 /* SDOperationAsset.swift */; };
+		C0F97AD12EA41D4B0063E159 /* PatientLocalDataSourceLegacyJSON.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0F97AB32EA41D4B0063E159 /* PatientLocalDataSourceLegacyJSON.swift */; };
+		C0F97AD22EA41D4B0063E159 /* SDPatient.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0F97ABA2EA41D4B0063E159 /* SDPatient.swift */; };
+		C0F97AD42EA41FB50063E159 /* PatientLocalDataSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0F97AD32EA41FB50063E159 /* PatientLocalDataSource.swift */; };
+		C0F97AD52EA41FB50063E159 /* PatientLocalDataSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0F97AD32EA41FB50063E159 /* PatientLocalDataSource.swift */; };
+		C0F97AD62EA41FB50063E159 /* PatientLocalDataSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0F97AD32EA41FB50063E159 /* PatientLocalDataSource.swift */; };
+		C0F97AD92EA420E10063E159 /* DataDependencies.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0F97AD72EA420E10063E159 /* DataDependencies.swift */; };
+		C0F97ADA2EA420E10063E159 /* DataDependencies.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0F97AD72EA420E10063E159 /* DataDependencies.swift */; };
+		C0F97ADB2EA420E10063E159 /* DataDependencies.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0F97AD72EA420E10063E159 /* DataDependencies.swift */; };
+		C0F97ADE2EA420EB0063E159 /* DomainDependencies.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0F97ADC2EA420EB0063E159 /* DomainDependencies.swift */; };
+		C0F97ADF2EA420EB0063E159 /* DomainDependencies.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0F97ADC2EA420EB0063E159 /* DomainDependencies.swift */; };
+		C0F97AE02EA420EB0063E159 /* DomainDependencies.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0F97ADC2EA420EB0063E159 /* DomainDependencies.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -148,7 +175,6 @@
 		C04677FB2EA00B1F00D160DA /* GetPatient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GetPatient.swift; sourceTree = "<group>"; };
 		C04677FC2EA00B1F00D160DA /* ListPatients.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ListPatients.swift; sourceTree = "<group>"; };
 		C04677FF2EA00B1F00D160DA /* UpsertPatient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UpsertPatient.swift; sourceTree = "<group>"; };
-		C04678262EA00B3A00D160DA /* PatientLocalDataSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PatientLocalDataSource.swift; sourceTree = "<group>"; };
 		C04678282EA00B3A00D160DA /* PatientRemoteDataSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PatientRemoteDataSource.swift; sourceTree = "<group>"; };
 		C046782C2EA00B3A00D160DA /* PatientRepositoryImpl.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PatientRepositoryImpl.swift; sourceTree = "<group>"; };
 		C04678382EA00B4A00D160DA /* PatientState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PatientState.swift; sourceTree = "<group>"; };
@@ -172,6 +198,16 @@
 		C0F97AA02EA401160063E159 /* OperationDisplayModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OperationDisplayModel.swift; sourceTree = "<group>"; };
 		C0F97AA12EA401160063E159 /* PatientDisplayModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PatientDisplayModel.swift; sourceTree = "<group>"; };
 		C0F97AA22EA401160063E159 /* PatientMapper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PatientMapper.swift; sourceTree = "<group>"; };
+		C0F97AB32EA41D4B0063E159 /* PatientLocalDataSourceLegacyJSON.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PatientLocalDataSourceLegacyJSON.swift; sourceTree = "<group>"; };
+		C0F97AB52EA41D4B0063E159 /* SwiftDataMappers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwiftDataMappers.swift; sourceTree = "<group>"; };
+		C0F97AB72EA41D4B0063E159 /* SDOperation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SDOperation.swift; sourceTree = "<group>"; };
+		C0F97AB82EA41D4B0063E159 /* SDOperationAsset.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SDOperationAsset.swift; sourceTree = "<group>"; };
+		C0F97AB92EA41D4B0063E159 /* SDOperationRecording.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SDOperationRecording.swift; sourceTree = "<group>"; };
+		C0F97ABA2EA41D4B0063E159 /* SDPatient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SDPatient.swift; sourceTree = "<group>"; };
+		C0F97ABC2EA41D4B0063E159 /* PatientLocalDataSourceSwiftData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PatientLocalDataSourceSwiftData.swift; sourceTree = "<group>"; };
+		C0F97AD32EA41FB50063E159 /* PatientLocalDataSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PatientLocalDataSource.swift; sourceTree = "<group>"; };
+		C0F97AD72EA420E10063E159 /* DataDependencies.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataDependencies.swift; sourceTree = "<group>"; };
+		C0F97ADC2EA420EB0063E159 /* DomainDependencies.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DomainDependencies.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -318,6 +354,7 @@
 		C02FFA652E9FFF6F00F16742 /* Data */ = {
 			isa = PBXGroup;
 			children = (
+				C0F97AD82EA420E10063E159 /* DI */,
 				C046782E2EA00B3A00D160DA /* Patients */,
 			);
 			path = Data;
@@ -326,6 +363,7 @@
 		C02FFA692E9FFF6F00F16742 /* Domain */ = {
 			isa = PBXGroup;
 			children = (
+				C0F97ADD2EA420EB0063E159 /* DI */,
 				C04678012EA00B1F00D160DA /* Patients */,
 			);
 			path = Domain;
@@ -398,7 +436,8 @@
 		C04678272EA00B3A00D160DA /* Local */ = {
 			isa = PBXGroup;
 			children = (
-				C04678262EA00B3A00D160DA /* PatientLocalDataSource.swift */,
+				C0F97AB42EA41D4B0063E159 /* JSON */,
+				C0F97ABD2EA41D4B0063E159 /* SwiftData */,
 			);
 			path = Local;
 			sourceTree = "<group>";
@@ -415,6 +454,7 @@
 		C046782A2EA00B3A00D160DA /* DataSources */ = {
 			isa = PBXGroup;
 			children = (
+				C0F97AD32EA41FB50063E159 /* PatientLocalDataSource.swift */,
 				C04678272EA00B3A00D160DA /* Local */,
 				C04678292EA00B3A00D160DA /* Remote */,
 			);
@@ -492,6 +532,59 @@
 				C0F97AA22EA401160063E159 /* PatientMapper.swift */,
 			);
 			path = DisplayModels;
+			sourceTree = "<group>";
+		};
+		C0F97AB42EA41D4B0063E159 /* JSON */ = {
+			isa = PBXGroup;
+			children = (
+				C0F97AB32EA41D4B0063E159 /* PatientLocalDataSourceLegacyJSON.swift */,
+			);
+			path = JSON;
+			sourceTree = "<group>";
+		};
+		C0F97AB62EA41D4B0063E159 /* Mappers */ = {
+			isa = PBXGroup;
+			children = (
+				C0F97AB52EA41D4B0063E159 /* SwiftDataMappers.swift */,
+			);
+			path = Mappers;
+			sourceTree = "<group>";
+		};
+		C0F97ABB2EA41D4B0063E159 /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				C0F97AB72EA41D4B0063E159 /* SDOperation.swift */,
+				C0F97AB82EA41D4B0063E159 /* SDOperationAsset.swift */,
+				C0F97AB92EA41D4B0063E159 /* SDOperationRecording.swift */,
+				C0F97ABA2EA41D4B0063E159 /* SDPatient.swift */,
+			);
+			path = Models;
+			sourceTree = "<group>";
+		};
+		C0F97ABD2EA41D4B0063E159 /* SwiftData */ = {
+			isa = PBXGroup;
+			children = (
+				C0F97AB62EA41D4B0063E159 /* Mappers */,
+				C0F97ABB2EA41D4B0063E159 /* Models */,
+				C0F97ABC2EA41D4B0063E159 /* PatientLocalDataSourceSwiftData.swift */,
+			);
+			path = SwiftData;
+			sourceTree = "<group>";
+		};
+		C0F97AD82EA420E10063E159 /* DI */ = {
+			isa = PBXGroup;
+			children = (
+				C0F97AD72EA420E10063E159 /* DataDependencies.swift */,
+			);
+			path = DI;
+			sourceTree = "<group>";
+		};
+		C0F97ADD2EA420EB0063E159 /* DI */ = {
+			isa = PBXGroup;
+			children = (
+				C0F97ADC2EA420EB0063E159 /* DomainDependencies.swift */,
+			);
+			path = DI;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -638,7 +731,9 @@
 			files = (
 				C02FFA952E9FFF6F00F16742 /* ToggleImmersiveSpaceButton.swift in Sources */,
 				C04678102EA00B1F00D160DA /* DeletePatient.swift in Sources */,
+				C0F97AD62EA41FB50063E159 /* PatientLocalDataSource.swift in Sources */,
 				C0F97A842EA3FDDE0063E159 /* OperationAsset.swift in Sources */,
+				C0F97ADF2EA420EB0063E159 /* DomainDependencies.swift in Sources */,
 				C0F97A852EA3FDDE0063E159 /* OperationRecording.swift in Sources */,
 				C0F97A862EA3FDDE0063E159 /* Operation.swift in Sources */,
 				C046782F2EA00B3A00D160DA /* PatientRepositoryImpl.swift in Sources */,
@@ -646,7 +741,6 @@
 				C0F97A732EA3FA560063E159 /* OperationStatus.swift in Sources */,
 				C0F97A742EA3FA560063E159 /* Gender.swift in Sources */,
 				C0F97A752EA3FA560063E159 /* OperationAssetExtension.swift in Sources */,
-				C04678312EA00B3A00D160DA /* PatientLocalDataSource.swift in Sources */,
 				C04678122EA00B1F00D160DA /* UpsertPatient.swift in Sources */,
 				C04678432EA00C1B00D160DA /* PatientView.swift in Sources */,
 				C04678142EA00B1F00D160DA /* Patient.swift in Sources */,
@@ -658,12 +752,20 @@
 				C0F97A7B2EA3FD370063E159 /* PatientDTO.swift in Sources */,
 				C02FFA9E2E9FFF6F00F16742 /* ContentView.swift in Sources */,
 				C02FFA9F2E9FFF6F00F16742 /* ImmersiveView.swift in Sources */,
+				C0F97ACC2EA41D4B0063E159 /* SDOperation.swift in Sources */,
+				C0F97ACD2EA41D4B0063E159 /* SDOperationRecording.swift in Sources */,
+				C0F97ACE2EA41D4B0063E159 /* SwiftDataMappers.swift in Sources */,
+				C0F97ACF2EA41D4B0063E159 /* PatientLocalDataSourceSwiftData.swift in Sources */,
+				C0F97AD02EA41D4B0063E159 /* SDOperationAsset.swift in Sources */,
+				C0F97AD12EA41D4B0063E159 /* PatientLocalDataSourceLegacyJSON.swift in Sources */,
+				C0F97AD22EA41D4B0063E159 /* SDPatient.swift in Sources */,
 				C046783F2EA00B4A00D160DA /* PatientState.swift in Sources */,
 				C0F97AAE2EA401160063E159 /* PatientMapper.swift in Sources */,
 				C0F97AAF2EA401160063E159 /* PatientDisplayModel.swift in Sources */,
 				C0F97AB02EA401160063E159 /* OperationDisplayModel.swift in Sources */,
 				C0F97AB12EA401160063E159 /* DisplayHelpers.swift in Sources */,
 				C0F97AB22EA401160063E159 /* OperationAssetDisplayModel.swift in Sources */,
+				C0F97ADA2EA420E10063E159 /* DataDependencies.swift in Sources */,
 				C0F97A8E2EA3FDF50063E159 /* DeleteOperation.swift in Sources */,
 				C0F97A8F2EA3FDF50063E159 /* RemoveAssetFromOperation.swift in Sources */,
 				C0F97A902EA3FDF50063E159 /* UpsertOperation.swift in Sources */,
@@ -680,20 +782,29 @@
 				C04678042EA00B1F00D160DA /* DeletePatient.swift in Sources */,
 				C0F97A812EA3FDDE0063E159 /* OperationAsset.swift in Sources */,
 				C0F97A822EA3FDDE0063E159 /* OperationRecording.swift in Sources */,
+				C0F97AE02EA420EB0063E159 /* DomainDependencies.swift in Sources */,
 				C0F97A832EA3FDDE0063E159 /* Operation.swift in Sources */,
 				C046783B2EA00B4A00D160DA /* PatientState.swift in Sources */,
+				C0F97AD52EA41FB50063E159 /* PatientLocalDataSource.swift in Sources */,
 				C046783C2EA00B4A00D160DA /* PatientViewModel.swift in Sources */,
 				C04678062EA00B1F00D160DA /* UpsertPatient.swift in Sources */,
 				C04678082EA00B1F00D160DA /* Patient.swift in Sources */,
 				C0F97A7C2EA3FD370063E159 /* PatientDTO.swift in Sources */,
 				C046780B2EA00B1F00D160DA /* GetPatient.swift in Sources */,
+				C0F97ABE2EA41D4B0063E159 /* SDOperation.swift in Sources */,
+				C0F97ABF2EA41D4B0063E159 /* SDOperationRecording.swift in Sources */,
+				C0F97AD92EA420E10063E159 /* DataDependencies.swift in Sources */,
+				C0F97AC02EA41D4B0063E159 /* SwiftDataMappers.swift in Sources */,
+				C0F97AC12EA41D4B0063E159 /* PatientLocalDataSourceSwiftData.swift in Sources */,
+				C0F97AC22EA41D4B0063E159 /* SDOperationAsset.swift in Sources */,
+				C0F97AC32EA41D4B0063E159 /* PatientLocalDataSourceLegacyJSON.swift in Sources */,
+				C0F97AC42EA41D4B0063E159 /* SDPatient.swift in Sources */,
 				C04678352EA00B3A00D160DA /* PatientRepositoryImpl.swift in Sources */,
 				C0F97A922EA3FDF50063E159 /* DeleteOperation.swift in Sources */,
 				C0F97A932EA3FDF50063E159 /* RemoveAssetFromOperation.swift in Sources */,
 				C0F97A942EA3FDF50063E159 /* UpsertOperation.swift in Sources */,
 				C0F97A952EA3FDF50063E159 /* AttachAssetToOperation.swift in Sources */,
 				C04678362EA00B3A00D160DA /* PatientRemoteDataSource.swift in Sources */,
-				C04678372EA00B3A00D160DA /* PatientLocalDataSource.swift in Sources */,
 				C046780C2EA00B1F00D160DA /* ListPatients.swift in Sources */,
 				C046780D2EA00B1F00D160DA /* PatientRepository.swift in Sources */,
 				C04678482EA00C2700D160DA /* PatientView.swift in Sources */,
@@ -721,6 +832,16 @@
 			buildActionMask = 2147483647;
 			files = (
 				C0F97AA92EA401160063E159 /* PatientMapper.swift in Sources */,
+				C0F97AC52EA41D4B0063E159 /* SDOperation.swift in Sources */,
+				C0F97ADE2EA420EB0063E159 /* DomainDependencies.swift in Sources */,
+				C0F97AD42EA41FB50063E159 /* PatientLocalDataSource.swift in Sources */,
+				C0F97AC62EA41D4B0063E159 /* SDOperationRecording.swift in Sources */,
+				C0F97AC72EA41D4B0063E159 /* SwiftDataMappers.swift in Sources */,
+				C0F97AC82EA41D4B0063E159 /* PatientLocalDataSourceSwiftData.swift in Sources */,
+				C0F97AC92EA41D4B0063E159 /* SDOperationAsset.swift in Sources */,
+				C0F97ACA2EA41D4B0063E159 /* PatientLocalDataSourceLegacyJSON.swift in Sources */,
+				C0F97ADB2EA420E10063E159 /* DataDependencies.swift in Sources */,
+				C0F97ACB2EA41D4B0063E159 /* SDPatient.swift in Sources */,
 				C0F97AAA2EA401160063E159 /* PatientDisplayModel.swift in Sources */,
 				C0F97AAB2EA401160063E159 /* OperationDisplayModel.swift in Sources */,
 				C0F97AAC2EA401160063E159 /* DisplayHelpers.swift in Sources */,
@@ -730,7 +851,6 @@
 				C02FFA872E9FFF6F00F16742 /* AppModel.swift in Sources */,
 				C04678322EA00B3A00D160DA /* PatientRepositoryImpl.swift in Sources */,
 				C04678332EA00B3A00D160DA /* PatientRemoteDataSource.swift in Sources */,
-				C04678342EA00B3A00D160DA /* PatientLocalDataSource.swift in Sources */,
 				C04678472EA00C2700D160DA /* PatientView.swift in Sources */,
 				C0F97A7D2EA3FD370063E159 /* PatientDTO.swift in Sources */,
 				C046781C2EA00B1F00D160DA /* DeletePatient.swift in Sources */,
@@ -770,7 +890,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
-				CODE_SIGN_STYLE = Automatic;
+				CODE_SIGN_STYLE = Manual;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = "";
 				ENABLE_PREVIEWS = YES;
@@ -784,6 +904,7 @@
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.television.hippo.vision;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
 				SUPPORTED_PLATFORMS = "xros xrsimulator";
 				SWIFT_APPROACHABLE_CONCURRENCY = YES;
@@ -800,7 +921,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
-				CODE_SIGN_STYLE = Automatic;
+				CODE_SIGN_STYLE = Manual;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = "";
 				ENABLE_PREVIEWS = YES;
@@ -814,6 +935,7 @@
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.television.hippo.vision;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
 				SUPPORTED_PLATFORMS = "xros xrsimulator";
 				SWIFT_APPROACHABLE_CONCURRENCY = YES;

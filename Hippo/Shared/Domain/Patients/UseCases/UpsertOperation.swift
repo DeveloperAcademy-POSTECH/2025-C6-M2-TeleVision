@@ -1,4 +1,3 @@
-import Dependencies
 import Foundation
 
 public struct UpsertOperation: Sendable {
@@ -19,20 +18,16 @@ public struct UpsertOperation: Sendable {
   }
 
   public func run(_ input: Input) async throws {
-    try await repository.upsertOperation(patientID: input.patientID, operation: input.operation)
-  }
-}
+    // Get patient, update operation, and update timestamp (business logic)
+    var patient = try await repository.getPatient(id: input.patientID)
 
-// MARK: - Dependency
-extension UpsertOperation: DependencyKey {
-  public static let liveValue = UpsertOperation(
-    repository: PatientRepositoryImpl()
-  )
-}
+    if let operationIndex = patient.operations.firstIndex(where: { $0.id == input.operation.id }) {
+      patient.operations[operationIndex] = input.operation
+    } else {
+      patient.operations.append(input.operation)
+    }
 
-extension DependencyValues {
-  public var upsertOperation: UpsertOperation {
-    get { self[UpsertOperation.self] }
-    set { self[UpsertOperation.self] = newValue }
+    let updatedPatient = patient.withUpdatedTimestamp()
+    _ = try await repository.upsertPatient(updatedPatient)
   }
 }
