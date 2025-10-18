@@ -10,6 +10,7 @@ import RealityKit
 import RealityKitContent
 
 struct ContentView: View {
+    @Environment(\.openWindow) private var openWindow
 
     var body: some View {
         VStack {
@@ -17,8 +18,13 @@ struct ContentView: View {
                 .padding(.bottom, 50)
 
             Text("Hello, world!")
-
+            
             ToggleImmersiveSpaceButton()
+
+            Button("Open Patients") {
+                openWindow(id: "patients")
+            }
+            .buttonStyle(.borderedProminent)
         }
         .padding()
     }
