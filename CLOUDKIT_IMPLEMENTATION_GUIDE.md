@@ -12,7 +12,8 @@
 - Offline-First 아키텍처
 - Repository 패턴 구현
 - CRUD 작업 (Create, Read, Update, Delete)
-- 도메인 모델 (`Patient`, `Case`, `ModelFile`)
+- 도메인 모델 (`Patient`, `Operation`, `OperationAsset`, `OperationRecording`)
+- Value Objects (`Gender`, `OperationStatus`, `OperationAssetExtension`)
 
 ### [TODO] Phase 2 구현 대기
 - CloudKit 동기화
@@ -32,36 +33,43 @@
 ```swift
 // Record Type: "Patient"
 - id: String (Primary Key)
+- patientNumber: String
 - name: String
-- sex: String (male/female/other/unknown)
-- birthDate: Date (Optional)
-- mrn: String (Optional)
+- gender: String (male/female)
+- birthDate: Date
+- createdAt: Date
 - updatedAt: Date
 ```
 
-**2. Case Record**
+**2. Operation Record**
 ```swift
-// Record Type: "Case"
+// Record Type: "Operation"
 - id: String (Primary Key)
 - patientID: Reference<Patient>
 - title: String
 - diagnosis: String
-- scheduledAt: Date (Optional)
-- detail: String (Optional)
-- updatedAt: Date
+- surgeon: String
+- date: Date
+- details: String
+- status: String (planned/inProgress/completed/cancelled)
 ```
 
-**3. ModelFile Record**
+**3. OperationAsset Record**
 ```swift
-// Record Type: "ModelFile"
+// Record Type: "OperationAsset"
 - id: String (Primary Key)
-- caseID: Reference<Case>
-- fileName: String
-- format: String (usdz/reality/obj/fbx/stl/dicom)
-- sizeBytes: Int64 (Optional)
-- remoteURL: String (Optional)
+- operationID: Reference<Operation>
+- name: String
+- fileExtension: String (usdz/usdc/others)
 - fileAsset: CKAsset (3D 파일)
-- createdAt: Date
+```
+
+**4. OperationRecording Record**
+```swift
+// Record Type: "OperationRecording"
+- id: String (Primary Key)
+- operationID: Reference<Operation>
+- recordingAsset: CKAsset (Recording 파일)
 ```
 
 ### Step 2: CKRecord Extensions 구현
@@ -77,13 +85,14 @@ import Foundation
 extension Patient {
     /// Domain Model → CKRecord 변환
     func toCKRecord() -> CKRecord {
-        let recordID = CKRecord.ID(recordName: id.value)
+        let recordID = CKRecord.ID(recordName: id)
         let record = CKRecord(recordType: "Patient", recordID: recordID)
 
+        record["patientNumber"] = patientNumber as CKRecordValue
         record["name"] = name as CKRecordValue
-        record["sex"] = sex.rawValue as CKRecordValue
-        record["birthDate"] = birthDate as? CKRecordValue
-        record["mrn"] = mrn as? CKRecordValue
+        record["gender"] = gender.rawValue as CKRecordValue
+        record["birthDate"] = birthDate as CKRecordValue
+        record["createdAt"] = createdAt as CKRecordValue
         record["updatedAt"] = updatedAt as CKRecordValue
 
         return record
@@ -93,62 +102,115 @@ extension Patient {
 extension CKRecord {
     /// CKRecord → Domain Model 변환
     func toPatient() throws -> Patient {
-        guard let name = self["name"] as? String,
-              let sexRaw = self["sex"] as? String,
-              let sex = Sex(rawValue: sexRaw),
+        guard let patientNumber = self["patientNumber"] as? String,
+              let name = self["name"] as? String,
+              let genderRaw = self["gender"] as? String,
+              let gender = Gender(rawValue: genderRaw),
+              let birthDate = self["birthDate"] as? Date,
+              let createdAt = self["createdAt"] as? Date,
               let updatedAt = self["updatedAt"] as? Date else {
             throw CKRecordError.missingRequiredField
         }
 
         return Patient(
-            id: PatientID(value: recordID.recordName),
+            id: recordID.recordName,
+            patientNumber: patientNumber,
             name: name,
-            sex: sex,
-            birthDate: self["birthDate"] as? Date,
-            mrn: self["mrn"] as? String,
-            cases: [], // Cases는 별도 쿼리로 가져오기
+            gender: gender,
+            birthDate: birthDate,
+            operations: [], // Operations는 별도 쿼리로 가져오기
+            createdAt: createdAt,
             updatedAt: updatedAt
         )
     }
 }
 
-// MARK: - Case Extensions
+// MARK: - Operation Extensions
 
-extension Case {
-    func toCKRecord(patientID: PatientID) -> CKRecord {
-        let recordID = CKRecord.ID(recordName: id.value)
-        let record = CKRecord(recordType: "Case", recordID: recordID)
+extension Operation {
+    func toCKRecord(patientID: String) -> CKRecord {
+        let recordID = CKRecord.ID(recordName: id)
+        let record = CKRecord(recordType: "Operation", recordID: recordID)
 
-        let patientRecordID = CKRecord.ID(recordName: patientID.value)
+        let patientRecordID = CKRecord.ID(recordName: patientID)
         let patientReference = CKRecord.Reference(recordID: patientRecordID, action: .deleteSelf)
 
         record["patientID"] = patientReference
         record["title"] = title as CKRecordValue
         record["diagnosis"] = diagnosis as CKRecordValue
-        record["scheduledAt"] = scheduledAt as? CKRecordValue
-        record["detail"] = detail as? CKRecordValue
-        record["updatedAt"] = updatedAt as CKRecordValue
+        record["surgeon"] = surgeon as CKRecordValue
+        record["date"] = date as CKRecordValue
+        record["details"] = details as CKRecordValue
+        record["status"] = status.rawValue as CKRecordValue
 
         return record
     }
 }
 
 extension CKRecord {
-    func toCase() throws -> Case {
+    func toOperation() throws -> Operation {
         guard let title = self["title"] as? String,
               let diagnosis = self["diagnosis"] as? String,
-              let updatedAt = self["updatedAt"] as? Date else {
+              let surgeon = self["surgeon"] as? String,
+              let date = self["date"] as? Date,
+              let details = self["details"] as? String,
+              let statusRaw = self["status"] as? String,
+              let status = OperationStatus(rawValue: statusRaw) else {
             throw CKRecordError.missingRequiredField
         }
 
-        return Case(
-            id: CaseID(value: recordID.recordName),
+        return Operation(
+            id: recordID.recordName,
             title: title,
             diagnosis: diagnosis,
-            scheduledAt: self["scheduledAt"] as? Date,
-            detail: self["detail"] as? String,
-            models: [], // Models는 별도 쿼리로 가져오기
-            updatedAt: updatedAt
+            surgeon: surgeon,
+            date: date,
+            details: details,
+            operationAssets: [], // Assets는 별도 쿼리로 가져오기
+            recordings: [], // Recordings는 별도 쿼리로 가져오기
+            status: status
+        )
+    }
+}
+
+// MARK: - OperationAsset Extensions
+
+extension OperationAsset {
+    func toCKRecord(operationID: String, fileData: Data) -> CKRecord {
+        let recordID = CKRecord.ID(recordName: id)
+        let record = CKRecord(recordType: "OperationAsset", recordID: recordID)
+
+        let operationRecordID = CKRecord.ID(recordName: operationID)
+        let operationReference = CKRecord.Reference(recordID: operationRecordID, action: .deleteSelf)
+
+        record["operationID"] = operationReference
+        record["name"] = name as CKRecordValue
+        record["fileExtension"] = fileExtension.rawValue as CKRecordValue
+
+        // CKAsset 생성
+        let tempURL = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString)
+        try? fileData.write(to: tempURL)
+        record["fileAsset"] = CKAsset(fileURL: tempURL)
+
+        return record
+    }
+}
+
+extension CKRecord {
+    func toOperationAsset() throws -> OperationAsset {
+        guard let name = self["name"] as? String,
+              let fileExtRaw = self["fileExtension"] as? String,
+              let fileExtension = OperationAssetExtension(rawValue: fileExtRaw),
+              let fileAsset = self["fileAsset"] as? CKAsset,
+              let fileURL = fileAsset.fileURL else {
+            throw CKRecordError.missingRequiredField
+        }
+
+        return OperationAsset(
+            id: recordID.recordName,
+            name: name,
+            fileExtension: fileExtension,
+            fileURL: fileURL
         )
     }
 }
@@ -195,8 +257,8 @@ public actor PatientRemoteDataSourceCloudKit: PatientRemoteDataSource {
             let record = try result.get()
             var patient = try record.toPatient()
 
-            // 각 Patient의 Cases 가져오기
-            patient.cases = try await fetchCases(for: patient.id)
+            // 각 Patient의 Operations 가져오기
+            patient.operations = try await fetchOperations(for: patient.id)
 
             patients.append(patient)
         }
@@ -209,65 +271,76 @@ public actor PatientRemoteDataSourceCloudKit: PatientRemoteDataSource {
         let patientRecord = patient.toCKRecord()
         _ = try await database.save(patientRecord)
 
-        // 2. 각 Case 레코드 저장
-        for `case` in patient.cases {
-            let caseRecord = `case`.toCKRecord(patientID: patient.id)
-            _ = try await database.save(caseRecord)
+        // 2. 각 Operation 레코드 저장
+        for operation in patient.operations {
+            let operationRecord = operation.toCKRecord(patientID: patient.id)
+            _ = try await database.save(operationRecord)
 
-            // 3. 각 ModelFile 레코드 저장
-            for model in `case`.models {
-                let modelRecord = model.toCKRecord(caseID: `case`.id)
-                _ = try await database.save(modelRecord)
+            // 3. 각 OperationAsset 레코드 저장
+            for asset in operation.operationAssets {
+                // 파일 데이터 로드 (실제 구현 시 fileURL에서 데이터 읽기)
+                let fileData = try Data(contentsOf: asset.fileURL)
+                let assetRecord = asset.toCKRecord(operationID: operation.id, fileData: fileData)
+                _ = try await database.save(assetRecord)
             }
+
+            // 4. 각 OperationRecording 레코드 저장 (구현 필요)
+            // for recording in operation.recordings {
+            //     let recordingRecord = recording.toCKRecord(operationID: operation.id)
+            //     _ = try await database.save(recordingRecord)
+            // }
         }
     }
 
-    public func remove(id: PatientID) async throws {
-        let recordID = CKRecord.ID(recordName: id.value)
-        // deleteSelf action으로 인해 연관된 Case, ModelFile도 자동 삭제
+    public func remove(id: String) async throws {
+        let recordID = CKRecord.ID(recordName: id)
+        // deleteSelf action으로 인해 연관된 Operation, OperationAsset도 자동 삭제
         _ = try await database.deleteRecord(withID: recordID)
     }
 
     // MARK: - Private Helpers
 
-    private func fetchCases(for patientID: PatientID) async throws -> [Case] {
-        let patientRecordID = CKRecord.ID(recordName: patientID.value)
+    private func fetchOperations(for patientID: String) async throws -> [Operation] {
+        let patientRecordID = CKRecord.ID(recordName: patientID)
         let patientReference = CKRecord.Reference(recordID: patientRecordID, action: .none)
         let predicate = NSPredicate(format: "patientID == %@", patientReference)
 
-        let query = CKQuery(recordType: "Case", predicate: predicate)
+        let query = CKQuery(recordType: "Operation", predicate: predicate)
         let results = try await database.records(matching: query)
 
-        var cases: [Case] = []
+        var operations: [Operation] = []
         for (_, result) in results.matchResults {
             let record = try result.get()
-            var `case` = try record.toCase()
+            var operation = try record.toOperation()
 
-            // 각 Case의 ModelFiles 가져오기
-            `case`.models = try await fetchModels(for: `case`.id)
+            // 각 Operation의 OperationAssets 가져오기
+            operation.operationAssets = try await fetchAssets(for: operation.id)
 
-            cases.append(`case`)
+            // 각 Operation의 Recordings 가져오기 (구현 필요)
+            // operation.recordings = try await fetchRecordings(for: operation.id)
+
+            operations.append(operation)
         }
 
-        return cases
+        return operations
     }
 
-    private func fetchModels(for caseID: CaseID) async throws -> [ModelFile] {
-        let caseRecordID = CKRecord.ID(recordName: caseID.value)
-        let caseReference = CKRecord.Reference(recordID: caseRecordID, action: .none)
-        let predicate = NSPredicate(format: "caseID == %@", caseReference)
+    private func fetchAssets(for operationID: String) async throws -> [OperationAsset] {
+        let operationRecordID = CKRecord.ID(recordName: operationID)
+        let operationReference = CKRecord.Reference(recordID: operationRecordID, action: .none)
+        let predicate = NSPredicate(format: "operationID == %@", operationReference)
 
-        let query = CKQuery(recordType: "ModelFile", predicate: predicate)
+        let query = CKQuery(recordType: "OperationAsset", predicate: predicate)
         let results = try await database.records(matching: query)
 
-        var models: [ModelFile] = []
+        var assets: [OperationAsset] = []
         for (_, result) in results.matchResults {
             let record = try result.get()
-            let model = try record.toModelFile()
-            models.append(model)
+            let asset = try record.toOperationAsset()
+            assets.append(asset)
         }
 
-        return models
+        return assets
     }
 }
 ```
@@ -327,10 +400,12 @@ private func syncFromRemote() async {
 ### Phase 2.2: 매퍼 구현
 - [ ] `Patient.toCKRecord()` 구현
 - [ ] `CKRecord.toPatient()` 구현
-- [ ] `Case.toCKRecord()` 구현
-- [ ] `CKRecord.toCase()` 구현
-- [ ] `ModelFile.toCKRecord()` 구현
-- [ ] `CKRecord.toModelFile()` 구현
+- [ ] `Operation.toCKRecord()` 구현
+- [ ] `CKRecord.toOperation()` 구현
+- [ ] `OperationAsset.toCKRecord()` 구현
+- [ ] `CKRecord.toOperationAsset()` 구현
+- [ ] `OperationRecording.toCKRecord()` 구현 (선택)
+- [ ] `CKRecord.toOperationRecording()` 구현 (선택)
 
 ### Phase 2.3: RemoteDataSource 구현
 - [ ] `pullAll()` 구현 (전체 동기화)
@@ -353,6 +428,17 @@ private func syncFromRemote() async {
 
 ---
 
+## 도메인 모델 변경 사항 요약
+
+### 주요 변경사항 (2025-10-19)
+- **Patient**: 필드 변경
+- **Case → Operation**: 엔티티 이름 변경, 필드 추가: `surgeon`, `status`, `recordings`
+- **ModelFile → OperationAsset**: 엔티티 이름 변경
+- **OperationRecording**: 새로운 엔티티 추가 (수술 녹화 영상 관리)
+- **Value Objects**: `Gender`, `OperationStatus`, `OperationAssetExtension` 추가
+
+---
+
 ## 참고 자료
 
 - [CloudKit Documentation](https://developer.apple.com/documentation/cloudkit)
@@ -361,5 +447,5 @@ private func syncFromRemote() async {
 
 ---
 
-**Last Updated**: 2025-10-16
-**Status**: Phase 1 완료 / Phase 2 대기 중
+**Last Updated**: 2025-10-19
+**Status**: Phase 1 완료 / Phase 2 대기 중 (도메인 모델 업데이트 완료)
