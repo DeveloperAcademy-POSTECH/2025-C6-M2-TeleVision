@@ -4,12 +4,12 @@ public struct AttachAssetToOperation: Sendable {
   public struct Input: Sendable {
     public let patientID: String
     public let operationID: String
-    public let asset: OperationAsset
+    public let command: AttachAssetCommand
 
-    public init(patientID: String, operationID: String, asset: OperationAsset) {
+    public init(patientID: String, operationID: String, command: AttachAssetCommand) {
       self.patientID = patientID
       self.operationID = operationID
-      self.asset = asset
+      self.command = command
     }
   }
 
@@ -27,7 +27,9 @@ public struct AttachAssetToOperation: Sendable {
       throw UseCaseError.operationNotFound
     }
 
-    patient.operations[operationIndex].operationAssets.append(input.asset)
+    // Convert command to OperationAsset entity (UUID generated here)
+    let newAsset = input.command.toOperationAsset()
+    patient.operations[operationIndex].operationAssets.append(newAsset)
 
     let updatedPatient = patient.withUpdatedTimestamp()
     _ = try await repository.upsertPatient(updatedPatient)
