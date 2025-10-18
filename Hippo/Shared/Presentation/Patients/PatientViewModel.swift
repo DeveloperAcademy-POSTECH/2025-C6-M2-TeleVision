@@ -16,16 +16,16 @@ public final class PatientViewModel {
     @Dependency(\.deletePatient) private var deletePatient
 
     @ObservationIgnored
-    @Dependency(\.upsertCase) private var upsertCase
+    @Dependency(\.upsertOperation) private var upsertOperation
 
     @ObservationIgnored
-    @Dependency(\.deleteCase) private var deleteCase
+    @Dependency(\.deleteOperation) private var deleteOperation
 
     @ObservationIgnored
-    @Dependency(\.attachModelToCase) private var attachModelToCase
+    @Dependency(\.attachModelToOperation) private var attachModelToOperation
 
     @ObservationIgnored
-    @Dependency(\.removeModelFromCase) private var removeModelFromCase
+    @Dependency(\.removeModelFromOperation) private var removeModelFromOperation
 
     // MARK: - State
     public var state: PatientState
@@ -55,7 +55,6 @@ public final class PatientViewModel {
             name: name,
             sex: sex,
             birthDate: birthDate,
-            mrn: mrn
         )
 
         do {
@@ -88,37 +87,40 @@ public final class PatientViewModel {
         }
     }
 
-    // MARK: - Case Management
+    // MARK: - Operation Management
 
-    public func addCase(to patient: Patient, title: String, diagnosis: String) async {
-        let newCase = Case(
+    public func addOperation(to patient: Patient, title: String, diagnosis: String, surgeon: String = "", scheduledAt: Date? = nil, detail: String? = nil) async {
+        let newOperation = Operation(
             title: title,
-            diagnosis: diagnosis
+            diagnosis: diagnosis,
+            surgeon: surgeon,
+            scheduledAt: scheduledAt,
+            detail: detail
         )
 
         do {
-            try await upsertCase.run(UpsertCase.Input(patientID: patient.id, case: newCase))
+            try await upsertOperation.run(UpsertOperation.Input(patientID: patient.id, operation: newOperation))
             await load() // Reload to get updated data
         } catch {
-            state.alert = "Failed to add case: \(error.localizedDescription)"
+            state.alert = "Failed to add operation: \(error.localizedDescription)"
         }
     }
 
-    public func removeCase(_ caseItem: Case, from patient: Patient) async {
+    public func removeOperation(_ operation: Operation, from patient: Patient) async {
         do {
-            try await deleteCase.run(DeleteCase.Input(patientID: patient.id, caseID: caseItem.id))
+            try await deleteOperation.run(DeleteOperation.Input(patientID: patient.id, operationID: operation.id))
             await load() // Reload to get updated data
         } catch {
-            state.alert = "Failed to remove case: \(error.localizedDescription)"
+            state.alert = "Failed to remove operation: \(error.localizedDescription)"
         }
     }
 
     // MARK: - Model Management
 
-    public func attachModel(_ file: ModelFile, toCase caseItem: Case, in patient: Patient) async {
+    public func attachModel(_ file: OperationAsset, to operation: Operation, in patient: Patient) async {
         do {
-            try await attachModelToCase.run(
-                AttachModelToCase.Input(patientID: patient.id, caseID: caseItem.id, file: file)
+            try await attachModelToOperation.run(
+                AttachModelToOperation.Input(patientID: patient.id, operationID: operation.id, file: file)
             )
             await load() // Reload to get updated data
         } catch {
@@ -126,10 +128,10 @@ public final class PatientViewModel {
         }
     }
 
-    public func removeModel(_ modelID: ModelID, fromCase caseItem: Case, in patient: Patient) async {
+    public func removeModel(_ assetID: AssetID, from operation: Operation, in patient: Patient) async {
         do {
-            try await removeModelFromCase.run(
-                RemoveModelFromCase.Input(patientID: patient.id, caseID: caseItem.id, modelID: modelID)
+            try await removeModelFromOperation.run(
+                RemoveModelFromOperation.Input(patientID: patient.id, operationID: operation.id, assetID: assetID)
             )
             await load() // Reload to get updated data
         } catch {
