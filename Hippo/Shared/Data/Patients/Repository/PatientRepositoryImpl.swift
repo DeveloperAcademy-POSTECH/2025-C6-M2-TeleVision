@@ -79,22 +79,22 @@ public actor PatientRepositoryImpl: PatientRepository {
         }
     }
 
-    // MARK: - Case Operations
+    // MARK: - operation Operations
 
-    public func upsertCase(patientID: PatientID, case: Case) async throws {
+    public func upsertOperation(patientID: PatientID, operation: Operation) async throws {
         var patients = try await localDataSource.fetchAll()
         guard let patientIndex = patients.firstIndex(where: { $0.id == patientID }) else {
             throw RepositoryError.notFound
         }
 
         var patient = patients[patientIndex]
-        var updatedCase = `case`
-        updatedCase.updatedAt = Date()
+        var updatedOperation = operation
+        updatedOperation.updatedAt = Date()
 
-        if let caseIndex = patient.cases.firstIndex(where: { $0.id == `case`.id }) {
-            patient.cases[caseIndex] = updatedCase
+        if let operationIndex = patient.operations.firstIndex(where: { $0.id == operation.id }) {
+            patient.operations[operationIndex] = updatedOperation
         } else {
-            patient.cases.append(updatedCase)
+            patient.operations.append(updatedOperation)
         }
 
         patient.updatedAt = Date()
@@ -108,14 +108,14 @@ public actor PatientRepositoryImpl: PatientRepository {
         }
     }
 
-    public func deleteCase(patientID: PatientID, caseID: CaseID) async throws {
+    public func deleteOperation(patientID: PatientID, operationID: OperationID) async throws {
         var patients = try await localDataSource.fetchAll()
         guard let patientIndex = patients.firstIndex(where: { $0.id == patientID }) else {
             throw RepositoryError.notFound
         }
 
         var patient = patients[patientIndex]
-        patient.cases.removeAll { $0.id == caseID }
+        patient.operations.removeAll { $0.id == operationID }
         patient.updatedAt = Date()
         patients[patientIndex] = patient
 
@@ -129,21 +129,21 @@ public actor PatientRepositoryImpl: PatientRepository {
 
     // MARK: - Model Operations
 
-    public func attachModelToCase(patientID: PatientID, caseID: CaseID, file: ModelFile) async throws {
+    public func attachModelToOperation(patientID: PatientID, operationID: OperationID, file: OperationAsset) async throws {
         var patients = try await localDataSource.fetchAll()
         guard let patientIndex = patients.firstIndex(where: { $0.id == patientID }) else {
             throw RepositoryError.notFound
         }
 
         var patient = patients[patientIndex]
-        guard let caseIndex = patient.cases.firstIndex(where: { $0.id == caseID }) else {
+        guard let operationIndex = patient.operations.firstIndex(where: { $0.id == operationID }) else {
             throw RepositoryError.notFound
         }
 
-        var `case` = patient.cases[caseIndex]
-        `case`.models.append(file)
-        `case`.updatedAt = Date()
-        patient.cases[caseIndex] = `case`
+        var operation = patient.operations[operationIndex]
+        operation.operationAssets.append(file)
+        operation.updatedAt = Date()
+        patient.operations[operationIndex] = operation
         patient.updatedAt = Date()
         patients[patientIndex] = patient
 
@@ -155,21 +155,21 @@ public actor PatientRepositoryImpl: PatientRepository {
         }
     }
 
-    public func removeModelFromCase(patientID: PatientID, caseID: CaseID, modelID: ModelID) async throws {
+    public func removeModelFromOperation(patientID: PatientID, operationID: OperationID, assetID: AssetID) async throws {
         var patients = try await localDataSource.fetchAll()
         guard let patientIndex = patients.firstIndex(where: { $0.id == patientID }) else {
             throw RepositoryError.notFound
         }
 
         var patient = patients[patientIndex]
-        guard let caseIndex = patient.cases.firstIndex(where: { $0.id == caseID }) else {
+        guard let operationIndex = patient.operations.firstIndex(where: { $0.id == operationID }) else {
             throw RepositoryError.notFound
         }
 
-        var `case` = patient.cases[caseIndex]
-        `case`.models.removeAll { $0.id == modelID }
-        `case`.updatedAt = Date()
-        patient.cases[caseIndex] = `case`
+        var operation = patient.operations[operationIndex]
+        operation.operationAssets.removeAll { $0.id == assetID }
+        operation.updatedAt = Date()
+        patient.operations[operationIndex] = operation
         patient.updatedAt = Date()
         patients[patientIndex] = patient
 

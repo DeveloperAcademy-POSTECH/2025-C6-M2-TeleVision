@@ -24,8 +24,7 @@ public struct Patient: Codable, Sendable, Identifiable, Equatable {
     public var name: String
     public var sex: Sex
     public var birthDate: Date?
-    public var mrn: String?
-    public var cases: [Case]
+    public var operations: [Operation]
     public var updatedAt: Date
 
     public init(
@@ -33,16 +32,14 @@ public struct Patient: Codable, Sendable, Identifiable, Equatable {
         name: String,
         sex: Sex = .unknown,
         birthDate: Date? = nil,
-        mrn: String? = nil,
-        cases: [Case] = [],
+        operations: [Operation] = [],
         updatedAt: Date = Date()
     ) {
         self.id = id
         self.name = name
         self.sex = sex
         self.birthDate = birthDate
-        self.mrn = mrn
-        self.cases = cases
+        self.operations = operations
         self.updatedAt = updatedAt
     }
 

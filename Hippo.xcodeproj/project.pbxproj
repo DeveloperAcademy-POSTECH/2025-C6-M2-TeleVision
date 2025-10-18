@@ -9,56 +9,53 @@
 /* Begin PBXBuildFile section */
 		145E0F852E9C0F5B00CE6C97 /* TeleVisionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 145E0F832E9C0F5B00CE6C97 /* TeleVisionTests.swift */; };
 		146F102D2EA3AD1500DDDC35 /* HippoAssets in Frameworks */ = {isa = PBXBuildFile; productRef = 146F102C2EA3AD1500DDDC35 /* HippoAssets */; };
-		C02FFA712E9FFF6F00F16742 /* ToggleImmersiveSpaceButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = C02FFA572E9FFF6F00F16742 /* ToggleImmersiveSpaceButton.swift */; };
+		146F102F2EA3AF1000DDDC35 /* PatientListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 146F102E2EA3AF1000DDDC35 /* PatientListView.swift */; };
+		146F10302EA3AF1000DDDC35 /* PatientListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 146F102E2EA3AF1000DDDC35 /* PatientListView.swift */; };
+		146F10312EA3AF2D00DDDC35 /* PatientListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 146F102E2EA3AF1000DDDC35 /* PatientListView.swift */; };
 		C02FFA722E9FFF6F00F16742 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C02FFA532E9FFF6F00F16742 /* ContentView.swift */; };
 		C02FFA752E9FFF6F00F16742 /* HippoVisionApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = C02FFA4F2E9FFF6F00F16742 /* HippoVisionApp.swift */; };
 		C02FFA762E9FFF6F00F16742 /* HippoMacApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = C02FFA4C2E9FFF6F00F16742 /* HippoMacApp.swift */; };
 		C02FFA792E9FFF6F00F16742 /* AppModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = C02FFA6A2E9FFF6F00F16742 /* AppModel.swift */; };
-		C02FFA7A2E9FFF6F00F16742 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C02FFA552E9FFF6F00F16742 /* ContentView.swift */; };
-		C02FFA7B2E9FFF6F00F16742 /* ImmersiveView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C02FFA562E9FFF6F00F16742 /* ImmersiveView.swift */; };
 		C02FFA802E9FFF6F00F16742 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C02FFA532E9FFF6F00F16742 /* ContentView.swift */; };
 		C02FFA842E9FFF6F00F16742 /* HippoMacApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = C02FFA4C2E9FFF6F00F16742 /* HippoMacApp.swift */; };
 		C02FFA872E9FFF6F00F16742 /* AppModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = C02FFA6A2E9FFF6F00F16742 /* AppModel.swift */; };
 		C02FFA8D2E9FFF6F00F16742 /* MacAssets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = C02FFA5A2E9FFF6F00F16742 /* MacAssets.xcassets */; };
 		C02FFA932E9FFF6F00F16742 /* VisionAssets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = C02FFA5B2E9FFF6F00F16742 /* VisionAssets.xcassets */; };
-		C02FFA952E9FFF6F00F16742 /* ToggleImmersiveSpaceButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = C02FFA572E9FFF6F00F16742 /* ToggleImmersiveSpaceButton.swift */; };
 		C02FFA992E9FFF6F00F16742 /* HippoVisionApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = C02FFA4F2E9FFF6F00F16742 /* HippoVisionApp.swift */; };
 		C02FFA9D2E9FFF6F00F16742 /* AppModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = C02FFA6A2E9FFF6F00F16742 /* AppModel.swift */; };
-		C02FFA9E2E9FFF6F00F16742 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C02FFA552E9FFF6F00F16742 /* ContentView.swift */; };
-		C02FFA9F2E9FFF6F00F16742 /* ImmersiveView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C02FFA562E9FFF6F00F16742 /* ImmersiveView.swift */; };
 		C04677B92EA006FB00D160DA /* Dependencies in Frameworks */ = {isa = PBXBuildFile; productRef = C04677B82EA006FB00D160DA /* Dependencies */; };
 		C04677BB2EA006FB00D160DA /* DependenciesTestSupport in Frameworks */ = {isa = PBXBuildFile; productRef = C04677BA2EA006FB00D160DA /* DependenciesTestSupport */; };
 		C04677BD2EA0070D00D160DA /* Dependencies in Frameworks */ = {isa = PBXBuildFile; productRef = C04677BC2EA0070D00D160DA /* Dependencies */; };
-		C04678022EA00B1F00D160DA /* ModelFile.swift in Sources */ = {isa = PBXBuildFile; fileRef = C04677F32EA00B1F00D160DA /* ModelFile.swift */; };
+		C04678022EA00B1F00D160DA /* OperationAsset.swift in Sources */ = {isa = PBXBuildFile; fileRef = C04677F32EA00B1F00D160DA /* OperationAsset.swift */; };
 		C04678032EA00B1F00D160DA /* AttachModelToCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = C04677F82EA00B1F00D160DA /* AttachModelToCase.swift */; };
 		C04678042EA00B1F00D160DA /* DeletePatient.swift in Sources */ = {isa = PBXBuildFile; fileRef = C04677FA2EA00B1F00D160DA /* DeletePatient.swift */; };
 		C04678052EA00B1F00D160DA /* RemoveModelFromCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = C04677FD2EA00B1F00D160DA /* RemoveModelFromCase.swift */; };
 		C04678062EA00B1F00D160DA /* UpsertPatient.swift in Sources */ = {isa = PBXBuildFile; fileRef = C04677FF2EA00B1F00D160DA /* UpsertPatient.swift */; };
-		C04678072EA00B1F00D160DA /* Case.swift in Sources */ = {isa = PBXBuildFile; fileRef = C04677F22EA00B1F00D160DA /* Case.swift */; };
+		C04678072EA00B1F00D160DA /* Operation.swift in Sources */ = {isa = PBXBuildFile; fileRef = C04677F22EA00B1F00D160DA /* Operation.swift */; };
 		C04678082EA00B1F00D160DA /* Patient.swift in Sources */ = {isa = PBXBuildFile; fileRef = C04677F42EA00B1F00D160DA /* Patient.swift */; };
 		C04678092EA00B1F00D160DA /* DeleteCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = C04677F92EA00B1F00D160DA /* DeleteCase.swift */; };
 		C046780A2EA00B1F00D160DA /* UpsertCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = C04677FE2EA00B1F00D160DA /* UpsertCase.swift */; };
 		C046780B2EA00B1F00D160DA /* GetPatient.swift in Sources */ = {isa = PBXBuildFile; fileRef = C04677FB2EA00B1F00D160DA /* GetPatient.swift */; };
 		C046780C2EA00B1F00D160DA /* ListPatients.swift in Sources */ = {isa = PBXBuildFile; fileRef = C04677FC2EA00B1F00D160DA /* ListPatients.swift */; };
 		C046780D2EA00B1F00D160DA /* PatientRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = C04677F62EA00B1F00D160DA /* PatientRepository.swift */; };
-		C046780E2EA00B1F00D160DA /* ModelFile.swift in Sources */ = {isa = PBXBuildFile; fileRef = C04677F32EA00B1F00D160DA /* ModelFile.swift */; };
+		C046780E2EA00B1F00D160DA /* OperationAsset.swift in Sources */ = {isa = PBXBuildFile; fileRef = C04677F32EA00B1F00D160DA /* OperationAsset.swift */; };
 		C046780F2EA00B1F00D160DA /* AttachModelToCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = C04677F82EA00B1F00D160DA /* AttachModelToCase.swift */; };
 		C04678102EA00B1F00D160DA /* DeletePatient.swift in Sources */ = {isa = PBXBuildFile; fileRef = C04677FA2EA00B1F00D160DA /* DeletePatient.swift */; };
 		C04678112EA00B1F00D160DA /* RemoveModelFromCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = C04677FD2EA00B1F00D160DA /* RemoveModelFromCase.swift */; };
 		C04678122EA00B1F00D160DA /* UpsertPatient.swift in Sources */ = {isa = PBXBuildFile; fileRef = C04677FF2EA00B1F00D160DA /* UpsertPatient.swift */; };
-		C04678132EA00B1F00D160DA /* Case.swift in Sources */ = {isa = PBXBuildFile; fileRef = C04677F22EA00B1F00D160DA /* Case.swift */; };
+		C04678132EA00B1F00D160DA /* Operation.swift in Sources */ = {isa = PBXBuildFile; fileRef = C04677F22EA00B1F00D160DA /* Operation.swift */; };
 		C04678142EA00B1F00D160DA /* Patient.swift in Sources */ = {isa = PBXBuildFile; fileRef = C04677F42EA00B1F00D160DA /* Patient.swift */; };
 		C04678152EA00B1F00D160DA /* DeleteCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = C04677F92EA00B1F00D160DA /* DeleteCase.swift */; };
 		C04678162EA00B1F00D160DA /* UpsertCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = C04677FE2EA00B1F00D160DA /* UpsertCase.swift */; };
 		C04678172EA00B1F00D160DA /* GetPatient.swift in Sources */ = {isa = PBXBuildFile; fileRef = C04677FB2EA00B1F00D160DA /* GetPatient.swift */; };
 		C04678182EA00B1F00D160DA /* ListPatients.swift in Sources */ = {isa = PBXBuildFile; fileRef = C04677FC2EA00B1F00D160DA /* ListPatients.swift */; };
 		C04678192EA00B1F00D160DA /* PatientRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = C04677F62EA00B1F00D160DA /* PatientRepository.swift */; };
-		C046781A2EA00B1F00D160DA /* ModelFile.swift in Sources */ = {isa = PBXBuildFile; fileRef = C04677F32EA00B1F00D160DA /* ModelFile.swift */; };
+		C046781A2EA00B1F00D160DA /* OperationAsset.swift in Sources */ = {isa = PBXBuildFile; fileRef = C04677F32EA00B1F00D160DA /* OperationAsset.swift */; };
 		C046781B2EA00B1F00D160DA /* AttachModelToCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = C04677F82EA00B1F00D160DA /* AttachModelToCase.swift */; };
 		C046781C2EA00B1F00D160DA /* DeletePatient.swift in Sources */ = {isa = PBXBuildFile; fileRef = C04677FA2EA00B1F00D160DA /* DeletePatient.swift */; };
 		C046781D2EA00B1F00D160DA /* RemoveModelFromCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = C04677FD2EA00B1F00D160DA /* RemoveModelFromCase.swift */; };
 		C046781E2EA00B1F00D160DA /* UpsertPatient.swift in Sources */ = {isa = PBXBuildFile; fileRef = C04677FF2EA00B1F00D160DA /* UpsertPatient.swift */; };
-		C046781F2EA00B1F00D160DA /* Case.swift in Sources */ = {isa = PBXBuildFile; fileRef = C04677F22EA00B1F00D160DA /* Case.swift */; };
+		C046781F2EA00B1F00D160DA /* Operation.swift in Sources */ = {isa = PBXBuildFile; fileRef = C04677F22EA00B1F00D160DA /* Operation.swift */; };
 		C04678202EA00B1F00D160DA /* Patient.swift in Sources */ = {isa = PBXBuildFile; fileRef = C04677F42EA00B1F00D160DA /* Patient.swift */; };
 		C04678212EA00B1F00D160DA /* DeleteCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = C04677F92EA00B1F00D160DA /* DeleteCase.swift */; };
 		C04678222EA00B1F00D160DA /* UpsertCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = C04677FE2EA00B1F00D160DA /* UpsertCase.swift */; };
@@ -101,19 +98,17 @@
 		145E0F612E9C0F3B00CE6C97 /* HippoVisionTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = HippoVisionTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		145E0F832E9C0F5B00CE6C97 /* TeleVisionTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TeleVisionTests.swift; sourceTree = "<group>"; };
 		146F102A2EA3ACFD00DDDC35 /* HippoAssets */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = HippoAssets; sourceTree = "<group>"; };
+		146F102E2EA3AF1000DDDC35 /* PatientListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PatientListView.swift; sourceTree = "<group>"; };
 		C02FFA4C2E9FFF6F00F16742 /* HippoMacApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HippoMacApp.swift; sourceTree = "<group>"; };
 		C02FFA4D2E9FFF6F00F16742 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		C02FFA4F2E9FFF6F00F16742 /* HippoVisionApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HippoVisionApp.swift; sourceTree = "<group>"; };
 		C02FFA502E9FFF6F00F16742 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		C02FFA532E9FFF6F00F16742 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
-		C02FFA552E9FFF6F00F16742 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
-		C02FFA562E9FFF6F00F16742 /* ImmersiveView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImmersiveView.swift; sourceTree = "<group>"; };
-		C02FFA572E9FFF6F00F16742 /* ToggleImmersiveSpaceButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ToggleImmersiveSpaceButton.swift; sourceTree = "<group>"; };
 		C02FFA5A2E9FFF6F00F16742 /* MacAssets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = MacAssets.xcassets; sourceTree = "<group>"; };
 		C02FFA5B2E9FFF6F00F16742 /* VisionAssets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = VisionAssets.xcassets; sourceTree = "<group>"; };
 		C02FFA6A2E9FFF6F00F16742 /* AppModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppModel.swift; sourceTree = "<group>"; };
-		C04677F22EA00B1F00D160DA /* Case.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Case.swift; sourceTree = "<group>"; };
-		C04677F32EA00B1F00D160DA /* ModelFile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModelFile.swift; sourceTree = "<group>"; };
+		C04677F22EA00B1F00D160DA /* Operation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Operation.swift; sourceTree = "<group>"; };
+		C04677F32EA00B1F00D160DA /* OperationAsset.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OperationAsset.swift; sourceTree = "<group>"; };
 		C04677F42EA00B1F00D160DA /* Patient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Patient.swift; sourceTree = "<group>"; };
 		C04677F62EA00B1F00D160DA /* PatientRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PatientRepository.swift; sourceTree = "<group>"; };
 		C04677F82EA00B1F00D160DA /* AttachModelToCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AttachModelToCase.swift; sourceTree = "<group>"; };
@@ -257,10 +252,8 @@
 		C02FFA582E9FFF6F00F16742 /* VisionUI */ = {
 			isa = PBXGroup;
 			children = (
-				C02FFA552E9FFF6F00F16742 /* ContentView.swift */,
-				C02FFA562E9FFF6F00F16742 /* ImmersiveView.swift */,
-				C02FFA572E9FFF6F00F16742 /* ToggleImmersiveSpaceButton.swift */,
 				C04678422EA00C1B00D160DA /* Patients */,
+				146F102E2EA3AF1000DDDC35 /* PatientListView.swift */,
 			);
 			path = VisionUI;
 			sourceTree = "<group>";
@@ -321,8 +314,8 @@
 		C04677F52EA00B1F00D160DA /* Entities */ = {
 			isa = PBXGroup;
 			children = (
-				C04677F22EA00B1F00D160DA /* Case.swift */,
-				C04677F32EA00B1F00D160DA /* ModelFile.swift */,
+				C04677F22EA00B1F00D160DA /* Operation.swift */,
+				C04677F32EA00B1F00D160DA /* OperationAsset.swift */,
 				C04677F42EA00B1F00D160DA /* Patient.swift */,
 			);
 			path = Entities;
@@ -570,8 +563,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				C02FFA952E9FFF6F00F16742 /* ToggleImmersiveSpaceButton.swift in Sources */,
-				C046780E2EA00B1F00D160DA /* ModelFile.swift in Sources */,
+				C046780E2EA00B1F00D160DA /* OperationAsset.swift in Sources */,
 				C046780F2EA00B1F00D160DA /* AttachModelToCase.swift in Sources */,
 				C04678102EA00B1F00D160DA /* DeletePatient.swift in Sources */,
 				C04678112EA00B1F00D160DA /* RemoveModelFromCase.swift in Sources */,
@@ -579,7 +571,7 @@
 				C04678302EA00B3A00D160DA /* PatientRemoteDataSource.swift in Sources */,
 				C04678312EA00B3A00D160DA /* PatientLocalDataSource.swift in Sources */,
 				C04678122EA00B1F00D160DA /* UpsertPatient.swift in Sources */,
-				C04678132EA00B1F00D160DA /* Case.swift in Sources */,
+				C04678132EA00B1F00D160DA /* Operation.swift in Sources */,
 				C04678432EA00C1B00D160DA /* PatientView.swift in Sources */,
 				C04678142EA00B1F00D160DA /* Patient.swift in Sources */,
 				C04678152EA00B1F00D160DA /* DeleteCase.swift in Sources */,
@@ -587,10 +579,9 @@
 				C04678172EA00B1F00D160DA /* GetPatient.swift in Sources */,
 				C04678182EA00B1F00D160DA /* ListPatients.swift in Sources */,
 				C04678192EA00B1F00D160DA /* PatientRepository.swift in Sources */,
+				146F10302EA3AF1000DDDC35 /* PatientListView.swift in Sources */,
 				C02FFA992E9FFF6F00F16742 /* HippoVisionApp.swift in Sources */,
 				C02FFA9D2E9FFF6F00F16742 /* AppModel.swift in Sources */,
-				C02FFA9E2E9FFF6F00F16742 /* ContentView.swift in Sources */,
-				C02FFA9F2E9FFF6F00F16742 /* ImmersiveView.swift in Sources */,
 				C046783F2EA00B4A00D160DA /* PatientState.swift in Sources */,
 				C04678402EA00B4A00D160DA /* PatientViewModel.swift in Sources */,
 			);
@@ -600,15 +591,14 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				C02FFA712E9FFF6F00F16742 /* ToggleImmersiveSpaceButton.swift in Sources */,
-				C04678022EA00B1F00D160DA /* ModelFile.swift in Sources */,
+				C04678022EA00B1F00D160DA /* OperationAsset.swift in Sources */,
 				C04678032EA00B1F00D160DA /* AttachModelToCase.swift in Sources */,
 				C04678042EA00B1F00D160DA /* DeletePatient.swift in Sources */,
 				C04678052EA00B1F00D160DA /* RemoveModelFromCase.swift in Sources */,
 				C046783B2EA00B4A00D160DA /* PatientState.swift in Sources */,
 				C046783C2EA00B4A00D160DA /* PatientViewModel.swift in Sources */,
 				C04678062EA00B1F00D160DA /* UpsertPatient.swift in Sources */,
-				C04678072EA00B1F00D160DA /* Case.swift in Sources */,
+				C04678072EA00B1F00D160DA /* Operation.swift in Sources */,
 				C04678082EA00B1F00D160DA /* Patient.swift in Sources */,
 				C04678092EA00B1F00D160DA /* DeleteCase.swift in Sources */,
 				C046780A2EA00B1F00D160DA /* UpsertCase.swift in Sources */,
@@ -617,6 +607,7 @@
 				C04678362EA00B3A00D160DA /* PatientRemoteDataSource.swift in Sources */,
 				C04678372EA00B3A00D160DA /* PatientLocalDataSource.swift in Sources */,
 				C046780C2EA00B1F00D160DA /* ListPatients.swift in Sources */,
+				146F102F2EA3AF1000DDDC35 /* PatientListView.swift in Sources */,
 				C046780D2EA00B1F00D160DA /* PatientRepository.swift in Sources */,
 				C04678482EA00C2700D160DA /* PatientView.swift in Sources */,
 				C04678442EA00C1B00D160DA /* PatientView.swift in Sources */,
@@ -624,8 +615,6 @@
 				C02FFA752E9FFF6F00F16742 /* HippoVisionApp.swift in Sources */,
 				C02FFA762E9FFF6F00F16742 /* HippoMacApp.swift in Sources */,
 				C02FFA792E9FFF6F00F16742 /* AppModel.swift in Sources */,
-				C02FFA7A2E9FFF6F00F16742 /* ContentView.swift in Sources */,
-				C02FFA7B2E9FFF6F00F16742 /* ImmersiveView.swift in Sources */,
 				145E0F852E9C0F5B00CE6C97 /* TeleVisionTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -638,17 +627,18 @@
 				C02FFA842E9FFF6F00F16742 /* HippoMacApp.swift in Sources */,
 				C02FFA872E9FFF6F00F16742 /* AppModel.swift in Sources */,
 				C04678322EA00B3A00D160DA /* PatientRepositoryImpl.swift in Sources */,
+				146F10312EA3AF2D00DDDC35 /* PatientListView.swift in Sources */,
 				C04678332EA00B3A00D160DA /* PatientRemoteDataSource.swift in Sources */,
 				C04678342EA00B3A00D160DA /* PatientLocalDataSource.swift in Sources */,
 				C04678472EA00C2700D160DA /* PatientView.swift in Sources */,
-				C046781A2EA00B1F00D160DA /* ModelFile.swift in Sources */,
+				C046781A2EA00B1F00D160DA /* OperationAsset.swift in Sources */,
 				C046781B2EA00B1F00D160DA /* AttachModelToCase.swift in Sources */,
 				C046781C2EA00B1F00D160DA /* DeletePatient.swift in Sources */,
 				C046781D2EA00B1F00D160DA /* RemoveModelFromCase.swift in Sources */,
 				C046781E2EA00B1F00D160DA /* UpsertPatient.swift in Sources */,
 				C046783D2EA00B4A00D160DA /* PatientState.swift in Sources */,
 				C046783E2EA00B4A00D160DA /* PatientViewModel.swift in Sources */,
-				C046781F2EA00B1F00D160DA /* Case.swift in Sources */,
+				C046781F2EA00B1F00D160DA /* Operation.swift in Sources */,
 				C04678202EA00B1F00D160DA /* Patient.swift in Sources */,
 				C04678212EA00B1F00D160DA /* DeleteCase.swift in Sources */,
 				C04678222EA00B1F00D160DA /* UpsertCase.swift in Sources */,

@@ -1,15 +1,15 @@
 import Dependencies
 import Foundation
 
-public struct AttachModelToCase: Sendable {
+public struct AttachModelToOperation: Sendable {
     public struct Input: Sendable {
         public let patientID: PatientID
-        public let caseID: CaseID
-        public let file: ModelFile
+        public let operationID: OperationID
+        public let file: OperationAsset
 
-        public init(patientID: PatientID, caseID: CaseID, file: ModelFile) {
+        public init(patientID: PatientID, operationID: OperationID, file: OperationAsset) {
             self.patientID = patientID
-            self.caseID = caseID
+            self.operationID = operationID
             self.file = file
         }
     }
@@ -21,25 +21,25 @@ public struct AttachModelToCase: Sendable {
     }
 
     public func run(_ input: Input) async throws {
-        try await repository.attachModelToCase(
+        try await repository.attachModelToOperation(
             patientID: input.patientID,
-            caseID: input.caseID,
+            operationID: input.operationID,
             file: input.file
         )
     }
 }
 
 // MARK: - Dependency
-extension AttachModelToCase: DependencyKey {
-    public static let liveValue = AttachModelToCase(
+extension AttachModelToOperation: DependencyKey {
+    public static let liveValue = AttachModelToOperation(
         repository: PatientRepositoryImpl()
     )
 }
 
 extension DependencyValues {
-    public var attachModelToCase: AttachModelToCase {
-        get { self[AttachModelToCase.self] }
-        set { self[AttachModelToCase.self] = newValue }
+    public var attachModelToOperation: AttachModelToOperation {
+        get { self[AttachModelToOperation.self] }
+        set { self[AttachModelToOperation.self] = newValue }
     }
 }
 
@@ -51,8 +51,8 @@ private final class MockPatientRepository: PatientRepository, @unchecked Sendabl
     }
     func upsertPatient(_ patient: Patient) async throws -> Patient { patient }
     func deletePatient(id: PatientID) async throws {}
-    func upsertCase(patientID: PatientID, case: Case) async throws {}
-    func deleteCase(patientID: PatientID, caseID: CaseID) async throws {}
-    func attachModelToCase(patientID: PatientID, caseID: CaseID, file: ModelFile) async throws {}
-    func removeModelFromCase(patientID: PatientID, caseID: CaseID, modelID: ModelID) async throws {}
+    func upsertOperation(patientID: PatientID, operation: Operation) async throws {}
+    func deleteOperation(patientID: PatientID, operationID: OperationID) async throws {}
+    func attachModelToOperation(patientID: PatientID, operationID: OperationID, file: OperationAsset) async throws {}
+    func removeModelFromOperation(patientID: PatientID, operationID: OperationID, assetID: AssetID) async throws {}
 }

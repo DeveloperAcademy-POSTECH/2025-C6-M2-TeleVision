@@ -58,8 +58,8 @@ public struct PatientView: View {
                         }
                         .width(min: 100)
 
-                        TableColumn("Cases") { patient in
-                            Text("\(patient.cases.count)")
+                        TableColumn("Operations") { patient in
+                            Text("\(patient.operations.count)")
                                 .foregroundStyle(.blue)
                         }
                         .width(60)
@@ -162,19 +162,19 @@ private struct PatientDetailView: View {
                     }
                 }
 
-                // Cases
-                if !patient.cases.isEmpty {
-                    GroupBox("Cases (\(patient.cases.count))") {
+                // Operations
+                if !patient.operations.isEmpty {
+                    GroupBox("Operations (\(patient.operations.count))") {
                         VStack(alignment: .leading, spacing: 12) {
-                            ForEach(patient.cases) { caseItem in
+                            ForEach(patient.operations) { operationItem in
                                 VStack(alignment: .leading, spacing: 4) {
-                                    Text(caseItem.title)
+                                    Text(operationItem.title)
                                         .font(.headline)
-                                    Text(caseItem.diagnosis)
+                                    Text(operationItem.diagnosis)
                                         .font(.subheadline)
                                         .foregroundStyle(.secondary)
-                                    if !caseItem.models.isEmpty {
-                                        Text("\(caseItem.models.count) model(s)")
+                                    if !operationItem.operationAssets.isEmpty {
+                                        Text("\(operationItem.operationAssets.count) asset(s)")
                                             .font(.caption)
                                             .foregroundStyle(.blue)
                                     }

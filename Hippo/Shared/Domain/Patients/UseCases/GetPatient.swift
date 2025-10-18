@@ -35,8 +35,9 @@ private final class MockPatientRepository: PatientRepository, @unchecked Sendabl
     }
     func upsertPatient(_ patient: Patient) async throws -> Patient { patient }
     func deletePatient(id: PatientID) async throws {}
-    func upsertCase(patientID: PatientID, case: Case) async throws {}
-    func deleteCase(patientID: PatientID, caseID: CaseID) async throws {}
-    func attachModelToCase(patientID: PatientID, caseID: CaseID, file: ModelFile) async throws {}
-    func removeModelFromCase(patientID: PatientID, caseID: CaseID, modelID: ModelID) async throws {}
+    // Operation operations
+    func upsertOperation(patientID: PatientID, operation: Operation) async throws {}
+    func deleteOperation(patientID: PatientID, operationID: OperationID) async throws {}
+    func attachModelToOperation(patientID: PatientID, operationID: OperationID, file: OperationAsset) async throws {}
+    func removeModelFromOperation(patientID: PatientID, operationID: OperationID, assetID: AssetID) async throws {}
 }
