@@ -1,0 +1,56 @@
+import Foundation
+
+// MARK: - Patient Mapper
+/// Domain 모델 → Display 모델 변환
+
+extension Patient {
+  /// Domain 모델을 View Display 모델로 변환
+  public func toDisplayModel() -> PatientDisplayModel {
+    PatientDisplayModel(
+      id: id,
+      patientNumber: patientNumber,
+      name: name,
+      gender: gender.displayText,
+      genderIcon: gender.iconName,
+      age: age,
+      ageText: "\(age) years",
+      birthDateText: birthDate.formatted(date: .abbreviated, time: .omitted),
+      operations: operations.map { $0.toDisplayModel() },
+      operationCount: operations.count,
+      updatedAt: updatedAt,
+      updatedAtText: updatedAt.formatted()
+    )
+  }
+}
+
+extension Operation {
+  /// Domain 모델을 View Display 모델로 변환
+  public func toDisplayModel() -> OperationDisplayModel {
+    OperationDisplayModel(
+      id: id,
+      title: title,
+      diagnosis: diagnosis,
+      surgeon: surgeon,
+      date: date,
+      dateText: date.formatted(date: .abbreviated, time: .omitted),
+      details: details,
+      status: status.displayText,
+      statusColor: status.colorName,
+      assets: operationAssets.map { $0.toDisplayModel() },
+      assetCount: operationAssets.count
+    )
+  }
+}
+
+extension OperationAsset {
+  /// Domain 모델을 View Display 모델로 변환
+  public func toDisplayModel() -> OperationAssetDisplayModel {
+    OperationAssetDisplayModel(
+      id: id,
+      name: name,
+      fileExtension: fileExtension.rawValue,
+      fileURL: fileURL,
+      iconName: fileExtension.iconName
+    )
+  }
+}

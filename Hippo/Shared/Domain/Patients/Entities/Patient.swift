@@ -1,56 +1,40 @@
 import Foundation
 
-public struct PatientID: Codable, Hashable, Sendable {
-    public let value: String
+// MARK: - Patient Entity (Aggregate Root)
 
-    public init(value: String = UUID().uuidString) {
-        self.value = value
-    }
+public struct Patient: Identifiable, Codable, Equatable, Sendable {
+  public let id: String
+  public var patientNumber: String
+  public var name: String
+  public var gender: Gender
+  public var birthDate: Date
+  public var operations: [Operation]
+  public var createdAt: Date
+  public var updatedAt: Date
 
-    public nonisolated static func == (lhs: PatientID, rhs: PatientID) -> Bool {
-        lhs.value == rhs.value
-    }
-}
+  public init(
+    id: String = UUID().uuidString,
+    patientNumber: String,
+    name: String,
+    gender: Gender,
+    birthDate: Date,
+    operations: [Operation] = [],
+    createdAt: Date = Date(),
+    updatedAt: Date = Date()
+  ) {
+    self.id = id
+    self.patientNumber = patientNumber
+    self.name = name
+    self.gender = gender
+    self.birthDate = birthDate
+    self.operations = operations
+    self.createdAt = createdAt
+    self.updatedAt = updatedAt
+  }
 
-public enum Sex: String, Codable, Sendable {
-    case male
-    case female
-    case other
-    case unknown
-}
-
-public struct Patient: Codable, Sendable, Identifiable, Equatable {
-    public let id: PatientID
-    public var name: String
-    public var sex: Sex
-    public var birthDate: Date?
-    public var mrn: String?
-    public var cases: [Case]
-    public var updatedAt: Date
-
-    public init(
-        id: PatientID = PatientID(),
-        name: String,
-        sex: Sex = .unknown,
-        birthDate: Date? = nil,
-        mrn: String? = nil,
-        cases: [Case] = [],
-        updatedAt: Date = Date()
-    ) {
-        self.id = id
-        self.name = name
-        self.sex = sex
-        self.birthDate = birthDate
-        self.mrn = mrn
-        self.cases = cases
-        self.updatedAt = updatedAt
-    }
-
-    /// Computed age from birthDate
-    public var age: Int? {
-        guard let birthDate = birthDate else { return nil }
-        let calendar = Calendar.current
-        let ageComponents = calendar.dateComponents([.year], from: birthDate, to: Date())
-        return ageComponents.year
-    }
+  /// Computed age from birthDate
+  public var age: Int {
+    Calendar(identifier: .gregorian)
+      .dateComponents([.year], from: birthDate, to: Date()).year ?? 0
+  }
 }
