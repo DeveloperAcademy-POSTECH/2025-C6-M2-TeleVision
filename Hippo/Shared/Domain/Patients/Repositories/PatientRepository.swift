@@ -1,18 +1,19 @@
 import Foundation
 
 /// Repository interface for Patient domain operations
+/// Repository is responsible for data persistence only.
+/// Business logic (like timestamp updates) should be handled in Use Cases.
 public protocol PatientRepository: Sendable {
-    // Patient operations
-    func listPatients() async throws -> [Patient]
-    func getPatient(id: PatientID) async throws -> Patient
-    func upsertPatient(_ patient: Patient) async throws -> Patient
-    func deletePatient(id: PatientID) async throws
+  /// List all patients sorted by last update
+  func listPatients() async throws -> [Patient]
 
-    // Operation operations
-    func upsertOperation(patientID: PatientID, operation: Operation) async throws
-    func deleteOperation(patientID: PatientID, operationID: OperationID) async throws
+  /// Get a specific patient by ID
+  func getPatient(id: String) async throws -> Patient
 
-    // Model operations
-    func attachModelToOperation(patientID: PatientID, operationID: OperationID, file: OperationAsset) async throws
-    func removeModelFromOperation(patientID: PatientID, operationID: OperationID, assetID: AssetID) async throws
+  /// Insert or update a patient
+  /// - Note: Caller is responsible for updating timestamps
+  func upsertPatient(_ patient: Patient) async throws -> Patient
+
+  /// Delete a patient by ID
+  func deletePatient(id: String) async throws
 }
