@@ -16,5 +16,6 @@ struct HippoVisionApp: App {
             PatientListView()
                 .environment(appModel)
         }
+        .defaultSize(width: 800, height: 600)
     }
 }
