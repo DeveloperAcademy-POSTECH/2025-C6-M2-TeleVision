@@ -6,6 +6,9 @@ public struct PatientView: View {
     @State private var viewModel = PatientViewModel()
     @State private var showingAddPatient = false
     @State private var newPatientName = ""
+    @State private var newPatientNumber = ""
+    @State private var newPatientGender: Gender = .male
+    @State private var newPatientBirthDate = Date()
 
     public init() {}
 
@@ -27,7 +30,7 @@ public struct PatientView: View {
                                 .swipeActions(edge: .trailing, allowsFullSwipe: true) {
                                     Button(role: .destructive) {
                                         Task {
-                                            await viewModel.remove(patient)
+                                            await viewModel.remove(patientID: patient.id)
                                         }
                                     } label: {
                                         Label("Delete", systemImage: "trash")
@@ -59,15 +62,29 @@ public struct PatientView: View {
             .sheet(isPresented: $showingAddPatient) {
                 AddPatientSheet(
                     name: $newPatientName,
+                    patientNumber: $newPatientNumber,
+                    gender: $newPatientGender,
+                    birthDate: $newPatientBirthDate,
                     onAdd: {
                         Task {
-                            await viewModel.create(name: newPatientName)
+                            await viewModel.create(
+                                patientNumber: newPatientNumber,
+                                name: newPatientName,
+                                gender: newPatientGender,
+                                birthDate: newPatientBirthDate
+                            )
                             newPatientName = ""
+                            newPatientNumber = ""
+                            newPatientGender = .male
+                            newPatientBirthDate = Date()
                             showingAddPatient = false
                         }
                     },
                     onCancel: {
                         newPatientName = ""
+                        newPatientNumber = ""
+                        newPatientGender = .male
+                        newPatientBirthDate = Date()
                         showingAddPatient = false
                     }
                 )
@@ -81,7 +98,7 @@ public struct PatientView: View {
 
 // MARK: - Patient Row
 private struct PatientRow: View {
-    let patient: Patient
+    let patient: PatientDisplayModel
 
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
@@ -89,25 +106,21 @@ private struct PatientRow: View {
                 .font(.headline)
 
             HStack(spacing: 16) {
-                if let age = patient.age {
-                    Label("\(age) years", systemImage: "calendar")
-                        .font(.caption)
-                        .foregroundStyle(.secondary)
-                }
-
-                Label(patient.sex.rawValue.capitalized, systemImage: "person")
+                Label("\(patient.age) years", systemImage: "calendar")
                     .font(.caption)
                     .foregroundStyle(.secondary)
 
-                if let mrn = patient.mrn {
-                    Label("MRN: \(mrn)", systemImage: "number")
-                        .font(.caption)
-                        .foregroundStyle(.secondary)
-                }
+                Label(patient.gender.capitalized, systemImage: patient.genderIcon)
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+
+                Label("No. \(patient.patientNumber)", systemImage: "number")
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
             }
 
-            if !patient.cases.isEmpty {
-                Label("\(patient.cases.count) case(s)", systemImage: "folder")
+            if patient.operationCount > 0 {
+                Label("\(patient.operationCount) operation(s)", systemImage: "folder")
                     .font(.caption)
                     .foregroundStyle(.blue)
             }
@@ -119,15 +132,35 @@ private struct PatientRow: View {
 // MARK: - Add Patient Sheet
 private struct AddPatientSheet: View {
     @Binding var name: String
+    @Binding var patientNumber: String
+    @Binding var gender: Gender
+    @Binding var birthDate: Date
     let onAdd: () -> Void
     let onCancel: () -> Void
 
     var body: some View {
         NavigationStack {
             Form {
-                Section {
+                Section("Patient Information") {
+                    TextField("Patient Number", text: $patientNumber)
+                        .textFieldStyle(.roundedBorder)
+
                     TextField("Patient Name", text: $name)
                         .textFieldStyle(.roundedBorder)
+                }
+
+                Section("Demographics") {
+                    Picker("Gender", selection: $gender) {
+                        Text("Male").tag(Gender.male)
+                        Text("Female").tag(Gender.female)
+                    }
+                    .pickerStyle(.segmented)
+
+                    DatePicker(
+                        "Birth Date",
+                        selection: $birthDate,
+                        displayedComponents: [.date]
+                    )
                 }
             }
             .navigationTitle("New Patient")
@@ -138,11 +171,11 @@ private struct AddPatientSheet: View {
                 }
                 ToolbarItem(placement: .confirmationAction) {
                     Button("Add", action: onAdd)
-                        .disabled(name.isEmpty)
+                        .disabled(name.isEmpty || patientNumber.isEmpty)
                 }
             }
         }
-        .frame(width: 400, height: 300)
+        .frame(width: 500, height: 400)
         .glassBackgroundEffect()
     }
 }
