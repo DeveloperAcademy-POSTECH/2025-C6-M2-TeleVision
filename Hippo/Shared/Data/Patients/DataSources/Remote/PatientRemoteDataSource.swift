@@ -5,7 +5,7 @@ import CloudKit
 public protocol PatientRemoteDataSource: Sendable {
     func pullAll() async throws -> [Patient]
     func push(_ patient: Patient) async throws
-    func remove(id: PatientID) async throws
+    func remove(id: String) async throws
 }
 
 // MARK: - No-op (Safe default) Implementation
@@ -23,7 +23,7 @@ public actor PatientRemoteDataSourceNoop: PatientRemoteDataSource {
         // No-op
     }
 
-    public func remove(id: PatientID) async throws {
+    public func remove(id: String) async throws {
         // No-op
     }
 }
@@ -66,10 +66,10 @@ public actor PatientRemoteDataSourceCloudKit: PatientRemoteDataSource {
         // _ = try await database.save(record)
     }
 
-    public func remove(id: PatientID) async throws {
+    public func remove(id: String) async throws {
         // TODO: Implement CloudKit delete when ready
         // Example:
-        // let recordID = CKRecord.ID(recordName: id.value)
+        // let recordID = CKRecord.ID(recordName: id)
         // _ = try await database.deleteRecord(withID: recordID)
     }
 }
