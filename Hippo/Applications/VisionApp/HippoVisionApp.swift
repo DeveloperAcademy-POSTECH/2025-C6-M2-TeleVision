@@ -13,9 +13,9 @@ struct HippoVisionApp: App {
 
     var body: some Scene {
         WindowGroup(id: "InitialWindow") {
-            PatientListView()
+            HomeView()
                 .environment(appModel)
         }
-        .defaultSize(width: 800, height: 600)
+        .defaultSize(width: 1200, height: 800)
     }
 }

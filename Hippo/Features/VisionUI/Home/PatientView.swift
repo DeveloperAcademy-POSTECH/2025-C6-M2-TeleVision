@@ -3,7 +3,7 @@ import SwiftUI
 /// visionOS-specific Patient list view
 @MainActor
 public struct PatientView: View {
-    @State private var viewModel = PatientViewModel()
+    @State private var viewModel = HomeViewModel()
     @State private var showingAddPatient = false
     @State private var newPatientName = ""
     @State private var newPatientNumber = ""
