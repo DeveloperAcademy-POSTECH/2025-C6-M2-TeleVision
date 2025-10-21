@@ -36,7 +36,7 @@ struct TodayOperationCard: View {
                     Spacer()
 
                     // 수술 상태 배지 (수술 대기 / 수술 완료)
-                    Text(operation.status)
+                    Text(operation.statusText)
                         .font(.headline)
                         .fontWeight(.bold)
                         .foregroundStyle(.white)

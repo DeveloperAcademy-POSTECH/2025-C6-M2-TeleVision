@@ -36,7 +36,8 @@ public extension Operation {
             date: date,
             dateText: date.formatted(date: .abbreviated, time: .omitted),
             details: details,
-            status: status.displayText,
+            status: status,
+            statusText: status.displayText,
             statusColor: status.colorName,
             assets: operationAssets.map { $0.toDisplayModel() },
             assetCount: operationAssets.count

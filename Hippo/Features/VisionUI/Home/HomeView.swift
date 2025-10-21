@@ -11,16 +11,35 @@ import SwiftUI
 struct HomeView: View {
     @State private var viewModel = HomeViewModel()
 
-    /// 오늘 예정된 환자 목록 (Computed Property)
+    /// 오늘 예정된 환자 목록 (시간순 정렬, 완료된 수술은 뒤로)
     private var todayPlannedPatients: [PatientDisplayModel] {
         let calendar = Calendar.current
         let today = calendar.startOfDay(for: Date())
 
-        return viewModel.state.items.filter { patient in
-            guard let operation = patient.lastestOperation else { return false }
-            let operationDay = calendar.startOfDay(for: operation.date)
-            return today == operationDay
-        }
+        return viewModel.state.items
+            .filter { patient in
+                guard let operation = patient.lastestOperation else { return false }
+                let operationDay = calendar.startOfDay(for: operation.date)
+                return today == operationDay
+            }
+            .sorted { patient1, patient2 in
+                guard let op1 = patient1.lastestOperation,
+                      let op2 = patient2.lastestOperation
+                else {
+                    return false
+                }
+
+                // 1. 완료된 수술은 뒤로
+                if op1.status == .completed && op2.status != .completed {
+                    return false
+                }
+                if op1.status != .completed && op2.status == .completed {
+                    return true
+                }
+
+                // 2. 같은 상태면 수술 시간 오름차순 (이른 시간이 먼저)
+                return op1.date < op2.date
+            }
     }
 
     var body: some View {
@@ -54,7 +73,7 @@ struct HomeView: View {
 
                         await viewModel.create(
                             patientNumber: tempPatientID,
-                            name: "이윤서",
+                            name: "김선환",
                             gender: .female,
                             birthDate: Calendar.current.date(byAdding: .year, value: -30, to: Date())!
                         )
@@ -64,7 +83,7 @@ struct HomeView: View {
                             title: "Laparoscopis LLS TEST  sdfsdffdsefesfse",
                             diagnosis: "간암 / 뇌수술",
                             surgeon: "오남기",
-                            date: Calendar.current.date(byAdding: .day, value: 0, to: Date())!,
+                            date: Calendar.current.date(byAdding: .hour, value: 2, to: Date())!,
                             status: .completed
                         )
                     }
