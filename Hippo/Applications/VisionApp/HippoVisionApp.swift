@@ -14,7 +14,7 @@ struct HippoVisionApp: App {
     var body: some Scene {
         WindowGroup(id: "InitialWindow") {
             HomeView()
-                .frame(minWidth: 1020)
+                .frame(minWidth: 580, maxWidth: 1020, minHeight: 760, maxHeight: 1020)
                 .environment(appModel)
         }
         .windowResizability(.contentSize)

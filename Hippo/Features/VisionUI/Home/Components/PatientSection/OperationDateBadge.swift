@@ -29,8 +29,7 @@ struct OperationDateBadge: View {
 
     var body: some View {
         Text(badgeText)
-            .font(.title3)
-            .fontWeight(.bold)
+            .font(.callout)
             .foregroundStyle(.primary)
             .padding(.horizontal, 20)
             .padding(.vertical, 10)

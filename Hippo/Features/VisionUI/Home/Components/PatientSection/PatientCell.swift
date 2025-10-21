@@ -13,32 +13,30 @@ struct PatientCell: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 10) {
             Text(patient.patientNumber)
-                .font(.subheadline)
+                .font(.footnote)
                 .foregroundStyle(.secondary)
                 .padding(.horizontal)
-                .padding(.top, 20)
+                .padding(.top, 12)
 
             Divider()
 
             HStack {
                 Text(patient.name)
-                    .font(.largeTitle)
+                    .font(.title)
                     .foregroundStyle(.primary)
 
                 Spacer().frame(width: 12)
 
                 Text("\(patient.gender) / \(patient.age)세")
-                    .font(.title2)
+                    .font(.headline)
                     .foregroundStyle(.tertiary)
             }
             .padding(.horizontal)
 
             Text(patient.lastestOperation?.diagnosis ?? "예정 수술 없음")
-                .font(.headline)
+                .font(.body)
                 .foregroundStyle(.primary)
                 .padding(.horizontal)
-
-            Spacer()
 
             HStack {
                 Spacer()
@@ -48,9 +46,9 @@ struct PatientCell: View {
                 }
             }
             .padding(.horizontal)
-            .padding(.bottom, 20)
+            .padding(.bottom, 12)
         }
-        .frame(minWidth: 240)
+        .frame(minWidth: 200)
         .background(
             RoundedRectangle(cornerRadius: 20)
                 .fill(.thinMaterial)
