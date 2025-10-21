@@ -21,14 +21,14 @@ struct SectionHeader: View {
         HStack {
             Text(title)
                 .foregroundStyle(.tertiary)
-                .font(.largeTitle)
+                .font(.title)
 
             Spacer()
 
             if let subtitle = subtitle {
                 Text(subtitle)
                     .foregroundStyle(.quaternary)
-                    .font(.title)
+                    .font(.title3)
             }
         }
     }

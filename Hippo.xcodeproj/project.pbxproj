@@ -386,7 +386,6 @@
 			children = (
 				14CC755F2EA6A96700399562 /* TodaySectionView.swift */,
 				14CC75422EA6803800399562 /* TodayOperationCard.swift */,
-				14CC75672EA6A98700399562 /* OperationDateBadge.swift */,
 			);
 			path = TodaySection;
 			sourceTree = "<group>";
@@ -397,6 +396,7 @@
 				14CC756F2EA6AD5800399562 /* PatientSectionView.swift */,
 				14CC75462EA69DE400399562 /* PatientCell.swift */,
 				14CC756B2EA6A99300399562 /* PatientGridView.swift */,
+				14CC75672EA6A98700399562 /* OperationDateBadge.swift */,
 			);
 			path = PatientSection;
 			sourceTree = "<group>";
@@ -1072,7 +1072,8 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
-				CODE_SIGN_STYLE = Manual;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = 4FCV7BL65G;
 				ENABLE_PREVIEWS = YES;
@@ -1103,7 +1104,8 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
-				CODE_SIGN_STYLE = Manual;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = 4FCV7BL65G;
 				ENABLE_PREVIEWS = YES;

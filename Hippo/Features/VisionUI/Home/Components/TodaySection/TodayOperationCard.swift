@@ -30,7 +30,7 @@ struct TodayOperationCard: View {
             VStack {
                 HStack {
                     Text(operation.date, formatter: timeFormatter)
-                        .font(.extraLargeTitle)
+                        .font(.extraLargeTitle2)
                         .foregroundStyle(.primary)
 
                     Spacer()
@@ -49,14 +49,14 @@ struct TodayOperationCard: View {
                 }
 
                 Text(operation.title)
-                    .font(.largeTitle)
+                    .font(.title)
                     .fontWeight(.semibold)
-                    .foregroundStyle(.secondary)
+                    .foregroundStyle(.tertiary)
                     .lineLimit(1)
-                    .padding(.top, 8)
+                    .padding(.top, 4)
             }
             .padding(.horizontal, 24)
-            .padding(.top, 48)
+            .padding(.top, 24)
 
             Divider()
                 .padding(.vertical, 12)
@@ -70,7 +70,7 @@ struct TodayOperationCard: View {
                     // 환자 정보
                     VStack(alignment: .leading, spacing: 6) {
                         Text("환자 정보")
-                            .font(.caption)
+                            .font(.callout)
                             .foregroundStyle(.secondary)
 
                         HStack {
@@ -90,7 +90,7 @@ struct TodayOperationCard: View {
                     // 집도의
                     VStack(alignment: .leading, spacing: 6) {
                         Text("집도의")
-                            .font(.caption)
+                            .font(.callout)
                             .foregroundStyle(.secondary)
 
                         Text(operation.surgeon)
@@ -105,7 +105,7 @@ struct TodayOperationCard: View {
                     // 수술부위
                     VStack(alignment: .leading, spacing: 6) {
                         Text("수술부위")
-                            .font(.caption)
+                            .font(.callout)
                             .foregroundStyle(.secondary)
 
                         Text(operation.diagnosis)
@@ -117,7 +117,7 @@ struct TodayOperationCard: View {
                     // 진단(병명)
                     VStack(alignment: .leading, spacing: 6) {
                         Text("진단(병명)")
-                            .font(.caption)
+                            .font(.callout)
                             .foregroundStyle(.secondary)
 
                         Text(operation.diagnosis)
@@ -126,13 +126,11 @@ struct TodayOperationCard: View {
                     }
                     .frame(maxWidth: .infinity, alignment: .leading)
                 }
-
-                Spacer()
             }
             .padding(.horizontal, 24)
             .padding(.bottom, 24)
         }
-        .frame(width: 430, height: 300)
+        .frame(width: 430)
         .background(
             RoundedRectangle(cornerRadius: 40, style: .continuous)
                 .fill(.quaternary)
