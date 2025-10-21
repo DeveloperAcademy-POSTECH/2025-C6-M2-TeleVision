@@ -12,7 +12,7 @@ struct PatientGridView: View {
     let patients: [PatientDisplayModel]
 
     private var columns: [GridItem] {
-        [GridItem(.adaptive(minimum: 220), spacing: 24, alignment: .top)]
+        [GridItem(.adaptive(minimum: 240), spacing: 24, alignment: .top)]
     }
 
     var body: some View {

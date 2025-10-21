@@ -16,7 +16,7 @@ struct PatientCell: View {
                 .font(.subheadline)
                 .foregroundStyle(.secondary)
                 .padding(.horizontal)
-                .padding(.top, 40)
+                .padding(.top, 20)
 
             Divider()
 
@@ -48,9 +48,9 @@ struct PatientCell: View {
                 }
             }
             .padding(.horizontal)
-            .padding(.bottom, 40)
+            .padding(.bottom, 20)
         }
-        .frame(width: 240, height: 200)
+        .frame(minWidth: 240)
         .background(
             RoundedRectangle(cornerRadius: 20)
                 .fill(.thinMaterial)
