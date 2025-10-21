@@ -607,9 +607,9 @@
 		C04678422EA00C1B00D160DA /* Home */ = {
 			isa = PBXGroup;
 			children = (
-				14CC75412EA6801E00399562 /* Components */,
-				146F102E2EA3AF1000DDDC35 /* HomeView.swift */,
 				C04678412EA00C1B00D160DA /* PatientView.swift */,
+				146F102E2EA3AF1000DDDC35 /* HomeView.swift */,
+				14CC75412EA6801E00399562 /* Components */,
 			);
 			path = Home;
 			sourceTree = "<group>";

@@ -48,6 +48,7 @@ struct HomeView: View {
         .toolbar {
             ToolbarItem(placement: .bottomOrnament) {
                 AddPatientButton {
+                    // FIXME: - 추후 삭제 후 실제 로직 반영 필요
                     Task {
                         let tempPatientID = String(format: "%08d", Int.random(in: 0 ... 99_999_999))
 
