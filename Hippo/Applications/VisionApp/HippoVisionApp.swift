@@ -12,26 +12,11 @@ struct HippoVisionApp: App {
     @State private var appModel = AppModel()
 
     var body: some Scene {
-        WindowGroup {
-            ContentView()
+        WindowGroup(id: "InitialWindow") {
+            HomeView()
+                .frame(minWidth: 580, maxWidth: 1020, minHeight: 760, maxHeight: 1020)
                 .environment(appModel)
         }
-
-        WindowGroup(id: "patients") {
-            PatientView()
-        }
-        .defaultSize(width: 800, height: 600)
-
-        ImmersiveSpace(id: appModel.immersiveSpaceID) {
-            ImmersiveView()
-                .environment(appModel)
-                .onAppear {
-                    appModel.immersiveSpaceState = .open
-                }
-                .onDisappear {
-                    appModel.immersiveSpaceState = .closed
-                }
-        }
-        .immersionStyle(selection: .constant(.mixed), in: .mixed)
+        .windowResizability(.contentSize)
     }
 }
