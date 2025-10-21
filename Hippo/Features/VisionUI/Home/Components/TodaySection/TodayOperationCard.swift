@@ -18,9 +18,7 @@ struct TodayOperationCard: View {
     }
 
     private var operation: OperationDisplayModel {
-        guard let op = patient.lastestOperation else {
-            fatalError("No latest operation found for patient \(patient.name)")
-        }
+        guard let op = patient.lastestOperation else { return OperationDisplayModel.MockData }
         return op
     }
 
@@ -131,10 +129,11 @@ struct TodayOperationCard: View {
             .padding(.bottom, 24)
         }
         .frame(width: 430)
-        .background(
+        .background {
             RoundedRectangle(cornerRadius: 40, style: .continuous)
                 .fill(.quaternary)
-        )
+                .fill(operation.status == .completed ? .hippoBlack : .clear)
+        }
         .hoverEffect(.lift)
     }
 }
