@@ -44,4 +44,20 @@ public struct OperationDisplayModel: Identifiable, Equatable, Sendable {
         self.assets = assets
         self.assetCount = assetCount
     }
+
+    // MOCK Data
+    public static let MockData = OperationDisplayModel(
+        id: "operation-001",
+        title: "Appendectomy",
+        diagnosis: "Acute Appendicitis",
+        surgeon: "Dr. John Doe",
+        date: Date(),
+        dateText: "2024.06.15",
+        details: "Laparoscopic appendectomy performed successfully without complications.",
+        status: .completed,
+        statusText: "Completed",
+        statusColor: "Green",
+        assets: [],
+        assetCount: 0
+    )
 }

@@ -45,6 +45,38 @@ public final class HomeViewModel {
     private let logger = Logger(subsystem: "com.television.hippo", category: "PatientViewModel")
 
     public init() {}
+    
+    // MARK: - Computed Properties
+    /// 오늘 예정된 환자 목록 (시간순 정렬, 완료된 수술은 뒤로)
+    public var todayPlannedPatients: [PatientDisplayModel] {
+        let calendar = Calendar.current
+        let today = calendar.startOfDay(for: Date())
+
+        return state.items
+            .filter { patient in
+                guard let operation = patient.lastestOperation else { return false }
+                let operationDay = calendar.startOfDay(for: operation.date)
+                return today == operationDay
+            }
+            .sorted { patient1, patient2 in
+                guard let op1 = patient1.lastestOperation,
+                      let op2 = patient2.lastestOperation
+                else {
+                    return false
+                }
+
+                // 1. 완료된 수술은 뒤로
+                if op1.status == .completed && op2.status != .completed {
+                    return false
+                }
+                if op1.status != .completed && op2.status == .completed {
+                    return true
+                }
+
+                // 2. 같은 상태면 수술 시간 오름차순 (이른 시간이 먼저)
+                return op1.date < op2.date
+            }
+    }
 
     // MARK: - Actions
 
