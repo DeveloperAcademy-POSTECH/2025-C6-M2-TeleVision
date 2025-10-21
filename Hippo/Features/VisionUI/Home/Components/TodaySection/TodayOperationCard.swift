@@ -30,7 +30,7 @@ struct TodayOperationCard: View {
             VStack {
                 HStack {
                     Text(operation.date, formatter: timeFormatter)
-                        .font(.largeTitle)
+                        .font(.extraLargeTitle)
                         .foregroundStyle(.primary)
 
                     Spacer()
@@ -59,10 +59,10 @@ struct TodayOperationCard: View {
             .padding(.top, 48)
 
             Divider()
-                .padding(.vertical, 24)
-            
+                .padding(.vertical, 12)
+
             Spacer()
-            
+
             // 환자 정보 그리드 (2x2)
             VStack(spacing: 20) {
                 // 첫 번째 행
@@ -72,13 +72,13 @@ struct TodayOperationCard: View {
                         Text("환자 정보")
                             .font(.caption)
                             .foregroundStyle(.secondary)
-                        
+
                         HStack {
                             Text("\(patient.name)")
                                 .font(.headline)
                                 .fontWeight(.bold)
                                 .foregroundStyle(.primary)
-                            
+
                             Text("(\(patient.gender) / \(patient.age)세)")
                                 .font(.subheadline)
                                 .fontWeight(.bold)
@@ -126,7 +126,7 @@ struct TodayOperationCard: View {
                     }
                     .frame(maxWidth: .infinity, alignment: .leading)
                 }
-                
+
                 Spacer()
             }
             .padding(.horizontal, 24)
@@ -135,10 +135,9 @@ struct TodayOperationCard: View {
         .frame(width: 430, height: 300)
         .background(
             RoundedRectangle(cornerRadius: 40, style: .continuous)
-                .fill(.thinMaterial)
+                .fill(.quaternary)
         )
         .hoverEffect(.lift)
-        
     }
 }
 
