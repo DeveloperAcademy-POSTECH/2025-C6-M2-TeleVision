@@ -60,15 +60,11 @@
 		C04678402EA00B4A00D160DA /* HomeViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = C04678392EA00B4A00D160DA /* HomeViewModel.swift */; };
 		C04678432EA00C1B00D160DA /* PatientView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C04678412EA00C1B00D160DA /* PatientView.swift */; };
 		C04678472EA00C2700D160DA /* PatientView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C04678452EA00C2700D160DA /* PatientView.swift */; };
-		C050AA1C2EA810E800352314 /* ImmersiveCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = C050AA1A2EA810DE00352314 /* ImmersiveCoordinator.swift */; };
-		C050AA1D2EA810E800352314 /* ImmersiveCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = C050AA1A2EA810DE00352314 /* ImmersiveCoordinator.swift */; };
 		C050AA1F2EA8117100352314 /* RealityEntityLocator.swift in Sources */ = {isa = PBXBuildFile; fileRef = C050AA1E2EA8116800352314 /* RealityEntityLocator.swift */; };
 		C050AA202EA8117100352314 /* RealityEntityLocator.swift in Sources */ = {isa = PBXBuildFile; fileRef = C050AA1E2EA8116800352314 /* RealityEntityLocator.swift */; };
 		C050AA222EA811D500352314 /* RealityAnchorService.swift in Sources */ = {isa = PBXBuildFile; fileRef = C050AA212EA811D300352314 /* RealityAnchorService.swift */; };
 		C050AA232EA811D500352314 /* RealityAnchorService.swift in Sources */ = {isa = PBXBuildFile; fileRef = C050AA212EA811D300352314 /* RealityAnchorService.swift */; };
 		C050AA272EA8155D00352314 /* ImmersiveView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C050AA252EA8155D00352314 /* ImmersiveView.swift */; };
-		C050AA2F2EA8172D00352314 /* AppRouter.swift in Sources */ = {isa = PBXBuildFile; fileRef = C050AA2E2EA8172D00352314 /* AppRouter.swift */; };
-		C050AA302EA8172D00352314 /* AppRouter.swift in Sources */ = {isa = PBXBuildFile; fileRef = C050AA2E2EA8172D00352314 /* AppRouter.swift */; };
 		C050AA362EA8176300352314 /* RootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C050AA352EA8175C00352314 /* RootView.swift */; };
 		C050AA3B2EA8197E00352314 /* ImmersiveIDs.swift in Sources */ = {isa = PBXBuildFile; fileRef = C050AA3A2EA8197E00352314 /* ImmersiveIDs.swift */; };
 		C050AA3C2EA8197E00352314 /* ImmersiveIDs.swift in Sources */ = {isa = PBXBuildFile; fileRef = C050AA3A2EA8197E00352314 /* ImmersiveIDs.swift */; };
@@ -225,11 +221,9 @@
 		C04678392EA00B4A00D160DA /* HomeViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeViewModel.swift; sourceTree = "<group>"; };
 		C04678412EA00C1B00D160DA /* PatientView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PatientView.swift; sourceTree = "<group>"; };
 		C04678452EA00C2700D160DA /* PatientView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PatientView.swift; sourceTree = "<group>"; };
-		C050AA1A2EA810DE00352314 /* ImmersiveCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImmersiveCoordinator.swift; sourceTree = "<group>"; };
 		C050AA1E2EA8116800352314 /* RealityEntityLocator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RealityEntityLocator.swift; sourceTree = "<group>"; };
 		C050AA212EA811D300352314 /* RealityAnchorService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RealityAnchorService.swift; sourceTree = "<group>"; };
 		C050AA252EA8155D00352314 /* ImmersiveView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImmersiveView.swift; sourceTree = "<group>"; };
-		C050AA2E2EA8172D00352314 /* AppRouter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppRouter.swift; sourceTree = "<group>"; };
 		C050AA352EA8175C00352314 /* RootView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RootView.swift; sourceTree = "<group>"; };
 		C050AA3A2EA8197E00352314 /* ImmersiveIDs.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImmersiveIDs.swift; sourceTree = "<group>"; };
 		C050AA3E2EA81A5400352314 /* View+VisionDependencies.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "View+VisionDependencies.swift"; sourceTree = "<group>"; };
@@ -444,6 +438,7 @@
 			children = (
 				C050AA192EA80E9E00352314 /* Runtime */,
 				C050AA172EA80E5700352314 /* UI */,
+				C050AA392EA8196F00352314 /* Constants */,
 			);
 			path = Vision;
 			sourceTree = "<group>";
@@ -487,7 +482,6 @@
 		C02FFA6B2E9FFF6F00F16742 /* Presentation */ = {
 			isa = PBXGroup;
 			children = (
-				C050AA392EA8196F00352314 /* Constants */,
 				C02FFA6A2E9FFF6F00F16742 /* AppModel.swift */,
 				C046783A2EA00B4A00D160DA /* Home */,
 			);
@@ -650,10 +644,8 @@
 			isa = PBXGroup;
 			children = (
 				C050AA4D2EA8201A00352314 /* ImmersiveSceneRuntime.swift */,
-				C050AA2E2EA8172D00352314 /* AppRouter.swift */,
 				C050AA212EA811D300352314 /* RealityAnchorService.swift */,
 				C050AA1E2EA8116800352314 /* RealityEntityLocator.swift */,
-				C050AA1A2EA810DE00352314 /* ImmersiveCoordinator.swift */,
 			);
 			path = Runtime;
 			sourceTree = "<group>";
@@ -958,13 +950,11 @@
 				C0F97ACD2EA41D4B0063E159 /* SDOperationRecording.swift in Sources */,
 				14CC75562EA6A8BE00399562 /* LogoHeader.swift in Sources */,
 				C0F97ACE2EA41D4B0063E159 /* SwiftDataMappers.swift in Sources */,
-				C050AA1C2EA810E800352314 /* ImmersiveCoordinator.swift in Sources */,
 				C0F97ACF2EA41D4B0063E159 /* PatientLocalDataSourceSwiftData.swift in Sources */,
 				C050AA3C2EA8197E00352314 /* ImmersiveIDs.swift in Sources */,
 				C0F97AD02EA41D4B0063E159 /* SDOperationAsset.swift in Sources */,
 				C0F97AD12EA41D4B0063E159 /* PatientLocalDataSourceLegacyJSON.swift in Sources */,
 				C050AA362EA8176300352314 /* RootView.swift in Sources */,
-				C050AA302EA8172D00352314 /* AppRouter.swift in Sources */,
 				14CC75602EA6A96700399562 /* TodaySectionView.swift in Sources */,
 				C0F97AD22EA41D4B0063E159 /* SDPatient.swift in Sources */,
 				C0F97B222EA435490063E159 /* CreateOperationCommand.swift in Sources */,
@@ -1001,7 +991,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				C050AA1D2EA810E800352314 /* ImmersiveCoordinator.swift in Sources */,
 				C04678042EA00B1F00D160DA /* DeletePatient.swift in Sources */,
 				C0F97A812EA3FDDE0063E159 /* OperationAsset.swift in Sources */,
 				C0F97A822EA3FDDE0063E159 /* OperationRecording.swift in Sources */,
@@ -1050,7 +1039,6 @@
 				C0F97AA52EA401160063E159 /* PatientDisplayModel.swift in Sources */,
 				C0F97AA62EA401160063E159 /* OperationDisplayModel.swift in Sources */,
 				C0F97AA72EA401160063E159 /* DisplayHelpers.swift in Sources */,
-				C050AA2F2EA8172D00352314 /* AppRouter.swift in Sources */,
 				C0F97AA82EA401160063E159 /* OperationAssetDisplayModel.swift in Sources */,
 				C0F97B0C2EA4348D0063E159 /* CreatePatient.swift in Sources */,
 			);
