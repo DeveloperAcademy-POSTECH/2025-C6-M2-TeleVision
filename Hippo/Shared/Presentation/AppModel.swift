@@ -11,5 +11,5 @@ import SwiftUI
 @MainActor
 @Observable
 class AppModel {
-    var currentOperationContext: OperationDetailContext?
+    var currentOperationContext: OperationContext?
 }
