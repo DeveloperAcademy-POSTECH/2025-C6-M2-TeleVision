@@ -8,13 +8,20 @@
 import SwiftUI
 
 struct OperationDetailView: View {
-    @State private var viewModel = AppModel()
-    let patient: PatientDisplayModel
-    let operation: OperationDisplayModel
+    @Environment(AppModel.self) private var appModel
+    var context: OperationContext {
+        guard let context = appModel.currentOperationContext else {
+            return OperationContext(
+                operation: OperationDisplayModel.MockData,
+                patient: PatientDisplayModel.MockData
+            )
+        }
+        return context
+    }
 
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
-            DetailHeader(operation: operation, onClose: {})
+            DetailHeader(operation: context.operation, onClose: {})
                 .padding(.horizontal, 32)
                 .padding(.top, 32)
 
@@ -26,19 +33,19 @@ struct OperationDetailView: View {
                     // 수술 상세 정보
                     DetailSubPart(
                         title: "수술 상세",
-                        content: operation.details
+                        content: context.operation.details
                     )
 
                     // 환자 정보
                     DetailSubPart(
                         title: "환자 정보",
-                        content: "\(patient.name) (\(patient.gender) / \(patient.ageText))"
+                        content: "\(context.patient.name) (\(context.patient.gender) / \(context.patient.ageText))"
                     )
 
                     // 집도의 정보
                     DetailSubPart(
                         title: "집도의",
-                        content: operation.surgeon
+                        content: context.operation.surgeon
                     )
 
                     // 수술 부위 정보
@@ -50,26 +57,22 @@ struct OperationDetailView: View {
                     // 진단(병명) 정보
                     DetailSubPart(
                         title: "진단(병명)",
-                        content: operation.diagnosis
+                        content: context.operation.diagnosis
                     )
 
                     // 수술 날짜 정보
                     DetailSubPart(
                         title: "수술 날짜",
-                        content: operation.dateText
+                        content: context.operation.dateText
                     )
                 }
                 .padding(.horizontal, 32)
                 .padding(.vertical, 24)
             }
         }
-        .onDisappear {
-            viewModel.state.selectedPatient = nil
-        }
     }
 }
 
 #Preview {
-    OperationDetailView(patient: PatientDisplayModel.MockData)
+    OperationDetailView()
 }
-
