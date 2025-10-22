@@ -58,5 +58,5 @@ struct PatientCell: View {
 }
 
 #Preview {
-    PatientCell(patient: PatientDisplayModel.sample)
+    PatientCell(patient: PatientDisplayModel.MockData)
 }

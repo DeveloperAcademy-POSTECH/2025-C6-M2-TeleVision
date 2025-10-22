@@ -59,6 +59,17 @@ struct HomeView: View {
                 }
             }
         }
+        .ornament(
+            visibility: .visible,
+            attachmentAnchor: .scene(.trailing)
+        ) {
+            if let patient = viewModel.state.selectedPatient {
+                OperationDetailView(patient: patient)
+                    .onAppear {
+                        print("✅ Ornament appeared")
+                    }
+            }
+        }
     }
 }
 

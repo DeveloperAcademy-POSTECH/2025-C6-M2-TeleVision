@@ -34,7 +34,7 @@ public extension Operation {
             diagnosis: diagnosis,
             surgeon: surgeon,
             date: date,
-            dateText: date.formatted(date: .abbreviated, time: .omitted),
+            dateText: date.toOperationDateString(),
             details: details,
             status: status,
             statusText: status.displayText,
