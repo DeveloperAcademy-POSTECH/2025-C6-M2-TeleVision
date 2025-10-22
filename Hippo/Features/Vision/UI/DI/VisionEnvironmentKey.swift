@@ -6,11 +6,10 @@
 //
 import SwiftUI
 
-// MARK: - Environment Keys
-
-private struct ImmersiveKey: EnvironmentKey {
-    static let defaultValue: ImmersiveControlling? = nil
-}
+// MARK: - RealityKit Environment Keys
+// Note: ImmersiveSpace 진입/종료는 Apple 제공 Environment를 직접 사용
+// @Environment(\.openImmersiveSpace)
+// @Environment(\.dismissImmersiveSpace)
 
 private struct EntityLocatorKey: EnvironmentKey {
     static let defaultValue: EntityLocating? = nil
@@ -23,10 +22,6 @@ private struct AnchorServiceKey: EnvironmentKey {
 // MARK: - Environment Values
 
 extension EnvironmentValues {
-    var immersive: ImmersiveControlling? {
-        get { self[ImmersiveKey.self] }
-        set { self[ImmersiveKey.self] = newValue }
-    }
     var entityLocator: EntityLocating? {
         get { self[EntityLocatorKey.self] }
         set { self[EntityLocatorKey.self] = newValue }
