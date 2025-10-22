@@ -9,13 +9,7 @@ import SwiftUI
 
 struct TodayOperationCard: View {
     let patient: PatientDisplayModel
-
-    private var timeFormatter: DateFormatter {
-        let formatter = DateFormatter()
-        formatter.locale = Locale(identifier: "ko_KR")
-        formatter.dateFormat = "HH:mm"
-        return formatter
-    }
+    let onTap: () -> Void
 
     private var operation: OperationDisplayModel {
         guard let op = patient.lastestOperation else { return OperationDisplayModel.MockData }
@@ -27,7 +21,7 @@ struct TodayOperationCard: View {
             // 헤더: 수술명 + 상태 배지
             VStack {
                 HStack {
-                    Text(operation.date, formatter: timeFormatter)
+                    Text(operation.date.toTimeString())
                         .font(.extraLargeTitle2)
                         .foregroundStyle(.primary)
 
@@ -135,9 +129,10 @@ struct TodayOperationCard: View {
                 .fill(operation.status == .completed ? .hippoBlack : .clear)
         }
         .hoverEffect(.lift)
+        .onTapGesture { onTap() }
     }
 }
 
 #Preview {
-    TodayOperationCard(patient: PatientDisplayModel.sample)
+    TodayOperationCard(patient: PatientDisplayModel.MockData) {}
 }

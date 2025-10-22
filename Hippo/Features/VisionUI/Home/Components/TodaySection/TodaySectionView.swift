@@ -11,16 +11,9 @@ import SwiftUI
 struct TodaySectionView: View {
     let patients: [PatientDisplayModel]
 
-    private var dateFormatter: DateFormatter {
-        let formatter = DateFormatter()
-        formatter.locale = Locale(identifier: "ko_KR")
-        formatter.dateFormat = "yyyy.MM.dd"
-        return formatter
-    }
-
     var body: some View {
         VStack(alignment: .leading, spacing: 16) {
-            SectionHeader("Today Surgery", subtitle: Date().formatted(date: .numeric, time: .omitted))
+            SectionHeader("Today Surgery", subtitle: Date().toTodayDateString())
 
             if patients.isEmpty {
                 EmptyTodaySurgeryView()
@@ -44,13 +37,17 @@ private struct EmptyTodaySurgeryView: View {
 
 /// 오늘 수술 카드 스크롤뷰
 private struct TodayOperationScrollView: View {
+    @State private var viewModel = HomeViewModel()
     let patients: [PatientDisplayModel]
 
     var body: some View {
         ScrollView(.horizontal, showsIndicators: false) {
             HStack(spacing: 24) {
                 ForEach(patients) { patient in
-                    TodayOperationCard(patient: patient)
+                    TodayOperationCard(patient: patient) {
+                        viewModel.state.selectedPatient = patient
+                        print("Selected patient: \(viewModel.state.selectedPatient?.name ?? "Unknown")")
+                    }
                 }
             }
         }

@@ -18,5 +18,11 @@ struct HippoVisionApp: App {
                 .environment(appModel)
         }
         .windowResizability(.contentSize)
+
+        WindowGroup(id: "OperationDetailWindow") {
+            OperationDetailView()
+                .environment(appModel)
+        }
+        
     }
 }

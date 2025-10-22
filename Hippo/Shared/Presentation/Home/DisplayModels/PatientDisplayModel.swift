@@ -49,7 +49,7 @@ public struct PatientDisplayModel: Identifiable, Equatable, Sendable {
     }
 
     // SAMPLE
-    public static let sample = PatientDisplayModel(
+    public static let MockData = PatientDisplayModel(
         id: "sample-001",
         patientNumber: "12345678",
         name: "김철수",
