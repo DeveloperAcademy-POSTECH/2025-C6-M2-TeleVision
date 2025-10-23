@@ -37,6 +37,7 @@ private struct EmptyTodaySurgeryView: View {
 
 /// 오늘 수술 카드 스크롤뷰
 private struct TodayOperationScrollView: View {
+    @Environment(\.openWindow) private var openWindow
     @State private var viewModel = HomeViewModel()
     let patients: [PatientDisplayModel]
 
@@ -45,8 +46,14 @@ private struct TodayOperationScrollView: View {
             HStack(spacing: 24) {
                 ForEach(patients) { patient in
                     TodayOperationCard(patient: patient) {
-                        viewModel.state.selectedPatient = patient
-                        print("Selected patient: \(viewModel.state.selectedPatient?.name ?? "Unknown")")
+                        // TODO: - 구현
+                        if let operation = patient.lastestOperation {
+                            let context = OperationContext(
+                                patientID: patient.id,
+                                operationID: operation.id
+                            )
+                            openWindow(id: WindowIDs.operationDetail, value: context)
+                        }
                     }
                 }
             }

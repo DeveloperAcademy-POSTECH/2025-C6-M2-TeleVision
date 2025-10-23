@@ -2,22 +2,19 @@
 //  OperationContext.swift
 //  HippoVision
 //
-//  Created by 김현기 on 10/22/25.
+//  Created by 김현기 on 10/23/25.
 //
 
-import Foundation
+import SwiftUI
 
-/// OperationContext
-@MainActor
-@Observable
-class OperationContext {
-    public let id: String
-    public let operation: OperationDisplayModel
-    public let patient: PatientDisplayModel
-
-    public init(operation: OperationDisplayModel, patient: PatientDisplayModel) {
-        id = operation.id
-        self.operation = operation
-        self.patient = patient
+struct OperationContext: Identifiable, Hashable, Codable {
+    let id: String
+    let patientID: String
+    let operationID: String
+    
+    init(patientID: String, operationID: String) {
+        self.id = operationID
+        self.patientID = patientID
+        self.operationID = operationID
     }
 }
