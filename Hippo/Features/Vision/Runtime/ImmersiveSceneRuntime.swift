@@ -1,30 +1,52 @@
-import Combine
+
+
+import os.log
 import RealityKit
 import SwiftUI
 
 @MainActor
-final class ImmersiveSceneRuntime: ObservableObject {
+@Observable
+final class ImmersiveSceneRuntime {
+    // MARK: - Logger
+
+    private let logger = Logger(subsystem: "com.television.hippo", category: "ImmersiveSceneRuntime")
+
+    public init() {}
+
+    // MARK: - State
+
+    private var topAnchor: AnchorEntity?
+    private var bottomAnchor: AnchorEntity?
+
+    // MARK: - Setup
 
     // RealityView 의 content 관리
-    func setupScene(in content: RealityViewContent) {
-        // RealityViewContent 는 RealityView 의 클로저 파라미터입니다.
-        // 여기서 scene을 직접 new 하는 게 아니라, AnchorEntity를 추가해야 해요.
-        let anchor = AnchorEntity(world: .zero)
+    func setupScene(in content: RealityViewContent, attachments: RealityViewAttachments) {
+        let anchor1 = AnchorEntity(.head)
+        anchor1.position = [0, 0.45, -1.0]
+        if let topButton = attachments.entity(for: AttachmentIDs.topToggleButton) {
+            anchor1.addChild(topButton)
+        }
 
-        // 테스트용 엔티티
-        let sphere = ModelEntity(mesh: .generateSphere(radius: 0.1))
-        sphere.position = [0, 1, -1]
-        anchor.addChild(sphere)
+        let anchor2 = AnchorEntity(.head)
+        anchor2.position = [0, -0.45, -1.0] // 시야 아래쪽에 배치
+        if let bottomMenuBar = attachments.entity(for: AttachmentIDs.bottomMenuBar) {
+            anchor2.addChild(bottomMenuBar)
+        }
 
-        // RealityViewContent에 엔티티 추가
-        content.add(anchor)
+        content.add(anchor1)
+        content.add(anchor2)
+
+        topAnchor = anchor1
+        bottomAnchor = anchor2
     }
 
     func start() {
-        print("ImmersiveSceneRuntime started")
+        logger.debug("🐛 ImmersiveSceneRuntime started")
     }
 
     func stop() {
-        print("ImmersiveSceneRuntime stopped")
+        logger.debug("🐛 ImmersiveSceneRuntime stopped")
+        topAnchor = nil
     }
 }
