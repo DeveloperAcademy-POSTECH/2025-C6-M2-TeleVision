@@ -33,7 +33,7 @@ struct PatientCell: View {
             }
             .padding(.horizontal)
 
-            Text(patient.lastestOperation?.diagnosis ?? "예정 수술 없음")
+            Text(patient.latestOperation?.diagnosis ?? "예정 수술 없음")
                 .font(.body)
                 .foregroundStyle(.primary)
                 .padding(.horizontal)
@@ -41,7 +41,7 @@ struct PatientCell: View {
             HStack {
                 Spacer()
 
-                if let operation = patient.lastestOperation {
+                if let operation = patient.latestOperation {
                     OperationDateBadge(date: operation.date)
                 }
             }
@@ -58,5 +58,5 @@ struct PatientCell: View {
 }
 
 #Preview {
-    PatientCell(patient: PatientDisplayModel.sample)
+    PatientCell(patient: PatientDisplayModel.MockData)
 }
