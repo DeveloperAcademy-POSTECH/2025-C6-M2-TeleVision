@@ -17,6 +17,7 @@ final class ImmersiveSceneRuntime {
 
     private var topAnchor: AnchorEntity?
     private var bottomAnchor: AnchorEntity?
+    private var finishAlertAnchor: AnchorEntity?
 
     // MARK: - Setup
 
@@ -34,11 +35,19 @@ final class ImmersiveSceneRuntime {
             anchor2.addChild(bottomMenuBar)
         }
 
+        let anchor3 = AnchorEntity(.head)
+        anchor3.position = [0, 0, -1.0]
+        if let finishAlert = attachments.entity(for: AttachmentIDs.finishSurgeryAlert) {
+            anchor3.addChild(finishAlert)
+        }
+
         content.add(anchor1)
         content.add(anchor2)
+        content.add(anchor3)
 
         topAnchor = anchor1
         bottomAnchor = anchor2
+        finishAlertAnchor = anchor3
     }
 
     func start() {
@@ -48,5 +57,7 @@ final class ImmersiveSceneRuntime {
     func stop() {
         logger.debug("🐛 ImmersiveSceneRuntime stopped")
         topAnchor = nil
+        bottomAnchor = nil
+        finishAlertAnchor = nil
     }
 }

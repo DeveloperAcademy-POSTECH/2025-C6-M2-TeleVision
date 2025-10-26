@@ -9,114 +9,66 @@ import RealityKit
 import SwiftUI
 
 struct ImmersiveSurgeryView: View {
+    @Environment(\.dismissImmersiveSpace) private var dismissImmersiveSpace
+    @Environment(\.openWindow) private var openWindow
+
+    let patientID: String
+    let operationID: String
+
     @State private var runtime = ImmersiveSceneRuntime()
-    @State private var viewModel = SurgeryViewModel()
+    @State private var viewModel = OperationViewModel()
+
+    private var patient: PatientDisplayModel {
+        guard let patient = viewModel.state.patient else {
+            return PatientDisplayModel.MockData
+        }
+        return patient
+    }
+
+    private var operation: OperationDisplayModel {
+        guard let operation = viewModel.state.operation else {
+            return OperationDisplayModel.MockData
+        }
+        return operation
+    }
 
     var body: some View {
         RealityView { content, attachments in
             runtime.setupScene(in: content, attachments: attachments)
         } attachments: {
+            // 상단 토글 아이콘
             Attachment(id: AttachmentIDs.topToggleButton) {
-                Image("TopButton")
-                    .resizable()
-                    .frame(width: 120, height: 120)
-                    .opacity(viewModel.isMenuActive ? 1.0 : 0.25)
-                    .onTapGesture {
-                        viewModel.isMenuActive.toggle()
-                    }
-            }
-            Attachment(id: AttachmentIDs.bottomMenuBar) {
-                HStack {
-                    Button {} label: {
-                        ZStack {
-                            // 메인 원
-                            Circle()
-                                .fill(.regularMaterial)
-                                .frame(width: 80, height: 80)
-
-                            // 민트색 링
-                            Circle()
-                                .stroke(.white, lineWidth: 3)
-                                .frame(width: 40, height: 40)
-                                .shadow(color: .cyan, radius: 20)
-                        }
-                        .glassBackgroundEffect(displayMode: .always)
-                    }
-                    .buttonStyle(.borderless)
-                    .contentShape(.circle)
-                    .frame(width: 80, height: 80)
-                    .padding(24)
-
-                    HStack {
-                        VStack(alignment: .center) {
-                            Toggle("", isOn: $viewModel.isEndoscopicActive)
-                                .toggleStyle(.switch)
-                                .labelsHidden()
-                            Spacer().frame(height: 4)
-                            Text("내시경")
-                        }
-                        .padding(30)
-
-                        Spacer()
-
-                        Button {} label: {
-                            Text("수술 완료")
-                                .padding()
-                        }
-
-                        Spacer()
-
-                        Button {} label: {
-                            HStack {
-                                Text("녹화")
-                                Spacer().frame(width: 16)
-                                ZStack {
-                                    Circle()
-                                        .fill(.white)
-                                        .frame(width: 28, height: 28) // 외부 원 크기 조정
-                                        .shadow(color: .black.opacity(0.15), radius: 15, x: 0, y: 3)
-
-                                    Circle()
-                                        .fill(
-                                            LinearGradient(
-                                                colors: [.red, .red.opacity(0.8)],
-                                                startPoint: .top,
-                                                endPoint: .bottom
-                                            )
-                                        )
-                                        .frame(width: 18, height: 18) // 내부 원 크기 조정
-                                }
-                            }
-                            .padding(.vertical, 16)
-                            .padding(.horizontal, 12)
-                        }
-                        .padding(30)
-                    }
-                    .frame(width: 800)
-                    .glassBackgroundEffect(displayMode: .always)
-
-                    Button {} label: {
-                        ZStack {
-                            // 메인 원
-                            Circle()
-                                .fill(.regularMaterial)
-                                .frame(width: 80, height: 80)
-
-                            // 민트색 링
-                            Circle()
-                                .stroke(.white, lineWidth: 3)
-                                .frame(width: 40, height: 40)
-                                .shadow(color: .cyan, radius: 20)
-                        }
-                        .glassBackgroundEffect(displayMode: .always)
-                    }
-                    .buttonStyle(.borderless)
-                    .contentShape(.circle)
-                    .frame(width: 80, height: 80)
-                    .padding(24)
+                MenuToggleButton(isActive: viewModel.isMenuActive) {
+                    // 메뉴 토글
+                    viewModel.isMenuActive.toggle()
                 }
-                .opacity(viewModel.isMenuActive ? 1.0 : 0.0)
             }
+            // 하단 메뉴 바
+            Attachment(id: AttachmentIDs.bottomMenuBar) {
+                SurgeryBottomMenu(
+                    patient: patient,
+                    isEndoscopicActive: $viewModel.isEndoscopicActive,
+                    isVisible: viewModel.isMenuActive,
+                    onOpenEntityPanel: {},
+                    onRecord: {},
+                    onFinishSurgery: { viewModel.isShowingFinishAlert = true }
+                )
+            }
+            // 수술 나가기 Alert
+            Attachment(id: AttachmentIDs.finishSurgeryAlert) {
+                FinishSurgeryAlertView(
+                    isPresented: $viewModel.isShowingFinishAlert,
+                    onConfirm: {
+                        Task {
+                            await dismissImmersiveSpace()
+                            openWindow(id: WindowIDs.home)
+                        }
+                    }
+                )
+            }
+        }
+        .task {
+            await viewModel.load(patientID: patientID, operationID: operationID)
         }
         .onAppear { runtime.start() }
         .onDisappear { runtime.stop() }
@@ -124,5 +76,8 @@ struct ImmersiveSurgeryView: View {
 }
 
 #Preview {
-    ImmersiveSurgeryView()
+    ImmersiveSurgeryView(
+        patientID: PatientDisplayModel.MockData.id,
+        operationID: OperationDisplayModel.MockData.id
+    )
 }
