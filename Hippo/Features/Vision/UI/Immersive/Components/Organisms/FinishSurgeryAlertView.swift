@@ -43,7 +43,7 @@ struct FinishSurgeryAlertView: View {
                 } label: {
                     Text("네")
                         .font(.title)
-                        .foregroundStyle(.primary)
+                        .foregroundStyle(.red)
                         .frame(maxWidth: .infinity)
                         .frame(height: 52)
                 }
@@ -57,7 +57,7 @@ struct FinishSurgeryAlertView: View {
                 } label: {
                     Text("아니오")
                         .font(.title)
-                        .foregroundStyle(.red)
+                        .foregroundStyle(.primary)
                         .frame(maxWidth: .infinity)
                         .frame(height: 52)
                 }
