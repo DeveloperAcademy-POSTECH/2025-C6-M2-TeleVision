@@ -14,7 +14,7 @@ public struct PatientDisplayModel: Identifiable, Equatable, Sendable {
     public let birthDateText: String
     public let operations: [OperationDisplayModel]
     public let operationCount: Int
-    public let lastestOperation: OperationDisplayModel?
+    public let latestOperation: OperationDisplayModel?
     public let updatedAt: Date
     public let updatedAtText: String
 
@@ -29,7 +29,7 @@ public struct PatientDisplayModel: Identifiable, Equatable, Sendable {
         birthDateText: String,
         operations: [OperationDisplayModel],
         operationCount: Int,
-        lastestOperation: OperationDisplayModel? = nil,
+        latestOperation: OperationDisplayModel? = nil,
         updatedAt: Date,
         updatedAtText: String
     ) {
@@ -43,13 +43,13 @@ public struct PatientDisplayModel: Identifiable, Equatable, Sendable {
         self.birthDateText = birthDateText
         self.operations = operations
         self.operationCount = operationCount
-        self.lastestOperation = lastestOperation
+        self.latestOperation = latestOperation
         self.updatedAt = updatedAt
         self.updatedAtText = updatedAtText
     }
 
     // SAMPLE
-    public static let sample = PatientDisplayModel(
+    public static let MockData = PatientDisplayModel(
         id: "sample-001",
         patientNumber: "12345678",
         name: "김철수",
@@ -60,7 +60,7 @@ public struct PatientDisplayModel: Identifiable, Equatable, Sendable {
         birthDateText: "1979.03.15",
         operations: [],
         operationCount: 1,
-        lastestOperation: nil,
+        latestOperation: nil,
         updatedAt: Date(),
         updatedAtText: "방금 전"
     )

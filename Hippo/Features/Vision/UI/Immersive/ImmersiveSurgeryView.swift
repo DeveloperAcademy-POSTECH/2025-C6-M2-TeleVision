@@ -1,7 +1,14 @@
+//
+//  ImmersiveSurgeryView.swift
+//  HippoVision
+//
+//  Created by 김현기 on 10/24/25.
+//
+
 import RealityKit
 import SwiftUI
 
-struct ImmersiveView: View {
+struct ImmersiveSurgeryView: View {
     @StateObject private var runtime = ImmersiveSceneRuntime()
 
     var body: some View {
@@ -11,4 +18,8 @@ struct ImmersiveView: View {
         .onAppear { runtime.start() }
         .onDisappear { runtime.stop() }
     }
+}
+
+#Preview {
+    ImmersiveSurgeryView()
 }

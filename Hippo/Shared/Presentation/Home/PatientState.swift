@@ -12,7 +12,7 @@ public final class PatientState {
     public init(
         items: [PatientDisplayModel] = [],
         isLoading: Bool = false,
-        alert: String? = nil
+        alert: String? = nil,
     ) {
         self.items = items
         self.isLoading = isLoading

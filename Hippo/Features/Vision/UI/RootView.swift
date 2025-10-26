@@ -8,9 +8,19 @@
 import SwiftUI
 
 struct RootView: View {
+    @Environment(AppModel.self) private var appModel
+
     var body: some View {
-        HomeView()
-            .environment(\.entityLocator, RealityEntityLocator())
-            .environment(\.anchorService, RealityAnchorService())
+        GeometryReader { geometry in
+            HomeView()
+                .environment(\.entityLocator, RealityEntityLocator())
+                .environment(\.anchorService, RealityAnchorService())
+                .onAppear {
+                    appModel.updateHomeWindowSize(geometry.size)
+                }
+                .onChange(of: geometry.size) {
+                    appModel.updateHomeWindowSize(geometry.size)
+                }
+        }
     }
 }

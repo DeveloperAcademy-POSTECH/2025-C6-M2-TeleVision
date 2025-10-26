@@ -18,7 +18,7 @@ public extension Patient {
             birthDateText: birthDate.formatted(date: .abbreviated, time: .omitted),
             operations: operations.map { $0.toDisplayModel() },
             operationCount: operations.count,
-            lastestOperation: operations.sorted(by: { $0.date > $1.date }).first?.toDisplayModel(),
+            latestOperation: operations.sorted(by: { $0.date > $1.date }).first?.toDisplayModel(),
             updatedAt: updatedAt,
             updatedAtText: updatedAt.formatted()
         )
@@ -34,7 +34,7 @@ public extension Operation {
             diagnosis: diagnosis,
             surgeon: surgeon,
             date: date,
-            dateText: date.formatted(date: .abbreviated, time: .omitted),
+            dateText: date.toOperationDateString(),
             details: details,
             status: status,
             statusText: status.displayText,
