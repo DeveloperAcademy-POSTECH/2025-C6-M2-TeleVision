@@ -8,4 +8,5 @@
 enum AttachmentIDs {
     static let topToggleButton = "TopToggleButton"
     static let bottomMenuBar = "BottomMenuBar"
+    static let finishSurgeryAlert = "FinishSurgeryAlert"
 }
