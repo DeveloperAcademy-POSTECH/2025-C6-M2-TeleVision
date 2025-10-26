@@ -49,8 +49,8 @@ struct ImmersiveSurgeryView: View {
                     patient: patient,
                     isEndoscopicActive: $viewModel.isEndoscopicActive,
                     isVisible: viewModel.isMenuActive,
-                    onOpenEntityPanel: {},
-                    onRecord: {},
+                    onOpenEntityPanel: viewModel.openEntityPanel,
+                    onRecord: viewModel.recordPassThroughVideo,
                     onFinishSurgery: { viewModel.isShowingFinishAlert = true }
                 )
             }
