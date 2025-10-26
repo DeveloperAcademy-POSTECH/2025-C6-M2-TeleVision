@@ -12,7 +12,7 @@ struct TodayOperationCard: View {
     let onTap: () -> Void
 
     private var operation: OperationDisplayModel {
-        guard let op = patient.lastestOperation else { return OperationDisplayModel.MockData }
+        guard let op = patient.latestOperation else { return OperationDisplayModel.MockData }
         return op
     }
 

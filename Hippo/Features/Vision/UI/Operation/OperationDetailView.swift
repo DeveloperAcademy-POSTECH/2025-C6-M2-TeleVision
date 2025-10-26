@@ -10,7 +10,7 @@ import SwiftUI
 struct OperationDetailView: View {
     @Environment(\.openImmersiveSpace) private var openImmersiveSpace
     @Environment(\.dismissWindow) private var dismissWindow
-    
+
     let patientID: String
     let operationID: String
 
@@ -32,7 +32,7 @@ struct OperationDetailView: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
-            DetailHeader(operation: operation, onClose: {})
+            DetailHeader(operation: operation)
                 .padding(.horizontal, 32)
                 .padding(.top, 32)
 

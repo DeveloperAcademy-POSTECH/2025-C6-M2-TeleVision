@@ -55,13 +55,13 @@ public final class HomeViewModel {
 
         return state.items
             .filter { patient in
-                guard let operation = patient.lastestOperation else { return false }
+                guard let operation = patient.latestOperation else { return false }
                 let operationDay = calendar.startOfDay(for: operation.date)
                 return today == operationDay
             }
             .sorted { patient1, patient2 in
-                guard let op1 = patient1.lastestOperation,
-                      let op2 = patient2.lastestOperation
+                guard let op1 = patient1.latestOperation,
+                      let op2 = patient2.latestOperation
                 else {
                     return false
                 }

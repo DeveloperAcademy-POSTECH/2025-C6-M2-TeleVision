@@ -9,12 +9,11 @@ import SwiftUI
 
 struct DetailHeader: View {
     let operation: OperationDisplayModel
-    let onClose: () -> Void
 
     var body: some View {
         HStack {
             VStack(alignment: .leading, spacing: 8) {
-                Text("수술 대기")
+                Text(operation.statusText)
                     .font(.system(size: 20, weight: .semibold))
                     .foregroundStyle(.red)
 
@@ -24,18 +23,10 @@ struct DetailHeader: View {
             }
 
             Spacer()
-
-            Button(action: onClose) {
-                Image(systemName: "xmark.circle.fill")
-                    .font(.system(size: 32))
-                    .foregroundStyle(.secondary)
-                    .symbolRenderingMode(.hierarchical)
-            }
-            .buttonStyle(.plain)
         }
     }
 }
 
 #Preview {
-    DetailHeader(operation: OperationDisplayModel.MockData, onClose: {})
+    DetailHeader(operation: OperationDisplayModel.MockData)
 }

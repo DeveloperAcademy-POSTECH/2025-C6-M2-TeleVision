@@ -46,8 +46,7 @@ private struct TodayOperationScrollView: View {
             HStack(spacing: 24) {
                 ForEach(patients) { patient in
                     TodayOperationCard(patient: patient) {
-                        // TODO: - 구현
-                        if let operation = patient.lastestOperation {
+                        if let operation = patient.latestOperation {
                             let context = OperationContext(
                                 patientID: patient.id,
                                 operationID: operation.id
