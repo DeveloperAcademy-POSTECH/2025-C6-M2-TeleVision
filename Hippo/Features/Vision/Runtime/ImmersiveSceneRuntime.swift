@@ -22,9 +22,15 @@ final class ImmersiveSceneRuntime: ObservableObject {
 
     func start() {
         print("ImmersiveSceneRuntime started")
+        
+        // TODO: 추후 Entity 조작모드가 on 될 때만 작동하도록 수정할 것
+        ARSessionController.shared.runARSession()
     }
 
     func stop() {
         print("ImmersiveSceneRuntime stopped")
+        
+        // TODO: 추후 Entity 조작모드 off 될 때만 작동하도록 수정할 것
+        ARSessionController.shared.stopARSession()
     }
 }
