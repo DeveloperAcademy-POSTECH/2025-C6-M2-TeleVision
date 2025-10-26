@@ -4,6 +4,8 @@ import SwiftUI
 
 @MainActor
 final class ImmersiveSceneRuntime: ObservableObject {
+    
+    var selectedEntity: Entity? = nil
 
     // RealityView 의 content 관리
     func setupScene(in content: RealityViewContent) {
@@ -18,6 +20,11 @@ final class ImmersiveSceneRuntime: ObservableObject {
 
         // RealityViewContent에 엔티티 추가
         content.add(anchor)
+        
+        // 마지막 조작 Entity 정보 저장
+        _ = content.subscribe(to: ManipulationEvents.WillBegin.self)  { event in
+            self.selectedEntity = event.entity
+        }
     }
 
     func start() {

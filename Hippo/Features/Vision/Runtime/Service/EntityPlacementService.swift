@@ -10,7 +10,7 @@ import RealityKit
 
 public protocol AnchorServicing {
     func attach(entityID: String, to anchor: AnchorEntity) async throws
-    func detach(entityID: String, from anchor: AnchorEntity) async throws
+    func detach(entity: Entity) async throws
 }
 
 struct EntityPlacementService: AnchorServicing {
@@ -55,9 +55,7 @@ struct EntityPlacementService: AnchorServicing {
         }
     }
     
-    func detach(entityID: String, from anchor: AnchorEntity) async {
-        if let target = anchor.findEntity(named: entityID) {
-                target.removeFromParent()
-        }
+    func detach(entity: Entity) async {
+        entity.removeFromParent()
     }
 }
