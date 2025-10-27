@@ -35,14 +35,14 @@ final class ARSessionController {
         self.worldTracking = world
         
         Task {
-            do { try? await session.run([world]) }
+            try? await session.run([world])
         }
         
         // 디바이스 위치 0.1초 간격으로 업데이트
         timer = Timer.scheduledTimer(withTimeInterval: 0.1, repeats: true) { _ in
             Task.detached {
                 let now = CACurrentMediaTime()
-                if let dev = await self.worldTracking!.queryDeviceAnchor(atTimestamp: now) {
+                if let dev = await self.worldTracking?.queryDeviceAnchor(atTimestamp: now) {
                     let t = dev.originFromAnchorTransform
                     await MainActor.run { self.deviceTransform = t }
                 }
@@ -57,7 +57,10 @@ final class ARSessionController {
         timer?.invalidate()
         timer = nil
         Task { [session] in
-            session!.stop()
+            if let session = session {
+                session.stop()
+            }
+            self.session = nil
         }
     }
     
