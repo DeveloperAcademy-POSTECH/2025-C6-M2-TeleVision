@@ -19,6 +19,12 @@ struct HippoVisionApp: App {
         }
         .windowResizability(.contentSize)
 
+        WindowGroup(id: WindowIDs.patientInput) {
+            PatientInputView()
+                .environment(appModel)
+        }
+        .defaultSize(width: 512, height: 700)
+
         WindowGroup(id: WindowIDs.operationDetail, for: OperationContext.self) { $context in
             if let context = context {
                 OperationDetailView(
@@ -34,13 +40,13 @@ struct HippoVisionApp: App {
             return WindowPlacement(.trailing(homeWindow))
         }
 
-        ImmersiveSpace(id: ImmersiveIDs.surgery, for: OperationContext.self)  { $context in
+        ImmersiveSpace(id: ImmersiveIDs.surgery, for: OperationContext.self) { $context in
             if let context = context {
                 ImmersiveSurgeryView(
                     patientID: context.patientID,
                     operationID: context.operationID
                 )
-                    .environment(appModel)
+                .environment(appModel)
             }
         }
     }

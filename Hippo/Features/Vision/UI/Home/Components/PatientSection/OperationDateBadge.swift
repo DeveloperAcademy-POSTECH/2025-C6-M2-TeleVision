@@ -33,6 +33,7 @@ struct OperationDateBadge: View {
             .foregroundStyle(.primary)
             .padding(.horizontal, 20)
             .padding(.vertical, 10)
+            .frame(height: 30)
             .background(
                 RoundedRectangle(cornerRadius: 20, style: .continuous)
                     .fill(.regularMaterial)
