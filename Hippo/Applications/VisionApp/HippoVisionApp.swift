@@ -34,9 +34,14 @@ struct HippoVisionApp: App {
             return WindowPlacement(.trailing(homeWindow))
         }
 
-        ImmersiveSpace(id: ImmersiveIDs.surgery) {
-            ImmersiveSurgeryView()
-                .environment(appModel)
+        ImmersiveSpace(id: ImmersiveIDs.surgery, for: OperationContext.self)  { $context in
+            if let context = context {
+                ImmersiveSurgeryView(
+                    patientID: context.patientID,
+                    operationID: context.operationID
+                )
+                    .environment(appModel)
+            }
         }
     }
 }

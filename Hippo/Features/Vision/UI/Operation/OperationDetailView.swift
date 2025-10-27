@@ -90,7 +90,11 @@ struct OperationDetailView: View {
                     Task {
                         dismissWindow(id: WindowIDs.home)
                         dismissWindow(id: WindowIDs.operationDetail)
-                        await openImmersiveSpace(id: ImmersiveIDs.surgery)
+                        let context = OperationContext(
+                            patientID: patientID,
+                            operationID: operationID
+                        )
+                        await openImmersiveSpace(id: ImmersiveIDs.surgery, value: context)
                     }
                 }
             }

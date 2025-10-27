@@ -12,6 +12,8 @@ import SwiftUI
 @MainActor
 @Observable
 public final class OperationViewModel {
+    public init() {}
+
     // MARK: - Dependencies
 
     @ObservationIgnored
@@ -21,12 +23,16 @@ public final class OperationViewModel {
 
     private let logger = Logger(subsystem: "com.television.hippo", category: "PatientViewModel")
 
-    public init() {}
-
     // MARK: - State
 
     private let _state = OperationState()
     public var state: OperationState { _state } // 읽기 전용, 관찰 가능
+
+    // MARK: - UI State (Accessible)w
+
+    public var isMenuActive: Bool = true
+    public var isEndoscopicActive: Bool = false
+    public var isShowingFinishAlert: Bool = false
 
     // MARK: - Actions
 
@@ -62,4 +68,10 @@ public final class OperationViewModel {
             _state.operation = operation
         }
     }
+
+    // MARK: - Actions in Immersive Surgery Mode
+
+    public func openEntityPanel() {}
+
+    public func recordPassThroughVideo() {}
 }
