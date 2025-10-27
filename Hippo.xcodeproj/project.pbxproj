@@ -95,6 +95,7 @@
 		272BD1B32EADE1BF00C83F81 /* ARSessionController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 272BD1B12EADE1BA00C83F81 /* ARSessionController.swift */; };
 		272BD1B52EADE1E200C83F81 /* HeadPose.swift in Sources */ = {isa = PBXBuildFile; fileRef = 272BD1B42EADE1DE00C83F81 /* HeadPose.swift */; };
 		272BD1B62EADE1E200C83F81 /* HeadPose.swift in Sources */ = {isa = PBXBuildFile; fileRef = 272BD1B42EADE1DE00C83F81 /* HeadPose.swift */; };
+		27D8A2BE2EAF682B009429F0 /* OpacityControlViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 27D8A2BD2EAF67CE009429F0 /* OpacityControlViewModel.swift */; };
 		C02FFA752E9FFF6F00F16742 /* HippoVisionApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = C02FFA4F2E9FFF6F00F16742 /* HippoVisionApp.swift */; };
 		C02FFA762E9FFF6F00F16742 /* HippoMacApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = C02FFA4C2E9FFF6F00F16742 /* HippoMacApp.swift */; };
 		C02FFA792E9FFF6F00F16742 /* AppModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = C02FFA6A2E9FFF6F00F16742 /* AppModel.swift */; };
@@ -304,6 +305,7 @@
 		14F6B0332EAAC73F003F28EB /* ImmersiveSurgeryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImmersiveSurgeryView.swift; sourceTree = "<group>"; };
 		272BD1B12EADE1BA00C83F81 /* ARSessionController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ARSessionController.swift; sourceTree = "<group>"; };
 		272BD1B42EADE1DE00C83F81 /* HeadPose.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HeadPose.swift; sourceTree = "<group>"; };
+		27D8A2BD2EAF67CE009429F0 /* OpacityControlViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OpacityControlViewModel.swift; sourceTree = "<group>"; };
 		C02FFA4C2E9FFF6F00F16742 /* HippoMacApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HippoMacApp.swift; sourceTree = "<group>"; };
 		C02FFA4D2E9FFF6F00F16742 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		C02FFA4F2E9FFF6F00F16742 /* HippoVisionApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HippoVisionApp.swift; sourceTree = "<group>"; };
@@ -887,6 +889,7 @@
 		C050AA242EA8150500352314 /* Immersive */ = {
 			isa = PBXGroup;
 			children = (
+				27D8A2BD2EAF67CE009429F0 /* OpacityControlViewModel.swift */,
 				1446FB9B2EAE6987000BCF61 /* Components */,
 				14F6B0332EAAC73F003F28EB /* ImmersiveSurgeryView.swift */,
 			);
@@ -1203,6 +1206,7 @@
 				C0F97ACD2EA41D4B0063E159 /* SDOperationRecording.swift in Sources */,
 				14CC75562EA6A8BE00399562 /* LogoHeader.swift in Sources */,
 				C0F97ACE2EA41D4B0063E159 /* SwiftDataMappers.swift in Sources */,
+				27D8A2BE2EAF682B009429F0 /* OpacityControlViewModel.swift in Sources */,
 				C0F97ACF2EA41D4B0063E159 /* PatientLocalDataSourceSwiftData.swift in Sources */,
 				C050AA3C2EA8197E00352314 /* ImmersiveIDs.swift in Sources */,
 				C0F97AD02EA41D4B0063E159 /* SDOperationAsset.swift in Sources */,
