@@ -9,6 +9,8 @@ import SwiftUI
 
 /// 환자 카드 그리드
 struct PatientGridView: View {
+    @Environment(\.pushWindow) private var pushWindow
+
     let patients: [PatientDisplayModel]
 
     private var columns: [GridItem] {
@@ -18,7 +20,7 @@ struct PatientGridView: View {
     var body: some View {
         LazyVGrid(columns: columns, alignment: .leading, spacing: 24) {
             ForEach(patients) { patient in
-                PatientCell(patient: patient)
+                PatientCell(patient: patient) { pushWindow(id: WindowIDs.patientDetail, value: patient.id) }
             }
         }
     }
