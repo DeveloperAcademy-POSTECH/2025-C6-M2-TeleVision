@@ -50,6 +50,8 @@
 		1446FBC12EAE9571000BCF61 /* FinishSurgeryAlertView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1446FBC02EAE9568000BCF61 /* FinishSurgeryAlertView.swift */; };
 		1446FBC22EAE9571000BCF61 /* FinishSurgeryAlertView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1446FBC02EAE9568000BCF61 /* FinishSurgeryAlertView.swift */; };
 		1446FBC32EAE9571000BCF61 /* FinishSurgeryAlertView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1446FBC02EAE9568000BCF61 /* FinishSurgeryAlertView.swift */; };
+		1446FBD42EAF262F000BCF61 /* EntityPlacementService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1446FBD22EAF262F000BCF61 /* EntityPlacementService.swift */; };
+		1446FBD52EAF262F000BCF61 /* EntityPlacementService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1446FBD22EAF262F000BCF61 /* EntityPlacementService.swift */; };
 		146F102D2EA3AD1500DDDC35 /* HippoAssets in Frameworks */ = {isa = PBXBuildFile; productRef = 146F102C2EA3AD1500DDDC35 /* HippoAssets */; };
 		146F10302EA3AF1000DDDC35 /* HomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 146F102E2EA3AF1000DDDC35 /* HomeView.swift */; };
 		146F10312EA3AF2D00DDDC35 /* HomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 146F102E2EA3AF1000DDDC35 /* HomeView.swift */; };
@@ -133,8 +135,6 @@
 		C04678402EA00B4A00D160DA /* HomeViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = C04678392EA00B4A00D160DA /* HomeViewModel.swift */; };
 		C04678432EA00C1B00D160DA /* PatientView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C04678412EA00C1B00D160DA /* PatientView.swift */; };
 		C04678472EA00C2700D160DA /* PatientView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C04678452EA00C2700D160DA /* PatientView.swift */; };
-		C050AA1F2EA8117100352314 /* RealityEntityLocator.swift in Sources */ = {isa = PBXBuildFile; fileRef = C050AA1E2EA8116800352314 /* RealityEntityLocator.swift */; };
-		C050AA202EA8117100352314 /* RealityEntityLocator.swift in Sources */ = {isa = PBXBuildFile; fileRef = C050AA1E2EA8116800352314 /* RealityEntityLocator.swift */; };
 		C050AA362EA8176300352314 /* RootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C050AA352EA8175C00352314 /* RootView.swift */; };
 		C050AA3B2EA8197E00352314 /* ImmersiveIDs.swift in Sources */ = {isa = PBXBuildFile; fileRef = C050AA3A2EA8197E00352314 /* ImmersiveIDs.swift */; };
 		C050AA3C2EA8197E00352314 /* ImmersiveIDs.swift in Sources */ = {isa = PBXBuildFile; fileRef = C050AA3A2EA8197E00352314 /* ImmersiveIDs.swift */; };
@@ -274,6 +274,7 @@
 		1446FBB82EAE7705000BCF61 /* SurgeryControlBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SurgeryControlBar.swift; sourceTree = "<group>"; };
 		1446FBBC2EAE77B0000BCF61 /* SurgeryBottomMenu.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SurgeryBottomMenu.swift; sourceTree = "<group>"; };
 		1446FBC02EAE9568000BCF61 /* FinishSurgeryAlertView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FinishSurgeryAlertView.swift; sourceTree = "<group>"; };
+		1446FBD22EAF262F000BCF61 /* EntityPlacementService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EntityPlacementService.swift; sourceTree = "<group>"; };
 		145E0F4D2E9C0F3900CE6C97 /* HippoVision.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = HippoVision.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		145E0F612E9C0F3B00CE6C97 /* HippoVisionTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = HippoVisionTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		146F102A2EA3ACFD00DDDC35 /* HippoAssets */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = HippoAssets; sourceTree = "<group>"; };
@@ -317,7 +318,6 @@
 		C04678392EA00B4A00D160DA /* HomeViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeViewModel.swift; sourceTree = "<group>"; };
 		C04678412EA00C1B00D160DA /* PatientView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PatientView.swift; sourceTree = "<group>"; };
 		C04678452EA00C2700D160DA /* PatientView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PatientView.swift; sourceTree = "<group>"; };
-		C050AA1E2EA8116800352314 /* RealityEntityLocator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RealityEntityLocator.swift; sourceTree = "<group>"; };
 		C050AA352EA8175C00352314 /* RootView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RootView.swift; sourceTree = "<group>"; };
 		C050AA3A2EA8197E00352314 /* ImmersiveIDs.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImmersiveIDs.swift; sourceTree = "<group>"; };
 		C050AA3E2EA81A5400352314 /* View+VisionDependencies.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "View+VisionDependencies.swift"; sourceTree = "<group>"; };
@@ -359,14 +359,6 @@
 		C0F97B292EA439080063E159 /* UpdatePatient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UpdatePatient.swift; sourceTree = "<group>"; };
 		C0F97B2D2EA439290063E159 /* UpdatePatientCommand.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UpdatePatientCommand.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
-
-/* Begin PBXFileSystemSynchronizedRootGroup section */
-		272BD1AB2EADE18900C83F81 /* Service */ = {
-			isa = PBXFileSystemSynchronizedRootGroup;
-			path = Service;
-			sourceTree = "<group>";
-		};
-/* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
 		145E0F4A2E9C0F3900CE6C97 /* Frameworks */ = {
@@ -453,6 +445,14 @@
 				1446FBB82EAE7705000BCF61 /* SurgeryControlBar.swift */,
 			);
 			path = Organisms;
+			sourceTree = "<group>";
+		};
+		1446FBD32EAF262F000BCF61 /* Service */ = {
+			isa = PBXGroup;
+			children = (
+				1446FBD22EAF262F000BCF61 /* EntityPlacementService.swift */,
+			);
+			path = Service;
 			sourceTree = "<group>";
 		};
 		145E0F442E9C0F3900CE6C97 = {
@@ -840,8 +840,7 @@
 				272BD1B42EADE1DE00C83F81 /* HeadPose.swift */,
 				272BD1B12EADE1BA00C83F81 /* ARSessionController.swift */,
 				C050AA4D2EA8201A00352314 /* ImmersiveSceneRuntime.swift */,
-				C050AA1E2EA8116800352314 /* RealityEntityLocator.swift */,
-				272BD1AB2EADE18900C83F81 /* Service */,
+				1446FBD32EAF262F000BCF61 /* Service */,
 			);
 			path = Runtime;
 			sourceTree = "<group>";
@@ -991,9 +990,6 @@
 			);
 			dependencies = (
 			);
-			fileSystemSynchronizedGroups = (
-				272BD1AB2EADE18900C83F81 /* Service */,
-			);
 			name = HippoVision;
 			packageProductDependencies = (
 				C04677B82EA006FB00D160DA /* Dependencies */,
@@ -1016,9 +1012,6 @@
 			);
 			dependencies = (
 				145E0F632E9C0F3B00CE6C97 /* PBXTargetDependency */,
-			);
-			fileSystemSynchronizedGroups = (
-				272BD1AB2EADE18900C83F81 /* Service */,
 			);
 			name = HippoVisionTests;
 			packageProductDependencies = (
@@ -1139,6 +1132,7 @@
 				14CC754F2EA6A77C00399562 /* AddPatientButton.swift in Sources */,
 				C0F97A842EA3FDDE0063E159 /* OperationAsset.swift in Sources */,
 				C050AA4B2EA81EBE00352314 /* VisionEnvironmentKey.swift in Sources */,
+				1446FBD52EAF262F000BCF61 /* EntityPlacementService.swift in Sources */,
 				C0F97ADF2EA420EB0063E159 /* DomainDependencies.swift in Sources */,
 				C0F97A852EA3FDDE0063E159 /* OperationRecording.swift in Sources */,
 				C0F97A862EA3FDDE0063E159 /* Operation.swift in Sources */,
@@ -1180,7 +1174,6 @@
 				C0F97AD22EA41D4B0063E159 /* SDPatient.swift in Sources */,
 				C0F97B222EA435490063E159 /* CreateOperationCommand.swift in Sources */,
 				C0F97B232EA435490063E159 /* ValidationError.swift in Sources */,
-				C050AA1F2EA8117100352314 /* RealityEntityLocator.swift in Sources */,
 				1446FBB62EAE6C66000BCF61 /* MenuToggleButton.swift in Sources */,
 				C0F97B242EA435490063E159 /* CreatePatientCommand.swift in Sources */,
 				C0F97AE22EA4304D0063E159 /* CreateOperation.swift in Sources */,
@@ -1227,7 +1220,6 @@
 				1446FBC12EAE9571000BCF61 /* FinishSurgeryAlertView.swift in Sources */,
 				C0F97A822EA3FDDE0063E159 /* OperationRecording.swift in Sources */,
 				1446FBBE2EAE77B5000BCF61 /* SurgeryBottomMenu.swift in Sources */,
-				C050AA232EA811D500352314 /* RealityAnchorService.swift in Sources */,
 				C0F97AE02EA420EB0063E159 /* DomainDependencies.swift in Sources */,
 				C0F97B1F2EA435490063E159 /* CreateOperationCommand.swift in Sources */,
 				C0F97B202EA435490063E159 /* ValidationError.swift in Sources */,
@@ -1242,6 +1234,7 @@
 				C046783C2EA00B4A00D160DA /* HomeViewModel.swift in Sources */,
 				C050AA4E2EA8201A00352314 /* ImmersiveSceneRuntime.swift in Sources */,
 				C04678082EA00B1F00D160DA /* Patient.swift in Sources */,
+				1446FBD42EAF262F000BCF61 /* EntityPlacementService.swift in Sources */,
 				C0F97A7C2EA3FD370063E159 /* PatientDTO.swift in Sources */,
 				144254352EAA232300583CC3 /* OperationViewModel.swift in Sources */,
 				C046780B2EA00B1F00D160DA /* GetPatient.swift in Sources */,
@@ -1267,7 +1260,6 @@
 				C0F97A932EA3FDF50063E159 /* RemoveAssetFromOperation.swift in Sources */,
 				C0F97A942EA3FDF50063E159 /* UpsertOperation.swift in Sources */,
 				C0F97B302EA439290063E159 /* UpdatePatientCommand.swift in Sources */,
-				C050AA202EA8117100352314 /* RealityEntityLocator.swift in Sources */,
 				C0F97A952EA3FDF50063E159 /* AttachAssetToOperation.swift in Sources */,
 				C04678362EA00B3A00D160DA /* PatientRemoteDataSource.swift in Sources */,
 				C0F97B272EA437840063E159 /* AttachAssetCommand.swift in Sources */,

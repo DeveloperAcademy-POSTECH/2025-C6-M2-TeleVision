@@ -15,12 +15,5 @@ import SwiftUI
 
 extension View {
     /// RealityKit 전용 의존성을 한 번에 주입하는 헬퍼
-    func withRealityKitDependencies(
-        entityLocator: EntityLocating = RealityEntityLocator(),
-        anchorService: AnchorServicing = RealityAnchorService()
-    ) -> some View {
-        self
-            .environment(\.entityLocator, entityLocator)
-            .environment(\.anchorService, anchorService)
-    }
+//    func withRealityKitDependencies() -> some View {}
 }
