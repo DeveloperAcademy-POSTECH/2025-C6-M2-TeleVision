@@ -13,7 +13,7 @@ import Combine
 final class OpacityControlViewModel {
     
     struct Layer: Identifiable {
-        let id: UUID
+        let id: String
         let name: String
         let entity: Entity
         var isVisible: Bool
@@ -38,11 +38,13 @@ final class OpacityControlViewModel {
         
         let leafNodes = collectLeafNodes(from: entity)
         layers = leafNodes.enumerated().map { idx, e in
-            Layer(id: UUID(),
+            let currentOpacity = e.components[OpacityComponent.self]?.opacity ?? 1.0
+            
+            return Layer(id: Self.layerID(for: e),
                   name: e.name.isEmpty ? "Layer \(idx + 1)" : e.name,
                   entity: e,
                   isVisible: e.isEnabled,
-                  opacity: 1.0)
+                  opacity: currentOpacity)
         }
     }
     
@@ -52,6 +54,18 @@ final class OpacityControlViewModel {
         }
         return entity.children.flatMap { collectLeafNodes(from: $0) }
     }
+    
+    private static func layerID(for entity: Entity) -> String {
+        var chain: [String] = []
+        var current: Entity? = entity
+        while let e = current {
+            chain.append(e.name)
+            current = e.parent
+        }
+        let path = chain.reversed().joined(separator: "/")
+        return String(path.hashValue)
+    }
+    
     
     // MARK: -- 선택된 Layer 들의 visibility / Opacity 조정
     
@@ -68,7 +82,7 @@ final class OpacityControlViewModel {
     // 선택된 layer들의 Opacity 조정
     func setOpacity(for partIDs: [Layer.ID], opacity: Float) {
         for partID in partIDs {
-            guard let index = layers.firstIndex(where: { $0.id == partID }) else { return }
+            guard let index = layers.firstIndex(where: { $0.id == partID }) else { continue }
             
             layers[index].opacity = opacity
             let opacityComponent = OpacityComponent(opacity: opacity)
