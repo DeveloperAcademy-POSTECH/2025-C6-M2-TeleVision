@@ -25,6 +25,13 @@ struct HippoVisionApp: App {
         }
         .defaultSize(width: 512, height: 700)
 
+        WindowGroup(id: WindowIDs.patientDetail, for: String.self) { $id in
+            if let id = id {
+                PatientDetailView(patientId: id)
+                    .environment(appModel)
+            }
+        }
+
         WindowGroup(id: WindowIDs.operationDetail, for: OperationContext.self) { $context in
             if let context = context {
                 OperationDetailView(

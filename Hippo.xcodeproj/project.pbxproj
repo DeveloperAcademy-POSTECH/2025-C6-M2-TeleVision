@@ -51,6 +51,8 @@
 		1446FBD52EAF262F000BCF61 /* EntityPlacementService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1446FBD22EAF262F000BCF61 /* EntityPlacementService.swift */; };
 		1446FBDE2EAF2962000BCF61 /* HippoAlertView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1446FBDD2EAF2962000BCF61 /* HippoAlertView.swift */; };
 		1446FBE42EAF5801000BCF61 /* PatientInputView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1446FBE22EAF5801000BCF61 /* PatientInputView.swift */; };
+		1446FBE82EAF9E3B000BCF61 /* PatientDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1446FBE72EAF9E3B000BCF61 /* PatientDetailView.swift */; };
+		1446FBEA2EAFA132000BCF61 /* PatientViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1446FBE92EAFA129000BCF61 /* PatientViewModel.swift */; };
 		146F102D2EA3AD1500DDDC35 /* HippoAssets in Frameworks */ = {isa = PBXBuildFile; productRef = 146F102C2EA3AD1500DDDC35 /* HippoAssets */; };
 		146F10302EA3AF1000DDDC35 /* HomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 146F102E2EA3AF1000DDDC35 /* HomeView.swift */; };
 		146F10312EA3AF2D00DDDC35 /* HomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 146F102E2EA3AF1000DDDC35 /* HomeView.swift */; };
@@ -274,6 +276,8 @@
 		1446FBD22EAF262F000BCF61 /* EntityPlacementService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EntityPlacementService.swift; sourceTree = "<group>"; };
 		1446FBDD2EAF2962000BCF61 /* HippoAlertView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HippoAlertView.swift; sourceTree = "<group>"; };
 		1446FBE22EAF5801000BCF61 /* PatientInputView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PatientInputView.swift; sourceTree = "<group>"; };
+		1446FBE72EAF9E3B000BCF61 /* PatientDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PatientDetailView.swift; sourceTree = "<group>"; };
+		1446FBE92EAFA129000BCF61 /* PatientViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PatientViewModel.swift; sourceTree = "<group>"; };
 		145E0F4D2E9C0F3900CE6C97 /* HippoVision.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = HippoVision.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		145E0F612E9C0F3B00CE6C97 /* HippoVisionTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = HippoVisionTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		146F102A2EA3ACFD00DDDC35 /* HippoAssets */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = HippoAssets; sourceTree = "<group>"; };
@@ -473,6 +477,8 @@
 			children = (
 				1446FBE12EAF5801000BCF61 /* Components */,
 				1446FBE22EAF5801000BCF61 /* PatientInputView.swift */,
+				1446FBE72EAF9E3B000BCF61 /* PatientDetailView.swift */,
+				1446FBE92EAFA129000BCF61 /* PatientViewModel.swift */,
 			);
 			path = Patient;
 			sourceTree = "<group>";
@@ -1206,6 +1212,7 @@
 				14CC75482EA69DE400399562 /* PatientCell.swift in Sources */,
 				C0F97B082EA430880063E159 /* Gender.swift in Sources */,
 				C0F97B092EA430880063E159 /* OperationAssetExtension.swift in Sources */,
+				1446FBEA2EAFA132000BCF61 /* PatientViewModel.swift in Sources */,
 				C0F97B262EA437840063E159 /* AttachAssetCommand.swift in Sources */,
 				C0F97B0A2EA430880063E159 /* OperationStatus.swift in Sources */,
 				1494DEA72EA7C851000CD284 /* Date+Extension.swift in Sources */,
@@ -1215,6 +1222,7 @@
 				C0F97ADA2EA420E10063E159 /* DataDependencies.swift in Sources */,
 				C0F97A8E2EA3FDF50063E159 /* DeleteOperation.swift in Sources */,
 				C0F97A8F2EA3FDF50063E159 /* RemoveAssetFromOperation.swift in Sources */,
+				1446FBE82EAF9E3B000BCF61 /* PatientDetailView.swift in Sources */,
 				C0F97A902EA3FDF50063E159 /* UpsertOperation.swift in Sources */,
 				C0F97A912EA3FDF50063E159 /* AttachAssetToOperation.swift in Sources */,
 				C04678402EA00B4A00D160DA /* HomeViewModel.swift in Sources */,
