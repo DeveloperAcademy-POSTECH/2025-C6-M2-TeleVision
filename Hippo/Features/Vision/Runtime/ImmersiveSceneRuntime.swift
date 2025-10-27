@@ -52,27 +52,26 @@ final class ImmersiveSceneRuntime {
         bottomAnchor = anchor2
         finishAlertAnchor = anchor3
 
-         // 마지막 조작 Entity 정보 저장
+        // 마지막 조작 Entity 정보 저장
         eventSubscription = content.subscribe(to: ManipulationEvents.WillBegin.self)  { event in
             self.selectedEntity? = event.entity
         }
     }
 
     func start() {
-       logger.debug("🐛 ImmersiveSceneRuntime started")
-        
+        logger.debug("🐛 ImmersiveSceneRuntime started")
+
         // TODO: 추후 Entity 조작모드가 on 될 때만 작동하도록 수정할 것
         ARSessionController.shared.runARSession()
     }
 
     func stop() {
         logger.debug("🐛 ImmersiveSceneRuntime stopped")
-
         topAnchor = nil
         bottomAnchor = nil
         finishAlertAnchor = nil
-        
-        // TODO: 추후 Entity 조작모드 off 될 때만 작동하도록 수정할 것
+
+         // TODO: 추후 Entity 조작모드 off 될 때만 작동하도록 수정할 것
         ARSessionController.shared.stopARSession()
         
         // 제스쳐 이벤트 구독 정리

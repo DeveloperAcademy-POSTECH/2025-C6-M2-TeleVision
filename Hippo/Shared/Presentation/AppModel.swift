@@ -18,6 +18,10 @@ class AppModel {
 
     public init() {}
 
+    // MARK: - State
+
+    public var patients: Int = 0
+
     // MARK: - Home Window Size
 
     public var homeWindowSize: CGSize = .init(width: 580, height: 760)

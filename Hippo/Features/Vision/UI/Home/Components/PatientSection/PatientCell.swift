@@ -43,12 +43,14 @@ struct PatientCell: View {
 
                 if let operation = patient.latestOperation {
                     OperationDateBadge(date: operation.date)
+                } else {
+                    Color.clear.frame(height: 30)
                 }
             }
             .padding(.horizontal)
-            .padding(.bottom, 12)
+            .padding(.vertical, 12)
         }
-        .frame(minWidth: 200)
+        .frame(minWidth: 200, minHeight: 180, maxHeight: 180)
         .background(
             RoundedRectangle(cornerRadius: 20)
                 .fill(.thinMaterial)

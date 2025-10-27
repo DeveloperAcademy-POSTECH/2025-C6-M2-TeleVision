@@ -7,5 +7,8 @@
 
 enum WindowIDs {
     static let home = "HomeWindow"
+    static let patientInput = "PatientInputWindow"
+    static let patientDetail = "PatientDetailWindow"
+    static let operationInput = "OperationInputWindow"
     static let operationDetail = "OperationDetailWindow"
 }
