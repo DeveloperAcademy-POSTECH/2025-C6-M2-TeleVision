@@ -15,5 +15,6 @@ import SwiftUI
 
 extension View {
     /// RealityKit 전용 의존성을 한 번에 주입하는 헬퍼
+
 //    func withRealityKitDependencies() -> some View {}
 }

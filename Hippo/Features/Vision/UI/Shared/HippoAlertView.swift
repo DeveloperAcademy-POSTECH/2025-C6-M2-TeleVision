@@ -1,5 +1,5 @@
 //
-//  FinishSurgeryAlertView.swift
+//  HippoAlertView.swift
 //  Hippo
 //
 //  Created by 김현기 on 10/27/25.
@@ -7,27 +7,31 @@
 
 import SwiftUI
 
-struct FinishSurgeryAlertView: View {
+struct HippoAlertView: View {
     @Binding var isPresented: Bool
     let onConfirm: () -> Void
+
+    var systemName: String = "iphone.and.arrow.forward.outward"
+    var title: String = "나가시겠습니까?"
+    var content: String = "나가도 다시 들어올 수 있지만, 현재 상태가 초기화될 수 있습니다."
 
     var body: some View {
         if isPresented {
             VStack(spacing: 0) {
                 // 아이콘
-                Image(systemName: "iphone.and.arrow.forward.outward")
+                Image(systemName: systemName)
                     .font(.system(size: 48))
                     .foregroundStyle(.hippoPrimary)
                     .padding(.vertical, 32)
 
                 // 제목
-                Text("나가시겠습니까?")
+                Text(title)
                     .font(.largeTitle)
                     .foregroundStyle(.primary)
                     .padding(.bottom, 24)
 
                 // 설명
-                Text("나가도 다시 들어올 수 있지만, 현재 상태가 초기화될 수 있습니다.")
+                Text(content)
                     .font(.title)
                     .foregroundStyle(.secondary)
                     .multilineTextAlignment(.center)
@@ -67,5 +71,25 @@ struct FinishSurgeryAlertView: View {
             .frame(width: 500)
             .glassBackgroundEffect()
         }
+    }
+}
+
+extension HippoAlertView {
+    func systemName(_ systemName: String) -> Self {
+        var view = self
+        view.systemName = systemName
+        return view
+    }
+
+    func title(_ title: String) -> Self {
+        var view = self
+        view.title = title
+        return view
+    }
+
+    func content(_ message: String) -> Self {
+        var view = self
+        view.content = message
+        return view
     }
 }

@@ -56,15 +56,14 @@ struct ImmersiveSurgeryView: View {
             }
             // 수술 나가기 Alert
             Attachment(id: AttachmentIDs.finishSurgeryAlert) {
-                FinishSurgeryAlertView(
-                    isPresented: $viewModel.isShowingFinishAlert,
-                    onConfirm: {
-                        Task {
-                            await dismissImmersiveSpace()
-                            openWindow(id: WindowIDs.home)
-                        }
+                HippoAlertView(
+                    isPresented: $viewModel.isShowingFinishAlert
+                ) {
+                    Task {
+                        await dismissImmersiveSpace()
+                        openWindow(id: WindowIDs.home)
                     }
-                )
+                }
             }
         }
         .task {

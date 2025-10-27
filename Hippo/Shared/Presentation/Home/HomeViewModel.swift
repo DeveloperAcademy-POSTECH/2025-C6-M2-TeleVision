@@ -40,6 +40,13 @@ public final class HomeViewModel {
     private let _state = PatientState()
     public var state: PatientState { _state } // 읽기 전용, 관찰 가능
 
+    // MARK: - UI State
+
+    public var patientNumber: String = ""
+    public var name: String = ""
+    public var birthDate: Date = .init()
+    public var selectedGender: Gender = .male
+
     // MARK: - Logger
 
     private let logger = Logger(subsystem: "com.television.hippo", category: "PatientViewModel")
