@@ -10,7 +10,6 @@ import SwiftUI
 import ARKit
 
 @MainActor
-@Observable
 final class ARSessionController {
     static let shared = ARSessionController()
     
