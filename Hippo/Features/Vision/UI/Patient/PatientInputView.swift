@@ -28,6 +28,7 @@ struct PatientInputView: View {
             Spacer()
         }
         .padding(.horizontal, 32)
+//        .frame(minWidth: 580, maxWidth: 1020, minHeight: 760, maxHeight: 1020)
         .frame(width: 512, height: 700)
         .glassBackgroundEffect(displayMode: .always)
         .ornament(attachmentAnchor: .scene(.bottom)) {
