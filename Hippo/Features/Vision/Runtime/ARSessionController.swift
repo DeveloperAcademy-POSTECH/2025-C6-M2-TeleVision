@@ -28,13 +28,20 @@ final class ARSessionController {
         if timer != nil { return }
         
         let session = ARKitSession()
-        let world = worldTracking ?? WorldTrackingProvider()
+        let world = WorldTrackingProvider()
         
         self.session = session
         self.worldTracking = world
         
         Task {
-            try? await session.run([world])
+            do {
+                try await session.run([world])
+            } catch { // provider 가 다른 세션에 소유된 경우 방지
+                let newWorld = WorldTrackingProvider()
+                self.worldTracking = newWorld
+                try? await session.run([newWorld])
+            }
+            
         }
         
         // 디바이스 위치 0.1초 간격으로 업데이트
@@ -60,6 +67,7 @@ final class ARSessionController {
                 session.stop()
             }
             self.session = nil
+            self.worldTracking = nil
         }
     }
     
