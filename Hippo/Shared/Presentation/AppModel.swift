@@ -21,6 +21,7 @@ class AppModel {
     // MARK: - State
 
     public var patients: Int = 0
+    public var operations: Int = 0
 
     // MARK: - Home Window Size
 

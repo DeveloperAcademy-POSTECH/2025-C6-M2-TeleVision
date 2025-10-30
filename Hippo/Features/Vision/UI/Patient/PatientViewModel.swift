@@ -24,6 +24,7 @@ public class PatientViewModel {
     // MARK: - State
 
     public var patient: PatientDisplayModel?
+    public var isPresentingOperationInput = false
 
     // MARK: - Action
 

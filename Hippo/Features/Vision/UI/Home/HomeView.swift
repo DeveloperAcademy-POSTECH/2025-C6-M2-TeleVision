@@ -9,7 +9,6 @@ import SwiftUI
 
 /// 환자 목록 메인 화면 - 컨테이너 역할
 struct HomeView: View {
-    @Environment(\.pushWindow) private var pushWindow
     @Environment(AppModel.self) private var appModel
 
     @State private var viewModel = HomeViewModel()
@@ -42,10 +41,18 @@ struct HomeView: View {
                 await viewModel.load()
             }
         }
+        .onChange(of: appModel.operations) {
+            Task {
+                await viewModel.load()
+            }
+        }
         .ornament(attachmentAnchor: .scene(.bottom)) {
             OrnamentButton {
-                pushWindow(id: WindowIDs.patientInput)
+                viewModel.isPresentingCreatePatientSheet = true
             }
+        }
+        .sheet(isPresented: $viewModel.isPresentingCreatePatientSheet) {
+            PatientInputView()
         }
     }
 }
