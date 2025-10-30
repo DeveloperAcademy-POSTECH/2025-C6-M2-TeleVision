@@ -27,13 +27,13 @@ final class ImmersiveSceneRuntime {
     // RealityView 의 content 관리
     func setupScene(in content: RealityViewContent, attachments: RealityViewAttachments) {
         let anchor1 = AnchorEntity(.head)
-        anchor1.position = [0, 0.45, -1.0]
+        anchor1.position = [0, 0.3, -1.0]
         if let topButton = attachments.entity(for: AttachmentIDs.topToggleButton) {
             anchor1.addChild(topButton)
         }
 
         let anchor2 = AnchorEntity(.head)
-        anchor2.position = [0, -0.45, -1.0] // 시야 아래쪽에 배치
+        anchor2.position = [0, -0.6, -1.0] // 시야 아래쪽에 배치
         if let bottomMenuBar = attachments.entity(for: AttachmentIDs.bottomMenuBar) {
             anchor2.addChild(bottomMenuBar)
         }

@@ -48,6 +48,36 @@ public struct PatientDisplayModel: Identifiable, Equatable, Sendable {
         self.updatedAtText = updatedAtText
     }
 
+    static let operation1 = OperationDisplayModel(
+        id: "sample-op-001",
+        title: "고관절 전치환술",
+        diagnosis: "퇴행성 관절염",
+        surgeon: "Dr. 홍길동",
+        date: Date(),
+        dateText: "2024.06.20",
+        details: "환자는 70대 남성으로, 좌측 고관절의 심한 퇴행성 변화로 인해 전치환술을 시행하였습니다. 수술은 성공적으로 마무리되었으며, 현재 재활 치료 중입니다.",
+        status: .planned,
+        statusText: "수술 대기",
+        statusColor: "HippoRed",
+        assets: [],
+        assetCount: 0,
+    )
+
+    static let operation2 = OperationDisplayModel(
+        id: "sample-op-002",
+        title: "간암 절제술",
+        diagnosis: "간세포암",
+        surgeon: "Dr. 이순신",
+        date: Date(),
+        dateText: "2024.05.15",
+        details: "환자는 70대 남성으로, 좌측 고관절의 심한 퇴행성 변화로 인해 전치환술을 시행하였습니다. 수술은 성공적으로 마무리되었으며, 현재 재활 치료 중입니다.",
+        status: .completed,
+        statusText: "수술 완료",
+        statusColor: "HippoBlack",
+        assets: [],
+        assetCount: 0,
+    )
+
     // SAMPLE
     public static let MockData = PatientDisplayModel(
         id: "sample-001",
@@ -58,8 +88,8 @@ public struct PatientDisplayModel: Identifiable, Equatable, Sendable {
         age: 45,
         ageText: "45세",
         birthDateText: "1979.03.15",
-        operations: [],
-        operationCount: 1,
+        operations: [operation1, operation2],
+        operationCount: 2,
         latestOperation: nil,
         updatedAt: Date(),
         updatedAtText: "방금 전"

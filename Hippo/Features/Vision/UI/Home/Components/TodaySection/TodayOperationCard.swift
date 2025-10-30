@@ -28,16 +28,10 @@ struct TodayOperationCard: View {
                     Spacer()
 
                     // 수술 상태 배지 (수술 대기 / 수술 완료)
-                    Text(operation.statusText)
-                        .font(.headline)
-                        .fontWeight(.bold)
-                        .foregroundStyle(.white)
-                        .padding(.horizontal, 16)
-                        .padding(.vertical, 8)
-                        .background(
-                            Capsule()
-                                .fill(Color(operation.statusColor))
-                        )
+                    OperationStatusBadge(
+                        status: operation.statusText,
+                        color: operation.statusColor
+                    )
                 }
 
                 Text(operation.title)
