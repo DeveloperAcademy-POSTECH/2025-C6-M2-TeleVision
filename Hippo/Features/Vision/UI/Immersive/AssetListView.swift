@@ -9,7 +9,7 @@ import SwiftUI
 
 struct AssetListView: View {
     @Binding var isPresented: Bool
-
+    var onCreateEntity: (String) -> Void
     
     // TODO: Operation Context 연결해야 함
     private let selectedEntityID = "Sample1"
@@ -29,7 +29,7 @@ struct AssetListView: View {
                 Spacer()
                 
                 GlowingCapsuleButton(buttonText: "생성하기", action: {
-
+                    onCreateEntity(selectedEntityID)
                 })
                 .padding(.bottom, 20)
             }
@@ -43,6 +43,9 @@ struct AssetListView: View {
 
 #Preview {
     AssetListView(
-        isPresented: .constant(true)
+        isPresented: .constant(true),
+        onCreateEntity: { entityID in
+            print("Creating entity: \(entityID)")
+        }
     )
 }

@@ -19,6 +19,9 @@ final class ImmersiveSceneRuntime {
     private var bottomAnchor: AnchorEntity?
     private var finishAlertAnchor: AnchorEntity?
     private var assetListAnchor: AnchorEntity?
+    
+    //MARK: - 3D model 들이 추가될 루트 엔티티
+    private var sceneRoot: Entity?
 
     // MARK: - Setup
     
@@ -60,12 +63,55 @@ final class ImmersiveSceneRuntime {
         bottomAnchor = anchor2
         finishAlertAnchor = anchor3
         assetListAnchor = anchor4
-
+        
+        // 3D 모델들의 월드 앵커의 부모
+        let rootEntity = Entity()
+        rootEntity.name = "SceneRoot"
+        content.add(rootEntity)
+        self.sceneRoot = rootEntity
+        
+        // Attachment View 앵커 비활성화
+        self.assetListAnchor?.isEnabled = false
+        self.finishAlertAnchor?.isEnabled = false
+        
+        
         // 마지막 조작 Entity 정보 저장
         eventSubscription = content.subscribe(to: ManipulationEvents.WillBegin.self)  { event in
             self.selectedEntity? = event.entity
         }
+
     }
+    
+    func setFinishAlertVisibility(isVisible: Bool) {
+        self.finishAlertAnchor?.isEnabled = isVisible
+        logger.debug("FinishAlert Anchor isEnabled' set to: \(isVisible)")
+
+    }
+    
+    func setAssetListVisibility(isVisible: Bool) {
+        self.assetListAnchor?.isEnabled = isVisible
+        logger.debug("Asset List Anchor 'isEnabled' set to: \(isVisible)")
+
+    }
+    
+    func placeEntity(entityID: String, service: EntityPlacementService) async {
+            guard let sceneRoot = self.sceneRoot else {
+                logger.error("Scene root is not yet set up.")
+                return
+            }
+            
+            let anchor = service.placeAnchorInFront()
+            sceneRoot.addChild(anchor)
+
+            do {
+                try await service.attach(entityID: entityID, to: anchor)
+                logger.debug("Entity '\(entityID)' placed successfully.")
+            } catch {
+                logger.error("Failed to attach entity '\(entityID)': \(error)")
+                // 실패 시 생성했던 앵커 정리
+                anchor.removeFromParent()
+            }
+        }
 
     func start() {
         logger.debug("🐛 ImmersiveSceneRuntime started")
@@ -77,6 +123,7 @@ final class ImmersiveSceneRuntime {
         topAnchor = nil
         bottomAnchor = nil
         finishAlertAnchor = nil
+        assetListAnchor = nil
         
         // 제스쳐 이벤트 구독 정리
         eventSubscription?.cancel()

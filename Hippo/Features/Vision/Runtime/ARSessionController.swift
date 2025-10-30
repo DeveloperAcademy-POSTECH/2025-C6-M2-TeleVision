@@ -54,6 +54,8 @@ final class ARSessionController {
                 }
             }
         }
+        
+        print("Start AR Session Successfully")
     }
     
     func stopARSession() {
@@ -69,7 +71,7 @@ final class ARSessionController {
             self.session = nil
             self.worldTracking = nil
         }
+        
+        print("Stop AR Session Successfully")
     }
-    
-    
 }
