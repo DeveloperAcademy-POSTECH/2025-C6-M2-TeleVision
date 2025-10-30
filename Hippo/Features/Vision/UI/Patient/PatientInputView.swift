@@ -13,31 +13,32 @@ struct PatientInputView: View {
     @State private var viewModel = HomeViewModel()
 
     var body: some View {
-        VStack(spacing: 0) {
-            PatientInputHeader(onDismiss: { dismiss() })
+        ZStack {
+            VStack(spacing: 0) {
+                PatientInputHeader(onDismiss: { dismiss() })
 
-            Spacer().frame(height: 56)
+                Spacer().frame(height: 56)
 
-            PatientInputForm(
-                patientNumber: $viewModel.patientNumber,
-                name: $viewModel.name,
-                birthDate: $viewModel.birthDate,
-                selectedGender: $viewModel.selectedGender
-            )
+                PatientInputForm(
+                    patientNumber: $viewModel.patientNumber,
+                    name: $viewModel.name,
+                    birthDate: $viewModel.birthDate,
+                    selectedGender: $viewModel.selectedGender
+                )
 
-            Spacer()
-        }
-        .padding(.horizontal, 32)
-//        .frame(minWidth: 580, maxWidth: 1020, minHeight: 760, maxHeight: 1020)
-        .frame(width: 512, height: 700)
-        .glassBackgroundEffect(displayMode: .always)
-        .ornament(attachmentAnchor: .scene(.bottom)) {
-            OrnamentButton {
-                handleSubmit()
+                Spacer()
+                
+                OrnamentButton {
+                    handleSubmit()
+                }
+                .systemName("square.and.arrow.down")
+                .content("추가하기")
+                .padding(.bottom, 28)
             }
-            .systemName("square.and.arrow.down")
-            .content("추가하기")
         }
+        .padding(.horizontal, 28)
+        .frame(width: 460, height: 680)
+        .glassBackgroundEffect(displayMode: .always)
     }
 
     private func handleSubmit() {

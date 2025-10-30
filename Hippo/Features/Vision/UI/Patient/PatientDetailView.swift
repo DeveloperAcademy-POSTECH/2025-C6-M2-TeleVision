@@ -9,6 +9,8 @@ import SwiftUI
 
 struct PatientDetailView: View {
     @Environment(\.dismiss) private var dismiss
+    @Environment(\.openWindow) private var openWindow
+    @Environment(AppModel.self) private var appModel
     @State private var viewModel = PatientViewModel()
 
     let patientId: String
@@ -37,15 +39,26 @@ struct PatientDetailView: View {
             Spacer()
         }
         .padding(.horizontal, 32)
-        .frame(minWidth: 512, maxWidth: 512, minHeight: 620, maxHeight: 1020)
+        .frame(minWidth: 580, maxWidth: 580, minHeight: 800, maxHeight: 1080)
         .glassBackgroundEffect(displayMode: .always)
         .task {
             await viewModel.load(patientID: patientId)
+            appModel.operations = viewModel.patient?.operationCount ?? 0
+        }
+        .onChange(of: appModel.operations) {
+            Task {
+                await viewModel.load(patientID: patientId)
+            }
         }
         .ornament(attachmentAnchor: .scene(.bottom)) {
-            OrnamentButton {}
-                .systemName("long.text.page.and.pencil")
-                .content("수술 추가")
+            OrnamentButton {
+                viewModel.isPresentingOperationInput = true
+            }
+            .systemName("long.text.page.and.pencil")
+            .content("수술 추가")
+        }
+        .sheet(isPresented: $viewModel.isPresentingOperationInput) {
+            OperationInputView(patientID: patientId)
         }
     }
 }

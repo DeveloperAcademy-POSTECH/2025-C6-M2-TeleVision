@@ -33,13 +33,18 @@ struct TodayOperationCard: View {
                         color: operation.statusColor
                     )
                 }
-
-                Text(operation.title)
-                    .font(.title)
-                    .fontWeight(.semibold)
-                    .foregroundStyle(.tertiary)
-                    .lineLimit(1)
-                    .padding(.top, 4)
+                
+                HStack {
+                    Text(operation.title)
+                        .font(.title)
+                        .fontWeight(.semibold)
+                        .foregroundStyle(.tertiary)
+                        .lineLimit(1)
+                        .padding(.top, 4)
+                    
+                    
+                    Spacer()
+                }
             }
             .padding(.horizontal, 24)
             .padding(.top, 24)

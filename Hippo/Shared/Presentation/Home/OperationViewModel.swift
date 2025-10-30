@@ -19,6 +19,9 @@ public final class OperationViewModel {
     @ObservationIgnored
     @Dependency(\.getPatient) private var getPatient
 
+    @ObservationIgnored
+    @Dependency(\.createOperation) private var createOperation
+
     // MARK: - Logger
 
     private let logger = Logger(subsystem: "com.television.hippo", category: "PatientViewModel")
@@ -28,8 +31,16 @@ public final class OperationViewModel {
     private let _state = OperationState()
     public var state: OperationState { _state } // 읽기 전용, 관찰 가능
 
-    // MARK: - UI State (Accessible)w
+    // MARK: - UI State (Accessible)
 
+    // 수술 전
+    public var operationTitle: String = ""
+    public var operationDiagnosis: String = ""
+    public var operationSurgeon: String = ""
+    public var operationDate: Date = .init()
+    public var operationDetail: String = ""
+
+    // 수술 중
     public var isMenuActive: Bool = true
     public var isEndoscopicActive: Bool = false
     public var isShowingFinishAlert: Bool = false
@@ -66,6 +77,29 @@ public final class OperationViewModel {
             }
 
             _state.operation = operation
+        }
+    }
+
+    public func addOperation(toPatientID patientID: String) async {
+        do {
+            let command = try CreateOperationCommand(
+                title: operationTitle,
+                diagnosis: operationDiagnosis,
+                surgeon: operationSurgeon,
+                date: operationDate,
+                details: operationDetail,
+                status: .planned
+            )
+
+            try await createOperation.run(
+                CreateOperation.Input(patientID: patientID, command: command)
+            )
+        } catch let validationError as ValidationError {
+            logger.warning("Validation failed: \(validationError.localizedDescription)")
+            _state.alert = validationError.localizedDescription
+        } catch {
+            logger.error("Unexpected error creating operation command: \(error.localizedDescription)")
+            _state.alert = "Failed to add operation: \(error.localizedDescription)"
         }
     }
 
