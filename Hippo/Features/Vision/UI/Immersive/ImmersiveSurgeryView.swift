@@ -73,7 +73,17 @@ struct ImmersiveSurgeryView: View {
             // 3D 애셋 생성 (AssetListView)
             Attachment(id: AttachmentIDs.assetListView) {
                 AssetListView(
-                    isPresented: $viewModel.isShowingAssetListView
+                    isPresented: $viewModel.isShowingAssetListView,
+                    onCreateEntity: { entityID in
+                        Task {
+                            let placementService = EntityPlacementService()
+                            await runtime.placeEntity(
+                                entityID: entityID,
+                                service: placementService
+                            )
+                            viewModel.isShowingAssetListView = false
+                        }
+                    }
                 )
             }
         }
@@ -90,6 +100,12 @@ struct ImmersiveSurgeryView: View {
             } else {
                 ARSessionController.shared.stopARSession()
             }
+        }
+        .onChange(of: viewModel.isShowingAssetListView) { _, isVisible in
+            runtime.setAssetListVisibility(isVisible: isVisible)
+        }
+        .onChange(of: viewModel.isShowingFinishAlert) { _, isVisible in
+            runtime.setFinishAlertVisibility(isVisible: isVisible)
         }
         .onAppear { runtime.start() }
         .onDisappear { runtime.stop() }
