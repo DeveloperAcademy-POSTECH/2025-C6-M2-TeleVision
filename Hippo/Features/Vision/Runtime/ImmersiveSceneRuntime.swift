@@ -69,8 +69,6 @@ final class ImmersiveSceneRuntime {
 
     func start() {
         logger.debug("🐛 ImmersiveSceneRuntime started")
-
-        // TODO: 추후 Entity 조작모드가 on 될 때만 작동하도록 수정할 것
         ARSessionController.shared.runARSession()
     }
 
@@ -79,9 +77,6 @@ final class ImmersiveSceneRuntime {
         topAnchor = nil
         bottomAnchor = nil
         finishAlertAnchor = nil
-
-         // TODO: 추후 Entity 조작모드 off 될 때만 작동하도록 수정할 것
-        ARSessionController.shared.stopARSession()
         
         // 제스쳐 이벤트 구독 정리
         eventSubscription?.cancel()
