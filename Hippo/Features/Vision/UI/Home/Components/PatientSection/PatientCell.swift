@@ -9,6 +9,7 @@ import SwiftUI
 
 struct PatientCell: View {
     let patient: PatientDisplayModel
+    let action: () -> Void
 
     var body: some View {
         VStack(alignment: .leading, spacing: 10) {
@@ -56,9 +57,10 @@ struct PatientCell: View {
                 .fill(.thinMaterial)
         )
         .hoverEffect(.lift)
+        .onTapGesture { action() }
     }
 }
 
 #Preview {
-    PatientCell(patient: PatientDisplayModel.MockData)
+    PatientCell(patient: PatientDisplayModel.MockData) {}
 }
