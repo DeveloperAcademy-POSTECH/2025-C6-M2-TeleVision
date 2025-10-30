@@ -84,6 +84,13 @@ struct ImmersiveSurgeryView: View {
                 dismissWindow(id: WindowIDs.home)
             }
         }
+        .onChange(of: viewModel.isMenuActive) {
+            if viewModel.isMenuActive {
+                ARSessionController.shared.runARSession()
+            } else {
+                ARSessionController.shared.stopARSession()
+            }
+        }
         .onAppear { runtime.start() }
         .onDisappear { runtime.stop() }
     }
