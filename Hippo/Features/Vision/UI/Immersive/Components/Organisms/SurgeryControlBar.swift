@@ -9,6 +9,8 @@ import SwiftUI
 
 struct SurgeryControlBar: View {
     @Binding var isEndoscopicActive: Bool
+    @Binding var isAssetListOpen: Bool
+    
     let onOpenEntityPanel: () -> Void
     let onRecord: () -> Void
     let onFinishSurgery: () -> Void
@@ -26,12 +28,22 @@ struct SurgeryControlBar: View {
                     .padding(40)
 
                 Spacer()
-
-                GlowingCircleButton(
-                    imageName: "AddEntityIcon",
-                    action: onOpenEntityPanel
-                )
-                .padding(24)
+                if isAssetListOpen {
+                    GlowingCircleButton(
+                        imageName: "CloseIcon",
+                        action: {
+                            isAssetListOpen = false
+                        }
+                    )
+                    .padding(24)
+                } else {
+                    GlowingCircleButton(
+                        imageName: "AddEntityIcon",
+                        action: onOpenEntityPanel
+                    )
+                    .padding(24)
+                }
+                
 
                 Spacer()
 
@@ -49,9 +61,11 @@ struct SurgeryControlBar: View {
     }
 }
 
+
 #Preview {
     SurgeryControlBar(
         isEndoscopicActive: .constant(false),
+        isAssetListOpen: .constant(false),
         onOpenEntityPanel: {},
         onRecord: {},
         onFinishSurgery: {}

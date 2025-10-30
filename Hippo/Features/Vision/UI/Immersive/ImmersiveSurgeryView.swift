@@ -11,27 +11,30 @@ import SwiftUI
 struct ImmersiveSurgeryView: View {
     @Environment(\.dismissImmersiveSpace) private var dismissImmersiveSpace
     @Environment(\.openWindow) private var openWindow
-
+    
+    // 테스트 용
+    @Environment(\.dismissWindow) private var dismissWindow
+    
     let patientID: String
     let operationID: String
-
+    
     @State private var runtime = ImmersiveSceneRuntime()
     @State private var viewModel = OperationViewModel()
-
+    
     private var patient: PatientDisplayModel {
         guard let patient = viewModel.state.patient else {
             return PatientDisplayModel.MockData
         }
         return patient
     }
-
+    
     private var operation: OperationDisplayModel {
         guard let operation = viewModel.state.operation else {
             return OperationDisplayModel.MockData
         }
         return operation
     }
-
+    
     var body: some View {
         RealityView { content, attachments in
             runtime.setupScene(in: content, attachments: attachments)
@@ -48,8 +51,10 @@ struct ImmersiveSurgeryView: View {
                 SurgeryBottomMenu(
                     patient: patient,
                     isEndoscopicActive: $viewModel.isEndoscopicActive,
+                    isAssetListOpen:
+                        $viewModel.isShowingAssetListView,
                     isVisible: viewModel.isMenuActive,
-                    onOpenEntityPanel: viewModel.openEntityPanel,
+                    onOpenEntityPanel: { viewModel.isShowingAssetListView = true },
                     onRecord: viewModel.recordPassThroughVideo,
                     onFinishSurgery: { viewModel.isShowingFinishAlert = true }
                 )
@@ -65,9 +70,19 @@ struct ImmersiveSurgeryView: View {
                     }
                 }
             }
+            // 3D 애셋 생성 (AssetListView)
+            Attachment(id: AttachmentIDs.assetListView) {
+                AssetListView(
+                    isPresented: $viewModel.isShowingAssetListView
+                )
+            }
         }
         .task {
             await viewModel.load(patientID: patientID, operationID: operationID)
+            // 테스트 용
+            Task {
+                dismissWindow(id: WindowIDs.home)
+            }
         }
         .onAppear { runtime.start() }
         .onDisappear { runtime.stop() }
