@@ -10,7 +10,6 @@ import RealityKit
 import ARKit
 
 @MainActor
-@Observable
 class HeadPose {
     
     // Singleton
