@@ -18,6 +18,7 @@ final class ImmersiveSceneRuntime {
     private var topAnchor: AnchorEntity?
     private var bottomAnchor: AnchorEntity?
     private var finishAlertAnchor: AnchorEntity?
+    private var assetListAnchor: AnchorEntity?
 
     // MARK: - Setup
     
@@ -33,7 +34,7 @@ final class ImmersiveSceneRuntime {
         }
 
         let anchor2 = AnchorEntity(.head)
-        anchor2.position = [0, -0.6, -1.0] // 시야 아래쪽에 배치
+        anchor2.position = [0, -0.5, -1.0] // 시야 아래쪽에 배치
         if let bottomMenuBar = attachments.entity(for: AttachmentIDs.bottomMenuBar) {
             anchor2.addChild(bottomMenuBar)
         }
@@ -43,14 +44,22 @@ final class ImmersiveSceneRuntime {
         if let finishAlert = attachments.entity(for: AttachmentIDs.finishSurgeryAlert) {
             anchor3.addChild(finishAlert)
         }
-
+        
+        let anchor4 = AnchorEntity(.head)
+        anchor4.position = [0, -0.15, -1.0]
+        if let assetList = attachments.entity(for: AttachmentIDs.assetListView) {
+            anchor4.addChild(assetList)
+        }
+        
         content.add(anchor1)
         content.add(anchor2)
         content.add(anchor3)
+        content.add(anchor4)
 
         topAnchor = anchor1
         bottomAnchor = anchor2
         finishAlertAnchor = anchor3
+        assetListAnchor = anchor4
 
         // 마지막 조작 Entity 정보 저장
         eventSubscription = content.subscribe(to: ManipulationEvents.WillBegin.self)  { event in
