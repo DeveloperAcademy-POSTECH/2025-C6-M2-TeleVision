@@ -39,6 +39,9 @@ public final class OperationViewModel {
     public var operationSurgeon: String = ""
     public var operationDate: Date = .init()
     public var operationDetail: String = ""
+    public var operation3DModelURLs: [URL] = []
+
+    public var isShowingFilePicker: Bool = false
 
     // 수술 중
     public var isMenuActive: Bool = true
