@@ -11,6 +11,9 @@ import SwiftUI
 struct HomeView: View {
     @Environment(\.pushWindow) private var pushWindow
     @Environment(AppModel.self) private var appModel
+    
+    // 테스트용
+    @Environment(\.openImmersiveSpace) private var openImmersiveSpace
 
     @State private var viewModel = HomeViewModel()
 
@@ -43,8 +46,19 @@ struct HomeView: View {
             }
         }
         .ornament(attachmentAnchor: .scene(.bottom)) {
-            OrnamentButton {
-                pushWindow(id: WindowIDs.patientInput)
+            HStack {
+                OrnamentButton {
+                    pushWindow(id: WindowIDs.patientInput)
+                }
+                
+                // 테스트용
+                OrnamentButton(action: {
+                    let context = OperationContext(
+                        patientID: PatientDisplayModel.MockData.id,
+                        operationID: OperationDisplayModel.MockData.id
+                    )
+                    await openImmersiveSpace(id: ImmersiveIDs.surgery, value: context)
+                }, content: "수술 시작")
             }
         }
     }

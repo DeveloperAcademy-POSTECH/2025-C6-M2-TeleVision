@@ -7,6 +7,7 @@
 
 import simd
 import RealityKit
+import HippoAssets
 
 public protocol AnchorServicing {
     func attach(entityID: String, to anchor: AnchorEntity) async throws
@@ -23,36 +24,40 @@ struct EntityPlacementService: AnchorServicing {
         fwd /= sqrt(len2) // 정규화
         
         let up = SIMD3<Float>(0, 1, 0)
-        let target = pos + fwd * 1.0 + up * (-0.5)
+        let target = pos + fwd * 1.0 + up * (0.03)
         
         return AnchorEntity(world: target)
     }
     
+    @MainActor
     func attach(entityID: String, to anchor: AnchorEntity) async throws {
-        Task { @MainActor in
-            if let entity = try? await Entity(named: entityID) {
-                
-                // 조명 제거
-                if let lightEntity = entity.findEntity(named: "Light") {
-                    lightEntity.removeFromParent()
-                }
-                
-                // Gesture
-                let bounds = entity.visualBounds(relativeTo: nil)
-                let size   = bounds.extents
-                let box = ShapeResource.generateBox(size: size)
-                entity.components.set(CollisionComponent(shapes: [box]))
-                var manipulationComponent = ManipulationComponent()
-                manipulationComponent.releaseBehavior = .stay
-                
-                entity.components.set(
-                    [manipulationComponent, InputTargetComponent()]
-                )
-                
-                // Anchor 에 부착
-                anchor.addChild(entity)
+        
+        if let entity = try? await Entity(named: entityID, in: hippoAssetsBundle) {
+            
+            // 조명 제거
+            if let lightEntity = entity.findEntity(named: "Light") {
+                lightEntity.removeFromParent()
             }
+            
+            anchor.addChild(entity)
+            
+            entity.scale = SIMD3<Float>(repeating: 0.003)
+            
+            // Gesture
+            let bounds = entity.visualBounds(relativeTo: entity)
+            let size   = bounds.extents
+            let box = ShapeResource.generateBox(size: size)
+            entity.components.set(CollisionComponent(shapes: [box]))
+            var manipulationComponent = ManipulationComponent()
+            manipulationComponent.releaseBehavior = .stay
+            
+            entity.components.set(
+                [manipulationComponent, InputTargetComponent()]
+            )
+            
+            
         }
+        
     }
     
     func detach(entity: Entity) async {
