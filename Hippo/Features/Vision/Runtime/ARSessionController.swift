@@ -8,10 +8,12 @@
 import Foundation
 import SwiftUI
 import ARKit
+import os.log
 
 @MainActor
 final class ARSessionController {
     static let shared = ARSessionController()
+    private let logger = Logger(subsystem: "com.television.hippo", category: "ARSessionController")
     
     // 외부 접근 방지
     private init() { }
@@ -54,8 +56,7 @@ final class ARSessionController {
                 }
             }
         }
-        
-        print("Start AR Session Successfully")
+        logger.debug("Start AR Session Successfully")
     }
     
     func stopARSession() {
@@ -72,6 +73,6 @@ final class ARSessionController {
             self.worldTracking = nil
         }
         
-        print("Stop AR Session Successfully")
+        logger.debug("Start AR Session Successfully")
     }
 }
