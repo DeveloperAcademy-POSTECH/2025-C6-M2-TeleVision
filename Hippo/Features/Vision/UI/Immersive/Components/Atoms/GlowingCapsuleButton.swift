@@ -29,7 +29,7 @@ struct GlowingCapsuleButton: View {
                 }
             }
             .buttonStyle(.borderless)
-            .contentShape(.circle)
+            .contentShape(.capsule)
             .frame(width: 160, height: 60)
             .glassBackgroundEffect(displayMode: .always)
         }
