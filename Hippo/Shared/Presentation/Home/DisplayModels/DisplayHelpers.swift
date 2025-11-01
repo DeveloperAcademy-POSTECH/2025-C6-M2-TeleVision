@@ -44,14 +44,14 @@ public extension OperationStatus {
     }
 }
 
-// MARK: - OperationAssetExtension Display
+// MARK: - OperationAssetExtension Display (현재 사용하지 않음)
 
-public extension OperationAssetExtension {
-    var iconName: String {
-        switch self {
-        case .usdz: return "cube.fill"
-        case .usdc: return "cube.fill"
-        case .others: return "doc.fill"
-        }
-    }
-}
+// public extension OperationAssetExtension {
+//    var iconName: String {
+//        switch self {
+//        case .usdz: return "cube.fill"
+//        case .usdc: return "cube.fill"
+//        case .others: return "doc.fill"
+//        }
+//    }
+// }

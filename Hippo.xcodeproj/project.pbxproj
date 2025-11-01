@@ -108,6 +108,9 @@
 		14CC756A2EA6A98700399562 /* OperationDateBadge.swift in Sources */ = {isa = PBXBuildFile; fileRef = 14CC75672EA6A98700399562 /* OperationDateBadge.swift */; };
 		14CC756C2EA6A99300399562 /* PatientGridView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 14CC756B2EA6A99300399562 /* PatientGridView.swift */; };
 		14CC75722EA6AD5800399562 /* PatientSectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 14CC756F2EA6AD5800399562 /* PatientSectionView.swift */; };
+		14DE512C2EB5F71F0027D9A0 /* AddAssetsToOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 14DE512B2EB5F7180027D9A0 /* AddAssetsToOperation.swift */; };
+		14DE512D2EB5F71F0027D9A0 /* AddAssetsToOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 14DE512B2EB5F7180027D9A0 /* AddAssetsToOperation.swift */; };
+		14DE512E2EB5F71F0027D9A0 /* AddAssetsToOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 14DE512B2EB5F7180027D9A0 /* AddAssetsToOperation.swift */; };
 		14F6B0342EAAC73F003F28EB /* ImmersiveSurgeryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 14F6B0332EAAC73F003F28EB /* ImmersiveSurgeryView.swift */; };
 		272BD1B22EADE1BF00C83F81 /* ARSessionController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 272BD1B12EADE1BA00C83F81 /* ARSessionController.swift */; };
 		272BD1B32EADE1BF00C83F81 /* ARSessionController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 272BD1B12EADE1BA00C83F81 /* ARSessionController.swift */; };
@@ -332,6 +335,7 @@
 		14CC75672EA6A98700399562 /* OperationDateBadge.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OperationDateBadge.swift; sourceTree = "<group>"; };
 		14CC756B2EA6A99300399562 /* PatientGridView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PatientGridView.swift; sourceTree = "<group>"; };
 		14CC756F2EA6AD5800399562 /* PatientSectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PatientSectionView.swift; sourceTree = "<group>"; };
+		14DE512B2EB5F7180027D9A0 /* AddAssetsToOperation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddAssetsToOperation.swift; sourceTree = "<group>"; };
 		14F6B0332EAAC73F003F28EB /* ImmersiveSurgeryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImmersiveSurgeryView.swift; sourceTree = "<group>"; };
 		272BD1B12EADE1BA00C83F81 /* ARSessionController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ARSessionController.swift; sourceTree = "<group>"; };
 		272BD1B42EADE1DE00C83F81 /* HeadPose.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HeadPose.swift; sourceTree = "<group>"; };
@@ -810,6 +814,7 @@
 		C04678002EA00B1F00D160DA /* UseCases */ = {
 			isa = PBXGroup;
 			children = (
+				14DE512B2EB5F7180027D9A0 /* AddAssetsToOperation.swift */,
 				C0F97B292EA439080063E159 /* UpdatePatient.swift */,
 				C0F97B0B2EA4348D0063E159 /* CreatePatient.swift */,
 				C0F97AE12EA4304D0063E159 /* CreateOperation.swift */,
@@ -1315,6 +1320,7 @@
 				1446FBED2EAFA477000BCF61 /* FormSection.swift in Sources */,
 				C0F97A8E2EA3FDF50063E159 /* DeleteOperation.swift in Sources */,
 				C0F97A8F2EA3FDF50063E159 /* RemoveAssetFromOperation.swift in Sources */,
+				14DE512D2EB5F71F0027D9A0 /* AddAssetsToOperation.swift in Sources */,
 				1446FBE82EAF9E3B000BCF61 /* PatientDetailView.swift in Sources */,
 				C0F97A902EA3FDF50063E159 /* UpsertOperation.swift in Sources */,
 				C0F97A912EA3FDF50063E159 /* AttachAssetToOperation.swift in Sources */,
@@ -1354,6 +1360,7 @@
 				144254352EAA232300583CC3 /* OperationViewModel.swift in Sources */,
 				C046780B2EA00B1F00D160DA /* GetPatient.swift in Sources */,
 				1446FBBB2EAE770A000BCF61 /* SurgeryControlBar.swift in Sources */,
+				14DE512C2EB5F71F0027D9A0 /* AddAssetsToOperation.swift in Sources */,
 				14A17F982EB34F46009D16CF /* OperationInputHeader.swift in Sources */,
 				C0F97ABE2EA41D4B0063E159 /* SDOperation.swift in Sources */,
 				14C8FF6F2EABA4250089101B /* AttachmentIDs.swift in Sources */,
@@ -1454,6 +1461,7 @@
 				1494DE9A2EA73359000CD284 /* SectionTitle.swift in Sources */,
 				C04678332EA00B3A00D160DA /* PatientRemoteDataSource.swift in Sources */,
 				C04678472EA00C2700D160DA /* PatientView.swift in Sources */,
+				14DE512E2EB5F71F0027D9A0 /* AddAssetsToOperation.swift in Sources */,
 				C0F97A7D2EA3FD370063E159 /* PatientDTO.swift in Sources */,
 				C046781C2EA00B1F00D160DA /* DeletePatient.swift in Sources */,
 				C0F97B042EA430880063E159 /* Gender.swift in Sources */,

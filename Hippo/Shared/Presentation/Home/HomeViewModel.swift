@@ -232,14 +232,13 @@ public final class HomeViewModel {
         toOperationID operationID: String,
         inPatientID patientID: String,
         name: String,
-        fileExtension: OperationAssetExtension,
         fileURL: URL
     ) async {
         do {
             let command = try AttachAssetCommand(
                 name: name,
-                fileExtension: fileExtension,
-                fileURL: fileURL
+                fileURL: fileURL,
+                createdAt: Date()
             )
 
             await executeWithErrorHandling(
