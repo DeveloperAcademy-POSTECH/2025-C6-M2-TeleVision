@@ -20,6 +20,9 @@ public final class OperationViewModel {
     @Dependency(\.getPatient) private var getPatient
 
     @ObservationIgnored
+    @Dependency(\.addAssetsToOperation) private var addAssetsToOperation
+
+    @ObservationIgnored
     @Dependency(\.createOperation) private var createOperation
 
     // MARK: - Logger
@@ -39,7 +42,7 @@ public final class OperationViewModel {
     public var operationSurgeon: String = ""
     public var operationDate: Date = .init()
     public var operationDetail: String = ""
-    public var operation3DModelURLs: [URL] = []
+    public var operation3DFileURLs: [URL] = []
 
     public var isShowingFilePicker: Bool = false
 
@@ -85,6 +88,7 @@ public final class OperationViewModel {
 
     public func addOperation(toPatientID patientID: String) async {
         do {
+            // 1. Operation 생성
             let command = try CreateOperationCommand(
                 title: operationTitle,
                 diagnosis: operationDiagnosis,
@@ -94,14 +98,24 @@ public final class OperationViewModel {
                 status: .planned
             )
 
-            try await createOperation.run(
+            let operation = try await createOperation.run(
                 CreateOperation.Input(patientID: patientID, command: command)
             )
+
+            // 2. OperationAsset 추가 (파일이 있는 경우)
+            if !operation3DFileURLs.isEmpty {
+                try await addAssetsToOperation.run(
+                    AddAssetsToOperation.Input(
+                        patientID: patientID,
+                        operationID: operation.id,
+                        fileURLs: operation3DFileURLs
+                    )
+                )
+            }
+
         } catch let validationError as ValidationError {
-            logger.warning("Validation failed: \(validationError.localizedDescription)")
             _state.alert = validationError.localizedDescription
         } catch {
-            logger.error("Unexpected error creating operation command: \(error.localizedDescription)")
             _state.alert = "Failed to add operation: \(error.localizedDescription)"
         }
     }

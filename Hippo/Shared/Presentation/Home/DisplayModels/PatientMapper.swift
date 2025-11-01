@@ -51,9 +51,8 @@ public extension OperationAsset {
         OperationAssetDisplayModel(
             id: id,
             name: name,
-            fileExtension: fileExtension.rawValue,
             fileURL: fileURL,
-            iconName: fileExtension.iconName
+            createdAt: createdAt
         )
     }
 }
