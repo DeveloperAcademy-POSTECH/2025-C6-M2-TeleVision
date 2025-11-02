@@ -9,12 +9,8 @@ import SwiftUI
 
 struct TodayOperationCard: View {
     let patient: PatientDisplayModel
+    let operation: OperationDisplayModel
     let onTap: () -> Void
-
-    private var operation: OperationDisplayModel {
-        guard let op = patient.latestOperation else { return OperationDisplayModel.MockData }
-        return op
-    }
 
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
@@ -28,18 +24,19 @@ struct TodayOperationCard: View {
                     Spacer()
 
                     // 수술 상태 배지 (수술 대기 / 수술 완료)
-                    OperationStatusBadge(
-                        status: operation.statusText,
-                        color: operation.statusColor
-                    )
+                    OperationStatusBadge(status: operation.status)
                 }
 
-                Text(operation.title)
-                    .font(.title)
-                    .fontWeight(.semibold)
-                    .foregroundStyle(.tertiary)
-                    .lineLimit(1)
-                    .padding(.top, 4)
+                HStack {
+                    Text(operation.title)
+                        .font(.title)
+                        .fontWeight(.semibold)
+                        .foregroundStyle(.tertiary)
+                        .lineLimit(1)
+                        .padding(.top, 4)
+
+                    Spacer()
+                }
             }
             .padding(.horizontal, 24)
             .padding(.top, 24)
@@ -128,5 +125,6 @@ struct TodayOperationCard: View {
 }
 
 #Preview {
-    TodayOperationCard(patient: PatientDisplayModel.MockData) {}
+    TodayOperationCard(patient: PatientDisplayModel.MockData,
+                       operation: OperationDisplayModel.MockData) {}
 }

@@ -12,8 +12,6 @@ public struct OperationDisplayModel: Identifiable, Equatable, Sendable {
     public let dateText: String
     public let details: String
     public let status: OperationStatus
-    public let statusText: String
-    public let statusColor: String
     public let assets: [OperationAssetDisplayModel]
     public let assetCount: Int
 
@@ -26,8 +24,6 @@ public struct OperationDisplayModel: Identifiable, Equatable, Sendable {
         dateText: String,
         details: String,
         status: OperationStatus,
-        statusText: String,
-        statusColor: String,
         assets: [OperationAssetDisplayModel],
         assetCount: Int
     ) {
@@ -39,8 +35,6 @@ public struct OperationDisplayModel: Identifiable, Equatable, Sendable {
         self.dateText = dateText
         self.details = details
         self.status = status
-        self.statusText = statusText
-        self.statusColor = statusColor
         self.assets = assets
         self.assetCount = assetCount
     }
@@ -55,8 +49,6 @@ public struct OperationDisplayModel: Identifiable, Equatable, Sendable {
         dateText: "2024.06.15",
         details: "Laparoscopic appendectomy performed successfully without complications.",
         status: .completed,
-        statusText: "Completed",
-        statusColor: "Green",
         assets: [],
         assetCount: 0
     )

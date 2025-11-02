@@ -19,6 +19,12 @@ public final class OperationViewModel {
     @ObservationIgnored
     @Dependency(\.getPatient) private var getPatient
 
+    @ObservationIgnored
+    @Dependency(\.addAssetsToOperation) private var addAssetsToOperation
+
+    @ObservationIgnored
+    @Dependency(\.createOperation) private var createOperation
+
     // MARK: - Logger
 
     private let logger = Logger(subsystem: "com.television.hippo", category: "PatientViewModel")
@@ -28,8 +34,19 @@ public final class OperationViewModel {
     private let _state = OperationState()
     public var state: OperationState { _state } // 읽기 전용, 관찰 가능
 
-    // MARK: - UI State (Accessible)w
+    // MARK: - UI State (Accessible)
 
+    // 수술 전
+    public var operationTitle: String = ""
+    public var operationDiagnosis: String = ""
+    public var operationSurgeon: String = ""
+    public var operationDate: Date = .init()
+    public var operationDetail: String = ""
+    public var operation3DFileURLs: [URL] = []
+
+    public var isShowingFilePicker: Bool = false
+
+    // 수술 중
     public var isMenuActive: Bool = true
     public var isEndoscopicActive: Bool = false
     public var isShowingFinishAlert: Bool = false
@@ -68,6 +85,45 @@ public final class OperationViewModel {
             }
 
             _state.operation = operation
+        }
+    }
+
+    public func addOperation(toPatientID patientID: String) async {
+        do {
+            // 1. Operation 생성
+            let command = try CreateOperationCommand(
+                title: operationTitle,
+                diagnosis: operationDiagnosis,
+                surgeon: operationSurgeon,
+                date: operationDate,
+                details: operationDetail,
+                status: .planned
+            )
+
+            let operation = try await createOperation.run(
+                CreateOperation.Input(patientID: patientID, command: command)
+            )
+
+            // 2. OperationAsset 추가 (파일이 있는 경우)
+            if !operation3DFileURLs.isEmpty {
+                logger.debug("🐛 Adding assets to operation")
+
+                // AddAssetsCommand 추가
+                let assetsCommand = AddAssetsCommand(fileURLs: operation3DFileURLs)
+
+                try await addAssetsToOperation.run(
+                    AddAssetsToOperation.Input(
+                        patientID: patientID,
+                        operationID: operation.id,
+                        command: assetsCommand
+                    )
+                )
+            }
+
+        } catch let validationError as ValidationError {
+            _state.alert = validationError.localizedDescription
+        } catch {
+            _state.alert = "Failed to add operation: \(error.localizedDescription)"
         }
     }
 

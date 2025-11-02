@@ -57,8 +57,6 @@ public struct PatientDisplayModel: Identifiable, Equatable, Sendable {
         dateText: "2024.06.20",
         details: "환자는 70대 남성으로, 좌측 고관절의 심한 퇴행성 변화로 인해 전치환술을 시행하였습니다. 수술은 성공적으로 마무리되었으며, 현재 재활 치료 중입니다.",
         status: .planned,
-        statusText: "수술 대기",
-        statusColor: "HippoRed",
         assets: [],
         assetCount: 0,
     )
@@ -72,8 +70,6 @@ public struct PatientDisplayModel: Identifiable, Equatable, Sendable {
         dateText: "2024.05.15",
         details: "환자는 70대 남성으로, 좌측 고관절의 심한 퇴행성 변화로 인해 전치환술을 시행하였습니다. 수술은 성공적으로 마무리되었으며, 현재 재활 치료 중입니다.",
         status: .completed,
-        statusText: "수술 완료",
-        statusColor: "HippoBlack",
         assets: [],
         assetCount: 0,
     )

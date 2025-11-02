@@ -1,8 +1,6 @@
-import Foundation
+import SwiftUI
 
 // MARK: - Display Helpers
-
-/// Domain Value Objects의 UI 표시 헬퍼
 
 // MARK: - Gender Display
 
@@ -34,24 +32,12 @@ public extension OperationStatus {
         }
     }
 
-    var colorName: String {
+    var displayColor: Color {
         switch self {
-        case .planned: return "HippoRed"
-        case .inProgress: return "orange"
-        case .completed: return "HippoBlack"
-        case .cancelled: return "gray"
-        }
-    }
-}
-
-// MARK: - OperationAssetExtension Display
-
-public extension OperationAssetExtension {
-    var iconName: String {
-        switch self {
-        case .usdz: return "cube.fill"
-        case .usdc: return "cube.fill"
-        case .others: return "doc.fill"
+        case .planned: return Color("HippoRed")
+        case .inProgress: return .orange
+        case .completed: return Color("HippoBlack")
+        case .cancelled: return .gray
         }
     }
 }
