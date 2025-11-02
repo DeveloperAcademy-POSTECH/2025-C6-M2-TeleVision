@@ -3,6 +3,7 @@
 import os.log
 import RealityKit
 import SwiftUI
+import Foundation
 
 @MainActor
 @Observable
@@ -112,7 +113,7 @@ final class ImmersiveSceneRuntime {
         logger.debug("OpacityPanel Anchor 'isEnabled' set to: \(isVisible)")
     }
     
-    func placeEntity(entityID: String) async {
+    func placeEntity(url: URL) async {
         guard let sceneRoot = self.sceneRoot else {
             logger.error("Scene root is not yet set up.")
             return
@@ -122,10 +123,10 @@ final class ImmersiveSceneRuntime {
         sceneRoot.addChild(anchor)
         
         do {
-            try await placementService.attach(entityID: entityID, to: anchor)
-            logger.debug("Entity '\(entityID)' placed successfully.")
+            try await placementService.attach(url: url, to: anchor)
+            logger.debug("Entity from URL '\(url.lastPathComponent)' placed successfully.")
         } catch {
-            logger.error("Failed to attach entity '\(entityID)': \(error)")
+            logger.error("Failed to attach entity from URL: \(error)")
             // 실패 시 생성했던 앵커 정리
             anchor.removeFromParent()
         }

@@ -88,9 +88,9 @@ struct ImmersiveSurgeryView: View {
                 AssetListView(
                     isPresented: $viewModel.isShowingAssetListView,
                     operation: operation,
-                    onCreateEntity: { entityID in
+                    onCreateEntity: { url in
                         Task {
-                            await runtime.placeEntity(entityID: entityID)
+                            await runtime.placeEntity(url: url)
                             viewModel.isShowingAssetListView = false
                         }
                     }
@@ -99,7 +99,7 @@ struct ImmersiveSurgeryView: View {
             // Opacity Control Panel
             Attachment(id: AttachmentIDs.opacityControlPanel) {
                 OpacityControlPanel(viewModel: opacityViewModel)
-            }   
+            }
         }
         .task {
             await viewModel.load(patientID: patientID, operationID: operationID)

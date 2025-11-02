@@ -7,10 +7,10 @@
 
 import simd
 import RealityKit
-import HippoAssets
+import Foundation
 
 public protocol AnchorServicing {
-    func attach(entityID: String, to anchor: AnchorEntity) async throws
+    func attach(url: URL,to anchor: AnchorEntity) async throws
     func detach(entity: Entity) async throws
 }
 
@@ -30,33 +30,39 @@ struct EntityPlacementService: AnchorServicing {
     }
     
     @MainActor
-    func attach(entityID: String, to anchor: AnchorEntity) async throws {
-        
-        if let entity = try? await Entity(named: entityID, in: hippoAssetsBundle) {
-            
-            // 조명 제거
-            if let lightEntity = entity.findEntity(named: "Light") {
-                lightEntity.removeFromParent()
+    func attach(url: URL, to anchor: AnchorEntity) async throws {
+        let didStartAccessing = url.startAccessingSecurityScopedResource()
+        defer {
+            if didStartAccessing {
+                url.stopAccessingSecurityScopedResource()
             }
-            
-            anchor.addChild(entity)
-            
-            entity.scale = SIMD3<Float>(repeating: 0.003)
-            
-            // Gesture
-            let bounds = entity.visualBounds(relativeTo: entity)
-            let size   = bounds.extents
-            let box = ShapeResource.generateBox(size: size)
-            entity.components.set(CollisionComponent(shapes: [box]))
-            var manipulationComponent = ManipulationComponent()
-            manipulationComponent.releaseBehavior = .stay
-            
-            entity.components.set(
-                [manipulationComponent, InputTargetComponent()]
-            )
-            
-            
         }
+        
+        let entity = try await Entity(contentsOf: url)
+        
+        // 조명 제거
+        if let lightEntity = entity.findEntity(named: "Light") {
+            lightEntity.removeFromParent()
+        }
+        
+        anchor.addChild(entity)
+        
+        entity.scale = SIMD3<Float>(repeating: 0.003)
+        
+        // Gesture
+        let bounds = entity.visualBounds(relativeTo: entity)
+        let size   = bounds.extents
+        let box = ShapeResource.generateBox(size: size)
+        entity.components.set(CollisionComponent(shapes: [box]))
+        var manipulationComponent = ManipulationComponent()
+        manipulationComponent.releaseBehavior = .stay
+        
+        entity.components.set(
+            [manipulationComponent, InputTargetComponent()]
+        )
+        
+        
+        
         
     }
     
