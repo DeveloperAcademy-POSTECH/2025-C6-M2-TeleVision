@@ -59,36 +59,37 @@ public actor PatientRepositoryImpl: PatientRepository {
 
         backgroundRemove(id: id)
     }
-}
 
-// MARK: - OperationAsset Management
-
-public extension PatientRepositoryImpl {
-    func addAssets(
+    public func addAssets(
         _ assets: [OperationAsset],
         toOperationID operationID: String,
         inPatientID patientID: String
     ) async throws {
         // 1. 로컬에서 Patient 가져오기
-        guard let patient = try await localDataSource.getPatient(id: patientID) else {
+        guard var patient = try await localDataSource.getPatient(id: patientID) else {
             throw PatientError.patientNotFound
         }
+        print("1️⃣ Patient found: \(patient.name)")
 
         // 2. Operation 찾기
-        guard var operation = patient.operations.first(where: { $0.id == operationID }) else {
+        guard let operationIndex = patient.operations.firstIndex(where: { $0.id == operationID }) else {
             throw PatientError.operationNotFound
         }
+        print("2️⃣ Operation found: \(patient.operations[operationIndex].title)")
 
-        operation.operationAssets.append(contentsOf: assets)
+        // 3. assets를 operation에 추가
+        patient.operations[operationIndex].operationAssets.append(contentsOf: assets)
+        print("3️⃣ Assets added. Total assets now: \(patient.operations[operationIndex].operationAssets.count)")
 
         // 4. 저장
         try await localDataSource.upsert(patient)
+        print("4️⃣ Patient updated in local data source.")
 
         // 5. 동기화 (옵션)
 //        try? await syncPatient(sdPatient)
     }
 
-    func removeAsset(
+    public func removeAsset(
         _ assetID: String,
         fromOperationID operationID: String,
         inPatientID patientID: String
@@ -115,7 +116,7 @@ public extension PatientRepositoryImpl {
 //        try? await syncPatient(sdPatient)
     }
 
-    func getAssets(
+    public func getAssets(
         forOperationID operationID: String,
         inPatientID patientID: String
     ) async throws -> [OperationAsset] {

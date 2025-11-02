@@ -18,21 +18,21 @@ public struct AddAssetsToOperation: Sendable {
     public struct Input: Sendable {
         public let patientID: String
         public let operationID: String
-        public let fileURLs: [URL]
+        public let command: AddAssetsCommand
 
-        public init(patientID: String, operationID: String, fileURLs: [URL]) {
+        public init(patientID: String, operationID: String, command: AddAssetsCommand) {
             self.patientID = patientID
             self.operationID = operationID
-            self.fileURLs = fileURLs
+            self.command = command
         }
     }
 
     public func run(_ input: Input) async throws {
         // 1. 파일을 영구 저장소로 복사
-//        let savedAssets = try await saveFilesToDocuments(input.fileURLs)
+//        let savedAssets = try await saveFilesToDocuments(input.command.fileURLs)
 
         // 2. OperationAsset 생성
-        let assets = input.fileURLs.map { url in
+        let assets = input.command.fileURLs.map { url in
             OperationAsset(
                 name: url.deletingPathExtension().lastPathComponent,
                 fileURL: url,

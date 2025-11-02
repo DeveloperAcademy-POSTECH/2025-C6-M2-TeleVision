@@ -81,73 +81,10 @@ struct OperationInputForm: View {
             }
             .title("상세 내용")
 
-            FormSection {
-                HStack {
-                    if selected3DFiles.isEmpty {
-                        HStack {
-                            Spacer()
-
-                            Image(systemName: "cube.transparent")
-                                .font(.title2)
-                                .foregroundStyle(.secondary)
-
-                            Text("USDZ 파일을 첨부해주세요")
-                                .font(.body)
-                                .foregroundStyle(.secondary)
-
-                            Spacer()
-                        }
-                        .padding(.horizontal, 20)
-                        .frame(height: 150)
-                    }
-                    //
-                    else {
-                        ScrollView(.horizontal, showsIndicators: false) {
-                            HStack {
-                                Spacer().frame(width: 12)
-                                ForEach(selected3DFiles, id: \.self) { url in
-                                    ZStack(alignment: .center) {
-                                        RoundedRectangle(cornerRadius: 12)
-                                            .fill(.hippoBlack)
-                                            .frame(width: 130, height: 130)
-
-                                        Model3D(url: url) { model in
-                                            model
-                                                .resizable()
-                                                .scaledToFit()
-
-                                        } placeholder: { ProgressView() }
-                                            .frame(width: 110, height: 110)
-                                            .onAppear { let _ = url.startAccessingSecurityScopedResource() }
-                                            .onDisappear { url.stopAccessingSecurityScopedResource() }
-                                    }
-                                    .padding(.trailing, 12)
-                                }
-                            }
-                            .padding(.vertical)
-                        }
-                    }
-                }
-                .frame(maxWidth: .infinity, maxHeight: 150)
-                .background(.thinMaterial)
-                .cornerRadius(12)
-                .fileImporter(
-                    isPresented: $isShowingFilePicker,
-                    allowedContentTypes: [.usd, .usdz],
-                    allowsMultipleSelection: true
-                ) { result in
-                    switch result {
-                    case let .success(urls):
-                        selected3DFiles.append(contentsOf: urls)
-                        print("File import succeeded: \(urls)")
-
-                    case let .failure(error):
-                        print("File import failed: \(error.localizedDescription)")
-                    }
-                }
-            }
-            .title("3D 모델 파일")
-            .addAction { isShowingFilePicker = true }
+            FileAttachmentSection(
+                selectedFiles: $selected3DFiles,
+                isShowingFilePicker: $isShowingFilePicker
+            )
         }
     }
 }

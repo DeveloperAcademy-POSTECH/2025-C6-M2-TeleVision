@@ -17,7 +17,7 @@ final class SDOperation {
 
     var patient: SDPatient?
 
-    @Relationship(deleteRule: .cascade, inverse: \SDOperationAsset.operation)
+    @Relationship(deleteRule: .cascade)
     var assets: [SDOperationAsset] = []
 
     @Relationship(deleteRule: .cascade)
