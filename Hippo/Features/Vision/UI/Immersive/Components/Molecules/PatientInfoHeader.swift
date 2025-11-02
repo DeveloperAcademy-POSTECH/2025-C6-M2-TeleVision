@@ -15,11 +15,11 @@ struct PatientInfoHeader: View {
     var body: some View {
         HStack {
             Text(name)
-                .font(.extraLargeTitle2)
+                .font(.system(size: 10))
                 .foregroundStyle(.primary)
-            Spacer().frame(width: 8)
+            Spacer().frame(width: 4)
             Text("\(gender) / \(ageText)")
-                .font(.title)
+                .font(.system(size: 8))
                 .foregroundStyle(.primary)
         }
     }
