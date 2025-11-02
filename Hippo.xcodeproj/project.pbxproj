@@ -111,6 +111,24 @@
 		14DE512C2EB5F71F0027D9A0 /* AddAssetsToOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 14DE512B2EB5F7180027D9A0 /* AddAssetsToOperation.swift */; };
 		14DE512D2EB5F71F0027D9A0 /* AddAssetsToOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 14DE512B2EB5F7180027D9A0 /* AddAssetsToOperation.swift */; };
 		14DE512E2EB5F71F0027D9A0 /* AddAssetsToOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 14DE512B2EB5F7180027D9A0 /* AddAssetsToOperation.swift */; };
+		14DE51312EB60DB00027D9A0 /* FileAttachmentPlaceholder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 14DE51302EB60DA90027D9A0 /* FileAttachmentPlaceholder.swift */; };
+		14DE51322EB60DB00027D9A0 /* FileAttachmentPlaceholder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 14DE51302EB60DA90027D9A0 /* FileAttachmentPlaceholder.swift */; };
+		14DE51332EB60DB00027D9A0 /* FileAttachmentPlaceholder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 14DE51302EB60DA90027D9A0 /* FileAttachmentPlaceholder.swift */; };
+		14DE51352EB60DEC0027D9A0 /* ModelPreviewCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 14DE51342EB60DE10027D9A0 /* ModelPreviewCard.swift */; };
+		14DE51362EB60DEC0027D9A0 /* ModelPreviewCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 14DE51342EB60DE10027D9A0 /* ModelPreviewCard.swift */; };
+		14DE51372EB60DEC0027D9A0 /* ModelPreviewCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 14DE51342EB60DE10027D9A0 /* ModelPreviewCard.swift */; };
+		14DE51392EB60E1F0027D9A0 /* ModeFilelListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 14DE51382EB60E100027D9A0 /* ModeFilelListView.swift */; };
+		14DE513A2EB60E1F0027D9A0 /* ModeFilelListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 14DE51382EB60E100027D9A0 /* ModeFilelListView.swift */; };
+		14DE513B2EB60E1F0027D9A0 /* ModeFilelListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 14DE51382EB60E100027D9A0 /* ModeFilelListView.swift */; };
+		14DE513D2EB60E610027D9A0 /* FileAttachmentSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 14DE513C2EB60E5C0027D9A0 /* FileAttachmentSection.swift */; };
+		14DE513E2EB60E610027D9A0 /* FileAttachmentSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 14DE513C2EB60E5C0027D9A0 /* FileAttachmentSection.swift */; };
+		14DE513F2EB60E610027D9A0 /* FileAttachmentSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 14DE513C2EB60E5C0027D9A0 /* FileAttachmentSection.swift */; };
+		14DE51412EB64A2F0027D9A0 /* DetailModelSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 14DE51402EB64A220027D9A0 /* DetailModelSection.swift */; };
+		14DE51422EB64A2F0027D9A0 /* DetailModelSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 14DE51402EB64A220027D9A0 /* DetailModelSection.swift */; };
+		14DE51432EB64A2F0027D9A0 /* DetailModelSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 14DE51402EB64A220027D9A0 /* DetailModelSection.swift */; };
+		14DE51452EB7281B0027D9A0 /* AddAssetsCommand.swift in Sources */ = {isa = PBXBuildFile; fileRef = 14DE51442EB728140027D9A0 /* AddAssetsCommand.swift */; };
+		14DE51462EB7281B0027D9A0 /* AddAssetsCommand.swift in Sources */ = {isa = PBXBuildFile; fileRef = 14DE51442EB728140027D9A0 /* AddAssetsCommand.swift */; };
+		14DE51472EB7281B0027D9A0 /* AddAssetsCommand.swift in Sources */ = {isa = PBXBuildFile; fileRef = 14DE51442EB728140027D9A0 /* AddAssetsCommand.swift */; };
 		14F6B0342EAAC73F003F28EB /* ImmersiveSurgeryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 14F6B0332EAAC73F003F28EB /* ImmersiveSurgeryView.swift */; };
 		272BD1B22EADE1BF00C83F81 /* ARSessionController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 272BD1B12EADE1BA00C83F81 /* ARSessionController.swift */; };
 		272BD1B32EADE1BF00C83F81 /* ARSessionController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 272BD1B12EADE1BA00C83F81 /* ARSessionController.swift */; };
@@ -336,6 +354,12 @@
 		14CC756B2EA6A99300399562 /* PatientGridView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PatientGridView.swift; sourceTree = "<group>"; };
 		14CC756F2EA6AD5800399562 /* PatientSectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PatientSectionView.swift; sourceTree = "<group>"; };
 		14DE512B2EB5F7180027D9A0 /* AddAssetsToOperation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddAssetsToOperation.swift; sourceTree = "<group>"; };
+		14DE51302EB60DA90027D9A0 /* FileAttachmentPlaceholder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FileAttachmentPlaceholder.swift; sourceTree = "<group>"; };
+		14DE51342EB60DE10027D9A0 /* ModelPreviewCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModelPreviewCard.swift; sourceTree = "<group>"; };
+		14DE51382EB60E100027D9A0 /* ModeFilelListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModeFilelListView.swift; sourceTree = "<group>"; };
+		14DE513C2EB60E5C0027D9A0 /* FileAttachmentSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FileAttachmentSection.swift; sourceTree = "<group>"; };
+		14DE51402EB64A220027D9A0 /* DetailModelSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetailModelSection.swift; sourceTree = "<group>"; };
+		14DE51442EB728140027D9A0 /* AddAssetsCommand.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddAssetsCommand.swift; sourceTree = "<group>"; };
 		14F6B0332EAAC73F003F28EB /* ImmersiveSurgeryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImmersiveSurgeryView.swift; sourceTree = "<group>"; };
 		272BD1B12EADE1BA00C83F81 /* ARSessionController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ARSessionController.swift; sourceTree = "<group>"; };
 		272BD1B42EADE1DE00C83F81 /* HeadPose.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HeadPose.swift; sourceTree = "<group>"; };
@@ -615,6 +639,7 @@
 		148F5BDB2EA8D6270041BA60 /* Components */ = {
 			isa = PBXGroup;
 			children = (
+				14DE512F2EB60DA50027D9A0 /* Atoms */,
 				14A17F9A2EB34F51009D16CF /* Molecules */,
 				14A17F9B2EB34F59009D16CF /* Organisms */,
 				144254632EAAC43600583CC3 /* Buttons */,
@@ -633,6 +658,8 @@
 		14A17F9A2EB34F51009D16CF /* Molecules */ = {
 			isa = PBXGroup;
 			children = (
+				14DE51382EB60E100027D9A0 /* ModeFilelListView.swift */,
+				14DE51342EB60DE10027D9A0 /* ModelPreviewCard.swift */,
 				1494DE972EA73359000CD284 /* SectionTitle.swift */,
 				1494DE7F2EA7321A000CD284 /* AssetSection.swift */,
 				1494DE832EA73229000CD284 /* AssetImageCard.swift */,
@@ -644,6 +671,8 @@
 		14A17F9B2EB34F59009D16CF /* Organisms */ = {
 			isa = PBXGroup;
 			children = (
+				14DE51402EB64A220027D9A0 /* DetailModelSection.swift */,
+				14DE513C2EB60E5C0027D9A0 /* FileAttachmentSection.swift */,
 				1494DE7B2EA73205000CD284 /* DetailHeader.swift */,
 				14A17F962EB34F40009D16CF /* OperationInputHeader.swift */,
 				14A17F9C2EB34FF3009D16CF /* OperationInputForm.swift */,
@@ -688,6 +717,14 @@
 				14CC75672EA6A98700399562 /* OperationDateBadge.swift */,
 			);
 			path = PatientSection;
+			sourceTree = "<group>";
+		};
+		14DE512F2EB60DA50027D9A0 /* Atoms */ = {
+			isa = PBXGroup;
+			children = (
+				14DE51302EB60DA90027D9A0 /* FileAttachmentPlaceholder.swift */,
+			);
+			path = Atoms;
 			sourceTree = "<group>";
 		};
 		C02FFA4E2E9FFF6F00F16742 /* MacApp */ = {
@@ -1064,6 +1101,7 @@
 		C0F97B192EA435490063E159 /* Commands */ = {
 			isa = PBXGroup;
 			children = (
+				14DE51442EB728140027D9A0 /* AddAssetsCommand.swift */,
 				C0F97B2D2EA439290063E159 /* UpdatePatientCommand.swift */,
 				C0F97B252EA437840063E159 /* AttachAssetCommand.swift */,
 				C0F97B172EA435490063E159 /* CreateOperationCommand.swift */,
@@ -1241,8 +1279,10 @@
 				1446FBD52EAF262F000BCF61 /* EntityPlacementService.swift in Sources */,
 				C0F97ADF2EA420EB0063E159 /* DomainDependencies.swift in Sources */,
 				14A17F952EB341D9009D16CF /* OperationInputView.swift in Sources */,
+				14DE513B2EB60E1F0027D9A0 /* ModeFilelListView.swift in Sources */,
 				C0F97A852EA3FDDE0063E159 /* OperationRecording.swift in Sources */,
 				C0F97A862EA3FDDE0063E159 /* Operation.swift in Sources */,
+				14DE51352EB60DEC0027D9A0 /* ModelPreviewCard.swift in Sources */,
 				1494DE7C2EA73205000CD284 /* DetailHeader.swift in Sources */,
 				C046782F2EA00B3A00D160DA /* PatientRepositoryImpl.swift in Sources */,
 				C04678302EA00B3A00D160DA /* PatientRemoteDataSource.swift in Sources */,
@@ -1271,6 +1311,8 @@
 				14A17F8B2EB31411009D16CF /* SurgeonInfoSection.swift in Sources */,
 				1494DE852EA73229000CD284 /* AssetImageCard.swift in Sources */,
 				C0F97ACC2EA41D4B0063E159 /* SDOperation.swift in Sources */,
+				14DE51432EB64A2F0027D9A0 /* DetailModelSection.swift in Sources */,
+				14DE51452EB7281B0027D9A0 /* AddAssetsCommand.swift in Sources */,
 				C0F97ACD2EA41D4B0063E159 /* SDOperationRecording.swift in Sources */,
 				14CC75562EA6A8BE00399562 /* LogoHeader.swift in Sources */,
 				C0F97ACE2EA41D4B0063E159 /* SwiftDataMappers.swift in Sources */,
@@ -1283,6 +1325,7 @@
 				144254312EA9FF7800583CC3 /* OperationContext.swift in Sources */,
 				272BD1B32EADE1BF00C83F81 /* ARSessionController.swift in Sources */,
 				14CC75602EA6A96700399562 /* TodaySectionView.swift in Sources */,
+				14DE51312EB60DB00027D9A0 /* FileAttachmentPlaceholder.swift in Sources */,
 				C0F97AD22EA41D4B0063E159 /* SDPatient.swift in Sources */,
 				C0F97B222EA435490063E159 /* CreateOperationCommand.swift in Sources */,
 				C0F97B232EA435490063E159 /* ValidationError.swift in Sources */,
@@ -1317,6 +1360,7 @@
 				C0F97B2C2EA439080063E159 /* UpdatePatient.swift in Sources */,
 				14A17F972EB34F46009D16CF /* OperationInputHeader.swift in Sources */,
 				C0F97ADA2EA420E10063E159 /* DataDependencies.swift in Sources */,
+				14DE513F2EB60E610027D9A0 /* FileAttachmentSection.swift in Sources */,
 				1446FBED2EAFA477000BCF61 /* FormSection.swift in Sources */,
 				C0F97A8E2EA3FDF50063E159 /* DeleteOperation.swift in Sources */,
 				C0F97A8F2EA3FDF50063E159 /* RemoveAssetFromOperation.swift in Sources */,
@@ -1346,14 +1390,18 @@
 				C0F97B202EA435490063E159 /* ValidationError.swift in Sources */,
 				1446FBA42EAE6A27000BCF61 /* GlowingCircleButton.swift in Sources */,
 				1494DEA22EA7510A000CD284 /* DetailSubPart.swift in Sources */,
+				14DE51412EB64A2F0027D9A0 /* DetailModelSection.swift in Sources */,
 				C0F97B212EA435490063E159 /* CreatePatientCommand.swift in Sources */,
+				14DE51392EB60E1F0027D9A0 /* ModeFilelListView.swift in Sources */,
 				C0F97A832EA3FDDE0063E159 /* Operation.swift in Sources */,
 				C046783B2EA00B4A00D160DA /* PatientState.swift in Sources */,
 				C0F97AD52EA41FB50063E159 /* PatientLocalDataSource.swift in Sources */,
 				1494DE862EA73229000CD284 /* AssetImageCard.swift in Sources */,
 				C0F97AE32EA4304D0063E159 /* CreateOperation.swift in Sources */,
 				C046783C2EA00B4A00D160DA /* HomeViewModel.swift in Sources */,
+				14DE51462EB7281B0027D9A0 /* AddAssetsCommand.swift in Sources */,
 				C050AA4E2EA8201A00352314 /* ImmersiveSceneRuntime.swift in Sources */,
+				14DE513E2EB60E610027D9A0 /* FileAttachmentSection.swift in Sources */,
 				C04678082EA00B1F00D160DA /* Patient.swift in Sources */,
 				1446FBD42EAF262F000BCF61 /* EntityPlacementService.swift in Sources */,
 				C0F97A7C2EA3FD370063E159 /* PatientDTO.swift in Sources */,
@@ -1379,6 +1427,7 @@
 				144254652EAAC44900583CC3 /* StartOperationButton.swift in Sources */,
 				1446FB992EAE6911000BCF61 /* CircleIconButton.swift in Sources */,
 				1442546B2EAAC61F00583CC3 /* WindowIDs.swift in Sources */,
+				14DE51362EB60DEC0027D9A0 /* ModelPreviewCard.swift in Sources */,
 				C0F97A922EA3FDF50063E159 /* DeleteOperation.swift in Sources */,
 				C0F97A932EA3FDF50063E159 /* RemoveAssetFromOperation.swift in Sources */,
 				C0F97A942EA3FDF50063E159 /* UpsertOperation.swift in Sources */,
@@ -1393,6 +1442,7 @@
 				C0F97B002EA430880063E159 /* Gender.swift in Sources */,
 				C050AA3B2EA8197E00352314 /* ImmersiveIDs.swift in Sources */,
 				144254392EAA9FF000583CC3 /* OperationState.swift in Sources */,
+				14DE51322EB60DB00027D9A0 /* FileAttachmentPlaceholder.swift in Sources */,
 				272BD1B22EADE1BF00C83F81 /* ARSessionController.swift in Sources */,
 				14A17F932EB341D9009D16CF /* OperationInputView.swift in Sources */,
 				272BD1B62EADE1E200C83F81 /* HeadPose.swift in Sources */,
@@ -1434,6 +1484,7 @@
 				C0F97ADB2EA420E10063E159 /* DataDependencies.swift in Sources */,
 				C0F97AE42EA4304D0063E159 /* CreateOperation.swift in Sources */,
 				C0F97ACB2EA41D4B0063E159 /* SDPatient.swift in Sources */,
+				14DE513D2EB60E610027D9A0 /* FileAttachmentSection.swift in Sources */,
 				C0F97B2E2EA439290063E159 /* UpdatePatientCommand.swift in Sources */,
 				C0F97AAA2EA401160063E159 /* PatientDisplayModel.swift in Sources */,
 				1446FBB12EAE6C23000BCF61 /* RecordButton.swift in Sources */,
@@ -1460,6 +1511,7 @@
 				14A17F992EB34F46009D16CF /* OperationInputHeader.swift in Sources */,
 				1494DE9A2EA73359000CD284 /* SectionTitle.swift in Sources */,
 				C04678332EA00B3A00D160DA /* PatientRemoteDataSource.swift in Sources */,
+				14DE51372EB60DEC0027D9A0 /* ModelPreviewCard.swift in Sources */,
 				C04678472EA00C2700D160DA /* PatientView.swift in Sources */,
 				14DE512E2EB5F71F0027D9A0 /* AddAssetsToOperation.swift in Sources */,
 				C0F97A7D2EA3FD370063E159 /* PatientDTO.swift in Sources */,
@@ -1470,6 +1522,7 @@
 				14A17F942EB341D9009D16CF /* OperationInputView.swift in Sources */,
 				1446FB982EAE6911000BCF61 /* CircleIconButton.swift in Sources */,
 				C0F97B062EA430880063E159 /* OperationStatus.swift in Sources */,
+				14DE51332EB60DB00027D9A0 /* FileAttachmentPlaceholder.swift in Sources */,
 				C046783D2EA00B4A00D160DA /* PatientState.swift in Sources */,
 				144254332EAA232300583CC3 /* OperationViewModel.swift in Sources */,
 				C050AA3D2EA8197E00352314 /* ImmersiveIDs.swift in Sources */,
@@ -1477,6 +1530,7 @@
 				C0F97B282EA437840063E159 /* AttachAssetCommand.swift in Sources */,
 				C0F97A872EA3FDDE0063E159 /* OperationAsset.swift in Sources */,
 				C0F97A882EA3FDDE0063E159 /* OperationRecording.swift in Sources */,
+				14DE513A2EB60E1F0027D9A0 /* ModeFilelListView.swift in Sources */,
 				C0F97A892EA3FDDE0063E159 /* Operation.swift in Sources */,
 				C04678202EA00B1F00D160DA /* Patient.swift in Sources */,
 				C04678232EA00B1F00D160DA /* GetPatient.swift in Sources */,
@@ -1487,8 +1541,10 @@
 				C0F97B1C2EA435490063E159 /* CreateOperationCommand.swift in Sources */,
 				C0F97B1D2EA435490063E159 /* ValidationError.swift in Sources */,
 				C0F97B1E2EA435490063E159 /* CreatePatientCommand.swift in Sources */,
+				14DE51422EB64A2F0027D9A0 /* DetailModelSection.swift in Sources */,
 				C0F97A962EA3FDF50063E159 /* DeleteOperation.swift in Sources */,
 				14A17F9D2EB34FF7009D16CF /* OperationInputForm.swift in Sources */,
+				14DE51472EB7281B0027D9A0 /* AddAssetsCommand.swift in Sources */,
 				C0F97A972EA3FDF50063E159 /* RemoveAssetFromOperation.swift in Sources */,
 				C0F97A982EA3FDF50063E159 /* UpsertOperation.swift in Sources */,
 				C0F97A992EA3FDF50063E159 /* AttachAssetToOperation.swift in Sources */,

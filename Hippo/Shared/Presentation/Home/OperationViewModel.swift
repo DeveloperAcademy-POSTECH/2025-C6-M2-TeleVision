@@ -104,11 +104,16 @@ public final class OperationViewModel {
 
             // 2. OperationAsset 추가 (파일이 있는 경우)
             if !operation3DFileURLs.isEmpty {
+                logger.debug("🐛 Adding assets to operation")
+
+                // AddAssetsCommand 추가
+                let assetsCommand = AddAssetsCommand(fileURLs: operation3DFileURLs)
+
                 try await addAssetsToOperation.run(
                     AddAssetsToOperation.Input(
                         patientID: patientID,
                         operationID: operation.id,
-                        fileURLs: operation3DFileURLs
+                        command: assetsCommand
                     )
                 )
             }
