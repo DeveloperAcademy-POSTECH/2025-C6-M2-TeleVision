@@ -10,6 +10,9 @@ import SwiftUI
 /// 환자 목록 메인 화면 - 컨테이너 역할
 struct HomeView: View {
     @Environment(AppModel.self) private var appModel
+    
+    // 테스트용
+    @Environment(\.openImmersiveSpace) private var openImmersiveSpace
 
     @State private var viewModel = HomeViewModel()
 

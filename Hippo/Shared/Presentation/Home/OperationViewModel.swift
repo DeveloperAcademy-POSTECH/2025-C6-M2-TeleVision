@@ -50,6 +50,8 @@ public final class OperationViewModel {
     public var isMenuActive: Bool = true
     public var isEndoscopicActive: Bool = false
     public var isShowingFinishAlert: Bool = false
+    public var isShowingAssetListView: Bool = false
+    
 
     // MARK: - Actions
 
