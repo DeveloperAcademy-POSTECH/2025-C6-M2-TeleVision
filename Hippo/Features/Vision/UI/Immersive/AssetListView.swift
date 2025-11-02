@@ -9,6 +9,8 @@ import SwiftUI
 
 struct AssetListView: View {
     @Binding var isPresented: Bool
+    let operation: OperationDisplayModel
+    
     var onCreateEntity: (String) -> Void
     
     // TODO: Operation Context 연결해야 함
@@ -25,7 +27,9 @@ struct AssetListView: View {
                 .padding()
                 .padding(.leading, 10)
                 
-                // TODO: 여기에 3D 에셋을 선택하는 리스트 UI 구현
+                Spacer()
+                
+                ModelFileListView(fileURLs: operation.assets.map { $0.fileURL })
                 Spacer()
                 
                 GlowingCapsuleButton(buttonText: "생성하기", action: {
@@ -44,6 +48,7 @@ struct AssetListView: View {
 #Preview {
     AssetListView(
         isPresented: .constant(true),
+        operation: OperationDisplayModel.MockData,
         onCreateEntity: { entityID in
             print("Creating entity: \(entityID)")
         }
