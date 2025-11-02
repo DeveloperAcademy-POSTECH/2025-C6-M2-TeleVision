@@ -12,14 +12,14 @@ struct TodaySectionView: View {
     let operations: [(patient: PatientDisplayModel, operation: OperationDisplayModel)]
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 16) {
-            SectionHeader("Today Surgery", subtitle: Date().toTodayDateString())
+        if !operations.isEmpty {
+            VStack(alignment: .leading, spacing: 16) {
+                SectionHeader("Today Surgery", subtitle: Date().toTodayDateString())
 
-            if operations.isEmpty {
-                EmptyTodaySurgeryView()
-            } else {
                 TodayOperationScrollView(operations: operations)
             }
+            .padding(.top, 20)
+            .padding(.horizontal, 40)
         }
     }
 }

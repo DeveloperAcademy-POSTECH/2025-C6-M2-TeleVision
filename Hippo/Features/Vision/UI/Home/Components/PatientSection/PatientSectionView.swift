@@ -16,7 +16,23 @@ struct PatientSectionView: View {
             SectionHeader("Patient List")
                 .padding(.top, 24)
 
-            PatientGridView(patients: patients)
+            if patients.isEmpty {
+                HStack(alignment: .center) {
+                    Spacer()
+                    VStack {
+                        Spacer().frame(height: 250)
+                        Text("등록된 환자가 없습니다")
+                            .font(.headline)
+                            .foregroundStyle(.primary)
+                        Text("수술을 시작하려면 환자 정보를 입력해주세요")
+                            .font(.body)
+                            .foregroundStyle(.tertiary)
+                    }
+                    Spacer()
+                }
+            } else {
+                PatientGridView(patients: patients)
+            }
         }
     }
 }

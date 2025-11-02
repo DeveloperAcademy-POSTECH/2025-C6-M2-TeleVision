@@ -10,7 +10,7 @@ import SwiftUI
 /// 환자 목록 메인 화면 - 컨테이너 역할
 struct HomeView: View {
     @Environment(AppModel.self) private var appModel
-    
+
     // 테스트용
     @Environment(\.openImmersiveSpace) private var openImmersiveSpace
 
@@ -26,8 +26,6 @@ struct HomeView: View {
                 Divider()
 
                 TodaySectionView(operations: viewModel.todayOperations)
-                    .padding(.top, 20)
-                    .padding(.horizontal, 40)
 
                 PatientSectionView(patients: viewModel.state.items)
                     .padding(.horizontal, 40)

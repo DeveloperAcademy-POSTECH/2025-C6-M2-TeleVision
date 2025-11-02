@@ -134,6 +134,7 @@
 		14DE51522EB771420027D9A0 /* HIPPO.icon in Resources */ = {isa = PBXBuildFile; fileRef = 14DE51512EB771420027D9A0 /* HIPPO.icon */; };
 		14DE51532EB771420027D9A0 /* HIPPO.icon in Resources */ = {isa = PBXBuildFile; fileRef = 14DE51512EB771420027D9A0 /* HIPPO.icon */; };
 		14DE51542EB771420027D9A0 /* HIPPO.icon in Resources */ = {isa = PBXBuildFile; fileRef = 14DE51512EB771420027D9A0 /* HIPPO.icon */; };
+		14DE51562EB779960027D9A0 /* EmptyPatientView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 14DE51552EB7798B0027D9A0 /* EmptyPatientView.swift */; };
 		14F6B0342EAAC73F003F28EB /* ImmersiveSurgeryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 14F6B0332EAAC73F003F28EB /* ImmersiveSurgeryView.swift */; };
 		272BD1B22EADE1BF00C83F81 /* ARSessionController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 272BD1B12EADE1BA00C83F81 /* ARSessionController.swift */; };
 		272BD1B32EADE1BF00C83F81 /* ARSessionController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 272BD1B12EADE1BA00C83F81 /* ARSessionController.swift */; };
@@ -372,6 +373,7 @@
 		14DE51492EB740710027D9A0 /* EmptyTodaySurgeryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmptyTodaySurgeryView.swift; sourceTree = "<group>"; };
 		14DE514B2EB7408D0027D9A0 /* TodayOperationScrollView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TodayOperationScrollView.swift; sourceTree = "<group>"; };
 		14DE51512EB771420027D9A0 /* HIPPO.icon */ = {isa = PBXFileReference; lastKnownFileType = folder.iconcomposer.icon; path = HIPPO.icon; sourceTree = "<group>"; };
+		14DE51552EB7798B0027D9A0 /* EmptyPatientView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmptyPatientView.swift; sourceTree = "<group>"; };
 		14F6B0332EAAC73F003F28EB /* ImmersiveSurgeryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImmersiveSurgeryView.swift; sourceTree = "<group>"; };
 		272BD1B12EADE1BA00C83F81 /* ARSessionController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ARSessionController.swift; sourceTree = "<group>"; };
 		272BD1B42EADE1DE00C83F81 /* HeadPose.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HeadPose.swift; sourceTree = "<group>"; };
@@ -727,6 +729,7 @@
 		14CC755E2EA6A95100399562 /* PatientSection */ = {
 			isa = PBXGroup;
 			children = (
+				14DE51552EB7798B0027D9A0 /* EmptyPatientView.swift */,
 				14CC756F2EA6AD5800399562 /* PatientSectionView.swift */,
 				14CC75462EA69DE400399562 /* PatientCell.swift */,
 				14CC756B2EA6A99300399562 /* PatientGridView.swift */,
@@ -1403,6 +1406,7 @@
 				C0F97A912EA3FDF50063E159 /* AttachAssetToOperation.swift in Sources */,
 				C04678402EA00B4A00D160DA /* HomeViewModel.swift in Sources */,
 				1442546A2EAAC61F00583CC3 /* WindowIDs.swift in Sources */,
+				14DE51562EB779960027D9A0 /* EmptyPatientView.swift in Sources */,
 				14DE514C2EB740930027D9A0 /* TodayOperationScrollView.swift in Sources */,
 				1446FBF22EAFADCC000BCF61 /* PatientInputForm.swift in Sources */,
 				14CC75442EA6803800399562 /* TodayOperationCard.swift in Sources */,
@@ -1601,7 +1605,7 @@
 		145E0F692E9C0F3B00CE6C97 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ASSETCATALOG_COMPILER_APPICON_NAME = HIPPO;
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = NO;
 				CODE_SIGN_IDENTITY = "Apple Development";
@@ -1634,7 +1638,7 @@
 		145E0F6A2E9C0F3B00CE6C97 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ASSETCATALOG_COMPILER_APPICON_NAME = HIPPO;
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = NO;
 				CODE_SIGN_IDENTITY = "Apple Development";
