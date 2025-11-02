@@ -129,6 +129,8 @@
 		14DE51452EB7281B0027D9A0 /* AddAssetsCommand.swift in Sources */ = {isa = PBXBuildFile; fileRef = 14DE51442EB728140027D9A0 /* AddAssetsCommand.swift */; };
 		14DE51462EB7281B0027D9A0 /* AddAssetsCommand.swift in Sources */ = {isa = PBXBuildFile; fileRef = 14DE51442EB728140027D9A0 /* AddAssetsCommand.swift */; };
 		14DE51472EB7281B0027D9A0 /* AddAssetsCommand.swift in Sources */ = {isa = PBXBuildFile; fileRef = 14DE51442EB728140027D9A0 /* AddAssetsCommand.swift */; };
+		14DE514A2EB7407B0027D9A0 /* EmptyTodaySurgeryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 14DE51492EB740710027D9A0 /* EmptyTodaySurgeryView.swift */; };
+		14DE514C2EB740930027D9A0 /* TodayOperationScrollView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 14DE514B2EB7408D0027D9A0 /* TodayOperationScrollView.swift */; };
 		14F6B0342EAAC73F003F28EB /* ImmersiveSurgeryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 14F6B0332EAAC73F003F28EB /* ImmersiveSurgeryView.swift */; };
 		272BD1B22EADE1BF00C83F81 /* ARSessionController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 272BD1B12EADE1BA00C83F81 /* ARSessionController.swift */; };
 		272BD1B32EADE1BF00C83F81 /* ARSessionController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 272BD1B12EADE1BA00C83F81 /* ARSessionController.swift */; };
@@ -360,6 +362,8 @@
 		14DE513C2EB60E5C0027D9A0 /* FileAttachmentSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FileAttachmentSection.swift; sourceTree = "<group>"; };
 		14DE51402EB64A220027D9A0 /* DetailModelSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetailModelSection.swift; sourceTree = "<group>"; };
 		14DE51442EB728140027D9A0 /* AddAssetsCommand.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddAssetsCommand.swift; sourceTree = "<group>"; };
+		14DE51492EB740710027D9A0 /* EmptyTodaySurgeryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmptyTodaySurgeryView.swift; sourceTree = "<group>"; };
+		14DE514B2EB7408D0027D9A0 /* TodayOperationScrollView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TodayOperationScrollView.swift; sourceTree = "<group>"; };
 		14F6B0332EAAC73F003F28EB /* ImmersiveSurgeryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImmersiveSurgeryView.swift; sourceTree = "<group>"; };
 		272BD1B12EADE1BA00C83F81 /* ARSessionController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ARSessionController.swift; sourceTree = "<group>"; };
 		272BD1B42EADE1DE00C83F81 /* HeadPose.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HeadPose.swift; sourceTree = "<group>"; };
@@ -702,6 +706,7 @@
 		14CC755D2EA6A94700399562 /* TodaySection */ = {
 			isa = PBXGroup;
 			children = (
+				14DE51482EB740680027D9A0 /* Components */,
 				14CC755F2EA6A96700399562 /* TodaySectionView.swift */,
 				14CC75422EA6803800399562 /* TodayOperationCard.swift */,
 			);
@@ -725,6 +730,15 @@
 				14DE51302EB60DA90027D9A0 /* FileAttachmentPlaceholder.swift */,
 			);
 			path = Atoms;
+			sourceTree = "<group>";
+		};
+		14DE51482EB740680027D9A0 /* Components */ = {
+			isa = PBXGroup;
+			children = (
+				14DE514B2EB7408D0027D9A0 /* TodayOperationScrollView.swift */,
+				14DE51492EB740710027D9A0 /* EmptyTodaySurgeryView.swift */,
+			);
+			path = Components;
 			sourceTree = "<group>";
 		};
 		C02FFA4E2E9FFF6F00F16742 /* MacApp */ = {
@@ -1279,6 +1293,7 @@
 				1446FBD52EAF262F000BCF61 /* EntityPlacementService.swift in Sources */,
 				C0F97ADF2EA420EB0063E159 /* DomainDependencies.swift in Sources */,
 				14A17F952EB341D9009D16CF /* OperationInputView.swift in Sources */,
+				14DE514A2EB7407B0027D9A0 /* EmptyTodaySurgeryView.swift in Sources */,
 				14DE513B2EB60E1F0027D9A0 /* ModeFilelListView.swift in Sources */,
 				C0F97A852EA3FDDE0063E159 /* OperationRecording.swift in Sources */,
 				C0F97A862EA3FDDE0063E159 /* Operation.swift in Sources */,
@@ -1370,6 +1385,7 @@
 				C0F97A912EA3FDF50063E159 /* AttachAssetToOperation.swift in Sources */,
 				C04678402EA00B4A00D160DA /* HomeViewModel.swift in Sources */,
 				1442546A2EAAC61F00583CC3 /* WindowIDs.swift in Sources */,
+				14DE514C2EB740930027D9A0 /* TodayOperationScrollView.swift in Sources */,
 				1446FBF22EAFADCC000BCF61 /* PatientInputForm.swift in Sources */,
 				14CC75442EA6803800399562 /* TodayOperationCard.swift in Sources */,
 			);

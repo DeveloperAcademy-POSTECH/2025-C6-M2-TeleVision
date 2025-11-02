@@ -57,35 +57,37 @@ public final class HomeViewModel {
 
     // MARK: - Computed Properties
 
-    /// 오늘 예정된 환자 목록 (시간순 정렬, 완료된 수술은 뒤로)
-    public var todayPlannedPatients: [PatientDisplayModel] {
+    var todayOperations: [(patient: PatientDisplayModel, operation: OperationDisplayModel)] {
         let calendar = Calendar.current
         let today = calendar.startOfDay(for: Date())
 
-        return state.items
-            .filter { patient in
-                guard let operation = patient.latestOperation else { return false }
+        // 모든 환자의 수술 중 오늘 날짜인 것들을 수집
+        var operations: [(patient: PatientDisplayModel, operation: OperationDisplayModel)] = []
+
+        for patient in state.items {
+            let todayOps = patient.operations.filter { operation in
                 let operationDay = calendar.startOfDay(for: operation.date)
-                return today == operationDay
+                return operationDay == today
             }
-            .sorted { patient1, patient2 in
-                guard let op1 = patient1.latestOperation,
-                      let op2 = patient2.latestOperation
-                else {
-                    return false
-                }
 
-                // 1. 완료된 수술은 뒤로
-                if op1.status == .completed, op2.status != .completed {
-                    return false
-                }
-                if op1.status != .completed, op2.status == .completed {
-                    return true
-                }
-
-                // 2. 같은 상태면 수술 시간 오름차순 (이른 시간이 먼저)
-                return op1.date < op2.date
+            for operation in todayOps {
+                operations.append((patient, operation))
             }
+        }
+
+        // 수술 시간 기준 오름차순 정렬
+        return operations.sorted { lhs, rhs in
+            // 1. 완료된 수술은 뒤로
+            if lhs.operation.status == .completed, rhs.operation.status != .completed {
+                return false
+            }
+            if lhs.operation.status != .completed, rhs.operation.status == .completed {
+                return true
+            }
+
+            // 2. 같은 상태면 수술 시간 오름차순
+            return lhs.operation.date < rhs.operation.date
+        }
     }
 
     // MARK: - Actions
