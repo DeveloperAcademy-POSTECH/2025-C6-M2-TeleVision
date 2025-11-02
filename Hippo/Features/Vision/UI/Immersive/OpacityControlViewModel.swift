@@ -21,7 +21,16 @@ final class OpacityControlViewModel {
     }
     
     var layers: [Layer] = []
-    private var runtime: ImmersiveSceneRuntime
+    var runtime: ImmersiveSceneRuntime
+    
+    var isAllVisible: Bool {
+        guard !layers.isEmpty else { return false }
+        return layers.allSatisfy { $0.isVisible }
+    }
+    
+    var hasAnyLayers: Bool {
+        !layers.isEmpty
+    }
     
     init(runtime: ImmersiveSceneRuntime) {
         self.runtime = runtime
@@ -41,10 +50,10 @@ final class OpacityControlViewModel {
             let currentOpacity = e.components[OpacityComponent.self]?.opacity ?? 1.0
             
             return Layer(id: Self.layerID(for: e),
-                  name: e.name.isEmpty ? "Layer \(idx + 1)" : e.name,
-                  entity: e,
-                  isVisible: e.isEnabled,
-                  opacity: currentOpacity)
+                         name: e.name.isEmpty ? "Layer \(idx + 1)" : e.name,
+                         entity: e,
+                         isVisible: e.isEnabled,
+                         opacity: currentOpacity)
         }
     }
     
@@ -78,7 +87,6 @@ final class OpacityControlViewModel {
         layers[index].entity.isEnabled = newVisibility
     }
     
-    
     // 선택된 layer들의 Opacity 조정
     func setOpacity(for partIDs: [Layer.ID], opacity: Float) {
         for partID in partIDs {
@@ -87,6 +95,22 @@ final class OpacityControlViewModel {
             layers[index].opacity = opacity
             let opacityComponent = OpacityComponent(opacity: opacity)
             layers[index].entity.components.set(opacityComponent)
+        }
+    }
+    
+    // MARK: -- 전체 Layer
+    func setVisibilityForAll(to isVisible: Bool) {
+        // ViewModel의 'layers' 배열 상태를 업데이트
+        for index in layers.indices {
+            layers[index].isVisible = isVisible
+            layers[index].entity.isEnabled = isVisible
+        }
+    }
+    
+    // MARK: -- 객체 삭제
+    func deleteSelectedEntity() {
+        Task {
+            await runtime.deleteSelectedEntity()
         }
     }
 }

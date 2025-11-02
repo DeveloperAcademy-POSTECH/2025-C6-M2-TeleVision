@@ -18,8 +18,9 @@ struct ImmersiveSurgeryView: View {
     let patientID: String
     let operationID: String
     
-    @State private var runtime = ImmersiveSceneRuntime()
-    @State private var viewModel = OperationViewModel()
+    @State private var runtime: ImmersiveSceneRuntime
+    @State private var viewModel: OperationViewModel
+    @State private var opacityViewModel: OpacityControlViewModel
     
     private var patient: PatientDisplayModel {
         guard let patient = viewModel.state.patient else {
@@ -33,6 +34,18 @@ struct ImmersiveSurgeryView: View {
             return OperationDisplayModel.MockData
         }
         return operation
+    }
+    
+    // 생성한 runtime 을 ViewModel에 주입시키기 위한 init
+    init(patientID: String, operationID: String) {
+        self.patientID = patientID
+        self.operationID = operationID
+        
+        let runtime = ImmersiveSceneRuntime()
+        self._runtime = State(initialValue: runtime)
+        
+        self._opacityViewModel = State(initialValue: OpacityControlViewModel(runtime: runtime))
+        self._viewModel = State(initialValue: OperationViewModel())
     }
     
     var body: some View {
@@ -74,18 +87,19 @@ struct ImmersiveSurgeryView: View {
             Attachment(id: AttachmentIDs.assetListView) {
                 AssetListView(
                     isPresented: $viewModel.isShowingAssetListView,
+                    operation: operation,
                     onCreateEntity: { entityID in
                         Task {
-                            let placementService = EntityPlacementService()
-                            await runtime.placeEntity(
-                                entityID: entityID,
-                                service: placementService
-                            )
+                            await runtime.placeEntity(entityID: entityID)
                             viewModel.isShowingAssetListView = false
                         }
                     }
                 )
             }
+            // Opacity Control Panel
+            Attachment(id: AttachmentIDs.opacityControlPanel) {
+                OpacityControlPanel(viewModel: opacityViewModel)
+            }   
         }
         .task {
             await viewModel.load(patientID: patientID, operationID: operationID)
@@ -97,15 +111,21 @@ struct ImmersiveSurgeryView: View {
         .onChange(of: viewModel.isMenuActive) {
             if viewModel.isMenuActive {
                 ARSessionController.shared.runARSession()
+                
             } else {
                 ARSessionController.shared.stopARSession()
             }
+            runtime.setOpacityPanelVisibility(isVisible: viewModel.isMenuActive)
         }
         .onChange(of: viewModel.isShowingAssetListView) { _, isVisible in
             runtime.setAssetListVisibility(isVisible: isVisible)
+            runtime.setOpacityPanelVisibility(isVisible: !isVisible)
         }
         .onChange(of: viewModel.isShowingFinishAlert) { _, isVisible in
             runtime.setFinishAlertVisibility(isVisible: isVisible)
+        }
+        .onChange(of: runtime.selectedEntity) { _, newValue in
+            runtime.setOpacityPanelVisibility(isVisible: newValue != nil)
         }
         .onAppear { runtime.start() }
         .onDisappear { runtime.stop() }
