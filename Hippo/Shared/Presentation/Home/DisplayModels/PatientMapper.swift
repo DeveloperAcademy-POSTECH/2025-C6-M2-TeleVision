@@ -37,8 +37,6 @@ public extension Operation {
             dateText: date.toOperationDateString(),
             details: details,
             status: status,
-            statusText: status.displayText,
-            statusColor: status.colorName,
             assets: operationAssets.map { $0.toDisplayModel() },
             assetCount: operationAssets.count
         )

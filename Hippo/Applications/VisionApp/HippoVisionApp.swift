@@ -19,7 +19,7 @@ struct HippoVisionApp: App {
                 .frame(minWidth: 580, maxWidth: 1020, minHeight: 760, maxHeight: 1020)
         }
         .windowResizability(.contentSize)
-        
+
         // 환자 상세 화면
         WindowGroup(id: WindowIDs.patientDetail, for: String.self) { $id in
             if let id = id {
@@ -28,7 +28,7 @@ struct HippoVisionApp: App {
             }
         }
         .windowResizability(.contentSize)
-        
+
         // 수술 상세 화면
         WindowGroup(id: WindowIDs.operationDetail, for: OperationContext.self) { $context in
             if let context = context {
@@ -41,10 +41,20 @@ struct HippoVisionApp: App {
         }
         .defaultSize(width: 480, height: appModel.homeWindowSize.height)
         .defaultWindowPlacement { _, context in
-            guard let homeWindow = context.windows.first(where: { $0.id == WindowIDs.home }) else { return WindowPlacement() }
-            return WindowPlacement(.trailing(homeWindow))
+            // 1. 환자 상세 창이 열려있는지 확인
+            if let patientDetailWindow = context.windows.first(where: { $0.id == WindowIDs.patientDetail }) {
+                return WindowPlacement(.trailing(patientDetailWindow))
+            }
+
+            // 2. 환자 상세 창이 없으면 홈 창 옆에 배치
+            if let homeWindow = context.windows.first(where: { $0.id == WindowIDs.home }) {
+                return WindowPlacement(.trailing(homeWindow))
+            }
+
+            // 3. 둘 다 없으면 기본 배치
+            return WindowPlacement()
         }
-        
+
         // 몰입형 수술 화면
         ImmersiveSpace(id: ImmersiveIDs.surgery, for: OperationContext.self) { $context in
             if let context = context {
