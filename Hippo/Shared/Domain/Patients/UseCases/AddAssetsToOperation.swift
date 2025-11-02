@@ -61,9 +61,17 @@ public struct AddAssetsToOperation: Sendable {
         var savedURLs: [URL] = []
 
         for url in urls {
+            // 보안 스코프 리소스 접근
+            let accessing = url.startAccessingSecurityScopedResource()
+            defer {
+                if accessing {
+                    url.stopAccessingSecurityScopedResource()
+                }
+            }
+
             // 파일명 중복 방지를 위해 UUID 추가
             let fileExtension = url.pathExtension
-            let fileName = "\(UUID().uuidString).\(fileExtension)"
+            let fileName = "\(url.deletingPathExtension().lastPathComponent).\(fileExtension)"
             let destinationURL = operationAssetsFolder.appendingPathComponent(fileName)
 
             // 기존 파일이 있으면 삭제

@@ -36,6 +36,7 @@ struct ModelPreviewCard: View {
             .frame(width: size - 20, height: size - 20)
             .onAppear {
                 _ = url.startAccessingSecurityScopedResource()
+                print("🚀 Accessing security scoped resource: \(url)")
             }
             .onDisappear {
                 url.stopAccessingSecurityScopedResource()

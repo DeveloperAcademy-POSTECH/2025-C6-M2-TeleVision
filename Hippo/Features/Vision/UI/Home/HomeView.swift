@@ -48,8 +48,10 @@ struct HomeView: View {
             }
         }
         .ornament(attachmentAnchor: .scene(.bottom)) {
-            OrnamentButton {
-                viewModel.isPresentingCreatePatientSheet = true
+            if !viewModel.isPresentingCreatePatientSheet {
+                OrnamentButton {
+                    viewModel.isPresentingCreatePatientSheet = true
+                }
             }
         }
         .sheet(isPresented: $viewModel.isPresentingCreatePatientSheet) {
