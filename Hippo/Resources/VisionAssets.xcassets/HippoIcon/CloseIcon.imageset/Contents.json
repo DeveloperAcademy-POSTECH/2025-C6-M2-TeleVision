@@ -1,15 +1,17 @@
 {
   "images" : [
     {
-      "filename" : "CloseIcon.png",
+      "filename" : "xmarkIcon.svg",
       "idiom" : "universal",
       "scale" : "1x"
     },
     {
+      "filename" : "xmarkIcon 1.svg",
       "idiom" : "universal",
       "scale" : "2x"
     },
     {
+      "filename" : "xmarkIcon 2.svg",
       "idiom" : "universal",
       "scale" : "3x"
     }

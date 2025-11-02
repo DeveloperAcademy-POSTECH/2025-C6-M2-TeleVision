@@ -15,7 +15,7 @@ struct SurgeryBottomMenu: View {
     let onOpenEntityPanel: () -> Void
     let onRecord: () -> Void
     let onFinishSurgery: () -> Void
-
+    
     var body: some View {
         VStack {
             PatientInfoHeader(
@@ -23,9 +23,8 @@ struct SurgeryBottomMenu: View {
                 gender: patient.gender,
                 ageText: patient.ageText
             )
-
-            Spacer().frame(height: 12)
-
+            Spacer().frame(height: 6)
+            
             SurgeryControlBar(
                 isEndoscopicActive: $isEndoscopicActive,
                 isAssetListOpen: $isAssetListOpen,
