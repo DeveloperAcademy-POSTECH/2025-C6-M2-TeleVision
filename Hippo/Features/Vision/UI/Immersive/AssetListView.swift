@@ -9,12 +9,16 @@ import SwiftUI
 
 struct AssetListView: View {
     @Binding var isPresented: Bool
+    
+    @State private var selectedURL: URL?
     let operation: OperationDisplayModel
+
+    var onCreateEntity: (URL) -> Void
+
+    private var fileURLs: [URL] {
+        operation.assets.map { $0.fileURL }
+    }
     
-    var onCreateEntity: (String) -> Void
-    
-    // TODO: Operation Context 연결해야 함
-    private let selectedEntityID = "Sample1"
     
     var body: some View {
         if isPresented {
@@ -29,17 +33,28 @@ struct AssetListView: View {
                 
                 Spacer()
                 
-                ModelFileListView(fileURLs: operation.assets.map { $0.fileURL })
+                AssetListScrollView(
+                    fileURLs: fileURLs,
+                    selectedURL: $selectedURL
+                )
                 Spacer()
                 
                 GlowingCapsuleButton(buttonText: "생성하기", action: {
-                    onCreateEntity(selectedEntityID)
+                    if let url = selectedURL {
+                        onCreateEntity(url)
+                    }
                 })
+                .disabled(selectedURL == nil)
                 .padding(.bottom, 20)
             }
             .frame(width: 680, height: 440)
             .padding()
             .glassBackgroundEffect()
+            .onAppear {
+                if selectedURL == nil {
+                    selectedURL = fileURLs.first
+                }
+            }
             
         }
     }
