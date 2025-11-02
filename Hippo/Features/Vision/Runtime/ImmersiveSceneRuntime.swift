@@ -19,6 +19,7 @@ final class ImmersiveSceneRuntime {
     private var bottomAnchor: AnchorEntity?
     private var finishAlertAnchor: AnchorEntity?
     private var assetListAnchor: AnchorEntity?
+    private var opacityPanelAnchor: AnchorEntity?
     
     //MARK: - 3D model 들이 추가될 루트 엔티티
     private var sceneRoot: Entity?
@@ -28,17 +29,22 @@ final class ImmersiveSceneRuntime {
     var selectedEntity: Entity? = nil
     private var eventSubscription: EventSubscription? = nil
     
+    private let placementService: EntityPlacementService = EntityPlacementService()
+    
     // RealityView 의 content 관리
     func setupScene(in content: RealityViewContent, attachments: RealityViewAttachments) {
         let anchor1 = AnchorEntity(.head)
-        anchor1.position = [0, 0.3, -1.0]
+        anchor1.position = [0, 0.25, -1.0]
         if let topButton = attachments.entity(for: AttachmentIDs.topToggleButton) {
             anchor1.addChild(topButton)
         }
         
         let anchor2 = AnchorEntity(.head)
-        anchor2.position = [0, -0.5, -1.0] // 시야 아래쪽에 배치
+        anchor2.position = [0, -0.27, -0.45] // 시야 아래쪽에 배치
         if let bottomMenuBar = attachments.entity(for: AttachmentIDs.bottomMenuBar) {
+            // 회전
+            let pitchUp = simd_quatf(angle: -(20 * .pi / 180), axis: [1, 0, 0])
+            bottomMenuBar.setOrientation(pitchUp, relativeTo: anchor2)
             anchor2.addChild(bottomMenuBar)
         }
         
@@ -54,15 +60,23 @@ final class ImmersiveSceneRuntime {
             anchor4.addChild(assetList)
         }
         
+        let anchor5 = AnchorEntity(.head)
+        anchor5.position = [0.2, 0, -1.0] // 예시 위치 (오른쪽)
+        if let opacityPanel = attachments.entity(for: AttachmentIDs.opacityControlPanel) {
+            anchor5.addChild(opacityPanel)
+        }
+        
         content.add(anchor1)
         content.add(anchor2)
         content.add(anchor3)
         content.add(anchor4)
+        content.add(anchor5)
         
         topAnchor = anchor1
         bottomAnchor = anchor2
         finishAlertAnchor = anchor3
         assetListAnchor = anchor4
+        opacityPanelAnchor = anchor5
         
         // 3D 모델들의 월드 앵커의 부모
         let rootEntity = Entity()
@@ -73,13 +87,12 @@ final class ImmersiveSceneRuntime {
         // Attachment View 앵커 비활성화
         self.assetListAnchor?.isEnabled = false
         self.finishAlertAnchor?.isEnabled = false
-        
+        self.opacityPanelAnchor?.isEnabled = false
         
         // 마지막 조작 Entity 정보 저장
         eventSubscription = content.subscribe(to: ManipulationEvents.WillBegin.self)  { event in
             self.selectedEntity = event.entity
         }
-        
     }
     
     func setFinishAlertVisibility(isVisible: Bool) {
@@ -94,17 +107,22 @@ final class ImmersiveSceneRuntime {
         
     }
     
-    func placeEntity(entityID: String, service: EntityPlacementService) async {
+    func setOpacityPanelVisibility(isVisible: Bool) {
+        self.opacityPanelAnchor?.isEnabled = isVisible
+        logger.debug("OpacityPanel Anchor 'isEnabled' set to: \(isVisible)")
+    }
+    
+    func placeEntity(entityID: String) async {
         guard let sceneRoot = self.sceneRoot else {
             logger.error("Scene root is not yet set up.")
             return
         }
         
-        let anchor = service.placeAnchorInFront()
+        let anchor = placementService.placeAnchorInFront()
         sceneRoot.addChild(anchor)
         
         do {
-            try await service.attach(entityID: entityID, to: anchor)
+            try await placementService.attach(entityID: entityID, to: anchor)
             logger.debug("Entity '\(entityID)' placed successfully.")
         } catch {
             logger.error("Failed to attach entity '\(entityID)': \(error)")
@@ -112,6 +130,18 @@ final class ImmersiveSceneRuntime {
             anchor.removeFromParent()
         }
     }
+    
+    func deleteSelectedEntity() async {
+            guard let entity = selectedEntity else {
+                logger.warning("Delete requested, but no entity is selected.")
+                return
+            }
+            
+            await placementService.detach(entity: entity)
+            self.selectedEntity = nil
+            
+            logger.debug("Selected entity deleted and selection cleared.")
+        }
     
     func start() {
         logger.debug("🐛 ImmersiveSceneRuntime started")
@@ -124,6 +154,7 @@ final class ImmersiveSceneRuntime {
         bottomAnchor = nil
         finishAlertAnchor = nil
         assetListAnchor = nil
+        opacityPanelAnchor = nil
         
         // 제스쳐 이벤트 구독 정리
         eventSubscription?.cancel()

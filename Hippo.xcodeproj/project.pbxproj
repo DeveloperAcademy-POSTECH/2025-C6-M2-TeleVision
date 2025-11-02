@@ -108,6 +108,24 @@
 		278F28BA2EB3874800DF2F73 /* GlowingCapsuleButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 278F28B82EB3874500DF2F73 /* GlowingCapsuleButton.swift */; };
 		278F28BB2EB3874800DF2F73 /* GlowingCapsuleButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 278F28B82EB3874500DF2F73 /* GlowingCapsuleButton.swift */; };
 		278F28BD2EB3877300DF2F73 /* AssetListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 278F28BC2EB3877200DF2F73 /* AssetListView.swift */; };
+		27AD7AC42EB4948A00E84809 /* LayerEyeButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 27AD7AC32EB4948A00E84809 /* LayerEyeButton.swift */; };
+		27AD7AC52EB4948A00E84809 /* LayerEyeButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 27AD7AC32EB4948A00E84809 /* LayerEyeButton.swift */; };
+		27AD7AC62EB4948A00E84809 /* LayerEyeButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 27AD7AC32EB4948A00E84809 /* LayerEyeButton.swift */; };
+		27AD7ACC2EB496D900E84809 /* LayerButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 27AD7ACB2EB496D900E84809 /* LayerButton.swift */; };
+		27AD7ACD2EB496D900E84809 /* LayerButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 27AD7ACB2EB496D900E84809 /* LayerButton.swift */; };
+		27AD7ACE2EB496D900E84809 /* LayerButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 27AD7ACB2EB496D900E84809 /* LayerButton.swift */; };
+		27AD7AD42EB5ACD600E84809 /* OpacityControlPanel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 27AD7AD32EB5ACD600E84809 /* OpacityControlPanel.swift */; };
+		27AD7AD52EB5ACD600E84809 /* OpacityControlPanel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 27AD7AD32EB5ACD600E84809 /* OpacityControlPanel.swift */; };
+		27AD7AD62EB5ACD600E84809 /* OpacityControlPanel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 27AD7AD32EB5ACD600E84809 /* OpacityControlPanel.swift */; };
+		27AD7ADC2EB5BA2E00E84809 /* OpacityControlPanelButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 27AD7ADB2EB5BA2E00E84809 /* OpacityControlPanelButton.swift */; };
+		27AD7ADD2EB5BA2E00E84809 /* OpacityControlPanelButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 27AD7ADB2EB5BA2E00E84809 /* OpacityControlPanelButton.swift */; };
+		27AD7ADE2EB5BA2E00E84809 /* OpacityControlPanelButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 27AD7ADB2EB5BA2E00E84809 /* OpacityControlPanelButton.swift */; };
+		27AD7AE02EB5BE2E00E84809 /* OpacityControlPanelHeaderComponent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 27AD7ADF2EB5BE2E00E84809 /* OpacityControlPanelHeaderComponent.swift */; };
+		27AD7AE12EB5BE2E00E84809 /* OpacityControlPanelHeaderComponent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 27AD7ADF2EB5BE2E00E84809 /* OpacityControlPanelHeaderComponent.swift */; };
+		27AD7AE22EB5BE2E00E84809 /* OpacityControlPanelHeaderComponent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 27AD7ADF2EB5BE2E00E84809 /* OpacityControlPanelHeaderComponent.swift */; };
+		27AD7AE42EB5BEA400E84809 /* OpacityControlPanelHeader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 27AD7AE32EB5BEA400E84809 /* OpacityControlPanelHeader.swift */; };
+		27AD7AE52EB5BEA400E84809 /* OpacityControlPanelHeader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 27AD7AE32EB5BEA400E84809 /* OpacityControlPanelHeader.swift */; };
+		27AD7AE62EB5BEA400E84809 /* OpacityControlPanelHeader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 27AD7AE32EB5BEA400E84809 /* OpacityControlPanelHeader.swift */; };
 		27D8A2BE2EAF682B009429F0 /* OpacityControlViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 27D8A2BD2EAF67CE009429F0 /* OpacityControlViewModel.swift */; };
 		C02FFA752E9FFF6F00F16742 /* HippoVisionApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = C02FFA4F2E9FFF6F00F16742 /* HippoVisionApp.swift */; };
 		C02FFA762E9FFF6F00F16742 /* HippoMacApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = C02FFA4C2E9FFF6F00F16742 /* HippoMacApp.swift */; };
@@ -329,6 +347,12 @@
 		272BD1B42EADE1DE00C83F81 /* HeadPose.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HeadPose.swift; sourceTree = "<group>"; };
 		278F28B82EB3874500DF2F73 /* GlowingCapsuleButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GlowingCapsuleButton.swift; sourceTree = "<group>"; };
 		278F28BC2EB3877200DF2F73 /* AssetListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AssetListView.swift; sourceTree = "<group>"; };
+		27AD7AC32EB4948A00E84809 /* LayerEyeButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LayerEyeButton.swift; sourceTree = "<group>"; };
+		27AD7ACB2EB496D900E84809 /* LayerButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LayerButton.swift; sourceTree = "<group>"; };
+		27AD7AD32EB5ACD600E84809 /* OpacityControlPanel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OpacityControlPanel.swift; sourceTree = "<group>"; };
+		27AD7ADB2EB5BA2E00E84809 /* OpacityControlPanelButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OpacityControlPanelButton.swift; sourceTree = "<group>"; };
+		27AD7ADF2EB5BE2E00E84809 /* OpacityControlPanelHeaderComponent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OpacityControlPanelHeaderComponent.swift; sourceTree = "<group>"; };
+		27AD7AE32EB5BEA400E84809 /* OpacityControlPanelHeader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OpacityControlPanelHeader.swift; sourceTree = "<group>"; };
 		27D8A2BD2EAF67CE009429F0 /* OpacityControlViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OpacityControlViewModel.swift; sourceTree = "<group>"; };
 		C02FFA4C2E9FFF6F00F16742 /* HippoMacApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HippoMacApp.swift; sourceTree = "<group>"; };
 		C02FFA4D2E9FFF6F00F16742 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -453,6 +477,8 @@
 				1446FB9D2EAE69A4000BCF61 /* RecordingIndicator.swift */,
 				1446FBA12EAE6A1F000BCF61 /* GlowingCircleButton.swift */,
 				1446FB972EAE6906000BCF61 /* CircleIconButton.swift */,
+				27AD7AC32EB4948A00E84809 /* LayerEyeButton.swift */,
+				27AD7ADB2EB5BA2E00E84809 /* OpacityControlPanelButton.swift */,
 			);
 			path = Atoms;
 			sourceTree = "<group>";
@@ -464,6 +490,8 @@
 				1446FBB02EAE6C20000BCF61 /* RecordButton.swift */,
 				1446FBAC2EAE6BB8000BCF61 /* EndoscopeToggle.swift */,
 				1446FBA82EAE6B51000BCF61 /* PatientInfoHeader.swift */,
+				27AD7ACB2EB496D900E84809 /* LayerButton.swift */,
+				27AD7ADF2EB5BE2E00E84809 /* OpacityControlPanelHeaderComponent.swift */,
 			);
 			path = Molecules;
 			sourceTree = "<group>";
@@ -473,6 +501,7 @@
 			children = (
 				1446FBBC2EAE77B0000BCF61 /* SurgeryBottomMenu.swift */,
 				1446FBB82EAE7705000BCF61 /* SurgeryControlBar.swift */,
+				27AD7AE32EB5BEA400E84809 /* OpacityControlPanelHeader.swift */,
 			);
 			path = Organisms;
 			sourceTree = "<group>";
@@ -927,6 +956,7 @@
 				14F6B0332EAAC73F003F28EB /* ImmersiveSurgeryView.swift */,
 				27D8A2BD2EAF67CE009429F0 /* OpacityControlViewModel.swift */,
 				278F28BC2EB3877200DF2F73 /* AssetListView.swift */,
+				27AD7AD32EB5ACD600E84809 /* OpacityControlPanel.swift */,
 			);
 			path = Immersive;
 			sourceTree = "<group>";
@@ -1199,6 +1229,7 @@
 				C0F97B0E2EA4348D0063E159 /* CreatePatient.swift in Sources */,
 				C050AA3F2EA81A5800352314 /* View+VisionDependencies.swift in Sources */,
 				1446FBBA2EAE770A000BCF61 /* SurgeryControlBar.swift in Sources */,
+				27AD7ADE2EB5BA2E00E84809 /* OpacityControlPanelButton.swift in Sources */,
 				1446FBAB2EAE6B55000BCF61 /* PatientInfoHeader.swift in Sources */,
 				C050AA4F2EA8201A00352314 /* ImmersiveSceneRuntime.swift in Sources */,
 				1446FB9A2EAE6911000BCF61 /* CircleIconButton.swift in Sources */,
@@ -1213,15 +1244,18 @@
 				1446FBD52EAF262F000BCF61 /* EntityPlacementService.swift in Sources */,
 				C0F97ADF2EA420EB0063E159 /* DomainDependencies.swift in Sources */,
 				C0F97A852EA3FDDE0063E159 /* OperationRecording.swift in Sources */,
+				27AD7ACD2EB496D900E84809 /* LayerButton.swift in Sources */,
 				C0F97A862EA3FDDE0063E159 /* Operation.swift in Sources */,
 				1494DE7C2EA73205000CD284 /* DetailHeader.swift in Sources */,
 				C046782F2EA00B3A00D160DA /* PatientRepositoryImpl.swift in Sources */,
 				C04678302EA00B3A00D160DA /* PatientRemoteDataSource.swift in Sources */,
 				147EB27D2EB0782100D9CFB3 /* OperationStatusBadge.swift in Sources */,
+				27AD7AD42EB5ACD600E84809 /* OpacityControlPanel.swift in Sources */,
 				14F6B0342EAAC73F003F28EB /* ImmersiveSurgeryView.swift in Sources */,
 				144254662EAAC44900583CC3 /* StartOperationButton.swift in Sources */,
 				144254342EAA232300583CC3 /* OperationViewModel.swift in Sources */,
 				C04678142EA00B1F00D160DA /* Patient.swift in Sources */,
+				27AD7AE52EB5BEA400E84809 /* OpacityControlPanelHeader.swift in Sources */,
 				278F28B92EB3874800DF2F73 /* GlowingCapsuleButton.swift in Sources */,
 				14C8FF6D2EABA4250089101B /* AttachmentIDs.swift in Sources */,
 				14A17F872EB31397009D16CF /* PatientDetailHeader.swift in Sources */,
@@ -1241,6 +1275,7 @@
 				C02FFA9D2E9FFF6F00F16742 /* AppModel.swift in Sources */,
 				C0F97A7B2EA3FD370063E159 /* PatientDTO.swift in Sources */,
 				14A17F8B2EB31411009D16CF /* SurgeonInfoSection.swift in Sources */,
+				27AD7AE02EB5BE2E00E84809 /* OpacityControlPanelHeaderComponent.swift in Sources */,
 				1494DE852EA73229000CD284 /* AssetImageCard.swift in Sources */,
 				C0F97ACC2EA41D4B0063E159 /* SDOperation.swift in Sources */,
 				C0F97ACD2EA41D4B0063E159 /* SDOperationRecording.swift in Sources */,
@@ -1294,6 +1329,7 @@
 				1446FBE82EAF9E3B000BCF61 /* PatientDetailView.swift in Sources */,
 				C0F97A902EA3FDF50063E159 /* UpsertOperation.swift in Sources */,
 				C0F97A912EA3FDF50063E159 /* AttachAssetToOperation.swift in Sources */,
+				27AD7AC62EB4948A00E84809 /* LayerEyeButton.swift in Sources */,
 				C04678402EA00B4A00D160DA /* HomeViewModel.swift in Sources */,
 				1442546A2EAAC61F00583CC3 /* WindowIDs.swift in Sources */,
 				1446FBF22EAFADCC000BCF61 /* PatientInputForm.swift in Sources */,
@@ -1323,6 +1359,8 @@
 				1494DE862EA73229000CD284 /* AssetImageCard.swift in Sources */,
 				C0F97AE32EA4304D0063E159 /* CreateOperation.swift in Sources */,
 				C046783C2EA00B4A00D160DA /* HomeViewModel.swift in Sources */,
+				27AD7ACC2EB496D900E84809 /* LayerButton.swift in Sources */,
+				27AD7AE12EB5BE2E00E84809 /* OpacityControlPanelHeaderComponent.swift in Sources */,
 				C050AA4E2EA8201A00352314 /* ImmersiveSceneRuntime.swift in Sources */,
 				C04678082EA00B1F00D160DA /* Patient.swift in Sources */,
 				1446FBD42EAF262F000BCF61 /* EntityPlacementService.swift in Sources */,
@@ -1330,10 +1368,12 @@
 				144254352EAA232300583CC3 /* OperationViewModel.swift in Sources */,
 				C046780B2EA00B1F00D160DA /* GetPatient.swift in Sources */,
 				1446FBBB2EAE770A000BCF61 /* SurgeryControlBar.swift in Sources */,
+				27AD7AC42EB4948A00E84809 /* LayerEyeButton.swift in Sources */,
 				C0F97ABE2EA41D4B0063E159 /* SDOperation.swift in Sources */,
 				14C8FF6F2EABA4250089101B /* AttachmentIDs.swift in Sources */,
 				C0F97ABF2EA41D4B0063E159 /* SDOperationRecording.swift in Sources */,
 				C0F97AD92EA420E10063E159 /* DataDependencies.swift in Sources */,
+				27AD7AE42EB5BEA400E84809 /* OpacityControlPanelHeader.swift in Sources */,
 				C0F97AC02EA41D4B0063E159 /* SwiftDataMappers.swift in Sources */,
 				1494DE7E2EA73205000CD284 /* DetailHeader.swift in Sources */,
 				1446FBB32EAE6C23000BCF61 /* RecordButton.swift in Sources */,
@@ -1355,6 +1395,7 @@
 				C04678362EA00B3A00D160DA /* PatientRemoteDataSource.swift in Sources */,
 				C0F97B272EA437840063E159 /* AttachAssetCommand.swift in Sources */,
 				1494DE812EA7321A000CD284 /* AssetSection.swift in Sources */,
+				27AD7ADD2EB5BA2E00E84809 /* OpacityControlPanelButton.swift in Sources */,
 				1446FBA02EAE69AF000BCF61 /* RecordingIndicator.swift in Sources */,
 				C046780C2EA00B1F00D160DA /* ListPatients.swift in Sources */,
 				C046780D2EA00B1F00D160DA /* PatientRepository.swift in Sources */,
@@ -1365,6 +1406,7 @@
 				272BD1B62EADE1E200C83F81 /* HeadPose.swift in Sources */,
 				C0F97B012EA430880063E159 /* OperationAssetExtension.swift in Sources */,
 				C0F97B022EA430880063E159 /* OperationStatus.swift in Sources */,
+				27AD7AD52EB5ACD600E84809 /* OpacityControlPanel.swift in Sources */,
 				1494DEA62EA7C851000CD284 /* Date+Extension.swift in Sources */,
 				1494DE712EA72BCE000CD284 /* OperationDetailView.swift in Sources */,
 				C02FFA752E9FFF6F00F16742 /* HippoVisionApp.swift in Sources */,
@@ -1389,14 +1431,17 @@
 				1446FBBF2EAE77B5000BCF61 /* SurgeryBottomMenu.swift in Sources */,
 				C0F97AA92EA401160063E159 /* PatientMapper.swift in Sources */,
 				C0F97AC52EA41D4B0063E159 /* SDOperation.swift in Sources */,
+				27AD7AE62EB5BEA400E84809 /* OpacityControlPanelHeader.swift in Sources */,
 				C0F97ADE2EA420EB0063E159 /* DomainDependencies.swift in Sources */,
 				C0F97AD42EA41FB50063E159 /* PatientLocalDataSource.swift in Sources */,
 				C0F97AC62EA41D4B0063E159 /* SDOperationRecording.swift in Sources */,
 				C0F97AC72EA41D4B0063E159 /* SwiftDataMappers.swift in Sources */,
 				C0F97AC82EA41D4B0063E159 /* PatientLocalDataSourceSwiftData.swift in Sources */,
+				27AD7AE22EB5BE2E00E84809 /* OpacityControlPanelHeaderComponent.swift in Sources */,
 				144254372EAA9FF000583CC3 /* OperationState.swift in Sources */,
 				C0F97AC92EA41D4B0063E159 /* SDOperationAsset.swift in Sources */,
 				144254692EAAC61F00583CC3 /* WindowIDs.swift in Sources */,
+				27AD7ADC2EB5BA2E00E84809 /* OpacityControlPanelButton.swift in Sources */,
 				C0F97ACA2EA41D4B0063E159 /* PatientLocalDataSourceLegacyJSON.swift in Sources */,
 				C0F97ADB2EA420E10063E159 /* DataDependencies.swift in Sources */,
 				C0F97AE42EA4304D0063E159 /* CreateOperation.swift in Sources */,
@@ -1404,6 +1449,7 @@
 				C0F97B2E2EA439290063E159 /* UpdatePatientCommand.swift in Sources */,
 				C0F97AAA2EA401160063E159 /* PatientDisplayModel.swift in Sources */,
 				1446FBB12EAE6C23000BCF61 /* RecordButton.swift in Sources */,
+				27AD7AC52EB4948A00E84809 /* LayerEyeButton.swift in Sources */,
 				1446FBB92EAE770A000BCF61 /* SurgeryControlBar.swift in Sources */,
 				C0F97B2A2EA439080063E159 /* UpdatePatient.swift in Sources */,
 				1494DE7D2EA73205000CD284 /* DetailHeader.swift in Sources */,
@@ -1417,6 +1463,7 @@
 				C0F97AAD2EA401160063E159 /* OperationAssetDisplayModel.swift in Sources */,
 				14C8FF6E2EABA4250089101B /* AttachmentIDs.swift in Sources */,
 				C02FFA802E9FFF6F00F16742 /* ContentView.swift in Sources */,
+				27AD7ACE2EB496D900E84809 /* LayerButton.swift in Sources */,
 				C02FFA842E9FFF6F00F16742 /* HippoMacApp.swift in Sources */,
 				C0F97B0D2EA4348D0063E159 /* CreatePatient.swift in Sources */,
 				C02FFA872E9FFF6F00F16742 /* AppModel.swift in Sources */,
@@ -1425,6 +1472,7 @@
 				146F10312EA3AF2D00DDDC35 /* HomeView.swift in Sources */,
 				1446FBB72EAE6C66000BCF61 /* MenuToggleButton.swift in Sources */,
 				1494DE9A2EA73359000CD284 /* SectionTitle.swift in Sources */,
+				27AD7AD62EB5ACD600E84809 /* OpacityControlPanel.swift in Sources */,
 				C04678332EA00B3A00D160DA /* PatientRemoteDataSource.swift in Sources */,
 				C04678472EA00C2700D160DA /* PatientView.swift in Sources */,
 				C0F97A7D2EA3FD370063E159 /* PatientDTO.swift in Sources */,
