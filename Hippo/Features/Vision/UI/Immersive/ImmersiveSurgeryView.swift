@@ -87,6 +87,7 @@ struct ImmersiveSurgeryView: View {
             Attachment(id: AttachmentIDs.assetListView) {
                 AssetListView(
                     isPresented: $viewModel.isShowingAssetListView,
+                    operation: operation,
                     onCreateEntity: { entityID in
                         Task {
                             await runtime.placeEntity(entityID: entityID)
