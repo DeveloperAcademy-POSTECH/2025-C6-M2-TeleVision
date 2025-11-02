@@ -23,20 +23,47 @@ public class PatientViewModel {
 
     // MARK: - State
 
-    public var patient: PatientDisplayModel?
+    public enum LoadingState {
+        case idle
+        case loading
+        case loaded(PatientDisplayModel)
+        case error(Error)
+    }
+
+    public var loadingState: LoadingState = .idle
+    public var isPresentingOperationInput = false
+
+    // MARK: - Computed Properties
+
+    public var patient: PatientDisplayModel? {
+        if case let .loaded(patient) = loadingState {
+            return patient
+        }
+        return nil
+    }
+
+    public var isLoading: Bool {
+        if case .loading = loadingState {
+            return true
+        }
+        return false
+    }
 
     // MARK: - Action
 
     public func load(patientID: String) async {
+        loadingState = .loading
+
         do {
             let p = try await getPatient.run(patientID)
             logger.debug("🐛 Loaded \(p.name) from repository")
 
             let patientDisplayModel = p.toDisplayModel()
-            patient = patientDisplayModel
+            loadingState = .loaded(patientDisplayModel)
 
         } catch {
             logger.error("Failed to load patient with ID \(patientID), error: \(error.localizedDescription)")
+            loadingState = .error(error)
         }
     }
 }

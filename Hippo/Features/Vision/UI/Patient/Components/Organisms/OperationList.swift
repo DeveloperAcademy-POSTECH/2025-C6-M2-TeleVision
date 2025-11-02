@@ -8,6 +8,11 @@
 import SwiftUI
 
 struct OperationList: View {
+    @Environment(AppModel.self) private var appModel
+    @Environment(\.dismissWindow) private var dismissWindow
+    @Environment(\.openWindow) private var openWindow
+
+    let patientID: String
     let operations: [OperationDisplayModel]
 
     var body: some View {
@@ -15,7 +20,17 @@ struct OperationList: View {
             LazyVStack(alignment: .center) {
                 Spacer().frame(height: 40)
                 ForEach(operations) { operation in
-                    OperationCard(operation: operation)
+                    OperationCard(operation: operation) {
+                        let context = OperationContext(
+                            patientID: patientID,
+                            operationID: operation.id
+                        )
+                        appModel.openOperationDetail(
+                            context: context,
+                            openWindow: openWindow,
+                            dismissWindow: dismissWindow
+                        )
+                    }
                 }
             }
         }
@@ -24,8 +39,9 @@ struct OperationList: View {
 }
 
 #Preview {
-    OperationList(operations: [
-        OperationDisplayModel.MockData,
-        OperationDisplayModel.MockData,
-    ])
+    OperationList(patientID: "patientID",
+                  operations: [
+                      OperationDisplayModel.MockData,
+                      OperationDisplayModel.MockData,
+                  ])
 }
