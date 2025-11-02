@@ -8,6 +8,7 @@
 import SwiftUI
 
 struct OperationDetailView: View {
+    @Environment(AppModel.self) private var appModel
     @Environment(\.openImmersiveSpace) private var openImmersiveSpace
     @Environment(\.dismissWindow) private var dismissWindow
 
@@ -68,6 +69,12 @@ struct OperationDetailView: View {
                         }
                         .padding(.horizontal, 32)
                         .padding(.vertical, 24)
+                    }
+                }
+                .onDisappear {
+                    // 윈도우가 닫힐 때 컨텍스트 정리
+                    if appModel.currentOperationContext?.operationID == operationID {
+                        appModel.currentOperationContext = nil
                     }
                 }
                 .toolbar {

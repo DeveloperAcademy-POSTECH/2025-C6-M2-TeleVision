@@ -13,7 +13,7 @@ struct DetailHeader: View {
     var body: some View {
         HStack {
             VStack(alignment: .leading, spacing: 8) {
-                Text(operation.statusText)
+                Text(operation.status.displayText)
                     .font(.system(size: 20, weight: .semibold))
                     .foregroundStyle(.red)
 

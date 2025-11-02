@@ -10,6 +10,8 @@ import SwiftUI
 struct OperationCard: View {
     let operation: OperationDisplayModel
 
+    let action: () -> Void
+
     var body: some View {
         VStack {
             OperationInfoSection(operation: operation)
@@ -19,10 +21,11 @@ struct OperationCard: View {
             SurgeonInfoSection(surgeonName: operation.surgeon)
         }
         .glassBackgroundEffect()
+        .onTapGesture { action() }
         .padding(.bottom, 28)
     }
 }
 
 #Preview {
-    OperationCard(operation: OperationDisplayModel.MockData)
+    OperationCard(operation: OperationDisplayModel.MockData) {}
 }
