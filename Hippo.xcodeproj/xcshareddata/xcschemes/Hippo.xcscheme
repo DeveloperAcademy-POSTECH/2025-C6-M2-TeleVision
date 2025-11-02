@@ -47,7 +47,7 @@
       buildConfiguration = "Debug"
       selectedDebuggerIdentifier = "Xcode.DebuggerFoundation.Debugger.LLDB"
       selectedLauncherIdentifier = "Xcode.DebuggerFoundation.Launcher.LLDB"
-      launchStyle = "0"
+      launchStyle = "1"
       useCustomWorkingDirectory = "NO"
       ignoresPersistentStateOnLaunch = "NO"
       debugDocumentVersioning = "YES"
@@ -60,7 +60,7 @@
             BlueprintIdentifier = "145E0F4C2E9C0F3900CE6C97"
             BuildableName = "HippoVision.app"
             BlueprintName = "HippoVision"
-            ReferencedContainer = "container:TeleVision.xcodeproj">
+            ReferencedContainer = "container:Hippo.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </LaunchAction>
