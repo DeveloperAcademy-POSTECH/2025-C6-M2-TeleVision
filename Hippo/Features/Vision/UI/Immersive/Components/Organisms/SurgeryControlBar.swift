@@ -14,49 +14,47 @@ struct SurgeryControlBar: View {
     let onOpenEntityPanel: () -> Void
     let onRecord: () -> Void
     let onFinishSurgery: () -> Void
-
+    
     var body: some View {
         HStack {
             CircleIconButton(
                 systemName: "iphone.and.arrow.forward.outward",
+                buttonSize: 28,
+                iconSize: 10,
                 action: onFinishSurgery
             )
-            .padding(24)
-
-            HStack {
-                EndoscopeToggle(isOn: $isEndoscopicActive)
-                    .padding(40)
-
-                Spacer()
-                if isAssetListOpen {
-                    GlowingCircleButton(
-                        imageName: "CloseIcon",
-                        action: {
-                            isAssetListOpen = false
-                        }
-                    )
-                    .padding(24)
-                } else {
-                    GlowingCircleButton(
-                        imageName: "AddEntityIcon",
-                        action: onOpenEntityPanel
-                    )
-                    .padding(24)
+            
+            ZStack {
+                HStack {
+                    Spacer()
+                    if isAssetListOpen {
+                        GlowingCircleButton(
+                            imageName: "CloseIcon",
+                            action: {
+                                isAssetListOpen = false
+                            }
+                        )
+                    } else {
+                        GlowingCircleButton(
+                            imageName: "AddEntityIcon",
+                            action: onOpenEntityPanel
+                        )
+                    }
+                    Spacer()
                 }
-                
-
-                Spacer()
-
-                RecordButton(action: onRecord)
-                    .padding(40)
+                HStack {
+                    EndoscopeToggle(isOn: $isEndoscopicActive)
+                    Spacer()
+                    RecordButton(action: onRecord)
+                }
             }
-            .frame(width: 720, height: 120)
+            .padding(10)
+            .frame(width: 180, height: 40)
             .glassBackgroundEffect(in: .capsule, displayMode: .always)
-
+            
             Circle()
                 .fill(.clear)
-                .frame(width: 80, height: 80)
-                .padding(24)
+                .frame(width: 28, height: 28)
         }
     }
 }
