@@ -32,23 +32,25 @@ struct OperationInputView: View {
                 )
                 .padding(.bottom, 32)
 
-                OrnamentButton {
-                    // 수술 저장하기
-                    Task {
-                        await viewModel.addOperation(toPatientID: patientID)
-                        appModel.operations += 1
-                        dismiss()
-                    }
-                }
-                .systemName("square.and.arrow.down")
-                .content("저장하기")
-                .padding(.bottom, 32)
+                Spacer()
             }
         }
         .scrollIndicators(.hidden)
         .padding(.horizontal, 32)
         .frame(width: 460, height: 680)
         .glassBackgroundEffect(displayMode: .always)
+        .ornament(attachmentAnchor: .parent(.bottom)) {
+            OrnamentButton {
+                // 수술 저장하기
+                Task {
+                    await viewModel.addOperation(toPatientID: patientID)
+                    appModel.operations += 1
+                    dismiss()
+                }
+            }
+            .systemName("square.and.arrow.down")
+            .content("저장하기")
+        }
     }
 }
 
