@@ -10,6 +10,7 @@ import SwiftUI
 struct SurgeryBottomMenu: View {
     let patient: PatientDisplayModel
     @Binding var isEndoscopicActive: Bool
+    @Binding var isAssetListOpen: Bool
     let isVisible: Bool
     let onOpenEntityPanel: () -> Void
     let onRecord: () -> Void
@@ -27,6 +28,7 @@ struct SurgeryBottomMenu: View {
 
             SurgeryControlBar(
                 isEndoscopicActive: $isEndoscopicActive,
+                isAssetListOpen: $isAssetListOpen,
                 onOpenEntityPanel: onOpenEntityPanel,
                 onRecord: onRecord,
                 onFinishSurgery: onFinishSurgery
@@ -40,6 +42,7 @@ struct SurgeryBottomMenu: View {
     SurgeryBottomMenu(
         patient: PatientDisplayModel.MockData,
         isEndoscopicActive: .constant(true),
+        isAssetListOpen: .constant(true),
         isVisible: true,
         onOpenEntityPanel: {},
         onRecord: {},
