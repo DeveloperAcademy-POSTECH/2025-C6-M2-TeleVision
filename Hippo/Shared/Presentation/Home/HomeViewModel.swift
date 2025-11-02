@@ -239,8 +239,7 @@ public final class HomeViewModel {
         do {
             let command = try AttachAssetCommand(
                 name: name,
-                fileURL: fileURL,
-                createdAt: Date()
+                fileURL: fileURL
             )
 
             await executeWithErrorHandling(
