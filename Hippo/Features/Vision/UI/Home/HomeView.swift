@@ -22,7 +22,7 @@ struct HomeView: View {
 
                 Divider()
 
-                TodaySectionView(patients: viewModel.todayPlannedPatients)
+                TodaySectionView(operations: viewModel.todayOperations)
                     .padding(.top, 20)
                     .padding(.horizontal, 40)
 
