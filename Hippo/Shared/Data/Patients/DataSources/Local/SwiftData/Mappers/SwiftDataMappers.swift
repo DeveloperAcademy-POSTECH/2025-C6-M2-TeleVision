@@ -48,7 +48,7 @@ extension SDOperationAsset {
             id: a.id,
             name: a.name,
             fileURL: a.fileURL.absoluteString,
-            createdAt: Date()
+            createdAt: a.createdAt
         )
         sdAsset.operation = op
         return sdAsset
