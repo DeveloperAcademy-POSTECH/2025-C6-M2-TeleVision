@@ -9,7 +9,6 @@ import SwiftUI
 
 /// 환자 목록 메인 화면 - 컨테이너 역할
 struct HomeView: View {
-    @Environment(\.pushWindow) private var pushWindow
     @Environment(AppModel.self) private var appModel
     
     // 테스트용
@@ -26,7 +25,7 @@ struct HomeView: View {
 
                 Divider()
 
-                TodaySectionView(patients: viewModel.todayPlannedPatients)
+                TodaySectionView(operations: viewModel.todayOperations)
                     .padding(.top, 20)
                     .padding(.horizontal, 40)
 
@@ -45,21 +44,18 @@ struct HomeView: View {
                 await viewModel.load()
             }
         }
-        .ornament(attachmentAnchor: .scene(.bottom)) {
-            HStack {
-                OrnamentButton {
-                    pushWindow(id: WindowIDs.patientInput)
-                }
-                
-                // 테스트용
-                OrnamentButton(action: {
-                    let context = OperationContext(
-                        patientID: PatientDisplayModel.MockData.id,
-                        operationID: OperationDisplayModel.MockData.id
-                    )
-                    await openImmersiveSpace(id: ImmersiveIDs.surgery, value: context)
-                }, content: "수술 시작")
+        .onChange(of: appModel.operations) {
+            Task {
+                await viewModel.load()
             }
+        }
+        .ornament(attachmentAnchor: .scene(.bottom)) {
+            OrnamentButton {
+                viewModel.isPresentingCreatePatientSheet = true
+            }
+        }
+        .sheet(isPresented: $viewModel.isPresentingCreatePatientSheet) {
+            PatientInputView()
         }
     }
 }

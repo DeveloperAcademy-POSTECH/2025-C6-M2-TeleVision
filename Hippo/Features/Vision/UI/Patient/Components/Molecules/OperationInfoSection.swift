@@ -13,10 +13,7 @@ struct OperationInfoSection: View {
     var body: some View {
         VStack(alignment: .leading) {
             HStack {
-                OperationStatusBadge(
-                    status: operation.statusText,
-                    color: operation.statusColor
-                )
+                OperationStatusBadge(status: operation.status)
                 Spacer()
             }
             .padding(.bottom)

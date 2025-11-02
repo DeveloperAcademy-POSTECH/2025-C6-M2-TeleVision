@@ -19,7 +19,7 @@ struct PatientInputForm: View {
                 TextField("환자번호를 입력해주세요", text: $patientNumber)
                     .padding(.horizontal)
                     .padding(.vertical, 12)
-                    .background(.thickMaterial)
+                    .background(.thinMaterial)
                     .cornerRadius(12)
             }
             .title("환자 번호")
@@ -28,7 +28,7 @@ struct PatientInputForm: View {
                 TextField("이름을 입력해주세요", text: $name)
                     .padding(.horizontal)
                     .padding(.vertical, 12)
-                    .background(.thickMaterial)
+                    .background(.thinMaterial)
                     .cornerRadius(12)
             }
             .title("이름")
