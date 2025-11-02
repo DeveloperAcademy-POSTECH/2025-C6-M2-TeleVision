@@ -40,11 +40,13 @@ struct PatientDetailView: View {
             }
         }
         .ornament(attachmentAnchor: .scene(.bottom)) {
-            OrnamentButton {
-                viewModel.isPresentingOperationInput = true
+            if !viewModel.isPresentingOperationInput {
+                OrnamentButton {
+                    viewModel.isPresentingOperationInput = true
+                }
+                .systemName("long.text.page.and.pencil")
+                .content("수술 추가")
             }
-            .systemName("long.text.page.and.pencil")
-            .content("수술 추가")
         }
         .sheet(isPresented: $viewModel.isPresentingOperationInput) {
             OperationInputView(patientID: patientId)

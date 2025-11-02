@@ -13,34 +13,32 @@ struct PatientInputView: View {
     @State private var viewModel = HomeViewModel()
 
     var body: some View {
-        ZStack {
-            VStack(spacing: 0) {
-                PatientInputHeader(onDismiss: {
-                    viewModel.isShowDismissAlert = true
-                })
+        VStack(spacing: 0) {
+            PatientInputHeader(onDismiss: {
+                viewModel.isShowDismissAlert = true
+            })
 
-                Spacer().frame(height: 56)
+            Spacer().frame(height: 56)
 
-                PatientInputForm(
-                    patientNumber: $viewModel.patientNumber,
-                    name: $viewModel.name,
-                    birthDate: $viewModel.birthDate,
-                    selectedGender: $viewModel.selectedGender
-                )
+            PatientInputForm(
+                patientNumber: $viewModel.patientNumber,
+                name: $viewModel.name,
+                birthDate: $viewModel.birthDate,
+                selectedGender: $viewModel.selectedGender
+            )
 
-                Spacer()
-
-                OrnamentButton {
-                    handleSubmit()
-                }
-                .systemName("square.and.arrow.down")
-                .content("추가하기")
-                .padding(.bottom, 28)
-            }
+            Spacer()
         }
         .padding(.horizontal, 28)
         .frame(width: 460, height: 680)
         .glassBackgroundEffect(displayMode: .always)
+        .ornament(attachmentAnchor: .parent(.bottom)) {
+            OrnamentButton {
+                handleSubmit()
+            }
+            .systemName("square.and.arrow.down")
+            .content("추가하기")
+        }
         .alert("작성을 취소할까요?", isPresented: $viewModel.isShowDismissAlert) {
             Button("네", role: .destructive) { dismiss() }
             Button("아니요", role: .cancel) { viewModel.isShowDismissAlert = false }
