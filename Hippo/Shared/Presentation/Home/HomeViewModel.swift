@@ -43,6 +43,7 @@ public final class HomeViewModel {
     // MARK: - UI State
 
     public var isPresentingCreatePatientSheet: Bool = false
+    public var isShowDismissAlert: Bool = false
 
     public var patientNumber: String = ""
     public var name: String = ""

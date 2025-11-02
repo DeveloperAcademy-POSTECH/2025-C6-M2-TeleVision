@@ -29,10 +29,10 @@ public struct AddAssetsToOperation: Sendable {
 
     public func run(_ input: Input) async throws {
         // 1. 파일을 영구 저장소로 복사
-//        let savedAssets = try await saveFilesToDocuments(input.command.fileURLs)
+        let savedAssets = try await saveFilesToDocuments(input.command.fileURLs)
 
         // 2. OperationAsset 생성
-        let assets = input.command.fileURLs.map { url in
+        let assets = savedAssets.map { url in
             OperationAsset(
                 name: url.deletingPathExtension().lastPathComponent,
                 fileURL: url,
@@ -48,34 +48,34 @@ public struct AddAssetsToOperation: Sendable {
         )
     }
 
-//    private func saveFilesToDocuments(_ urls: [URL]) async throws -> [URL] {
-//        let fileManager = FileManager.default
-//        let documentsURL = fileManager.urls(for: .documentDirectory, in: .userDomainMask)[0]
-//        let operationAssetsFolder = documentsURL.appendingPathComponent("OperationAssets", isDirectory: true)
-//
-//        // 폴더 생성
-//        if !fileManager.fileExists(atPath: operationAssetsFolder.path) {
-//            try fileManager.createDirectory(at: operationAssetsFolder, withIntermediateDirectories: true)
-//        }
-//
-//        var savedURLs: [URL] = []
-//
-//        for url in urls {
-//            // 파일명 중복 방지를 위해 UUID 추가
-//            let fileExtension = url.pathExtension
-//            let fileName = "\(UUID().uuidString).\(fileExtension)"
-//            let destinationURL = operationAssetsFolder.appendingPathComponent(fileName)
-//
-//            // 기존 파일이 있으면 삭제
-//            if fileManager.fileExists(atPath: destinationURL.path) {
-//                try fileManager.removeItem(at: destinationURL)
-//            }
-//
-//            // 파일 복사
-//            try fileManager.copyItem(at: url, to: destinationURL)
-//            savedURLs.append(destinationURL)
-//        }
-//
-//        return savedURLs
-//    }
+    private func saveFilesToDocuments(_ urls: [URL]) async throws -> [URL] {
+        let fileManager = FileManager.default
+        let documentsURL = fileManager.urls(for: .documentDirectory, in: .userDomainMask)[0]
+        let operationAssetsFolder = documentsURL.appendingPathComponent("OperationAssets", isDirectory: true)
+
+        // 폴더 생성
+        if !fileManager.fileExists(atPath: operationAssetsFolder.path) {
+            try fileManager.createDirectory(at: operationAssetsFolder, withIntermediateDirectories: true)
+        }
+
+        var savedURLs: [URL] = []
+
+        for url in urls {
+            // 파일명 중복 방지를 위해 UUID 추가
+            let fileExtension = url.pathExtension
+            let fileName = "\(UUID().uuidString).\(fileExtension)"
+            let destinationURL = operationAssetsFolder.appendingPathComponent(fileName)
+
+            // 기존 파일이 있으면 삭제
+            if fileManager.fileExists(atPath: destinationURL.path) {
+                try fileManager.removeItem(at: destinationURL)
+            }
+
+            // 파일 복사
+            try fileManager.copyItem(at: url, to: destinationURL)
+            savedURLs.append(destinationURL)
+        }
+
+        return savedURLs
+    }
 }

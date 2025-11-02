@@ -83,6 +83,7 @@ struct OperationDetailView: View {
                             Task {
                                 dismissWindow(id: WindowIDs.home)
                                 dismissWindow(id: WindowIDs.operationDetail)
+                                dismissWindow(id: WindowIDs.patientDetail)
                                 let context = OperationContext(
                                     patientID: patientID,
                                     operationID: operationID

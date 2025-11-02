@@ -11,6 +11,12 @@ import SwiftUI
 struct LogoHeader: View {
     var body: some View {
         HStack {
+            Image("HippoLogo")
+                .resizable()
+                .frame(width: 40, height: 40)
+                .scaledToFit()
+                .padding(.trailing, 8)
+            
             Text("Hippo")
                 .foregroundStyle(.primary)
                 .font(.extraLargeTitle2)
