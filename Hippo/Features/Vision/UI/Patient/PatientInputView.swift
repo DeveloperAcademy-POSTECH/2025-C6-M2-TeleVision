@@ -15,7 +15,9 @@ struct PatientInputView: View {
     var body: some View {
         ZStack {
             VStack(spacing: 0) {
-                PatientInputHeader(onDismiss: { dismiss() })
+                PatientInputHeader(onDismiss: {
+                    viewModel.isShowDismissAlert = true
+                })
 
                 Spacer().frame(height: 56)
 
@@ -27,7 +29,7 @@ struct PatientInputView: View {
                 )
 
                 Spacer()
-                
+
                 OrnamentButton {
                     handleSubmit()
                 }
@@ -39,6 +41,12 @@ struct PatientInputView: View {
         .padding(.horizontal, 28)
         .frame(width: 460, height: 680)
         .glassBackgroundEffect(displayMode: .always)
+        .alert("작성을 취소할까요?", isPresented: $viewModel.isShowDismissAlert) {
+            Button("네", role: .destructive) { dismiss() }
+            Button("아니요", role: .cancel) { viewModel.isShowDismissAlert = false }
+        } message: {
+            Text("지금까지 입력한 내용이\n모두 사라집니다")
+        }
     }
 
     private func handleSubmit() {
