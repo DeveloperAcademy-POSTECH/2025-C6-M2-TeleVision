@@ -51,7 +51,6 @@ public final class OperationViewModel {
     public var isEndoscopicActive: Bool = false
     public var isShowingFinishAlert: Bool = false
     public var isShowingAssetListView: Bool = false
-    
 
     // MARK: - Actions
 
@@ -90,35 +89,19 @@ public final class OperationViewModel {
 
     public func addOperation(toPatientID patientID: String) async {
         do {
-            // 1. Operation 생성
             let command = try CreateOperationCommand(
                 title: operationTitle,
                 diagnosis: operationDiagnosis,
                 surgeon: operationSurgeon,
                 date: operationDate,
                 details: operationDetail,
+                modelURLs: operation3DFileURLs,
                 status: .planned
             )
 
-            let operation = try await createOperation.run(
+            try await createOperation.run(
                 CreateOperation.Input(patientID: patientID, command: command)
             )
-
-            // 2. OperationAsset 추가 (파일이 있는 경우)
-            if !operation3DFileURLs.isEmpty {
-                logger.debug("🐛 Adding assets to operation")
-
-                // AddAssetsCommand 추가
-                let assetsCommand = AddAssetsCommand(fileURLs: operation3DFileURLs)
-
-                try await addAssetsToOperation.run(
-                    AddAssetsToOperation.Input(
-                        patientID: patientID,
-                        operationID: operation.id,
-                        command: assetsCommand
-                    )
-                )
-            }
 
         } catch let validationError as ValidationError {
             _state.alert = validationError.localizedDescription
