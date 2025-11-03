@@ -32,6 +32,25 @@ final class OpacityControlViewModel {
         !layers.isEmpty
     }
     
+    // Opacity 조절용 변수
+    var selectedLayerIDs: Set<String> = []
+    var currentOpacity: Float {
+            get {
+                guard let firstSelectedID = selectedLayerIDs.first,
+                      let layer = layers.first(where: { $0.id == firstSelectedID }) else {
+                    return 1.0
+                }
+                return layer.opacity
+            }
+            set {
+                setOpacity(for: Array(selectedLayerIDs), opacity: newValue)
+            }
+        }
+    
+    var isAllSelected: Bool {
+        !layers.isEmpty && selectedLayerIDs.count == layers.count
+    }
+    
     init(runtime: ImmersiveSceneRuntime) {
         self.runtime = runtime
     }
@@ -55,6 +74,7 @@ final class OpacityControlViewModel {
                          isVisible: e.isEnabled,
                          opacity: currentOpacity)
         }
+        selectedLayerIDs.removeAll()
     }
     
     private func collectLeafNodes(from entity: Entity) -> [Entity] {
@@ -77,6 +97,23 @@ final class OpacityControlViewModel {
     
     
     // MARK: -- 선택된 Layer 들의 visibility / Opacity 조정
+    
+    // 선택 상태 관리
+    func selectLayer(id: String, shouldSelect: Bool) {
+        if shouldSelect {
+            selectedLayerIDs.insert(id)
+        } else {
+            selectedLayerIDs.remove(id)
+        }
+    }
+    
+    func selectAllLayers(shouldSelectAll: Bool) {
+        if shouldSelectAll {
+            selectedLayerIDs = Set(layers.map { $0.id })
+        } else {
+            selectedLayerIDs.removeAll()
+        }
+    }
     
     // 선택된 layer 의 visibility 설정
     func toggleVisibility(for partID: Layer.ID) {
