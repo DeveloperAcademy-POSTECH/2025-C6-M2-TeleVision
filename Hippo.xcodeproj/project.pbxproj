@@ -483,6 +483,30 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		0617C8FC2EB8BB9F003B26E8 /* StreamingControl */ = {
+			isa = PBXGroup;
+			children = (
+				0667A5492EB8814100D7BDF3 /* StreamingControlView.swift */,
+			);
+			path = StreamingControl;
+			sourceTree = "<group>";
+		};
+		0617C8FD2EB8BBC0003B26E8 /* TodaysSurgery */ = {
+			isa = PBXGroup;
+			children = (
+				0667A54D2EB8961C00D7BDF3 /* TodaysSurgeryView.swift */,
+			);
+			path = TodaysSurgery;
+			sourceTree = "<group>";
+		};
+		0617C8FE2EB8BBCB003B26E8 /* PatientDetail */ = {
+			isa = PBXGroup;
+			children = (
+				0667A54B2EB8833D00D7BDF3 /* PatientDetailView.swift */,
+			);
+			path = PatientDetail;
+			sourceTree = "<group>";
+		};
 		0667A54F2EB8A2F900D7BDF3 /* Home */ = {
 			isa = PBXGroup;
 			children = (
@@ -1025,11 +1049,11 @@
 		C050AA182EA80E6200352314 /* UI */ = {
 			isa = PBXGroup;
 			children = (
+				0617C8FE2EB8BBCB003B26E8 /* PatientDetail */,
+				0617C8FD2EB8BBC0003B26E8 /* TodaysSurgery */,
+				0617C8FC2EB8BB9F003B26E8 /* StreamingControl */,
 				0667A54F2EB8A2F900D7BDF3 /* Home */,
 				C02FFA532E9FFF6F00F16742 /* RootView.swift */,
-				0667A5492EB8814100D7BDF3 /* StreamingControlView.swift */,
-				0667A54D2EB8961C00D7BDF3 /* TodaysSurgeryView.swift */,
-				0667A54B2EB8833D00D7BDF3 /* PatientDetailView.swift */,
 				C04678462EA00C2700D160DA /* Patients */,
 			);
 			path = UI;

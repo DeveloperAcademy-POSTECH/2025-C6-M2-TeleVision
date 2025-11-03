@@ -9,7 +9,7 @@ import SwiftUI
 
 struct HomeView: View {
     var mockData = HomeMockDataModel.mockList
-    @State private var isTodaysSurgery = true
+    @Binding var isTodaysSurgery: Bool
     
     var body: some View {
         NavigationSplitView {
@@ -24,6 +24,7 @@ struct HomeView: View {
                 Section {
                     //TODO: 환자 리스트에 데이터가 없는 경우
                     //환자 리스트에 데이터가 있는 경우
+
                     ForEach(mockData) { data in
                         Button {
                             isTodaysSurgery = false
