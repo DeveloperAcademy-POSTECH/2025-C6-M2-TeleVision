@@ -32,8 +32,7 @@ struct RootView: View {
             .onChange(of: selectedTab) {
                 if selectedTab == .StreamingControl {
                     isTodaysSurgery = false
-                }
-                if selectedTab == .Home {
+                } else if selectedTab == .Home {
                     isTodaysSurgery = true
                 }
             }
