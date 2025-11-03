@@ -8,7 +8,7 @@ public struct CreateOperationCommand: Sendable {
     public let surgeon: String
     public let date: Date
     public let details: String
-    public let models: [OperationAsset]
+    public let modelURLs: [URL]
     public let status: OperationStatus
 
     /// Creates a new operation command with validation
@@ -27,7 +27,7 @@ public struct CreateOperationCommand: Sendable {
         surgeon: String,
         date: Date,
         details: String = "",
-        models: [OperationAsset] = [],
+        modelURLs: [URL] = [],
         status: OperationStatus = .planned
     ) throws {
         // Validation
@@ -48,8 +48,19 @@ public struct CreateOperationCommand: Sendable {
         self.surgeon = surgeon.trimmingCharacters(in: .whitespaces)
         self.date = date
         self.details = details
-        self.models = models
+        self.modelURLs = modelURLs
         self.status = status
+    }
+
+    public func toOperationAssetList() -> [OperationAsset] {
+        modelURLs.map { url in
+            OperationAsset(
+                id: UUID().uuidString,
+                name: url.lastPathComponent,
+                fileURL: url,
+                createdAt: Date()
+            )
+        }
     }
 
     /// Converts command to Operation entity
@@ -62,7 +73,7 @@ public struct CreateOperationCommand: Sendable {
             surgeon: surgeon,
             date: date,
             details: details,
-            operationAssets: models,
+            operationAssets: toOperationAssetList(),
             status: status
         )
     }
