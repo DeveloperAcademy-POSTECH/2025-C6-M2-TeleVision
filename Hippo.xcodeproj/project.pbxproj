@@ -11,6 +11,7 @@
 		0667A54A2EB8814100D7BDF3 /* StreamingControlView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0667A5492EB8814100D7BDF3 /* StreamingControlView.swift */; };
 		0667A54C2EB8833D00D7BDF3 /* PatientDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0667A54B2EB8833D00D7BDF3 /* PatientDetailView.swift */; };
 		0667A54E2EB8961C00D7BDF3 /* TodaysSurgeryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0667A54D2EB8961C00D7BDF3 /* TodaysSurgeryView.swift */; };
+		0667A5512EB8A34300D7BDF3 /* HomeMockDataModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0667A5502EB8A33400D7BDF3 /* HomeMockDataModel.swift */; };
 		144254312EA9FF7800583CC3 /* OperationContext.swift in Sources */ = {isa = PBXBuildFile; fileRef = 144254302EA9FF7800583CC3 /* OperationContext.swift */; };
 		144254332EAA232300583CC3 /* OperationViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 144254322EAA232300583CC3 /* OperationViewModel.swift */; };
 		144254342EAA232300583CC3 /* OperationViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 144254322EAA232300583CC3 /* OperationViewModel.swift */; };
@@ -315,6 +316,7 @@
 		0667A5492EB8814100D7BDF3 /* StreamingControlView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StreamingControlView.swift; sourceTree = "<group>"; };
 		0667A54B2EB8833D00D7BDF3 /* PatientDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PatientDetailView.swift; sourceTree = "<group>"; };
 		0667A54D2EB8961C00D7BDF3 /* TodaysSurgeryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TodaysSurgeryView.swift; sourceTree = "<group>"; };
+		0667A5502EB8A33400D7BDF3 /* HomeMockDataModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeMockDataModel.swift; sourceTree = "<group>"; };
 		144254302EA9FF7800583CC3 /* OperationContext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OperationContext.swift; sourceTree = "<group>"; };
 		144254322EAA232300583CC3 /* OperationViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OperationViewModel.swift; sourceTree = "<group>"; };
 		144254362EAA9FEB00583CC3 /* OperationState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OperationState.swift; sourceTree = "<group>"; };
@@ -481,6 +483,15 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		0667A54F2EB8A2F900D7BDF3 /* Home */ = {
+			isa = PBXGroup;
+			children = (
+				0667A5502EB8A33400D7BDF3 /* HomeMockDataModel.swift */,
+				0667A5392EB79DBB00D7BDF3 /* HomeView.swift */,
+			);
+			path = Home;
+			sourceTree = "<group>";
+		};
 		1442542F2EA9FF3900583CC3 /* Context */ = {
 			isa = PBXGroup;
 			children = (
@@ -1014,9 +1025,9 @@
 		C050AA182EA80E6200352314 /* UI */ = {
 			isa = PBXGroup;
 			children = (
+				0667A54F2EB8A2F900D7BDF3 /* Home */,
 				C02FFA532E9FFF6F00F16742 /* RootView.swift */,
 				0667A5492EB8814100D7BDF3 /* StreamingControlView.swift */,
-				0667A5392EB79DBB00D7BDF3 /* HomeView.swift */,
 				0667A54D2EB8961C00D7BDF3 /* TodaysSurgeryView.swift */,
 				0667A54B2EB8833D00D7BDF3 /* PatientDetailView.swift */,
 				C04678462EA00C2700D160DA /* Patients */,
@@ -1565,6 +1576,7 @@
 				1494DE842EA73229000CD284 /* AssetImageCard.swift in Sources */,
 				C0F97AAB2EA401160063E159 /* OperationDisplayModel.swift in Sources */,
 				1494DEA52EA7C851000CD284 /* Date+Extension.swift in Sources */,
+				0667A5512EB8A34300D7BDF3 /* HomeMockDataModel.swift in Sources */,
 				1494DEA12EA7510A000CD284 /* DetailSubPart.swift in Sources */,
 				C0F97AAC2EA401160063E159 /* DisplayHelpers.swift in Sources */,
 				C0F97AAD2EA401160063E159 /* OperationAssetDisplayModel.swift in Sources */,
