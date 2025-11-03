@@ -185,6 +185,9 @@
 		25E78BAE2EB9225600D8CAD2 /* AddAssetsToOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 25E78B8D2EB9225600D8CAD2 /* AddAssetsToOperation.swift */; };
 		25E78BAF2EB9225600D8CAD2 /* UpdateOperationStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = 25E78B942EB9225600D8CAD2 /* UpdateOperationStatus.swift */; };
 		25E78BB02EB9225600D8CAD2 /* DeleteOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 25E78B902EB9225600D8CAD2 /* DeleteOperation.swift */; };
+		25E78BB22EB92A2E00D8CAD2 /* UpdateOperationCommand.swift in Sources */ = {isa = PBXBuildFile; fileRef = 25E78BB12EB92A2E00D8CAD2 /* UpdateOperationCommand.swift */; };
+		25E78BB32EB92A2E00D8CAD2 /* UpdateOperationCommand.swift in Sources */ = {isa = PBXBuildFile; fileRef = 25E78BB12EB92A2E00D8CAD2 /* UpdateOperationCommand.swift */; };
+		25E78BB42EB92A2E00D8CAD2 /* UpdateOperationCommand.swift in Sources */ = {isa = PBXBuildFile; fileRef = 25E78BB12EB92A2E00D8CAD2 /* UpdateOperationCommand.swift */; };
 		272BD1B22EADE1BF00C83F81 /* ARSessionController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 272BD1B12EADE1BA00C83F81 /* ARSessionController.swift */; };
 		272BD1B32EADE1BF00C83F81 /* ARSessionController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 272BD1B12EADE1BA00C83F81 /* ARSessionController.swift */; };
 		272BD1B52EADE1E200C83F81 /* HeadPose.swift in Sources */ = {isa = PBXBuildFile; fileRef = 272BD1B42EADE1DE00C83F81 /* HeadPose.swift */; };
@@ -428,6 +431,7 @@
 		25E78B932EB9225600D8CAD2 /* RemoveAssetFromOperation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RemoveAssetFromOperation.swift; sourceTree = "<group>"; };
 		25E78B942EB9225600D8CAD2 /* UpdateOperationStatus.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UpdateOperationStatus.swift; sourceTree = "<group>"; };
 		25E78B952EB9225600D8CAD2 /* UpsertOperation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UpsertOperation.swift; sourceTree = "<group>"; };
+		25E78BB12EB92A2E00D8CAD2 /* UpdateOperationCommand.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UpdateOperationCommand.swift; sourceTree = "<group>"; };
 		272BD1B12EADE1BA00C83F81 /* ARSessionController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ARSessionController.swift; sourceTree = "<group>"; };
 		272BD1B42EADE1DE00C83F81 /* HeadPose.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HeadPose.swift; sourceTree = "<group>"; };
 		2786232E2EB78F2900F97BE3 /* AssetListScrollView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AssetListScrollView.swift; sourceTree = "<group>"; };
@@ -847,6 +851,7 @@
 		25E78B522EB90D4600D8CAD2 /* Commands */ = {
 			isa = PBXGroup;
 			children = (
+				25E78BB12EB92A2E00D8CAD2 /* UpdateOperationCommand.swift */,
 				25E78B762EB9164E00D8CAD2 /* AddAssetsCommand.swift */,
 				25E78B772EB9164E00D8CAD2 /* AttachAssetCommand.swift */,
 				25E78B782EB9164E00D8CAD2 /* CreateOperationCommand.swift */,
@@ -1577,6 +1582,7 @@
 				25E78B712EB90D4600D8CAD2 /* OperationAssetExtension.swift in Sources */,
 				C046783F2EA00B4A00D160DA /* PatientState.swift in Sources */,
 				C0F97AAE2EA401160063E159 /* PatientMapper.swift in Sources */,
+				25E78BB32EB92A2E00D8CAD2 /* UpdateOperationCommand.swift in Sources */,
 				C0F97AAF2EA401160063E159 /* PatientDisplayModel.swift in Sources */,
 				1446FBF02EAFAD5C000BCF61 /* PatientInputHeader.swift in Sources */,
 				1494DEA02EA7510A000CD284 /* DetailSubPart.swift in Sources */,
@@ -1682,6 +1688,7 @@
 				C0F97AC32EA41D4B0063E159 /* PatientLocalDataSourceLegacyJSON.swift in Sources */,
 				278623332EB790CE00F97BE3 /* AssetListScrollCard.swift in Sources */,
 				C0F97AC42EA41D4B0063E159 /* SDPatient.swift in Sources */,
+				25E78BB22EB92A2E00D8CAD2 /* UpdateOperationCommand.swift in Sources */,
 				C0F97B2B2EA439080063E159 /* UpdatePatient.swift in Sources */,
 				C04678352EA00B3A00D160DA /* PatientRepositoryImpl.swift in Sources */,
 				144254652EAAC44900583CC3 /* StartOperationButton.swift in Sources */,
@@ -1742,6 +1749,7 @@
 				C0F97ACA2EA41D4B0063E159 /* PatientLocalDataSourceLegacyJSON.swift in Sources */,
 				C0F97ADB2EA420E10063E159 /* DataDependencies.swift in Sources */,
 				278623312EB78F2900F97BE3 /* AssetListScrollView.swift in Sources */,
+				25E78BB42EB92A2E00D8CAD2 /* UpdateOperationCommand.swift in Sources */,
 				C0F97ACB2EA41D4B0063E159 /* SDPatient.swift in Sources */,
 				C0F97B2E2EA439290063E159 /* UpdatePatientCommand.swift in Sources */,
 				C0F97AAA2EA401160063E159 /* PatientDisplayModel.swift in Sources */,

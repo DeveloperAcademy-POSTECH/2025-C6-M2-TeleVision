@@ -144,6 +144,7 @@ public actor OperationRepositoryImpl: OperationRepository {
             )
         } catch {
             try mapPatientError(error)
+            throw error
         }
     }
 

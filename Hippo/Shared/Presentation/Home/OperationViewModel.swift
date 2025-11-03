@@ -20,6 +20,9 @@ public final class OperationViewModel {
     @Dependency(\.getPatient) private var getPatient
 
     @ObservationIgnored
+    @Dependency(\.getOperation) private var getOperation
+
+    @ObservationIgnored
     @Dependency(\.createOperation) private var createOperation
 
     // MARK: - Logger
@@ -56,32 +59,26 @@ public final class OperationViewModel {
         _state.alert = nil
 
         do {
+            // Load patient
             let patient = try await getPatient.run(patientID)
-            logger.debug("🐛 Loaded \(patient.name) from repository")
+            logger.debug("Loaded \(patient.name) from repository")
 
             let patientDisplayModel = patient.toDisplayModel()
             _state.patient = patientDisplayModel
 
-            await getOperation(id: operationID)
-            logger.debug("🐛 Loaded operation with ID \(operationID) for patient \(patient.name)")
+            // Load operation using GetOperation UseCase
+            let operation = try await getOperation.run(
+                GetOperation.Input(patientID: patientID, operationID: operationID)
+            )
+            _state.operation = operation.toDisplayModel()
+            logger.debug("Loaded operation with ID \(operationID) for patient \(patient.name)")
 
         } catch {
-            logger.error("Failed to load patient with ID \(patientID), error: \(error.localizedDescription)")
-            _state.alert = "Failed to load patient: \(error.localizedDescription)"
+            logger.error("Failed to load data with patientID: \(patientID), operationID: \(operationID), error: \(error.localizedDescription)")
+            _state.alert = "Failed to load data: \(error.localizedDescription)"
         }
 
         _state.isLoading = false
-    }
-
-    public func getOperation(id: String) async {
-        if let patient = _state.patient {
-            guard let operation = patient.operations.first(where: { $0.id == id }) else {
-                logger.error("❌ Operation with ID \(id) not found for patient \(patient.name)")
-                return
-            }
-
-            _state.operation = operation
-        }
     }
 
     public func addOperation(toPatientID patientID: String) async {
