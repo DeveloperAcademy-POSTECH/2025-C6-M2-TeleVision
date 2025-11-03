@@ -11,18 +11,31 @@ struct OpacityControlSlider: View {
     
     @Binding var currentOpacity: Float
     var selectedLayerIDS: Set<String>
+    var isMixed: Bool
+    
+    private var sliderBinding: Binding<Float> {
+        Binding<Float>(
+            get: {
+                return isMixed ? 0.0 : currentOpacity
+            },
+            set: { newValue in
+                currentOpacity = newValue
+            }
+        )
+    }
     
     var body: some View {
         VStack(alignment: .leading, spacing: 10) {
-            HStack(alignment: .center ,spacing: 10) {
+            HStack(alignment: .center, spacing: 10) {
                 Text("불투명도")
                     .font(.headline)
-                Text("\(Int(currentOpacity * 100))%")
+                Text(isMixed ? "Mixed" : "\(Int(currentOpacity * 100))%")
                     .font(.title)
+                    .animation(.none, value: isMixed)
             }
             .foregroundStyle(.secondary)
             
-            Slider(value: $currentOpacity, in: 0.0...1.0) {
+            Slider(value: sliderBinding, in: 0.0...1.0) {
                 Text("Opacity")
             }
         }
@@ -40,12 +53,10 @@ struct OpacityControlSlider: View {
 #Preview {
     @Previewable @State var previewOpacity: Float = 0.75
     
-    
-    
-    
     OpacityControlSlider(
         currentOpacity: $previewOpacity,
-        selectedLayerIDS: ["layer_id_1"] // 비어있지 않은 Set
+        selectedLayerIDS: ["layer_id_1"],
+        isMixed: false
     )
 }
 
