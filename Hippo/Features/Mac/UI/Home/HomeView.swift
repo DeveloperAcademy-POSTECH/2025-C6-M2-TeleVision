@@ -30,7 +30,7 @@ struct HomeView: View {
                             isTodaysSurgery = false
                         } label: {
                             Text(data.patientNumber)
-                            Text(data.age)
+                            Text(data.name)
                             Text(data.gender)
                             Text("\(data.age)세")
                         }
