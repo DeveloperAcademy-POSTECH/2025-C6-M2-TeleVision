@@ -35,20 +35,30 @@ final class OpacityControlViewModel {
     // Opacity 조절용 변수
     var selectedLayerIDs: Set<String> = []
     var currentOpacity: Float {
-            get {
-                guard let firstSelectedID = selectedLayerIDs.first,
-                      let layer = layers.first(where: { $0.id == firstSelectedID }) else {
-                    return 1.0
-                }
-                return layer.opacity
+        get {
+            guard let firstSelectedID = selectedLayerIDs.first,
+                  let layer = layers.first(where: { $0.id == firstSelectedID }) else {
+                return 1.0
             }
-            set {
-                setOpacity(for: Array(selectedLayerIDs), opacity: newValue)
-            }
+            return layer.opacity
         }
+        set {
+            setOpacity(for: Array(selectedLayerIDs), opacity: newValue)
+        }
+    }
     
     var isAllSelected: Bool {
         !layers.isEmpty && selectedLayerIDs.count == layers.count
+    }
+    
+    var isMixed: Bool {
+        let selectedLayers = layers.filter { selectedLayerIDs.contains($0.id) }
+        guard selectedLayers.count > 1 else {
+            return false
+        }
+        
+        let uniqueOpacities = Set(selectedLayers.map { $0.opacity })
+        return uniqueOpacities.count > 1
     }
     
     init(runtime: ImmersiveSceneRuntime) {

@@ -39,7 +39,8 @@ struct OpacityControlPanel: View {
             // 투명도 슬라이더
             OpacityControlSlider(
                 currentOpacity: $viewModel.currentOpacity,
-                selectedLayerIDS: viewModel.selectedLayerIDs
+                selectedLayerIDS: viewModel.selectedLayerIDs,
+                isMixed: viewModel.isMixed
             )
             
             // 2. 레이어 버튼 그리드
