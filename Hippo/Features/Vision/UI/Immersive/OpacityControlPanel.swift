@@ -10,42 +10,38 @@ import RealityKit
 
 struct OpacityControlPanel: View {
     
-    var viewModel: OpacityControlViewModel
+    @Bindable var viewModel: OpacityControlViewModel
     
-    @State private var selectedLayerIDs: Set<String> = []
-    
-    // Grid 레이아웃 설정 (3열)
+    // Grid 레이아웃 설정 (4열)
     private let columns: [GridItem] = [
+        GridItem(.flexible()),
         GridItem(.flexible()),
         GridItem(.flexible()),
         GridItem(.flexible())
     ]
     
-    private var isAllSelected: Bool {
-        !viewModel.layers.isEmpty && selectedLayerIDs.count == viewModel.layers.count
-    }
-    
     var body: some View {
         VStack {
             OpacityControlPanelHeader(
-                isAllSelected: isAllSelected,
+                isAllSelected: viewModel.isAllSelected,
                 isAllVisible: viewModel.isAllVisible,
                 onDeleteTapped: {
                     viewModel.deleteSelectedEntity()
                 },
                 onSelectAllToggle: { shouldSelectAll in
-                    if shouldSelectAll {
-                        selectedLayerIDs = Set(viewModel.layers.map { $0.id })
-                    } else {
-                        selectedLayerIDs.removeAll()
-                    }
+                    viewModel.selectAllLayers(shouldSelectAll: shouldSelectAll)
                 },
                 onShowAllToggle: {_ in
                     viewModel.setVisibilityForAll(to: !viewModel.isAllVisible)
                 }
             )
             
-            // TODO: 투명도 슬라이더 (요청대로 일단 보류)
+            // 투명도 슬라이더
+            OpacityControlSlider(
+                currentOpacity: $viewModel.currentOpacity,
+                selectedLayerIDS: viewModel.selectedLayerIDs,
+                isMixed: viewModel.isMixed
+            )
             
             // 2. 레이어 버튼 그리드
             if viewModel.hasAnyLayers {
@@ -55,14 +51,10 @@ struct OpacityControlPanel: View {
                             LayerButton(
                                 title: layer.name,
                                 opacity: layer.opacity,
-                                isSelected: selectedLayerIDs.contains(layer.id),
+                                isSelected: viewModel.selectedLayerIDs.contains(layer.id),
                                 isVisible: layer.isVisible,
                                 onSelect: { shouldSelect in
-                                    if shouldSelect {
-                                        selectedLayerIDs.insert(layer.id)
-                                    } else {
-                                        selectedLayerIDs.remove(layer.id)
-                                    }
+                                    viewModel.selectLayer(id: layer.id, shouldSelect: shouldSelect)
                                 },
                                 onEyeToggle: { _ in
                                     viewModel.toggleVisibility(for: layer.id)
@@ -85,9 +77,8 @@ struct OpacityControlPanel: View {
         }
         .onChange(of: viewModel.runtime.selectedEntity) {
             viewModel.reloadLayers()
-            selectedLayerIDs.removeAll() // 선택 상태 초기화
         }
-        .frame(width: 500, height: 522)
+        .frame(width: 658, height: 522)
         .padding()
         .glassBackgroundEffect()
     }
