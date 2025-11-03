@@ -1,3 +1,4 @@
+/*
 import SwiftUI
 
 /// macOS-specific Patient list view with Table interface
@@ -300,3 +301,4 @@ private struct AddPatientSheet: View {
 #Preview {
     PatientView()
 }
+*/
