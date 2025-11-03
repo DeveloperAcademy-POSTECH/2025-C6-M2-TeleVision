@@ -10,7 +10,7 @@ import RealityKit
 import Foundation
 
 public protocol AnchorServicing {
-    func attach(url: URL,to anchor: AnchorEntity) async throws
+    func attach(url: URL, to anchor: AnchorEntity) async throws
     func detach(entity: Entity) async throws
 }
 
