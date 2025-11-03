@@ -10,12 +10,15 @@ import SwiftUI
 struct HomeView: View {
     var mockData = HomeMockDataModel.mockList
     @Binding var isTodaysSurgery: Bool
+    @State private var selectedPatientID: HomeMockDataModel.ID?
+    private var selectedPatient: HomeMockDataModel? { mockData.first { $0.id == selectedPatientID } }
     
     var body: some View {
         NavigationSplitView {
             //오늘의 수술 버튼
             Button {
                 isTodaysSurgery = true
+                selectedPatientID = nil
             } label: {
                 Text("Today's Surgery")
             }
@@ -28,6 +31,7 @@ struct HomeView: View {
                     ForEach(mockData) { data in
                         Button {
                             isTodaysSurgery = false
+                            selectedPatientID = data.id
                         } label: {
                             Text(data.patientNumber)
                             Text(data.name)
@@ -52,8 +56,11 @@ struct HomeView: View {
         } detail: {
             if isTodaysSurgery {
                 TodaysSurgeryView()
+                    .navigationTitle("Today's Surgery")
             } else {
                 PatientDetailView()
+                    .navigationTitle(selectedPatient.map { "\($0.name) \($0.gender) \($0.age)세" } ?? "환자 상세 정보")
+                    .navigationSubtitle(selectedPatient?.patientNumber ?? "환자 번호")
             }
         }
     }
