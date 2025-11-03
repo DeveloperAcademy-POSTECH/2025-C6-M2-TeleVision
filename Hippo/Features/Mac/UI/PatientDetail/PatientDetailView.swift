@@ -8,13 +8,13 @@
 import SwiftUI
 
 struct PatientDetailView: View {
+    var mockData = HomeMockDataModel.mockList
+    
     var body: some View {
-        ScrollView {
-            Text("환자 디테일 비어있음")
-        }
+        Text("환자의 수술이 없습니다.")
     }
 }
 
 #Preview {
-    RootView()
+    PatientDetailView()
 }
