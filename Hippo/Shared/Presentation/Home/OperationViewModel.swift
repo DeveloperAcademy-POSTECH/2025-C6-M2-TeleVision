@@ -20,9 +20,6 @@ public final class OperationViewModel {
     @Dependency(\.getPatient) private var getPatient
 
     @ObservationIgnored
-    @Dependency(\.addAssetsToOperation) private var addAssetsToOperation
-
-    @ObservationIgnored
     @Dependency(\.createOperation) private var createOperation
 
     // MARK: - Logger
