@@ -134,10 +134,8 @@
 		272BD1B62EADE1E200C83F81 /* HeadPose.swift in Sources */ = {isa = PBXBuildFile; fileRef = 272BD1B42EADE1DE00C83F81 /* HeadPose.swift */; };
 		2786232F2EB78F2900F97BE3 /* AssetListScrollView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2786232E2EB78F2900F97BE3 /* AssetListScrollView.swift */; };
 		278623302EB78F2900F97BE3 /* AssetListScrollView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2786232E2EB78F2900F97BE3 /* AssetListScrollView.swift */; };
-		278623312EB78F2900F97BE3 /* AssetListScrollView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2786232E2EB78F2900F97BE3 /* AssetListScrollView.swift */; };
 		278623332EB790CE00F97BE3 /* AssetListScrollCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 278623322EB790CE00F97BE3 /* AssetListScrollCard.swift */; };
 		278623342EB790CE00F97BE3 /* AssetListScrollCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 278623322EB790CE00F97BE3 /* AssetListScrollCard.swift */; };
-		278623352EB790CE00F97BE3 /* AssetListScrollCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 278623322EB790CE00F97BE3 /* AssetListScrollCard.swift */; };
 		278F28B92EB3874800DF2F73 /* GlowingCapsuleButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 278F28B82EB3874500DF2F73 /* GlowingCapsuleButton.swift */; };
 		278F28BB2EB3874800DF2F73 /* GlowingCapsuleButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 278F28B82EB3874500DF2F73 /* GlowingCapsuleButton.swift */; };
 		278F28BD2EB3877300DF2F73 /* AssetListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 278F28BC2EB3877200DF2F73 /* AssetListView.swift */; };
@@ -1605,7 +1603,6 @@
 				C0F97ACA2EA41D4B0063E159 /* PatientLocalDataSourceLegacyJSON.swift in Sources */,
 				C0F97ADB2EA420E10063E159 /* DataDependencies.swift in Sources */,
 				C0F97AE42EA4304D0063E159 /* CreateOperation.swift in Sources */,
-				278623312EB78F2900F97BE3 /* AssetListScrollView.swift in Sources */,
 				C0F97ACB2EA41D4B0063E159 /* SDPatient.swift in Sources */,
 				C0F97B2E2EA439290063E159 /* UpdatePatientCommand.swift in Sources */,
 				C0F97AAA2EA401160063E159 /* PatientDisplayModel.swift in Sources */,
@@ -1639,7 +1636,6 @@
 				0667A54A2EB8814100D7BDF3 /* StreamingControlView.swift in Sources */,
 				C046783D2EA00B4A00D160DA /* PatientState.swift in Sources */,
 				144254332EAA232300583CC3 /* OperationViewModel.swift in Sources */,
-				278623352EB790CE00F97BE3 /* AssetListScrollCard.swift in Sources */,
 				C050AA3D2EA8197E00352314 /* ImmersiveIDs.swift in Sources */,
 				C046783E2EA00B4A00D160DA /* HomeViewModel.swift in Sources */,
 				C0F97B282EA437840063E159 /* AttachAssetCommand.swift in Sources */,

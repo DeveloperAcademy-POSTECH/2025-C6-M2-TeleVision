@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-enum Tabs{
+enum Tabs {
     case Home
     case StreamingControl
 }
@@ -15,18 +15,16 @@ enum Tabs{
 struct RootView: View {
     @State private var selectedTab: Tabs = .Home
     @State private var isTodaysSurgery: Bool = true
-    
+
     var body: some View {
         NavigationStack {
-            //탭바
-            TabView(selection: $selectedTab) {
-                Tab("Patients", systemImage: "", value: .Home) {
+            // 메인 컨텐츠는 선택된 탭에 따라 전환
+            Group {
+                switch selectedTab {
+                case .Home:
                     HomeView(isTodaysSurgery: $isTodaysSurgery)
-                        .navigationTitle("Patient")
-                }
-                Tab("Camera", systemImage: "", value: .StreamingControl) {
+                case .StreamingControl:
                     StreamingControlView()
-                        .navigationTitle("Camera")
                 }
             }
             .onChange(of: selectedTab) {
@@ -36,40 +34,45 @@ struct RootView: View {
                     isTodaysSurgery = true
                 }
             }
-        }
-        .toolbar {
-            ToolbarItem {
-                //툴바 우측 버튼
-                if !isTodaysSurgery {
-                    Button {
-                        //TODO: 상황에 따라 버튼 기능 변경
-                        switch selectedTab {
-                        case .Home:
-                            //CASE 1-2: HomeView에서 환자를 선택하지 않으면 버튼 없음
-                            //CASE 1-2: HomeView에서 환자를 선택하면 수술 생성 버튼
-                            print("홈뷰기능")
-                        case .StreamingControl:
-                            //CASE 2-1: StreamingControlView에서는 우측 디버깅 창 토글 버튼
-                            print("스트리밍 뷰 기능")
-                        }
-                    } label: {
-                        switch selectedTab {
-                        case .Home:
-                            //TODO: 환자 선택 전에는 비활성화/감춤 처리
-                            Label("Create", systemImage: "plus")
-                        case .StreamingControl:
-                            Label("Debug", systemImage: "sidebar.right")
+            .toolbar {
+
+                ToolbarItemGroup(placement: .primaryAction) {
+                    // 상단에 탭 전환용 세그먼트 컨트롤
+                    Picker("Section", selection: $selectedTab) {
+                        Text("Patients").tag(Tabs.Home)
+                        Text("Camera").tag(Tabs.StreamingControl)
+                    }
+                    .pickerStyle(.segmented)
+
+                    //툴바 우측 버튼
+                    if !isTodaysSurgery {
+                        Button {
+                            //TODO: 상황에 따라 버튼 기능 변경
+                            switch selectedTab {
+                            case .Home:
+                                //CASE 1-2: HomeView에서 환자를 선택하지 않으면 버튼 없음
+                                //CASE 1-2: HomeView에서 환자를 선택하면 수술 생성 버튼
+                                print("홈뷰기능")
+                            case .StreamingControl:
+                                //CASE 2-1: StreamingControlView에서는 우측 디버깅 창 토글 버튼
+                                print("스트리밍 뷰 기능")
+                            }
+                        } label: {
+                            switch selectedTab {
+                            case .Home:
+                                //TODO: 환자 선택 전에는 비활성화/감춤 처리
+                                Label("Create", systemImage: "plus")
+                            case .StreamingControl:
+                                Label("Debug", systemImage: "sidebar.right")
+                            }
                         }
                     }
                 }
-                    
             }
         }
     }
 }
 
-
 #Preview {
     RootView()
 }
-
