@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		0667A53A2EB79DBB00D7BDF3 /* HomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0667A5392EB79DBB00D7BDF3 /* HomeView.swift */; };
+		0667A54A2EB8814100D7BDF3 /* StreamingControlView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0667A5492EB8814100D7BDF3 /* StreamingControlView.swift */; };
 		144254312EA9FF7800583CC3 /* OperationContext.swift in Sources */ = {isa = PBXBuildFile; fileRef = 144254302EA9FF7800583CC3 /* OperationContext.swift */; };
 		144254332EAA232300583CC3 /* OperationViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 144254322EAA232300583CC3 /* OperationViewModel.swift */; };
 		144254342EAA232300583CC3 /* OperationViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 144254322EAA232300583CC3 /* OperationViewModel.swift */; };
@@ -146,7 +148,7 @@
 		C02FFA752E9FFF6F00F16742 /* HippoVisionApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = C02FFA4F2E9FFF6F00F16742 /* HippoVisionApp.swift */; };
 		C02FFA762E9FFF6F00F16742 /* HippoMacApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = C02FFA4C2E9FFF6F00F16742 /* HippoMacApp.swift */; };
 		C02FFA792E9FFF6F00F16742 /* AppModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = C02FFA6A2E9FFF6F00F16742 /* AppModel.swift */; };
-		C02FFA802E9FFF6F00F16742 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C02FFA532E9FFF6F00F16742 /* ContentView.swift */; };
+		C02FFA802E9FFF6F00F16742 /* RootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C02FFA532E9FFF6F00F16742 /* RootView.swift */; };
 		C02FFA842E9FFF6F00F16742 /* HippoMacApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = C02FFA4C2E9FFF6F00F16742 /* HippoMacApp.swift */; };
 		C02FFA8D2E9FFF6F00F16742 /* MacAssets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = C02FFA5A2E9FFF6F00F16742 /* MacAssets.xcassets */; };
 		C02FFA932E9FFF6F00F16742 /* VisionAssets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = C02FFA5B2E9FFF6F00F16742 /* VisionAssets.xcassets */; };
@@ -307,6 +309,8 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		0667A5392EB79DBB00D7BDF3 /* HomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeView.swift; sourceTree = "<group>"; };
+		0667A5492EB8814100D7BDF3 /* StreamingControlView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StreamingControlView.swift; sourceTree = "<group>"; };
 		144254302EA9FF7800583CC3 /* OperationContext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OperationContext.swift; sourceTree = "<group>"; };
 		144254322EAA232300583CC3 /* OperationViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OperationViewModel.swift; sourceTree = "<group>"; };
 		144254362EAA9FEB00583CC3 /* OperationState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OperationState.swift; sourceTree = "<group>"; };
@@ -387,7 +391,7 @@
 		C02FFA4D2E9FFF6F00F16742 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		C02FFA4F2E9FFF6F00F16742 /* HippoVisionApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HippoVisionApp.swift; sourceTree = "<group>"; };
 		C02FFA502E9FFF6F00F16742 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		C02FFA532E9FFF6F00F16742 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
+		C02FFA532E9FFF6F00F16742 /* RootView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RootView.swift; sourceTree = "<group>"; };
 		C02FFA5A2E9FFF6F00F16742 /* MacAssets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = MacAssets.xcassets; sourceTree = "<group>"; };
 		C02FFA5B2E9FFF6F00F16742 /* VisionAssets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = VisionAssets.xcassets; sourceTree = "<group>"; };
 		C02FFA6A2E9FFF6F00F16742 /* AppModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppModel.swift; sourceTree = "<group>"; };
@@ -1006,7 +1010,9 @@
 		C050AA182EA80E6200352314 /* UI */ = {
 			isa = PBXGroup;
 			children = (
-				C02FFA532E9FFF6F00F16742 /* ContentView.swift */,
+				C02FFA532E9FFF6F00F16742 /* RootView.swift */,
+				0667A5492EB8814100D7BDF3 /* StreamingControlView.swift */,
+				0667A5392EB79DBB00D7BDF3 /* HomeView.swift */,
 				C04678462EA00C2700D160DA /* Patients */,
 			);
 			path = UI;
@@ -1555,7 +1561,7 @@
 				C0F97AAC2EA401160063E159 /* DisplayHelpers.swift in Sources */,
 				C0F97AAD2EA401160063E159 /* OperationAssetDisplayModel.swift in Sources */,
 				14C8FF6E2EABA4250089101B /* AttachmentIDs.swift in Sources */,
-				C02FFA802E9FFF6F00F16742 /* ContentView.swift in Sources */,
+				C02FFA802E9FFF6F00F16742 /* RootView.swift in Sources */,
 				C02FFA842E9FFF6F00F16742 /* HippoMacApp.swift in Sources */,
 				C0F97B0D2EA4348D0063E159 /* CreatePatient.swift in Sources */,
 				C04678322EA00B3A00D160DA /* PatientRepositoryImpl.swift in Sources */,
@@ -1571,6 +1577,7 @@
 				C0F97B052EA430880063E159 /* OperationAssetExtension.swift in Sources */,
 				C0F97B062EA430880063E159 /* OperationStatus.swift in Sources */,
 				14DE51332EB60DB00027D9A0 /* FileAttachmentPlaceholder.swift in Sources */,
+				0667A54A2EB8814100D7BDF3 /* StreamingControlView.swift in Sources */,
 				C046783D2EA00B4A00D160DA /* PatientState.swift in Sources */,
 				144254332EAA232300583CC3 /* OperationViewModel.swift in Sources */,
 				C050AA3D2EA8197E00352314 /* ImmersiveIDs.swift in Sources */,
@@ -1579,6 +1586,7 @@
 				C0F97A872EA3FDDE0063E159 /* OperationAsset.swift in Sources */,
 				C0F97A882EA3FDDE0063E159 /* OperationRecording.swift in Sources */,
 				C0F97A892EA3FDDE0063E159 /* Operation.swift in Sources */,
+				0667A53A2EB79DBB00D7BDF3 /* HomeView.swift in Sources */,
 				C04678202EA00B1F00D160DA /* Patient.swift in Sources */,
 				C04678232EA00B1F00D160DA /* GetPatient.swift in Sources */,
 				1494DE822EA7321A000CD284 /* AssetSection.swift in Sources */,
