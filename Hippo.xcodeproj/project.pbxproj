@@ -127,6 +127,12 @@
 		272BD1B32EADE1BF00C83F81 /* ARSessionController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 272BD1B12EADE1BA00C83F81 /* ARSessionController.swift */; };
 		272BD1B52EADE1E200C83F81 /* HeadPose.swift in Sources */ = {isa = PBXBuildFile; fileRef = 272BD1B42EADE1DE00C83F81 /* HeadPose.swift */; };
 		272BD1B62EADE1E200C83F81 /* HeadPose.swift in Sources */ = {isa = PBXBuildFile; fileRef = 272BD1B42EADE1DE00C83F81 /* HeadPose.swift */; };
+		2786232F2EB78F2900F97BE3 /* AssetListScrollView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2786232E2EB78F2900F97BE3 /* AssetListScrollView.swift */; };
+		278623302EB78F2900F97BE3 /* AssetListScrollView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2786232E2EB78F2900F97BE3 /* AssetListScrollView.swift */; };
+		278623312EB78F2900F97BE3 /* AssetListScrollView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2786232E2EB78F2900F97BE3 /* AssetListScrollView.swift */; };
+		278623332EB790CE00F97BE3 /* AssetListScrollCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 278623322EB790CE00F97BE3 /* AssetListScrollCard.swift */; };
+		278623342EB790CE00F97BE3 /* AssetListScrollCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 278623322EB790CE00F97BE3 /* AssetListScrollCard.swift */; };
+		278623352EB790CE00F97BE3 /* AssetListScrollCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 278623322EB790CE00F97BE3 /* AssetListScrollCard.swift */; };
 		278F28B92EB3874800DF2F73 /* GlowingCapsuleButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 278F28B82EB3874500DF2F73 /* GlowingCapsuleButton.swift */; };
 		278F28BB2EB3874800DF2F73 /* GlowingCapsuleButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 278F28B82EB3874500DF2F73 /* GlowingCapsuleButton.swift */; };
 		278F28BD2EB3877300DF2F73 /* AssetListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 278F28BC2EB3877200DF2F73 /* AssetListView.swift */; };
@@ -374,6 +380,8 @@
 		14F6B0332EAAC73F003F28EB /* ImmersiveSurgeryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImmersiveSurgeryView.swift; sourceTree = "<group>"; };
 		272BD1B12EADE1BA00C83F81 /* ARSessionController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ARSessionController.swift; sourceTree = "<group>"; };
 		272BD1B42EADE1DE00C83F81 /* HeadPose.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HeadPose.swift; sourceTree = "<group>"; };
+		2786232E2EB78F2900F97BE3 /* AssetListScrollView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AssetListScrollView.swift; sourceTree = "<group>"; };
+		278623322EB790CE00F97BE3 /* AssetListScrollCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AssetListScrollCard.swift; sourceTree = "<group>"; };
 		278F28B82EB3874500DF2F73 /* GlowingCapsuleButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GlowingCapsuleButton.swift; sourceTree = "<group>"; };
 		278F28BC2EB3877200DF2F73 /* AssetListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AssetListView.swift; sourceTree = "<group>"; };
 		27AD7AC32EB4948A00E84809 /* LayerEyeButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LayerEyeButton.swift; sourceTree = "<group>"; };
@@ -521,6 +529,7 @@
 				1446FBA82EAE6B51000BCF61 /* PatientInfoHeader.swift */,
 				27AD7ACB2EB496D900E84809 /* LayerButton.swift */,
 				27AD7ADF2EB5BE2E00E84809 /* OpacityControlPanelHeaderComponent.swift */,
+				278623322EB790CE00F97BE3 /* AssetListScrollCard.swift */,
 			);
 			path = Molecules;
 			sourceTree = "<group>";
@@ -531,6 +540,7 @@
 				1446FBBC2EAE77B0000BCF61 /* SurgeryBottomMenu.swift */,
 				1446FBB82EAE7705000BCF61 /* SurgeryControlBar.swift */,
 				27AD7AE32EB5BEA400E84809 /* OpacityControlPanelHeader.swift */,
+				2786232E2EB78F2900F97BE3 /* AssetListScrollView.swift */,
 			);
 			path = Organisms;
 			sourceTree = "<group>";
@@ -1304,6 +1314,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				C04678102EA00B1F00D160DA /* DeletePatient.swift in Sources */,
+				278623342EB790CE00F97BE3 /* AssetListScrollCard.swift in Sources */,
 				C0F97B0E2EA4348D0063E159 /* CreatePatient.swift in Sources */,
 				C050AA3F2EA81A5800352314 /* View+VisionDependencies.swift in Sources */,
 				1446FBBA2EAE770A000BCF61 /* SurgeryControlBar.swift in Sources */,
@@ -1358,6 +1369,7 @@
 				C0F97A7B2EA3FD370063E159 /* PatientDTO.swift in Sources */,
 				14A17F8B2EB31411009D16CF /* SurgeonInfoSection.swift in Sources */,
 				27AD7AE02EB5BE2E00E84809 /* OpacityControlPanelHeaderComponent.swift in Sources */,
+				278623302EB78F2900F97BE3 /* AssetListScrollView.swift in Sources */,
 				1494DE852EA73229000CD284 /* AssetImageCard.swift in Sources */,
 				C0F97ACC2EA41D4B0063E159 /* SDOperation.swift in Sources */,
 				14DE51432EB64A2F0027D9A0 /* DetailModelSection.swift in Sources */,
@@ -1478,12 +1490,14 @@
 				1494DE992EA73359000CD284 /* SectionTitle.swift in Sources */,
 				C0F97AC22EA41D4B0063E159 /* SDOperationAsset.swift in Sources */,
 				C0F97AC32EA41D4B0063E159 /* PatientLocalDataSourceLegacyJSON.swift in Sources */,
+				278623332EB790CE00F97BE3 /* AssetListScrollCard.swift in Sources */,
 				C0F97AC42EA41D4B0063E159 /* SDPatient.swift in Sources */,
 				C0F97B2B2EA439080063E159 /* UpdatePatient.swift in Sources */,
 				C04678352EA00B3A00D160DA /* PatientRepositoryImpl.swift in Sources */,
 				144254652EAAC44900583CC3 /* StartOperationButton.swift in Sources */,
 				1446FB992EAE6911000BCF61 /* CircleIconButton.swift in Sources */,
 				1442546B2EAAC61F00583CC3 /* WindowIDs.swift in Sources */,
+				2786232F2EB78F2900F97BE3 /* AssetListScrollView.swift in Sources */,
 				14DE51362EB60DEC0027D9A0 /* ModelPreviewCard.swift in Sources */,
 				C0F97A922EA3FDF50063E159 /* DeleteOperation.swift in Sources */,
 				C0F97A932EA3FDF50063E159 /* RemoveAssetFromOperation.swift in Sources */,
@@ -1542,6 +1556,7 @@
 				C0F97ACA2EA41D4B0063E159 /* PatientLocalDataSourceLegacyJSON.swift in Sources */,
 				C0F97ADB2EA420E10063E159 /* DataDependencies.swift in Sources */,
 				C0F97AE42EA4304D0063E159 /* CreateOperation.swift in Sources */,
+				278623312EB78F2900F97BE3 /* AssetListScrollView.swift in Sources */,
 				C0F97ACB2EA41D4B0063E159 /* SDPatient.swift in Sources */,
 				C0F97B2E2EA439290063E159 /* UpdatePatientCommand.swift in Sources */,
 				C0F97AAA2EA401160063E159 /* PatientDisplayModel.swift in Sources */,
@@ -1573,6 +1588,7 @@
 				14DE51332EB60DB00027D9A0 /* FileAttachmentPlaceholder.swift in Sources */,
 				C046783D2EA00B4A00D160DA /* PatientState.swift in Sources */,
 				144254332EAA232300583CC3 /* OperationViewModel.swift in Sources */,
+				278623352EB790CE00F97BE3 /* AssetListScrollCard.swift in Sources */,
 				C050AA3D2EA8197E00352314 /* ImmersiveIDs.swift in Sources */,
 				C046783E2EA00B4A00D160DA /* HomeViewModel.swift in Sources */,
 				C0F97B282EA437840063E159 /* AttachAssetCommand.swift in Sources */,
@@ -1617,7 +1633,7 @@
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = PVM7V8BPP6;
+				DEVELOPMENT_TEAM = H2WD8C55D7;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = "$(SRCROOT)/Hippo/Applications/VisionApp/Info.plist";
@@ -1650,7 +1666,7 @@
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = PVM7V8BPP6;
+				DEVELOPMENT_TEAM = H2WD8C55D7;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = "$(SRCROOT)/Hippo/Applications/VisionApp/Info.plist";
