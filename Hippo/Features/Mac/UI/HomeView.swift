@@ -8,23 +8,52 @@
 import SwiftUI
 
 struct HomeView: View {
+    @State private var isTodaysSurgery = true
+    
     var body: some View {
         NavigationSplitView {
             List {
-                Section(header: Text("Today's Surgery")) {
-                    Text("오늘의 수술 비어있음")
+                //오늘의 수술 버튼
+                Button {
+                    isTodaysSurgery = true
+                } label: {
+                    Text("Today's Surgery")
                 }
-                Section(header: Text("Patient List")) {
-                    Text("환자 리스트 비어있음")
-                }
+                //Patient List 섹션
+                    Section {
+                        //TODO: 환자 리스트에 데이터가 없는 경우
+                        //환자 리스트에 데이터가 있는 경우
+                        ForEach(0..<5, id: \.self) { index in
+                            Button {
+                                isTodaysSurgery = false
+                            } label: {
+                                Text("환자 \(index)")
+                            }
+                        }
+                    } header: {
+                        HStack {
+                            Text("Patient List")
+                            Spacer()
+                            
+                            //환자 추가 버튼
+                            Button {
+                                //TODO: 환자 추가 기능 구현
+                            } label: {
+                                Image(systemName: "person.badge.plus")
+                            }
+                        }   
+                    }
             }
         } detail: {
-            //TODO: PatientDetailView()
-            Text("환자 디테일 비어있음")
+            if isTodaysSurgery {
+                TodaysSurgeryView()
+            } else {
+                PatientDetailView()
+            }
         }
     }
 }
 
 #Preview {
-    HomeView()
+    RootView()
 }

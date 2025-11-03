@@ -14,5 +14,5 @@ struct StreamingControlView: View {
 }
 
 #Preview {
-    StreamingControlView()
+    RootView()
 }
