@@ -98,9 +98,6 @@
 		14CC756A2EA6A98700399562 /* OperationDateBadge.swift in Sources */ = {isa = PBXBuildFile; fileRef = 14CC75672EA6A98700399562 /* OperationDateBadge.swift */; };
 		14CC756C2EA6A99300399562 /* PatientGridView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 14CC756B2EA6A99300399562 /* PatientGridView.swift */; };
 		14CC75722EA6AD5800399562 /* PatientSectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 14CC756F2EA6AD5800399562 /* PatientSectionView.swift */; };
-		14DE512C2EB5F71F0027D9A0 /* AddAssetsToOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 14DE512B2EB5F7180027D9A0 /* AddAssetsToOperation.swift */; };
-		14DE512D2EB5F71F0027D9A0 /* AddAssetsToOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 14DE512B2EB5F7180027D9A0 /* AddAssetsToOperation.swift */; };
-		14DE512E2EB5F71F0027D9A0 /* AddAssetsToOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 14DE512B2EB5F7180027D9A0 /* AddAssetsToOperation.swift */; };
 		14DE51312EB60DB00027D9A0 /* FileAttachmentPlaceholder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 14DE51302EB60DA90027D9A0 /* FileAttachmentPlaceholder.swift */; };
 		14DE51322EB60DB00027D9A0 /* FileAttachmentPlaceholder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 14DE51302EB60DA90027D9A0 /* FileAttachmentPlaceholder.swift */; };
 		14DE51332EB60DB00027D9A0 /* FileAttachmentPlaceholder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 14DE51302EB60DA90027D9A0 /* FileAttachmentPlaceholder.swift */; };
@@ -113,9 +110,6 @@
 		14DE51412EB64A2F0027D9A0 /* DetailModelSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 14DE51402EB64A220027D9A0 /* DetailModelSection.swift */; };
 		14DE51422EB64A2F0027D9A0 /* DetailModelSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 14DE51402EB64A220027D9A0 /* DetailModelSection.swift */; };
 		14DE51432EB64A2F0027D9A0 /* DetailModelSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 14DE51402EB64A220027D9A0 /* DetailModelSection.swift */; };
-		14DE51452EB7281B0027D9A0 /* AddAssetsCommand.swift in Sources */ = {isa = PBXBuildFile; fileRef = 14DE51442EB728140027D9A0 /* AddAssetsCommand.swift */; };
-		14DE51462EB7281B0027D9A0 /* AddAssetsCommand.swift in Sources */ = {isa = PBXBuildFile; fileRef = 14DE51442EB728140027D9A0 /* AddAssetsCommand.swift */; };
-		14DE51472EB7281B0027D9A0 /* AddAssetsCommand.swift in Sources */ = {isa = PBXBuildFile; fileRef = 14DE51442EB728140027D9A0 /* AddAssetsCommand.swift */; };
 		14DE514A2EB7407B0027D9A0 /* EmptyTodaySurgeryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 14DE51492EB740710027D9A0 /* EmptyTodaySurgeryView.swift */; };
 		14DE514C2EB740930027D9A0 /* TodayOperationScrollView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 14DE514B2EB7408D0027D9A0 /* TodayOperationScrollView.swift */; };
 		14DE51522EB771420027D9A0 /* HIPPO.icon in Resources */ = {isa = PBXBuildFile; fileRef = 14DE51512EB771420027D9A0 /* HIPPO.icon */; };
@@ -366,13 +360,11 @@
 		14CC75672EA6A98700399562 /* OperationDateBadge.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OperationDateBadge.swift; sourceTree = "<group>"; };
 		14CC756B2EA6A99300399562 /* PatientGridView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PatientGridView.swift; sourceTree = "<group>"; };
 		14CC756F2EA6AD5800399562 /* PatientSectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PatientSectionView.swift; sourceTree = "<group>"; };
-		14DE512B2EB5F7180027D9A0 /* AddAssetsToOperation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddAssetsToOperation.swift; sourceTree = "<group>"; };
 		14DE51302EB60DA90027D9A0 /* FileAttachmentPlaceholder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FileAttachmentPlaceholder.swift; sourceTree = "<group>"; };
 		14DE51342EB60DE10027D9A0 /* ModelPreviewCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModelPreviewCard.swift; sourceTree = "<group>"; };
 		14DE51382EB60E100027D9A0 /* ModeFilelListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModeFilelListView.swift; sourceTree = "<group>"; };
 		14DE513C2EB60E5C0027D9A0 /* FileAttachmentSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FileAttachmentSection.swift; sourceTree = "<group>"; };
 		14DE51402EB64A220027D9A0 /* DetailModelSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetailModelSection.swift; sourceTree = "<group>"; };
-		14DE51442EB728140027D9A0 /* AddAssetsCommand.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddAssetsCommand.swift; sourceTree = "<group>"; };
 		14DE51492EB740710027D9A0 /* EmptyTodaySurgeryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmptyTodaySurgeryView.swift; sourceTree = "<group>"; };
 		14DE514B2EB7408D0027D9A0 /* TodayOperationScrollView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TodayOperationScrollView.swift; sourceTree = "<group>"; };
 		14DE51512EB771420027D9A0 /* HIPPO.icon */ = {isa = PBXFileReference; lastKnownFileType = folder.iconcomposer.icon; path = HIPPO.icon; sourceTree = "<group>"; };
@@ -898,7 +890,6 @@
 		C04678002EA00B1F00D160DA /* UseCases */ = {
 			isa = PBXGroup;
 			children = (
-				14DE512B2EB5F7180027D9A0 /* AddAssetsToOperation.swift */,
 				C0F97B292EA439080063E159 /* UpdatePatient.swift */,
 				C0F97B0B2EA4348D0063E159 /* CreatePatient.swift */,
 				C0F97AE12EA4304D0063E159 /* CreateOperation.swift */,
@@ -1150,7 +1141,6 @@
 		C0F97B192EA435490063E159 /* Commands */ = {
 			isa = PBXGroup;
 			children = (
-				14DE51442EB728140027D9A0 /* AddAssetsCommand.swift */,
 				C0F97B2D2EA439290063E159 /* UpdatePatientCommand.swift */,
 				C0F97B252EA437840063E159 /* AttachAssetCommand.swift */,
 				C0F97B172EA435490063E159 /* CreateOperationCommand.swift */,
@@ -1373,7 +1363,6 @@
 				1494DE852EA73229000CD284 /* AssetImageCard.swift in Sources */,
 				C0F97ACC2EA41D4B0063E159 /* SDOperation.swift in Sources */,
 				14DE51432EB64A2F0027D9A0 /* DetailModelSection.swift in Sources */,
-				14DE51452EB7281B0027D9A0 /* AddAssetsCommand.swift in Sources */,
 				C0F97ACD2EA41D4B0063E159 /* SDOperationRecording.swift in Sources */,
 				14CC75562EA6A8BE00399562 /* LogoHeader.swift in Sources */,
 				C0F97ACE2EA41D4B0063E159 /* SwiftDataMappers.swift in Sources */,
@@ -1426,7 +1415,6 @@
 				278F28BD2EB3877300DF2F73 /* AssetListView.swift in Sources */,
 				C0F97A8E2EA3FDF50063E159 /* DeleteOperation.swift in Sources */,
 				C0F97A8F2EA3FDF50063E159 /* RemoveAssetFromOperation.swift in Sources */,
-				14DE512D2EB5F71F0027D9A0 /* AddAssetsToOperation.swift in Sources */,
 				1446FBE82EAF9E3B000BCF61 /* PatientDetailView.swift in Sources */,
 				C0F97A902EA3FDF50063E159 /* UpsertOperation.swift in Sources */,
 				C0F97A912EA3FDF50063E159 /* AttachAssetToOperation.swift in Sources */,
@@ -1464,7 +1452,6 @@
 				1494DE862EA73229000CD284 /* AssetImageCard.swift in Sources */,
 				C0F97AE32EA4304D0063E159 /* CreateOperation.swift in Sources */,
 				C046783C2EA00B4A00D160DA /* HomeViewModel.swift in Sources */,
-				14DE51462EB7281B0027D9A0 /* AddAssetsCommand.swift in Sources */,
 				27AD7ACC2EB496D900E84809 /* LayerButton.swift in Sources */,
 				27AD7AE12EB5BE2E00E84809 /* OpacityControlPanelHeaderComponent.swift in Sources */,
 				C050AA4E2EA8201A00352314 /* ImmersiveSceneRuntime.swift in Sources */,
@@ -1475,7 +1462,6 @@
 				144254352EAA232300583CC3 /* OperationViewModel.swift in Sources */,
 				C046780B2EA00B1F00D160DA /* GetPatient.swift in Sources */,
 				1446FBBB2EAE770A000BCF61 /* SurgeryControlBar.swift in Sources */,
-				14DE512C2EB5F71F0027D9A0 /* AddAssetsToOperation.swift in Sources */,
 				14A17F982EB34F46009D16CF /* OperationInputHeader.swift in Sources */,
 				27AD7AC42EB4948A00E84809 /* LayerEyeButton.swift in Sources */,
 				C0F97ABE2EA41D4B0063E159 /* SDOperation.swift in Sources */,
@@ -1579,7 +1565,6 @@
 				1494DE9A2EA73359000CD284 /* SectionTitle.swift in Sources */,
 				C04678332EA00B3A00D160DA /* PatientRemoteDataSource.swift in Sources */,
 				C04678472EA00C2700D160DA /* PatientView.swift in Sources */,
-				14DE512E2EB5F71F0027D9A0 /* AddAssetsToOperation.swift in Sources */,
 				C0F97A7D2EA3FD370063E159 /* PatientDTO.swift in Sources */,
 				C046781C2EA00B1F00D160DA /* DeletePatient.swift in Sources */,
 				C0F97B042EA430880063E159 /* Gender.swift in Sources */,
@@ -1606,7 +1591,6 @@
 				C0F97B1E2EA435490063E159 /* CreatePatientCommand.swift in Sources */,
 				14DE51422EB64A2F0027D9A0 /* DetailModelSection.swift in Sources */,
 				C0F97A962EA3FDF50063E159 /* DeleteOperation.swift in Sources */,
-				14DE51472EB7281B0027D9A0 /* AddAssetsCommand.swift in Sources */,
 				C0F97A972EA3FDF50063E159 /* RemoveAssetFromOperation.swift in Sources */,
 				C0F97A982EA3FDF50063E159 /* UpsertOperation.swift in Sources */,
 				C0F97A992EA3FDF50063E159 /* AttachAssetToOperation.swift in Sources */,
@@ -1633,7 +1617,7 @@
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = H2WD8C55D7;
+				DEVELOPMENT_TEAM = 4FCV7BL65G;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = "$(SRCROOT)/Hippo/Applications/VisionApp/Info.plist";
@@ -1666,7 +1650,7 @@
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = H2WD8C55D7;
+				DEVELOPMENT_TEAM = 4FCV7BL65G;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = "$(SRCROOT)/Hippo/Applications/VisionApp/Info.plist";

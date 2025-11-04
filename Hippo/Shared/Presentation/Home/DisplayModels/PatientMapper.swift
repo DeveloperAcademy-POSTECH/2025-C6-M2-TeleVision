@@ -46,11 +46,11 @@ public extension Operation {
 public extension OperationAsset {
     /// Domain 모델을 View Display 모델로 변환
     func toDisplayModel() -> OperationAssetDisplayModel {
-        OperationAssetDisplayModel(
+        return OperationAssetDisplayModel(
             id: id,
-            name: name,
-            fileURL: fileURL,
-            createdAt: createdAt
+            fileName: originalFileName,
+            createdAt: createdAt,
+            fileURL: getResolvedURL() ?? URL(fileURLWithPath: ""),
         )
     }
 }
