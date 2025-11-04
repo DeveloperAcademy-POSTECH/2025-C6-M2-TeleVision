@@ -25,7 +25,7 @@ public struct CreateOperation: Sendable {
     @discardableResult
     public func run(_ input: Input) async throws -> Operation {
         // Convert command to operation entity (UUID generated here)
-        let newOperation = input.command.toOperation()
+        let newOperation = try await input.command.toOperation()
 
         // Create operation through repository
         return try await repository.createOperation(newOperation, forPatientID: input.patientID)

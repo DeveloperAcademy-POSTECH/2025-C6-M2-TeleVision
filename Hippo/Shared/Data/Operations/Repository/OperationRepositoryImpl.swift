@@ -38,7 +38,7 @@ public actor OperationRepositoryImpl: OperationRepository {
         patient.operations.append(operation)
 
         // Patient 타임스탬프 업데이트 및 저장
-        let updatedPatient = patient.withUpdatedTimestamp()
+        let updatedPatient = await patient.withUpdatedTimestamp()
         _ = try await patientRepository.upsertPatient(updatedPatient)
 
         return operation
@@ -55,7 +55,7 @@ public actor OperationRepositoryImpl: OperationRepository {
         patient.operations[index] = operation
 
         // Patient 타임스탬프 업데이트 및 저장
-        let updatedPatient = patient.withUpdatedTimestamp()
+        let updatedPatient = await patient.withUpdatedTimestamp()
         _ = try await patientRepository.upsertPatient(updatedPatient)
     }
 
@@ -71,7 +71,7 @@ public actor OperationRepositoryImpl: OperationRepository {
         }
 
         // Patient 타임스탬프 업데이트 및 저장
-        let updatedPatient = patient.withUpdatedTimestamp()
+        let updatedPatient = await patient.withUpdatedTimestamp()
         _ = try await patientRepository.upsertPatient(updatedPatient)
     }
 
@@ -92,7 +92,7 @@ public actor OperationRepositoryImpl: OperationRepository {
         patient.operations[index].status = status
 
         // Patient 타임스탬프 업데이트 및 저장
-        let updatedPatient = patient.withUpdatedTimestamp()
+        let updatedPatient = await patient.withUpdatedTimestamp()
         _ = try await patientRepository.upsertPatient(updatedPatient)
     }
 
@@ -165,7 +165,7 @@ public actor OperationRepositoryImpl: OperationRepository {
         patient.operations[index].recordings.append(recording)
 
         // Patient 타임스탬프 업데이트 및 저장
-        let updatedPatient = patient.withUpdatedTimestamp()
+        let updatedPatient = await patient.withUpdatedTimestamp()
         _ = try await patientRepository.upsertPatient(updatedPatient)
     }
 
@@ -189,7 +189,7 @@ public actor OperationRepositoryImpl: OperationRepository {
         }
 
         // Patient 타임스탬프 업데이트 및 저장
-        let updatedPatient = patient.withUpdatedTimestamp()
+        let updatedPatient = await patient.withUpdatedTimestamp()
         _ = try await patientRepository.upsertPatient(updatedPatient)
     }
 
@@ -223,7 +223,7 @@ public actor OperationRepositoryImpl: OperationRepository {
             }
 
             for operation in matchingOperations {
-                result.append(OperationWithPatient(patient: patient, operation: operation))
+                await result.append(OperationWithPatient(patient: patient, operation: operation))
             }
         }
 
@@ -239,7 +239,7 @@ public actor OperationRepositoryImpl: OperationRepository {
             let matchingOperations = patient.operations.filter { $0.status == status }
 
             for operation in matchingOperations {
-                result.append(OperationWithPatient(patient: patient, operation: operation))
+                await result.append(OperationWithPatient(patient: patient, operation: operation))
             }
         }
 
