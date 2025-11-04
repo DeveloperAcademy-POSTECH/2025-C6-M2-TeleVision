@@ -8,31 +8,32 @@ import SwiftData
 @Model
 final class SDOperationAsset {
     @Attribute(.unique) var id: String
-    var name: String
-    var fileURL: String // absolute URL string
+    var originalFileName: String
+    @Attribute(.externalStorage) var bookmarkData: Data
     var createdAt: Date
 
     var operation: SDOperation?
 
     init(
         id: String,
-        name: String,
-        fileURL: String,
+        originalFileName: String,
+        bookmarkData: Data,
         createdAt: Date = Date(),
         operation: SDOperation? = nil
     ) {
         self.id = id
-        self.name = name
-        self.fileURL = fileURL
+        self.originalFileName = originalFileName
+        self.bookmarkData = bookmarkData
         self.createdAt = createdAt
         self.operation = operation
     }
 
+    // toDomain 매퍼 수정
     func toDomain() -> OperationAsset {
         OperationAsset(
             id: id,
-            name: name,
-            fileURL: URL(string: fileURL) ?? URL(fileURLWithPath: ""),
+            bookmarkData: bookmarkData,
+            originalFileName: originalFileName,
             createdAt: createdAt
         )
     }

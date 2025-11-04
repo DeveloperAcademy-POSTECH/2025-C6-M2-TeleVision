@@ -28,8 +28,12 @@ struct OperationDetailView: View {
 
                     ScrollView {
                         VStack(alignment: .leading, spacing: 32) {
+                            Text(operation.title)
+                                .font(.largeTitle)
+                                .foregroundStyle(.primary)
+
                             // 모델 이미지
-                            ModelFileListView(fileURLs: operation.assets.map { $0.fileURL })
+                            ModelFileListView(assets: operation.assets)
 
                             // 수술 상세 정보
                             DetailSubPart(

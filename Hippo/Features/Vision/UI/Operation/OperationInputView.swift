@@ -27,7 +27,7 @@ struct OperationInputView: View {
                     surgeon: $viewModel.operationSurgeon,
                     operationDate: $viewModel.operationDate,
                     detail: $viewModel.operationDetail,
-                    selected3DFiles: $viewModel.operation3DFileURLs,
+                    selectedAssets: $viewModel.operation3DAssets,
                     isShowingFilePicker: $viewModel.isShowingFilePicker
                 )
                 .padding(.bottom, 32)

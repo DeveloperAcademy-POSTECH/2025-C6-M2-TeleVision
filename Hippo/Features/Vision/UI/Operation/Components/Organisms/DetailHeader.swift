@@ -12,18 +12,32 @@ struct DetailHeader: View {
 
     var body: some View {
         HStack {
-            VStack(alignment: .leading, spacing: 8) {
-                Text(operation.status.displayText)
-                    .font(.system(size: 20, weight: .semibold))
-                    .foregroundStyle(.red)
-
-                Text(operation.title)
-                    .font(.system(size: 34, weight: .bold))
-                    .foregroundStyle(.primary)
-            }
+            OperationStatusBadge(status: operation.status)
 
             Spacer()
+
+            HStack(spacing: 16) {
+                Button {} label: {
+                    Image(systemName: "video")
+                        .foregroundStyle(.primary)
+                }
+                .frame(width: 44, height: 44)
+                .contentShape(.circle)
+                .glassBackgroundEffect()
+                .help(operation.assets.isEmpty ? "No Video" : "Video")
+
+                Button {} label: {
+                    Image(systemName: "ellipsis")
+                        .foregroundStyle(.primary)
+                }
+                .frame(width: 44, height: 44)
+                .contentShape(.circle)
+                .glassBackgroundEffect()
+                .help("More")
+            }
         }
+
+        Divider()
     }
 }
 

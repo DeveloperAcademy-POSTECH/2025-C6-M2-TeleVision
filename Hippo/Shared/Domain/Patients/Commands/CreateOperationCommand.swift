@@ -8,7 +8,7 @@ public struct CreateOperationCommand: Sendable {
     public let surgeon: String
     public let date: Date
     public let details: String
-    public let modelURLs: [URL]
+    public let assets: [OperationAsset]
     public let status: OperationStatus
 
     /// Creates a new operation command with validation
@@ -18,7 +18,7 @@ public struct CreateOperationCommand: Sendable {
     ///   - surgeon: Surgeon name (must not be empty)
     ///   - date: Scheduled operation date
     ///   - details: Additional operation details
-    ///   - models: Associated operation assets
+    ///   - assets: Associated operation assets
     ///   - status: Current operation status
     /// - Throws: `ValidationError` if any required field is invalid
     public init(
@@ -27,7 +27,7 @@ public struct CreateOperationCommand: Sendable {
         surgeon: String,
         date: Date,
         details: String = "",
-        modelURLs: [URL] = [],
+        assets: [OperationAsset] = [],
         status: OperationStatus = .planned
     ) throws {
         // Validation
@@ -48,24 +48,13 @@ public struct CreateOperationCommand: Sendable {
         self.surgeon = surgeon.trimmingCharacters(in: .whitespaces)
         self.date = date
         self.details = details
-        self.modelURLs = modelURLs
+        self.assets = assets
         self.status = status
-    }
-
-    public func toOperationAssetList() -> [OperationAsset] {
-        modelURLs.map { url in
-            OperationAsset(
-                id: UUID().uuidString,
-                name: url.lastPathComponent,
-                fileURL: url,
-                createdAt: Date()
-            )
-        }
     }
 
     /// Converts command to Operation entity
     /// - Returns: New Operation instance with generated UUID
-    public func toOperation() -> Operation {
+    public func toOperation() async throws -> Operation {
         Operation(
             id: UUID().uuidString,
             title: title,
@@ -73,7 +62,7 @@ public struct CreateOperationCommand: Sendable {
             surgeon: surgeon,
             date: date,
             details: details,
-            operationAssets: toOperationAssetList(),
+            operationAssets: assets,
             status: status
         )
     }

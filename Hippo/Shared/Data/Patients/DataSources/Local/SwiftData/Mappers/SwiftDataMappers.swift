@@ -46,9 +46,9 @@ extension SDOperationAsset {
     static func fromDomain(_ a: OperationAsset, owner op: SDOperation) -> SDOperationAsset {
         let sdAsset = SDOperationAsset(
             id: a.id,
-            name: a.name,
-            fileURL: a.fileURL.absoluteString,
-            createdAt: a.createdAt
+            originalFileName: a.originalFileName,
+            bookmarkData: a.bookmarkData,
+            createdAt: a.createdAt,
         )
         sdAsset.operation = op
         return sdAsset
@@ -110,8 +110,8 @@ extension OperationAsset {
     static func fromSwiftData(_ s: SDOperationAsset) -> OperationAsset {
         OperationAsset(
             id: s.id,
-            name: s.name,
-            fileURL: URL(string: s.fileURL) ?? URL(fileURLWithPath: "/dev/null"),
+            bookmarkData: s.bookmarkData,
+            originalFileName: s.originalFileName,
             createdAt: s.createdAt
         )
     }

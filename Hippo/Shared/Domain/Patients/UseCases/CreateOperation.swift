@@ -28,7 +28,7 @@ public struct CreateOperation: Sendable {
         var patient = try await repository.getPatient(id: input.patientID)
 
         // Convert command to operation entity (UUID generated here)
-        let newOperation = input.command.toOperation()
+        let newOperation = try await input.command.toOperation()
 
         // Add operation to patient
         patient.operations.append(newOperation)
