@@ -29,14 +29,17 @@ struct StreamingControlView: View {
     ]
 
     // MARK: - State
+    @State private var isStreamingInspectorPanelPresented: Bool = false
+
     @State private var videoInputMode: VideoInputMode = .SideBySide
     @State private var cameraInputMode: CameraInputMode = .DualInput
+    
 
-    // Stereo
+    // DualInput용
     @State private var selectedLeftDeviceId: String = "FaceTime HD Camera"
     @State private var selectedRightDeviceId: String = "UVC Capture A"
 
-    // Monoc
+    // SingleInput용
     @State private var selectedDeviceId: String = "FaceTime HD Camera"
     
     private let videoLayer = AVSampleBufferDisplayLayer()
@@ -64,7 +67,7 @@ struct StreamingControlView: View {
                 )
 
                 // 카메라인풋선택: 3D로 출력하기 위한 영상 vs 2D로 출력하기 위한 영상
-                VStack {
+                VStack(alignment: .leading) {
                     HStack {
                         Text("Camera")
                         Spacer()
@@ -144,6 +147,7 @@ struct StreamingControlView: View {
             
             //영상 프리뷰
             Section {
+                //영상 프리뷰 재생 레이어
                 DevicePreview(preview: videoLayer)
                                 .frame(width: 800, height: 240) // 16:9비율 가로픽셀을 600에 가까운 픽셀에 맞춤
                                 .background(Color.black.opacity(0.1))
@@ -167,10 +171,19 @@ struct StreamingControlView: View {
                 }
             }
         }
+        .toolbar {
+            Button {
+                //TODO: 디버깅 패널 토글 기능 구현
+                isStreamingInspectorPanelPresented.toggle()
+            } label: { Label("Debug", systemImage: "sidebar.right") }
+        }
         .padding()
+        .inspector(isPresented: $isStreamingInspectorPanelPresented) {
+            StreamingInspectorView()
+        }
     }
 }
 
 #Preview {
-    StreamingControlView()
+    RootView()
 }
