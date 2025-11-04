@@ -66,7 +66,6 @@
 		1494DE712EA72BCE000CD284 /* OperationDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1494DE702EA72BCE000CD284 /* OperationDetailView.swift */; };
 		1494DE732EA72BCE000CD284 /* OperationDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1494DE702EA72BCE000CD284 /* OperationDetailView.swift */; };
 		1494DE7C2EA73205000CD284 /* DetailHeader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1494DE7B2EA73205000CD284 /* DetailHeader.swift */; };
-		1494DE7D2EA73205000CD284 /* DetailHeader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1494DE7B2EA73205000CD284 /* DetailHeader.swift */; };
 		1494DE7E2EA73205000CD284 /* DetailHeader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1494DE7B2EA73205000CD284 /* DetailHeader.swift */; };
 		1494DE802EA7321A000CD284 /* AssetSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1494DE7F2EA7321A000CD284 /* AssetSection.swift */; };
 		1494DE812EA7321A000CD284 /* AssetSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1494DE7F2EA7321A000CD284 /* AssetSection.swift */; };
@@ -1743,7 +1742,6 @@
 				C0F97AAA2EA401160063E159 /* PatientDisplayModel.swift in Sources */,
 				1446FBB12EAE6C23000BCF61 /* RecordButton.swift in Sources */,
 				C0F97B2A2EA439080063E159 /* UpdatePatient.swift in Sources */,
-				1494DE7D2EA73205000CD284 /* DetailHeader.swift in Sources */,
 				1494DE842EA73229000CD284 /* AssetImageCard.swift in Sources */,
 				C0F97AAB2EA401160063E159 /* OperationDisplayModel.swift in Sources */,
 				1494DEA52EA7C851000CD284 /* Date+Extension.swift in Sources */,
