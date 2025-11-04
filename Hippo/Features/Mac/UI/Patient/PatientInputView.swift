@@ -41,7 +41,10 @@ struct PatientInputView: View {
             }
         }
         .padding()
-
+        
+        Divider()
+            .padding(.horizontal)
+        
         HStack {
             Button("취소") {
                 isPatientInputSheetPresented = false
