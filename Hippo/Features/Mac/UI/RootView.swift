@@ -25,7 +25,7 @@ struct RootView: View {
                     HomeView(isTodaysSurgery: $isTodaysSurgery)
                 case .StreamingControl:
                     StreamingControlView()
-                        .navigationTitle(Text("")) //툴바 버튼 위치 유지를 위해 빈 문자열 타이틀 추가
+                        .navigationTitle(Text("Hippo")) //툴바 버튼 위치 유지를 위해 빈 문자열 타이틀 추가
                 }
             }
             .onChange(of: selectedTab) {
