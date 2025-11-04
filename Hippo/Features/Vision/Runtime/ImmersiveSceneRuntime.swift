@@ -133,16 +133,16 @@ final class ImmersiveSceneRuntime {
     }
     
     func deleteSelectedEntity() async {
-            guard let entity = selectedEntity else {
-                logger.warning("Delete requested, but no entity is selected.")
-                return
-            }
-            
-            await placementService.detach(entity: entity)
-            self.selectedEntity = nil
-            
-            logger.debug("Selected entity deleted and selection cleared.")
+        guard let entity = selectedEntity else {
+            logger.warning("Delete requested, but no entity is selected.")
+            return
         }
+        
+        await placementService.detach(entity: entity)
+        self.selectedEntity = nil
+        
+        logger.debug("Selected entity deleted and selection cleared.")
+    }
     
     func start() {
         logger.debug("🐛 ImmersiveSceneRuntime started")
