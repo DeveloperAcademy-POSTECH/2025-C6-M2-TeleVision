@@ -9,7 +9,7 @@ import SwiftUI
 
 struct HomeView: View {
     var mockData = HomeMockDataModel.mockList
-    @Binding var isTodaysSurgery: Bool
+    @State private var isTodaysSurgery: Bool = true
     @State private var selectedPatientID: HomeMockDataModel.ID?
     private var selectedPatient: HomeMockDataModel? { mockData.first { $0.id == selectedPatientID } }
     @State var isPatientInputSheetPresented: Bool = false
@@ -65,6 +65,15 @@ struct HomeView: View {
                     .navigationTitle("Today's Surgery")
             } else {
                 PatientDetailView(patientId: selectedPatientID ?? "")
+            }
+        }
+        .toolbar {
+            if !isTodaysSurgery {
+                Button {
+                    //TODO: 수술 생성 기능 구현
+                } label: {
+                    Label("Create", systemImage: "plus")
+                }
             }
         }
         .sheet(isPresented: $isPatientInputSheetPresented) {

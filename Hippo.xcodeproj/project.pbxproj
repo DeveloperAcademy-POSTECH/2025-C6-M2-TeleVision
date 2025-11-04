@@ -15,6 +15,7 @@
 		06ADD9CD2EB98B3D0013665B /* OperationListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06ADD9CC2EB98B3D0013665B /* OperationListView.swift */; };
 		06ADD9D22EB98E730013665B /* PatientInputView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06ADD9D12EB98E730013665B /* PatientInputView.swift */; };
 		06F8CAC12EBA2DF100926483 /* DevicePreview.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06F8CAC02EBA2DF100926483 /* DevicePreview.swift */; };
+		06F8CAC32EBA459B00926483 /* StreamingInspectorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06F8CAC22EBA459B00926483 /* StreamingInspectorView.swift */; };
 		144254312EA9FF7800583CC3 /* OperationContext.swift in Sources */ = {isa = PBXBuildFile; fileRef = 144254302EA9FF7800583CC3 /* OperationContext.swift */; };
 		144254332EAA232300583CC3 /* OperationViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 144254322EAA232300583CC3 /* OperationViewModel.swift */; };
 		144254342EAA232300583CC3 /* OperationViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 144254322EAA232300583CC3 /* OperationViewModel.swift */; };
@@ -346,6 +347,7 @@
 		06ADD9CC2EB98B3D0013665B /* OperationListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OperationListView.swift; sourceTree = "<group>"; };
 		06ADD9D12EB98E730013665B /* PatientInputView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PatientInputView.swift; sourceTree = "<group>"; };
 		06F8CAC02EBA2DF100926483 /* DevicePreview.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DevicePreview.swift; sourceTree = "<group>"; };
+		06F8CAC22EBA459B00926483 /* StreamingInspectorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StreamingInspectorView.swift; sourceTree = "<group>"; };
 		144254302EA9FF7800583CC3 /* OperationContext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OperationContext.swift; sourceTree = "<group>"; };
 		144254322EAA232300583CC3 /* OperationViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OperationViewModel.swift; sourceTree = "<group>"; };
 		144254362EAA9FEB00583CC3 /* OperationState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OperationState.swift; sourceTree = "<group>"; };
@@ -526,6 +528,7 @@
 			children = (
 				0667A5492EB8814100D7BDF3 /* StreamingControlView.swift */,
 				06F8CAC02EBA2DF100926483 /* DevicePreview.swift */,
+				06F8CAC22EBA459B00926483 /* StreamingInspectorView.swift */,
 			);
 			path = StreamingControl;
 			sourceTree = "<group>";
@@ -1795,6 +1798,7 @@
 				C0F97B1E2EA435490063E159 /* CreatePatientCommand.swift in Sources */,
 				14DE51422EB64A2F0027D9A0 /* DetailModelSection.swift in Sources */,
 				25E78B852EB9166900D8CAD2 /* OperationWithPatient.swift in Sources */,
+				06F8CAC32EBA459B00926483 /* StreamingInspectorView.swift in Sources */,
 				25E78B732EB9164200D8CAD2 /* OperationRepository.swift in Sources */,
 				25E78B662EB90D4600D8CAD2 /* OperationStatus.swift in Sources */,
 				25E78B672EB90D4600D8CAD2 /* Operation.swift in Sources */,
