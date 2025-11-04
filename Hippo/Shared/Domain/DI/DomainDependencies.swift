@@ -65,11 +65,6 @@ public extension DependencyValues {
 
     // MARK: - Asset Use Cases
 
-    var addAssetsToOperation: AddAssetsToOperation {
-        get { self[AddAssetsToOperation.self] }
-        set { self[AddAssetsToOperation.self] = newValue }
-    }
-
     var attachAssetToOperation: AttachAssetToOperation {
         get { self[AttachAssetToOperation.self] }
         set { self[AttachAssetToOperation.self] = newValue }
@@ -212,18 +207,6 @@ extension UpdateOperationStatus: DependencyKey {
     public static var testValue: UpdateOperationStatus {
         @Dependency(\.operationRepository) var repository
         return UpdateOperationStatus(repository: repository)
-    }
-}
-
-extension AddAssetsToOperation: DependencyKey {
-    public static var liveValue: AddAssetsToOperation {
-        @Dependency(\.operationRepository) var repository
-        return AddAssetsToOperation(repository: repository)
-    }
-
-    public static var testValue: AddAssetsToOperation {
-        @Dependency(\.operationRepository) var repository
-        return AddAssetsToOperation(repository: repository)
     }
 }
 

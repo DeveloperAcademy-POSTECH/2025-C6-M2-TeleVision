@@ -42,7 +42,7 @@ public final class OperationViewModel {
     public var operationSurgeon: String = ""
     public var operationDate: Date = .init()
     public var operationDetail: String = ""
-    public var operation3DFileURLs: [URL] = []
+    public var operation3DAssets: [OperationAsset] = []
 
     public var isShowingFilePicker: Bool = false
 
@@ -89,7 +89,7 @@ public final class OperationViewModel {
                 surgeon: operationSurgeon,
                 date: operationDate,
                 details: operationDetail,
-                modelURLs: operation3DFileURLs,
+                assets: operation3DAssets,
                 status: .planned
             )
 

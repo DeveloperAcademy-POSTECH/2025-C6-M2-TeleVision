@@ -15,7 +15,7 @@ struct OperationInputForm: View {
     @Binding var surgeon: String
     @Binding var operationDate: Date
     @Binding var detail: String
-    @Binding var selected3DFiles: [URL]
+    @Binding var selectedAssets: [OperationAsset]
 
     @Binding var isShowingFilePicker: Bool
 
@@ -82,7 +82,7 @@ struct OperationInputForm: View {
             .title("상세 내용")
 
             FileAttachmentSection(
-                selectedFiles: $selected3DFiles,
+                selectedAssets: $selectedAssets,
                 isShowingFilePicker: $isShowingFilePicker
             )
         }

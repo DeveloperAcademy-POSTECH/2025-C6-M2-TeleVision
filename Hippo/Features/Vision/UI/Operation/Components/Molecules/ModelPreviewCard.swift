@@ -12,42 +12,43 @@ import SwiftUI
 
 /// 3D 모델 파일을 미리보기로 표시하는 Molecule 컴포넌트
 struct ModelPreviewCard: View {
-    let url: URL
+//    let url: URL
+    let asset: OperationAssetDisplayModel
     let size: CGFloat
 
-    init(url: URL, size: CGFloat = 130) {
-        self.url = url
+    init(asset: OperationAssetDisplayModel, size: CGFloat = 130) {
+        self.asset = asset
         self.size = size
     }
 
     var body: some View {
-        ZStack(alignment: .center) {
-            RoundedRectangle(cornerRadius: 12)
-                .fill(.hippoBlack)
-                .frame(width: size, height: size)
-
-            Model3D(url: url) { model in
-                model
-                    .resizable()
-                    .scaledToFit()
-            } placeholder: {
-                ProgressView()
-            }
-            .frame(width: size - 20, height: size - 20)
-            .onAppear {
-                _ = url.startAccessingSecurityScopedResource()
-                print("🚀 Accessing security scoped resource: \(url)")
-            }
-            .onDisappear {
-                url.stopAccessingSecurityScopedResource()
+        Group {
+            ZStack(alignment: .center) {
+                RoundedRectangle(cornerRadius: 12)
+                    .fill(.hippoBlack)
+                    .frame(width: size, height: size)
+                Model3D(url: asset.fileURL) { model in
+                    model
+                        .resizable()
+                        .scaledToFit()
+                } placeholder: {
+                    ProgressView()
+                }
+                .frame(width: size - 20, height: size - 20)
+                .onDisappear {
+                    asset.fileURL.stopAccessingSecurityScopedResource()
+                    print("Stopped access for \(asset.fileName)")
+                }
             }
         }
     }
 }
 
-#Preview {
-    ModelPreviewCard(
-        url: Bundle.main.url(forResource: "sample", withExtension: "usdz")!
-    )
-    .padding()
-}
+// #Preview {
+//    ModelPreviewCard(
+//        asset: OperationAssetDisplayModel(
+//
+//        )
+//    )
+//    .padding()
+// }

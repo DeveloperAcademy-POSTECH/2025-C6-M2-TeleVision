@@ -9,7 +9,7 @@ import SwiftUI
 
 struct AssetListView: View {
     @Binding var isPresented: Bool
-    
+
     @State private var selectedURL: URL?
     let operation: OperationDisplayModel
 
@@ -18,8 +18,7 @@ struct AssetListView: View {
     private var fileURLs: [URL] {
         operation.assets.map { $0.fileURL }
     }
-    
-    
+
     var body: some View {
         if isPresented {
             VStack {
@@ -30,15 +29,15 @@ struct AssetListView: View {
                 }
                 .padding()
                 .padding(.leading, 10)
-                
+
                 Spacer()
-                
+
                 AssetListScrollView(
                     fileURLs: fileURLs,
                     selectedURL: $selectedURL
                 )
                 Spacer()
-                
+
                 GlowingCapsuleButton(buttonText: "생성하기", action: {
                     if let url = selectedURL {
                         onCreateEntity(url)
@@ -55,7 +54,6 @@ struct AssetListView: View {
                     selectedURL = fileURLs.first
                 }
             }
-            
         }
     }
 }

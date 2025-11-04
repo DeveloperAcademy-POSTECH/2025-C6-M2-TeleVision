@@ -11,27 +11,25 @@ import SwiftUI
 
 /// 3D 모델 파일 목록을 수평 스크롤로 표시하는 Molecule 컴포넌트
 struct ModelFileListView: View {
-    let fileURLs: [URL]
+    let assets: [OperationAssetDisplayModel]
 
     var body: some View {
         ScrollView(.horizontal, showsIndicators: false) {
             HStack(spacing: 12) {
                 Spacer().frame(width: 0)
 
-                ForEach(fileURLs, id: \.self) { url in
-                    ModelPreviewCard(url: url)
+                ForEach(assets, id: \.self.id) { asset in
+                    // FIXME: ModelPreviewCard 구현 필요
+                    ModelPreviewCard(asset: asset)
                 }
             }
             .padding(.vertical)
-        }
-        .onAppear {
-            print("ModelFileListView - fileURLs: \(fileURLs)")
         }
     }
 }
 
 #Preview {
-    ModelFileListView(fileURLs: [])
+    ModelFileListView(assets: [])
         .frame(height: 150)
         .background(.thinMaterial)
 }
