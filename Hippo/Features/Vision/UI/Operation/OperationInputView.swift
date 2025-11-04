@@ -7,12 +7,30 @@
 
 import SwiftUI
 
+enum OperationInputMode: Equatable {
+    case create
+    case edit(operationID: String)
+}
+
 struct OperationInputView: View {
     @Environment(\.dismiss) private var dismiss
     @Environment(AppModel.self) private var appModel
     @State private var viewModel = OperationViewModel()
 
+    let mode: OperationInputMode
     let patientID: String
+
+    init(mode: OperationInputMode, patientID: String) {
+        self.mode = mode
+        self.patientID = patientID
+
+        switch mode {
+        case .create:
+            _viewModel = State(initialValue: OperationViewModel())
+        case let .edit(operationID):
+            _viewModel = State(initialValue: OperationViewModel(patientID: patientID, operationID: operationID))
+        }
+    }
 
     var body: some View {
         ScrollView {
@@ -40,20 +58,31 @@ struct OperationInputView: View {
         .frame(width: 460, height: 680)
         .glassBackgroundEffect(displayMode: .always)
         .ornament(attachmentAnchor: .parent(.bottom)) {
-            OrnamentButton {
-                // 수술 저장하기
-                Task {
-                    await viewModel.addOperation(toPatientID: patientID)
-                    appModel.operations += 1
-                    dismiss()
+            if mode == .create {
+                OrnamentButton {
+                    Task {
+                        await viewModel.addOperation(toPatientID: patientID)
+                        appModel.operations += 1
+                        dismiss()
+                    }
                 }
+                .systemName("square.and.arrow.down")
+                .content("저장하기")
+            } else {
+                OrnamentButton {
+                    print("Update Operation")
+                    Task {
+                        await viewModel.updateOperation()
+                        dismiss()
+                    }
+                }
+                .systemName("square.and.arrow.down")
+                .content("수정하기")
             }
-            .systemName("square.and.arrow.down")
-            .content("저장하기")
         }
     }
 }
 
 #Preview {
-    OperationInputView(patientID: "")
+    OperationInputView(mode: .create, patientID: "patient123")
 }

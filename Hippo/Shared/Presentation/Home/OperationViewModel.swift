@@ -25,6 +25,12 @@ public final class OperationViewModel {
     @ObservationIgnored
     @Dependency(\.createOperation) private var createOperation
 
+    @ObservationIgnored
+    @Dependency(\.upsertOperation) private var upsertOperation
+
+    @ObservationIgnored
+    @Dependency(\.deleteOperation) private var deleteOperation
+
     // MARK: - Logger
 
     private let logger = Logger(subsystem: "com.television.hippo", category: "PatientViewModel")
@@ -44,7 +50,22 @@ public final class OperationViewModel {
     public var operationDetail: String = ""
     public var operation3DAssets: [OperationAsset] = []
 
+    init(patientID: String, operationID: String) {
+        Task {
+            let operation = try await getOperation.run(
+                GetOperation.Input(patientID: patientID, operationID: operationID)
+            )
+            self.operationTitle = operation.title
+            self.operationDiagnosis = operation.diagnosis
+            self.operationSurgeon = operation.surgeon
+            self.operationDate = operation.date
+            self.operationDetail = operation.details
+            self.operation3DAssets = operation.operationAssets
+        }
+    }
+
     public var isShowingFilePicker: Bool = false
+    public var isShowingEditInputView: Bool = false
 
     // 수술 중
     public var isMenuActive: Bool = true
@@ -101,6 +122,73 @@ public final class OperationViewModel {
             _state.alert = validationError.localizedDescription
         } catch {
             _state.alert = "Failed to add operation: \(error.localizedDescription)"
+        }
+    }
+
+    public func updateOperationStatus(to status: OperationStatus) async {
+        do {
+            if let patientID = state.patient?.id, let operationID = state.operation?.id {
+                logger.debug("Attempting to update status with ID \(operationID) for patient ID \(patientID)")
+
+                let command = try UpdateOperationCommand(
+                    operationID: operationID,
+                    status: status
+                )
+
+                try await upsertOperation.run(
+                    UpsertOperation.Input(patientID: patientID, command: command)
+                )
+
+                print("Operation updated successfully.")
+            }
+        } catch let validationError as ValidationError {
+            _state.alert = validationError.localizedDescription
+        } catch {
+            _state.alert = "Failed to update operation: \(error.localizedDescription)"
+        }
+    }
+
+    public func updateOperation() async {
+        do {
+            if let patientID = state.patient?.id, let operationID = state.operation?.id {
+                logger.debug("Attempting to update operation with ID \(operationID) for patient ID \(patientID)")
+
+                let command = try UpdateOperationCommand(
+                    operationID: operationID,
+                    title: operationTitle,
+                    diagnosis: operationDiagnosis,
+                    surgeon: operationSurgeon,
+                    date: operationDate,
+                    details: operationDetail,
+                    assets: operation3DAssets
+                )
+
+                try await upsertOperation.run(
+                    UpsertOperation.Input(patientID: patientID, command: command)
+                )
+
+                print("Operation updated successfully.")
+            }
+        } catch let validationError as ValidationError {
+            _state.alert = validationError.localizedDescription
+        } catch {
+            _state.alert = "Failed to update operation: \(error.localizedDescription)"
+        }
+    }
+
+    public func deleteOperation() async {
+        do {
+            if let patientID = state.patient?.id, let operationID = state.operation?.id {
+                logger.debug("Attempting to delete operation with ID \(operationID) for patient ID \(patientID)")
+                try await deleteOperation.run(
+                    DeleteOperation.Input(patientID: patientID, operationID: operationID)
+                )
+                logger.debug("Operation deleted successfully.")
+            }
+        } catch let validationError as ValidationError {
+            _state.alert = validationError.localizedDescription
+        } catch {
+            _state.alert = "Failed to delete operation: \(error.localizedDescription)"
         }
     }
 

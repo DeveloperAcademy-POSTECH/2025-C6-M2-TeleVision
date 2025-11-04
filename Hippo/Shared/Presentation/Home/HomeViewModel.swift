@@ -40,8 +40,8 @@ public final class HomeViewModel {
 
     // MARK: - State
 
-    private let _state = PatientState()
-    public var state: PatientState { _state } // 읽기 전용, 관찰 가능
+    private let _state = HomeState()
+    public var state: HomeState { _state } // 읽기 전용, 관찰 가능
 
     // Today's operations state
     public var todayOperations: [(patient: PatientDisplayModel, operation: OperationDisplayModel)] = []
@@ -281,3 +281,13 @@ public final class HomeViewModel {
         }
     }
 }
+
+//extension HomeViewModel {
+//    convenience init(patient: PatientDisplayModel) {
+//        self.init()
+//        self.patientNumber = patient.patientNumber
+//        self.name = patient.name
+//        self.birthDate = patient.birthDateText
+//        self.selectedGender = patient.gend
+//    }
+//}

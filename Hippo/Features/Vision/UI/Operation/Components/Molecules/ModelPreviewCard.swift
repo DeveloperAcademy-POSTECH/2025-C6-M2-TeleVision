@@ -7,6 +7,7 @@
 
 // Hippo/Features/Vision/UI/Operation/Components/Molecules/Model3DPreviewCard.swift
 
+import QuickLookThumbnailing
 import RealityKit
 import SwiftUI
 
@@ -21,25 +22,51 @@ struct ModelPreviewCard: View {
         self.size = size
     }
 
+    @State private var thumbnailImage: Image?
+
     var body: some View {
         Group {
             ZStack(alignment: .center) {
                 RoundedRectangle(cornerRadius: 12)
                     .fill(.hippoBlack)
                     .frame(width: size, height: size)
-                Model3D(url: asset.fileURL) { model in
-                    model
+                if let image = thumbnailImage {
+                    image
                         .resizable()
                         .scaledToFit()
-                } placeholder: {
+                        .frame(width: size - 20, height: size - 20)
+                        .onDisappear {
+                            asset.fileURL.stopAccessingSecurityScopedResource()
+                            print("Stopped access for \(asset.fileName)")
+                        }
+                } else {
                     ProgressView()
-                }
-                .frame(width: size - 20, height: size - 20)
-                .onDisappear {
-                    asset.fileURL.stopAccessingSecurityScopedResource()
-                    print("Stopped access for \(asset.fileName)")
+                        .frame(width: size, height: size)
                 }
             }
+        }
+        .task {
+            await generateThumbnail()
+        }
+    }
+
+    /// QLThumbnailGenerator를 사용해 비동기로 썸네일을 생성하는 함수
+    private func generateThumbnail() async {
+        let generator = QLThumbnailGenerator.shared
+        let request = QLThumbnailGenerator.Request(
+            fileAt: asset.fileURL,
+            size: CGSize(width: size, height: size), // 요청할 썸네일 크기
+            scale: 0.5,
+            representationTypes: .thumbnail // 썸네일 요청
+        )
+
+        do {
+            let representation = try await generator.generateBestRepresentation(for: request)
+            thumbnailImage = Image(uiImage: representation.uiImage)
+            print("썸네일 생성 성공 for \(asset.fileName)")
+
+        } catch {
+            print("썸네일 생성 실패: \(error.localizedDescription)")
         }
     }
 }

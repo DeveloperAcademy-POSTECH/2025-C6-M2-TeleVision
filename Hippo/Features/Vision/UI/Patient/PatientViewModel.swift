@@ -17,53 +17,56 @@ public class PatientViewModel {
     @ObservationIgnored
     @Dependency(\.getPatient) private var getPatient
 
+    @ObservationIgnored
+    @Dependency(\.deletePatient) private var deletePatient
+
     // MARK: - Logger
 
     private let logger = Logger(subsystem: "com.television.hippo", category: "PatientViewModel")
 
     // MARK: - State
 
-    public enum LoadingState {
-        case idle
-        case loading
-        case loaded(PatientDisplayModel)
-        case error(Error)
-    }
+    private let _state = PatientState()
+    public var state: PatientState { _state }
 
-    public var loadingState: LoadingState = .idle
     public var isPresentingOperationInput = false
-
-    // MARK: - Computed Properties
-
-    public var patient: PatientDisplayModel? {
-        if case let .loaded(patient) = loadingState {
-            return patient
-        }
-        return nil
-    }
-
-    public var isLoading: Bool {
-        if case .loading = loadingState {
-            return true
-        }
-        return false
-    }
+    public var isShowingEditSheet = false
 
     // MARK: - Action
 
     public func load(patientID: String) async {
-        loadingState = .loading
+        state.isLoading = true
+        state.error = nil
 
         do {
             let p = try await getPatient.run(patientID)
             logger.debug("🐛 Loaded \(p.name) from repository")
 
-            let patientDisplayModel = p.toDisplayModel()
-            loadingState = .loaded(patientDisplayModel)
+            state.patient = p.toDisplayModel()
+            state.isLoading = false
 
         } catch {
             logger.error("Failed to load patient with ID \(patientID), error: \(error.localizedDescription)")
-            loadingState = .error(error)
+            state.isLoading = false
+            state.error = .fetchFailed(error)
+        }
+    }
+
+    public func deleteCurrentPatient() async {
+        guard let patient = state.patient else { return }
+
+        state.isLoading = true
+
+        do {
+            try await deletePatient.run(patient.id)
+            logger.debug("🗑️ Deleted patient \(patient.name)")
+            state.patient = nil
+            state.isLoading = false
+
+        } catch {
+            logger.error("Failed to delete patient \(patient.id), error: \(error.localizedDescription)")
+            state.isLoading = false
+            state.error = .deleteFailed(error)
         }
     }
 }

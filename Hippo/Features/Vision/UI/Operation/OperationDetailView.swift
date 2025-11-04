@@ -82,17 +82,19 @@ struct OperationDetailView: View {
                     }
                 }
                 .toolbar {
-                    ToolbarItem(placement: .bottomOrnament) {
-                        StartOperationButton {
-                            Task {
-                                dismissWindow(id: WindowIDs.home)
-                                dismissWindow(id: WindowIDs.operationDetail)
-                                dismissWindow(id: WindowIDs.patientDetail)
-                                let context = OperationContext(
-                                    patientID: patientID,
-                                    operationID: operationID
-                                )
-                                await openImmersiveSpace(id: ImmersiveIDs.surgery, value: context)
+                    if !viewModel.isShowingEditInputView {
+                        ToolbarItem(placement: .bottomOrnament) {
+                            StartOperationButton {
+                                Task {
+                                    dismissWindow(id: WindowIDs.home)
+                                    dismissWindow(id: WindowIDs.operationDetail)
+                                    dismissWindow(id: WindowIDs.patientDetail)
+                                    let context = OperationContext(
+                                        patientID: patientID,
+                                        operationID: operationID
+                                    )
+                                    await openImmersiveSpace(id: ImmersiveIDs.surgery, value: context)
+                                }
                             }
                         }
                     }
@@ -102,10 +104,14 @@ struct OperationDetailView: View {
                     .controlSize(.large)
             }
         }
+        .environment(viewModel)
         .task {
             await viewModel.load(patientID: patientID, operationID: operationID)
             print("Loaded operation detail for operationID: \(operationID)")
             isLoaded = true
+        }
+        .sheet(isPresented: $viewModel.isShowingEditInputView) {
+            OperationInputView(mode: .edit(operationID: operationID), patientID: patientID)
         }
     }
 }

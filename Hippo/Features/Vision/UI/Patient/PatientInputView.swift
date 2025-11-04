@@ -7,10 +7,30 @@
 
 import SwiftUI
 
+enum PatientInputMode: Equatable {
+    case create
+    case edit(patientID: String)
+}
+
 struct PatientInputView: View {
     @Environment(\.dismiss) private var dismiss
     @Environment(AppModel.self) private var appModel
     @State private var viewModel = HomeViewModel()
+
+    // TODO: - 환자 정보 수정 기능 구현
+//    let mode: PatientInputMode
+//
+//    init(mode: PatientInputMode) {
+//        self.mode = mode
+//
+//        switch mode {
+//        case .create:
+//            _viewModel = State(initialValue: HomeViewModel())
+//        case let .edit(patientID):
+//            // 실제로는 patientID로 환자 정보를 불러와서 초기화해야 합니다
+//            _viewModel = State(initialValue: HomeViewModel(patientID: patientID))
+//        }
+//    }
 
     var body: some View {
         VStack(spacing: 0) {
