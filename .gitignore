@@ -158,3 +158,9 @@ patients.json
 # Backup files
 backup_*/
 *_backup_*/
+
+# Node.js
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
