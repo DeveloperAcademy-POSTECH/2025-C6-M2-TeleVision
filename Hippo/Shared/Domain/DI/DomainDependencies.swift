@@ -210,18 +210,6 @@ extension UpdateOperationStatus: DependencyKey {
     }
 }
 
-extension AddAssetsToOperation: DependencyKey {
-    public static var liveValue: AddAssetsToOperation {
-        @Dependency(\.operationRepository) var repository
-        return AddAssetsToOperation(repository: repository)
-    }
-
-    public static var testValue: AddAssetsToOperation {
-        @Dependency(\.operationRepository) var repository
-        return AddAssetsToOperation(repository: repository)
-    }
-}
-
 extension AttachAssetToOperation: DependencyKey {
     public static var liveValue: AttachAssetToOperation {
         @Dependency(\.operationRepository) var repository
