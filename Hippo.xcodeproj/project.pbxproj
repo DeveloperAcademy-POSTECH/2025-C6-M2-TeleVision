@@ -390,6 +390,7 @@
 		272BD1B42EADE1DE00C83F81 /* HeadPose.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HeadPose.swift; sourceTree = "<group>"; };
 		2786232E2EB78F2900F97BE3 /* AssetListScrollView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AssetListScrollView.swift; sourceTree = "<group>"; };
 		278623322EB790CE00F97BE3 /* AssetListScrollCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AssetListScrollCard.swift; sourceTree = "<group>"; };
+		278623362EB8EB7800F97BE3 /* OpacityControlSlider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OpacityControlSlider.swift; sourceTree = "<group>"; };
 		278F28B82EB3874500DF2F73 /* GlowingCapsuleButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GlowingCapsuleButton.swift; sourceTree = "<group>"; };
 		278F28BC2EB3877200DF2F73 /* AssetListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AssetListView.swift; sourceTree = "<group>"; };
 		27AD7AC32EB4948A00E84809 /* LayerEyeButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LayerEyeButton.swift; sourceTree = "<group>"; };
@@ -582,6 +583,7 @@
 				1446FBB82EAE7705000BCF61 /* SurgeryControlBar.swift */,
 				27AD7AE32EB5BEA400E84809 /* OpacityControlPanelHeader.swift */,
 				2786232E2EB78F2900F97BE3 /* AssetListScrollView.swift */,
+				278623362EB8EB7800F97BE3 /* OpacityControlSlider.swift */,
 			);
 			path = Organisms;
 			sourceTree = "<group>";
@@ -1467,6 +1469,7 @@
 				14A17F972EB34F46009D16CF /* OperationInputHeader.swift in Sources */,
 				C0F97ADA2EA420E10063E159 /* DataDependencies.swift in Sources */,
 				14DE513F2EB60E610027D9A0 /* FileAttachmentSection.swift in Sources */,
+				278623372EB8EB7800F97BE3 /* OpacityControlSlider.swift in Sources */,
 				1446FBED2EAFA477000BCF61 /* FormSection.swift in Sources */,
 				278F28BD2EB3877300DF2F73 /* AssetListView.swift in Sources */,
 				C0F97A8E2EA3FDF50063E159 /* DeleteOperation.swift in Sources */,
@@ -1555,6 +1558,7 @@
 				27AD7ADD2EB5BA2E00E84809 /* OpacityControlPanelButton.swift in Sources */,
 				1446FBA02EAE69AF000BCF61 /* RecordingIndicator.swift in Sources */,
 				C046780C2EA00B1F00D160DA /* ListPatients.swift in Sources */,
+				278623382EB8EB7800F97BE3 /* OpacityControlSlider.swift in Sources */,
 				C046780D2EA00B1F00D160DA /* PatientRepository.swift in Sources */,
 				C0F97B002EA430880063E159 /* Gender.swift in Sources */,
 				C050AA3B2EA8197E00352314 /* ImmersiveIDs.swift in Sources */,
