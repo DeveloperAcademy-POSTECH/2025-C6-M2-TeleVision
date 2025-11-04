@@ -12,31 +12,22 @@ public struct CreateOperation: Sendable {
         }
     }
 
-    private let repository: PatientRepository
+    private let repository: OperationRepository
 
-    public init(repository: PatientRepository) {
+    public init(repository: OperationRepository) {
         self.repository = repository
     }
 
     /// Creates a new operation for the specified patient
     /// - Parameter input: Input containing patient ID and operation command
-    /// - Throws: Repository errors or patient not found error
+    /// - Throws: OperationError.patientNotFound if patient doesn't exist
     /// - Returns: The created Operation entity
     @discardableResult
     public func run(_ input: Input) async throws -> Operation {
-        // Get patient
-        var patient = try await repository.getPatient(id: input.patientID)
-
         // Convert command to operation entity (UUID generated here)
         let newOperation = try await input.command.toOperation()
 
-        // Add operation to patient
-        patient.operations.append(newOperation)
-
-        // Update patient with new timestamp
-        let updatedPatient = patient.withUpdatedTimestamp()
-        _ = try await repository.upsertPatient(updatedPatient)
-
-        return newOperation
+        // Create operation through repository
+        return try await repository.createOperation(newOperation, forPatientID: input.patientID)
     }
 }
