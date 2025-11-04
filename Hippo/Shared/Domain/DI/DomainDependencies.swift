@@ -48,6 +48,21 @@ public extension DependencyValues {
         set { self[DeleteOperation.self] = newValue }
     }
 
+    var getOperation: GetOperation {
+        get { self[GetOperation.self] }
+        set { self[GetOperation.self] = newValue }
+    }
+
+    var getTodayOperations: GetTodayOperations {
+        get { self[GetTodayOperations.self] }
+        set { self[GetTodayOperations.self] = newValue }
+    }
+
+    var updateOperationStatus: UpdateOperationStatus {
+        get { self[UpdateOperationStatus.self] }
+        set { self[UpdateOperationStatus.self] = newValue }
+    }
+
     // MARK: - Asset Use Cases
 
     var attachAssetToOperation: AttachAssetToOperation {
@@ -125,60 +140,108 @@ extension UpdatePatient: DependencyKey {
 
 extension CreateOperation: DependencyKey {
     public static var liveValue: CreateOperation {
-        @Dependency(\.patientRepository) var repository
+        @Dependency(\.operationRepository) var repository
         return CreateOperation(repository: repository)
     }
 
     public static var testValue: CreateOperation {
-        @Dependency(\.patientRepository) var repository
+        @Dependency(\.operationRepository) var repository
         return CreateOperation(repository: repository)
     }
 }
 
 extension UpsertOperation: DependencyKey {
     public static var liveValue: UpsertOperation {
-        @Dependency(\.patientRepository) var repository
+        @Dependency(\.operationRepository) var repository
         return UpsertOperation(repository: repository)
     }
 
     public static var testValue: UpsertOperation {
-        @Dependency(\.patientRepository) var repository
+        @Dependency(\.operationRepository) var repository
         return UpsertOperation(repository: repository)
     }
 }
 
 extension DeleteOperation: DependencyKey {
     public static var liveValue: DeleteOperation {
-        @Dependency(\.patientRepository) var repository
+        @Dependency(\.operationRepository) var repository
         return DeleteOperation(repository: repository)
     }
 
     public static var testValue: DeleteOperation {
-        @Dependency(\.patientRepository) var repository
+        @Dependency(\.operationRepository) var repository
         return DeleteOperation(repository: repository)
+    }
+}
+
+extension GetOperation: DependencyKey {
+    public static var liveValue: GetOperation {
+        @Dependency(\.operationRepository) var repository
+        return GetOperation(repository: repository)
+    }
+
+    public static var testValue: GetOperation {
+        @Dependency(\.operationRepository) var repository
+        return GetOperation(repository: repository)
+    }
+}
+
+extension GetTodayOperations: DependencyKey {
+    public static var liveValue: GetTodayOperations {
+        @Dependency(\.operationRepository) var repository
+        return GetTodayOperations(repository: repository)
+    }
+
+    public static var testValue: GetTodayOperations {
+        @Dependency(\.operationRepository) var repository
+        return GetTodayOperations(repository: repository)
+    }
+}
+
+extension UpdateOperationStatus: DependencyKey {
+    public static var liveValue: UpdateOperationStatus {
+        @Dependency(\.operationRepository) var repository
+        return UpdateOperationStatus(repository: repository)
+    }
+
+    public static var testValue: UpdateOperationStatus {
+        @Dependency(\.operationRepository) var repository
+        return UpdateOperationStatus(repository: repository)
+    }
+}
+
+extension AddAssetsToOperation: DependencyKey {
+    public static var liveValue: AddAssetsToOperation {
+        @Dependency(\.operationRepository) var repository
+        return AddAssetsToOperation(repository: repository)
+    }
+
+    public static var testValue: AddAssetsToOperation {
+        @Dependency(\.operationRepository) var repository
+        return AddAssetsToOperation(repository: repository)
     }
 }
 
 extension AttachAssetToOperation: DependencyKey {
     public static var liveValue: AttachAssetToOperation {
-        @Dependency(\.patientRepository) var repository
+        @Dependency(\.operationRepository) var repository
         return AttachAssetToOperation(repository: repository)
     }
 
     public static var testValue: AttachAssetToOperation {
-        @Dependency(\.patientRepository) var repository
+        @Dependency(\.operationRepository) var repository
         return AttachAssetToOperation(repository: repository)
     }
 }
 
 extension RemoveAssetFromOperation: DependencyKey {
     public static var liveValue: RemoveAssetFromOperation {
-        @Dependency(\.patientRepository) var repository
+        @Dependency(\.operationRepository) var repository
         return RemoveAssetFromOperation(repository: repository)
     }
 
     public static var testValue: RemoveAssetFromOperation {
-        @Dependency(\.patientRepository) var repository
+        @Dependency(\.operationRepository) var repository
         return RemoveAssetFromOperation(repository: repository)
     }
 }

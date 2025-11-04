@@ -22,7 +22,8 @@ struct AssetListScrollCard: View {
             } placeholder: {
                 ProgressView()
             }
-            .frame(width: size - 20, height: size - 20)
+            .frame(width: 200, height: 120)
+            .padding(.horizontal, 20)
             .onAppear {
                 _ = url.startAccessingSecurityScopedResource()
             }
@@ -30,12 +31,12 @@ struct AssetListScrollCard: View {
                 url.stopAccessingSecurityScopedResource()
             }
         }
+        .frame(width: size, height: size)
         .overlay {
-            if isSelected {
-                RoundedRectangle(cornerRadius: 12)
-                    .fill(.quaternary)
-                    .frame(width: size, height: size)
-            }
+            RoundedRectangle(cornerRadius: 40)
+                .fill(.quaternary)
+                .frame(width: size, height: size)
+                .opacity(isSelected ? 1.0 : 0.0)
         }
     }
 }
