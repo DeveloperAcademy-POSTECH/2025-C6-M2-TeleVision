@@ -103,9 +103,6 @@
 		14CC756A2EA6A98700399562 /* OperationDateBadge.swift in Sources */ = {isa = PBXBuildFile; fileRef = 14CC75672EA6A98700399562 /* OperationDateBadge.swift */; };
 		14CC756C2EA6A99300399562 /* PatientGridView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 14CC756B2EA6A99300399562 /* PatientGridView.swift */; };
 		14CC75722EA6AD5800399562 /* PatientSectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 14CC756F2EA6AD5800399562 /* PatientSectionView.swift */; };
-		14DE512C2EB5F71F0027D9A0 /* AddAssetsToOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 14DE512B2EB5F7180027D9A0 /* AddAssetsToOperation.swift */; };
-		14DE512D2EB5F71F0027D9A0 /* AddAssetsToOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 14DE512B2EB5F7180027D9A0 /* AddAssetsToOperation.swift */; };
-		14DE512E2EB5F71F0027D9A0 /* AddAssetsToOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 14DE512B2EB5F7180027D9A0 /* AddAssetsToOperation.swift */; };
 		14DE51312EB60DB00027D9A0 /* FileAttachmentPlaceholder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 14DE51302EB60DA90027D9A0 /* FileAttachmentPlaceholder.swift */; };
 		14DE51322EB60DB00027D9A0 /* FileAttachmentPlaceholder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 14DE51302EB60DA90027D9A0 /* FileAttachmentPlaceholder.swift */; };
 		14DE51332EB60DB00027D9A0 /* FileAttachmentPlaceholder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 14DE51302EB60DA90027D9A0 /* FileAttachmentPlaceholder.swift */; };
@@ -118,9 +115,6 @@
 		14DE51412EB64A2F0027D9A0 /* DetailModelSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 14DE51402EB64A220027D9A0 /* DetailModelSection.swift */; };
 		14DE51422EB64A2F0027D9A0 /* DetailModelSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 14DE51402EB64A220027D9A0 /* DetailModelSection.swift */; };
 		14DE51432EB64A2F0027D9A0 /* DetailModelSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 14DE51402EB64A220027D9A0 /* DetailModelSection.swift */; };
-		14DE51452EB7281B0027D9A0 /* AddAssetsCommand.swift in Sources */ = {isa = PBXBuildFile; fileRef = 14DE51442EB728140027D9A0 /* AddAssetsCommand.swift */; };
-		14DE51462EB7281B0027D9A0 /* AddAssetsCommand.swift in Sources */ = {isa = PBXBuildFile; fileRef = 14DE51442EB728140027D9A0 /* AddAssetsCommand.swift */; };
-		14DE51472EB7281B0027D9A0 /* AddAssetsCommand.swift in Sources */ = {isa = PBXBuildFile; fileRef = 14DE51442EB728140027D9A0 /* AddAssetsCommand.swift */; };
 		14DE514A2EB7407B0027D9A0 /* EmptyTodaySurgeryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 14DE51492EB740710027D9A0 /* EmptyTodaySurgeryView.swift */; };
 		14DE514C2EB740930027D9A0 /* TodayOperationScrollView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 14DE514B2EB7408D0027D9A0 /* TodayOperationScrollView.swift */; };
 		14DE51522EB771420027D9A0 /* HIPPO.icon in Resources */ = {isa = PBXBuildFile; fileRef = 14DE51512EB771420027D9A0 /* HIPPO.icon */; };
@@ -128,6 +122,72 @@
 		14DE51542EB771420027D9A0 /* HIPPO.icon in Resources */ = {isa = PBXBuildFile; fileRef = 14DE51512EB771420027D9A0 /* HIPPO.icon */; };
 		14DE51562EB779960027D9A0 /* EmptyPatientView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 14DE51552EB7798B0027D9A0 /* EmptyPatientView.swift */; };
 		14F6B0342EAAC73F003F28EB /* ImmersiveSurgeryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 14F6B0332EAAC73F003F28EB /* ImmersiveSurgeryView.swift */; };
+		25E78B602EB90D4600D8CAD2 /* OperationStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = 25E78B5D2EB90D4600D8CAD2 /* OperationStatus.swift */; };
+		25E78B612EB90D4600D8CAD2 /* Operation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 25E78B542EB90D4600D8CAD2 /* Operation.swift */; };
+		25E78B622EB90D4600D8CAD2 /* OperationAsset.swift in Sources */ = {isa = PBXBuildFile; fileRef = 25E78B552EB90D4600D8CAD2 /* OperationAsset.swift */; };
+		25E78B632EB90D4600D8CAD2 /* OperationRecording.swift in Sources */ = {isa = PBXBuildFile; fileRef = 25E78B562EB90D4600D8CAD2 /* OperationRecording.swift */; };
+		25E78B642EB90D4600D8CAD2 /* OperationError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 25E78B582EB90D4600D8CAD2 /* OperationError.swift */; };
+		25E78B652EB90D4600D8CAD2 /* OperationAssetExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 25E78B5C2EB90D4600D8CAD2 /* OperationAssetExtension.swift */; };
+		25E78B662EB90D4600D8CAD2 /* OperationStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = 25E78B5D2EB90D4600D8CAD2 /* OperationStatus.swift */; };
+		25E78B672EB90D4600D8CAD2 /* Operation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 25E78B542EB90D4600D8CAD2 /* Operation.swift */; };
+		25E78B682EB90D4600D8CAD2 /* OperationAsset.swift in Sources */ = {isa = PBXBuildFile; fileRef = 25E78B552EB90D4600D8CAD2 /* OperationAsset.swift */; };
+		25E78B692EB90D4600D8CAD2 /* OperationRecording.swift in Sources */ = {isa = PBXBuildFile; fileRef = 25E78B562EB90D4600D8CAD2 /* OperationRecording.swift */; };
+		25E78B6A2EB90D4600D8CAD2 /* OperationError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 25E78B582EB90D4600D8CAD2 /* OperationError.swift */; };
+		25E78B6B2EB90D4600D8CAD2 /* OperationAssetExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 25E78B5C2EB90D4600D8CAD2 /* OperationAssetExtension.swift */; };
+		25E78B6C2EB90D4600D8CAD2 /* OperationStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = 25E78B5D2EB90D4600D8CAD2 /* OperationStatus.swift */; };
+		25E78B6D2EB90D4600D8CAD2 /* Operation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 25E78B542EB90D4600D8CAD2 /* Operation.swift */; };
+		25E78B6E2EB90D4600D8CAD2 /* OperationAsset.swift in Sources */ = {isa = PBXBuildFile; fileRef = 25E78B552EB90D4600D8CAD2 /* OperationAsset.swift */; };
+		25E78B6F2EB90D4600D8CAD2 /* OperationRecording.swift in Sources */ = {isa = PBXBuildFile; fileRef = 25E78B562EB90D4600D8CAD2 /* OperationRecording.swift */; };
+		25E78B702EB90D4600D8CAD2 /* OperationError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 25E78B582EB90D4600D8CAD2 /* OperationError.swift */; };
+		25E78B712EB90D4600D8CAD2 /* OperationAssetExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 25E78B5C2EB90D4600D8CAD2 /* OperationAssetExtension.swift */; };
+		25E78B732EB9164200D8CAD2 /* OperationRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = 25E78B722EB9164200D8CAD2 /* OperationRepository.swift */; };
+		25E78B742EB9164200D8CAD2 /* OperationRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = 25E78B722EB9164200D8CAD2 /* OperationRepository.swift */; };
+		25E78B752EB9164200D8CAD2 /* OperationRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = 25E78B722EB9164200D8CAD2 /* OperationRepository.swift */; };
+		25E78B792EB9164E00D8CAD2 /* CreateOperationCommand.swift in Sources */ = {isa = PBXBuildFile; fileRef = 25E78B782EB9164E00D8CAD2 /* CreateOperationCommand.swift */; };
+		25E78B7A2EB9164E00D8CAD2 /* AttachAssetCommand.swift in Sources */ = {isa = PBXBuildFile; fileRef = 25E78B772EB9164E00D8CAD2 /* AttachAssetCommand.swift */; };
+		25E78B7B2EB9164E00D8CAD2 /* AddAssetsCommand.swift in Sources */ = {isa = PBXBuildFile; fileRef = 25E78B762EB9164E00D8CAD2 /* AddAssetsCommand.swift */; };
+		25E78B7C2EB9164E00D8CAD2 /* CreateOperationCommand.swift in Sources */ = {isa = PBXBuildFile; fileRef = 25E78B782EB9164E00D8CAD2 /* CreateOperationCommand.swift */; };
+		25E78B7D2EB9164E00D8CAD2 /* AttachAssetCommand.swift in Sources */ = {isa = PBXBuildFile; fileRef = 25E78B772EB9164E00D8CAD2 /* AttachAssetCommand.swift */; };
+		25E78B7E2EB9164E00D8CAD2 /* AddAssetsCommand.swift in Sources */ = {isa = PBXBuildFile; fileRef = 25E78B762EB9164E00D8CAD2 /* AddAssetsCommand.swift */; };
+		25E78B7F2EB9164E00D8CAD2 /* CreateOperationCommand.swift in Sources */ = {isa = PBXBuildFile; fileRef = 25E78B782EB9164E00D8CAD2 /* CreateOperationCommand.swift */; };
+		25E78B802EB9164E00D8CAD2 /* AttachAssetCommand.swift in Sources */ = {isa = PBXBuildFile; fileRef = 25E78B772EB9164E00D8CAD2 /* AttachAssetCommand.swift */; };
+		25E78B812EB9164E00D8CAD2 /* AddAssetsCommand.swift in Sources */ = {isa = PBXBuildFile; fileRef = 25E78B762EB9164E00D8CAD2 /* AddAssetsCommand.swift */; };
+		25E78B832EB9166900D8CAD2 /* OperationWithPatient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 25E78B822EB9166900D8CAD2 /* OperationWithPatient.swift */; };
+		25E78B842EB9166900D8CAD2 /* OperationWithPatient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 25E78B822EB9166900D8CAD2 /* OperationWithPatient.swift */; };
+		25E78B852EB9166900D8CAD2 /* OperationWithPatient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 25E78B822EB9166900D8CAD2 /* OperationWithPatient.swift */; };
+		25E78B8A2EB91ACB00D8CAD2 /* OperationRepositoryImpl.swift in Sources */ = {isa = PBXBuildFile; fileRef = 25E78B872EB91ACB00D8CAD2 /* OperationRepositoryImpl.swift */; };
+		25E78B8B2EB91ACB00D8CAD2 /* OperationRepositoryImpl.swift in Sources */ = {isa = PBXBuildFile; fileRef = 25E78B872EB91ACB00D8CAD2 /* OperationRepositoryImpl.swift */; };
+		25E78B8C2EB91ACC00D8CAD2 /* OperationRepositoryImpl.swift in Sources */ = {isa = PBXBuildFile; fileRef = 25E78B872EB91ACB00D8CAD2 /* OperationRepositoryImpl.swift */; };
+		25E78B962EB9225600D8CAD2 /* GetOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 25E78B912EB9225600D8CAD2 /* GetOperation.swift */; };
+		25E78B972EB9225600D8CAD2 /* GetTodayOperations.swift in Sources */ = {isa = PBXBuildFile; fileRef = 25E78B922EB9225600D8CAD2 /* GetTodayOperations.swift */; };
+		25E78B982EB9225600D8CAD2 /* CreateOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 25E78B8F2EB9225600D8CAD2 /* CreateOperation.swift */; };
+		25E78B992EB9225600D8CAD2 /* UpsertOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 25E78B952EB9225600D8CAD2 /* UpsertOperation.swift */; };
+		25E78B9A2EB9225600D8CAD2 /* AttachAssetToOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 25E78B8E2EB9225600D8CAD2 /* AttachAssetToOperation.swift */; };
+		25E78B9B2EB9225600D8CAD2 /* RemoveAssetFromOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 25E78B932EB9225600D8CAD2 /* RemoveAssetFromOperation.swift */; };
+		25E78B9C2EB9225600D8CAD2 /* AddAssetsToOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 25E78B8D2EB9225600D8CAD2 /* AddAssetsToOperation.swift */; };
+		25E78B9D2EB9225600D8CAD2 /* UpdateOperationStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = 25E78B942EB9225600D8CAD2 /* UpdateOperationStatus.swift */; };
+		25E78B9E2EB9225600D8CAD2 /* DeleteOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 25E78B902EB9225600D8CAD2 /* DeleteOperation.swift */; };
+		25E78B9F2EB9225600D8CAD2 /* GetOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 25E78B912EB9225600D8CAD2 /* GetOperation.swift */; };
+		25E78BA02EB9225600D8CAD2 /* GetTodayOperations.swift in Sources */ = {isa = PBXBuildFile; fileRef = 25E78B922EB9225600D8CAD2 /* GetTodayOperations.swift */; };
+		25E78BA12EB9225600D8CAD2 /* CreateOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 25E78B8F2EB9225600D8CAD2 /* CreateOperation.swift */; };
+		25E78BA22EB9225600D8CAD2 /* UpsertOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 25E78B952EB9225600D8CAD2 /* UpsertOperation.swift */; };
+		25E78BA32EB9225600D8CAD2 /* AttachAssetToOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 25E78B8E2EB9225600D8CAD2 /* AttachAssetToOperation.swift */; };
+		25E78BA42EB9225600D8CAD2 /* RemoveAssetFromOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 25E78B932EB9225600D8CAD2 /* RemoveAssetFromOperation.swift */; };
+		25E78BA52EB9225600D8CAD2 /* AddAssetsToOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 25E78B8D2EB9225600D8CAD2 /* AddAssetsToOperation.swift */; };
+		25E78BA62EB9225600D8CAD2 /* UpdateOperationStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = 25E78B942EB9225600D8CAD2 /* UpdateOperationStatus.swift */; };
+		25E78BA72EB9225600D8CAD2 /* DeleteOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 25E78B902EB9225600D8CAD2 /* DeleteOperation.swift */; };
+		25E78BA82EB9225600D8CAD2 /* GetOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 25E78B912EB9225600D8CAD2 /* GetOperation.swift */; };
+		25E78BA92EB9225600D8CAD2 /* GetTodayOperations.swift in Sources */ = {isa = PBXBuildFile; fileRef = 25E78B922EB9225600D8CAD2 /* GetTodayOperations.swift */; };
+		25E78BAA2EB9225600D8CAD2 /* CreateOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 25E78B8F2EB9225600D8CAD2 /* CreateOperation.swift */; };
+		25E78BAB2EB9225600D8CAD2 /* UpsertOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 25E78B952EB9225600D8CAD2 /* UpsertOperation.swift */; };
+		25E78BAC2EB9225600D8CAD2 /* AttachAssetToOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 25E78B8E2EB9225600D8CAD2 /* AttachAssetToOperation.swift */; };
+		25E78BAD2EB9225600D8CAD2 /* RemoveAssetFromOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 25E78B932EB9225600D8CAD2 /* RemoveAssetFromOperation.swift */; };
+		25E78BAE2EB9225600D8CAD2 /* AddAssetsToOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 25E78B8D2EB9225600D8CAD2 /* AddAssetsToOperation.swift */; };
+		25E78BAF2EB9225600D8CAD2 /* UpdateOperationStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = 25E78B942EB9225600D8CAD2 /* UpdateOperationStatus.swift */; };
+		25E78BB02EB9225600D8CAD2 /* DeleteOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 25E78B902EB9225600D8CAD2 /* DeleteOperation.swift */; };
+		25E78BB22EB92A2E00D8CAD2 /* UpdateOperationCommand.swift in Sources */ = {isa = PBXBuildFile; fileRef = 25E78BB12EB92A2E00D8CAD2 /* UpdateOperationCommand.swift */; };
+		25E78BB32EB92A2E00D8CAD2 /* UpdateOperationCommand.swift in Sources */ = {isa = PBXBuildFile; fileRef = 25E78BB12EB92A2E00D8CAD2 /* UpdateOperationCommand.swift */; };
+		25E78BB42EB92A2E00D8CAD2 /* UpdateOperationCommand.swift in Sources */ = {isa = PBXBuildFile; fileRef = 25E78BB12EB92A2E00D8CAD2 /* UpdateOperationCommand.swift */; };
 		272BD1B22EADE1BF00C83F81 /* ARSessionController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 272BD1B12EADE1BA00C83F81 /* ARSessionController.swift */; };
 		272BD1B32EADE1BF00C83F81 /* ARSessionController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 272BD1B12EADE1BA00C83F81 /* ARSessionController.swift */; };
 		272BD1B52EADE1E200C83F81 /* HeadPose.swift in Sources */ = {isa = PBXBuildFile; fileRef = 272BD1B42EADE1DE00C83F81 /* HeadPose.swift */; };
@@ -208,27 +268,6 @@
 		C0F97A7B2EA3FD370063E159 /* PatientDTO.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0F97A792EA3FD370063E159 /* PatientDTO.swift */; };
 		C0F97A7C2EA3FD370063E159 /* PatientDTO.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0F97A792EA3FD370063E159 /* PatientDTO.swift */; };
 		C0F97A7D2EA3FD370063E159 /* PatientDTO.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0F97A792EA3FD370063E159 /* PatientDTO.swift */; };
-		C0F97A812EA3FDDE0063E159 /* OperationAsset.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0F97A7F2EA3FDDE0063E159 /* OperationAsset.swift */; };
-		C0F97A822EA3FDDE0063E159 /* OperationRecording.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0F97A802EA3FDDE0063E159 /* OperationRecording.swift */; };
-		C0F97A832EA3FDDE0063E159 /* Operation.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0F97A7E2EA3FDDE0063E159 /* Operation.swift */; };
-		C0F97A842EA3FDDE0063E159 /* OperationAsset.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0F97A7F2EA3FDDE0063E159 /* OperationAsset.swift */; };
-		C0F97A852EA3FDDE0063E159 /* OperationRecording.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0F97A802EA3FDDE0063E159 /* OperationRecording.swift */; };
-		C0F97A862EA3FDDE0063E159 /* Operation.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0F97A7E2EA3FDDE0063E159 /* Operation.swift */; };
-		C0F97A872EA3FDDE0063E159 /* OperationAsset.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0F97A7F2EA3FDDE0063E159 /* OperationAsset.swift */; };
-		C0F97A882EA3FDDE0063E159 /* OperationRecording.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0F97A802EA3FDDE0063E159 /* OperationRecording.swift */; };
-		C0F97A892EA3FDDE0063E159 /* Operation.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0F97A7E2EA3FDDE0063E159 /* Operation.swift */; };
-		C0F97A8E2EA3FDF50063E159 /* DeleteOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0F97A8B2EA3FDF50063E159 /* DeleteOperation.swift */; };
-		C0F97A8F2EA3FDF50063E159 /* RemoveAssetFromOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0F97A8C2EA3FDF50063E159 /* RemoveAssetFromOperation.swift */; };
-		C0F97A902EA3FDF50063E159 /* UpsertOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0F97A8D2EA3FDF50063E159 /* UpsertOperation.swift */; };
-		C0F97A912EA3FDF50063E159 /* AttachAssetToOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0F97A8A2EA3FDF50063E159 /* AttachAssetToOperation.swift */; };
-		C0F97A922EA3FDF50063E159 /* DeleteOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0F97A8B2EA3FDF50063E159 /* DeleteOperation.swift */; };
-		C0F97A932EA3FDF50063E159 /* RemoveAssetFromOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0F97A8C2EA3FDF50063E159 /* RemoveAssetFromOperation.swift */; };
-		C0F97A942EA3FDF50063E159 /* UpsertOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0F97A8D2EA3FDF50063E159 /* UpsertOperation.swift */; };
-		C0F97A952EA3FDF50063E159 /* AttachAssetToOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0F97A8A2EA3FDF50063E159 /* AttachAssetToOperation.swift */; };
-		C0F97A962EA3FDF50063E159 /* DeleteOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0F97A8B2EA3FDF50063E159 /* DeleteOperation.swift */; };
-		C0F97A972EA3FDF50063E159 /* RemoveAssetFromOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0F97A8C2EA3FDF50063E159 /* RemoveAssetFromOperation.swift */; };
-		C0F97A982EA3FDF50063E159 /* UpsertOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0F97A8D2EA3FDF50063E159 /* UpsertOperation.swift */; };
-		C0F97A992EA3FDF50063E159 /* AttachAssetToOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0F97A8A2EA3FDF50063E159 /* AttachAssetToOperation.swift */; };
 		C0F97AA42EA401160063E159 /* PatientMapper.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0F97AA22EA401160063E159 /* PatientMapper.swift */; };
 		C0F97AA52EA401160063E159 /* PatientDisplayModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0F97AA12EA401160063E159 /* PatientDisplayModel.swift */; };
 		C0F97AA62EA401160063E159 /* OperationDisplayModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0F97AA02EA401160063E159 /* OperationDisplayModel.swift */; };
@@ -274,33 +313,18 @@
 		C0F97ADE2EA420EB0063E159 /* DomainDependencies.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0F97ADC2EA420EB0063E159 /* DomainDependencies.swift */; };
 		C0F97ADF2EA420EB0063E159 /* DomainDependencies.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0F97ADC2EA420EB0063E159 /* DomainDependencies.swift */; };
 		C0F97AE02EA420EB0063E159 /* DomainDependencies.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0F97ADC2EA420EB0063E159 /* DomainDependencies.swift */; };
-		C0F97AE22EA4304D0063E159 /* CreateOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0F97AE12EA4304D0063E159 /* CreateOperation.swift */; };
-		C0F97AE32EA4304D0063E159 /* CreateOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0F97AE12EA4304D0063E159 /* CreateOperation.swift */; };
-		C0F97AE42EA4304D0063E159 /* CreateOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0F97AE12EA4304D0063E159 /* CreateOperation.swift */; };
 		C0F97B002EA430880063E159 /* Gender.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0F97AFB2EA430880063E159 /* Gender.swift */; };
-		C0F97B012EA430880063E159 /* OperationAssetExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0F97AFC2EA430880063E159 /* OperationAssetExtension.swift */; };
-		C0F97B022EA430880063E159 /* OperationStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0F97AFD2EA430880063E159 /* OperationStatus.swift */; };
 		C0F97B042EA430880063E159 /* Gender.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0F97AFB2EA430880063E159 /* Gender.swift */; };
-		C0F97B052EA430880063E159 /* OperationAssetExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0F97AFC2EA430880063E159 /* OperationAssetExtension.swift */; };
-		C0F97B062EA430880063E159 /* OperationStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0F97AFD2EA430880063E159 /* OperationStatus.swift */; };
 		C0F97B082EA430880063E159 /* Gender.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0F97AFB2EA430880063E159 /* Gender.swift */; };
-		C0F97B092EA430880063E159 /* OperationAssetExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0F97AFC2EA430880063E159 /* OperationAssetExtension.swift */; };
-		C0F97B0A2EA430880063E159 /* OperationStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0F97AFD2EA430880063E159 /* OperationStatus.swift */; };
 		C0F97B0C2EA4348D0063E159 /* CreatePatient.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0F97B0B2EA4348D0063E159 /* CreatePatient.swift */; };
 		C0F97B0D2EA4348D0063E159 /* CreatePatient.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0F97B0B2EA4348D0063E159 /* CreatePatient.swift */; };
 		C0F97B0E2EA4348D0063E159 /* CreatePatient.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0F97B0B2EA4348D0063E159 /* CreatePatient.swift */; };
-		C0F97B1C2EA435490063E159 /* CreateOperationCommand.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0F97B172EA435490063E159 /* CreateOperationCommand.swift */; };
 		C0F97B1D2EA435490063E159 /* ValidationError.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0F97B1A2EA435490063E159 /* ValidationError.swift */; };
 		C0F97B1E2EA435490063E159 /* CreatePatientCommand.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0F97B182EA435490063E159 /* CreatePatientCommand.swift */; };
-		C0F97B1F2EA435490063E159 /* CreateOperationCommand.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0F97B172EA435490063E159 /* CreateOperationCommand.swift */; };
 		C0F97B202EA435490063E159 /* ValidationError.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0F97B1A2EA435490063E159 /* ValidationError.swift */; };
 		C0F97B212EA435490063E159 /* CreatePatientCommand.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0F97B182EA435490063E159 /* CreatePatientCommand.swift */; };
-		C0F97B222EA435490063E159 /* CreateOperationCommand.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0F97B172EA435490063E159 /* CreateOperationCommand.swift */; };
 		C0F97B232EA435490063E159 /* ValidationError.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0F97B1A2EA435490063E159 /* ValidationError.swift */; };
 		C0F97B242EA435490063E159 /* CreatePatientCommand.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0F97B182EA435490063E159 /* CreatePatientCommand.swift */; };
-		C0F97B262EA437840063E159 /* AttachAssetCommand.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0F97B252EA437840063E159 /* AttachAssetCommand.swift */; };
-		C0F97B272EA437840063E159 /* AttachAssetCommand.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0F97B252EA437840063E159 /* AttachAssetCommand.swift */; };
-		C0F97B282EA437840063E159 /* AttachAssetCommand.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0F97B252EA437840063E159 /* AttachAssetCommand.swift */; };
 		C0F97B2A2EA439080063E159 /* UpdatePatient.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0F97B292EA439080063E159 /* UpdatePatient.swift */; };
 		C0F97B2B2EA439080063E159 /* UpdatePatient.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0F97B292EA439080063E159 /* UpdatePatient.swift */; };
 		C0F97B2C2EA439080063E159 /* UpdatePatient.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0F97B292EA439080063E159 /* UpdatePatient.swift */; };
@@ -378,18 +402,38 @@
 		14CC75672EA6A98700399562 /* OperationDateBadge.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OperationDateBadge.swift; sourceTree = "<group>"; };
 		14CC756B2EA6A99300399562 /* PatientGridView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PatientGridView.swift; sourceTree = "<group>"; };
 		14CC756F2EA6AD5800399562 /* PatientSectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PatientSectionView.swift; sourceTree = "<group>"; };
-		14DE512B2EB5F7180027D9A0 /* AddAssetsToOperation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddAssetsToOperation.swift; sourceTree = "<group>"; };
 		14DE51302EB60DA90027D9A0 /* FileAttachmentPlaceholder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FileAttachmentPlaceholder.swift; sourceTree = "<group>"; };
 		14DE51342EB60DE10027D9A0 /* ModelPreviewCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModelPreviewCard.swift; sourceTree = "<group>"; };
 		14DE51382EB60E100027D9A0 /* ModeFilelListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModeFilelListView.swift; sourceTree = "<group>"; };
 		14DE513C2EB60E5C0027D9A0 /* FileAttachmentSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FileAttachmentSection.swift; sourceTree = "<group>"; };
 		14DE51402EB64A220027D9A0 /* DetailModelSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetailModelSection.swift; sourceTree = "<group>"; };
-		14DE51442EB728140027D9A0 /* AddAssetsCommand.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddAssetsCommand.swift; sourceTree = "<group>"; };
 		14DE51492EB740710027D9A0 /* EmptyTodaySurgeryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmptyTodaySurgeryView.swift; sourceTree = "<group>"; };
 		14DE514B2EB7408D0027D9A0 /* TodayOperationScrollView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TodayOperationScrollView.swift; sourceTree = "<group>"; };
 		14DE51512EB771420027D9A0 /* HIPPO.icon */ = {isa = PBXFileReference; lastKnownFileType = folder.iconcomposer.icon; path = HIPPO.icon; sourceTree = "<group>"; };
 		14DE51552EB7798B0027D9A0 /* EmptyPatientView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmptyPatientView.swift; sourceTree = "<group>"; };
 		14F6B0332EAAC73F003F28EB /* ImmersiveSurgeryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImmersiveSurgeryView.swift; sourceTree = "<group>"; };
+		25E78B542EB90D4600D8CAD2 /* Operation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Operation.swift; sourceTree = "<group>"; };
+		25E78B552EB90D4600D8CAD2 /* OperationAsset.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OperationAsset.swift; sourceTree = "<group>"; };
+		25E78B562EB90D4600D8CAD2 /* OperationRecording.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OperationRecording.swift; sourceTree = "<group>"; };
+		25E78B582EB90D4600D8CAD2 /* OperationError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OperationError.swift; sourceTree = "<group>"; };
+		25E78B5C2EB90D4600D8CAD2 /* OperationAssetExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OperationAssetExtension.swift; sourceTree = "<group>"; };
+		25E78B5D2EB90D4600D8CAD2 /* OperationStatus.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OperationStatus.swift; sourceTree = "<group>"; };
+		25E78B722EB9164200D8CAD2 /* OperationRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OperationRepository.swift; sourceTree = "<group>"; };
+		25E78B762EB9164E00D8CAD2 /* AddAssetsCommand.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddAssetsCommand.swift; sourceTree = "<group>"; };
+		25E78B772EB9164E00D8CAD2 /* AttachAssetCommand.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AttachAssetCommand.swift; sourceTree = "<group>"; };
+		25E78B782EB9164E00D8CAD2 /* CreateOperationCommand.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateOperationCommand.swift; sourceTree = "<group>"; };
+		25E78B822EB9166900D8CAD2 /* OperationWithPatient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OperationWithPatient.swift; sourceTree = "<group>"; };
+		25E78B872EB91ACB00D8CAD2 /* OperationRepositoryImpl.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OperationRepositoryImpl.swift; sourceTree = "<group>"; };
+		25E78B8D2EB9225600D8CAD2 /* AddAssetsToOperation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddAssetsToOperation.swift; sourceTree = "<group>"; };
+		25E78B8E2EB9225600D8CAD2 /* AttachAssetToOperation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AttachAssetToOperation.swift; sourceTree = "<group>"; };
+		25E78B8F2EB9225600D8CAD2 /* CreateOperation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateOperation.swift; sourceTree = "<group>"; };
+		25E78B902EB9225600D8CAD2 /* DeleteOperation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeleteOperation.swift; sourceTree = "<group>"; };
+		25E78B912EB9225600D8CAD2 /* GetOperation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GetOperation.swift; sourceTree = "<group>"; };
+		25E78B922EB9225600D8CAD2 /* GetTodayOperations.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GetTodayOperations.swift; sourceTree = "<group>"; };
+		25E78B932EB9225600D8CAD2 /* RemoveAssetFromOperation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RemoveAssetFromOperation.swift; sourceTree = "<group>"; };
+		25E78B942EB9225600D8CAD2 /* UpdateOperationStatus.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UpdateOperationStatus.swift; sourceTree = "<group>"; };
+		25E78B952EB9225600D8CAD2 /* UpsertOperation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UpsertOperation.swift; sourceTree = "<group>"; };
+		25E78BB12EB92A2E00D8CAD2 /* UpdateOperationCommand.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UpdateOperationCommand.swift; sourceTree = "<group>"; };
 		272BD1B12EADE1BA00C83F81 /* ARSessionController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ARSessionController.swift; sourceTree = "<group>"; };
 		272BD1B42EADE1DE00C83F81 /* HeadPose.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HeadPose.swift; sourceTree = "<group>"; };
 		2786232E2EB78F2900F97BE3 /* AssetListScrollView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AssetListScrollView.swift; sourceTree = "<group>"; };
@@ -429,13 +473,6 @@
 		C050AA4D2EA8201A00352314 /* ImmersiveSceneRuntime.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImmersiveSceneRuntime.swift; sourceTree = "<group>"; };
 		C05F32242E9FF303009C5974 /* HippoMac.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = HippoMac.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		C0F97A792EA3FD370063E159 /* PatientDTO.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PatientDTO.swift; sourceTree = "<group>"; };
-		C0F97A7E2EA3FDDE0063E159 /* Operation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Operation.swift; sourceTree = "<group>"; };
-		C0F97A7F2EA3FDDE0063E159 /* OperationAsset.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OperationAsset.swift; sourceTree = "<group>"; };
-		C0F97A802EA3FDDE0063E159 /* OperationRecording.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OperationRecording.swift; sourceTree = "<group>"; };
-		C0F97A8A2EA3FDF50063E159 /* AttachAssetToOperation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AttachAssetToOperation.swift; sourceTree = "<group>"; };
-		C0F97A8B2EA3FDF50063E159 /* DeleteOperation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeleteOperation.swift; sourceTree = "<group>"; };
-		C0F97A8C2EA3FDF50063E159 /* RemoveAssetFromOperation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RemoveAssetFromOperation.swift; sourceTree = "<group>"; };
-		C0F97A8D2EA3FDF50063E159 /* UpsertOperation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UpsertOperation.swift; sourceTree = "<group>"; };
 		C0F97A9E2EA401160063E159 /* DisplayHelpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DisplayHelpers.swift; sourceTree = "<group>"; };
 		C0F97A9F2EA401160063E159 /* OperationAssetDisplayModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OperationAssetDisplayModel.swift; sourceTree = "<group>"; };
 		C0F97AA02EA401160063E159 /* OperationDisplayModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OperationDisplayModel.swift; sourceTree = "<group>"; };
@@ -451,15 +488,10 @@
 		C0F97AD32EA41FB50063E159 /* PatientLocalDataSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PatientLocalDataSource.swift; sourceTree = "<group>"; };
 		C0F97AD72EA420E10063E159 /* DataDependencies.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataDependencies.swift; sourceTree = "<group>"; };
 		C0F97ADC2EA420EB0063E159 /* DomainDependencies.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DomainDependencies.swift; sourceTree = "<group>"; };
-		C0F97AE12EA4304D0063E159 /* CreateOperation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateOperation.swift; sourceTree = "<group>"; };
 		C0F97AFB2EA430880063E159 /* Gender.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Gender.swift; sourceTree = "<group>"; };
-		C0F97AFC2EA430880063E159 /* OperationAssetExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OperationAssetExtension.swift; sourceTree = "<group>"; };
-		C0F97AFD2EA430880063E159 /* OperationStatus.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OperationStatus.swift; sourceTree = "<group>"; };
 		C0F97B0B2EA4348D0063E159 /* CreatePatient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreatePatient.swift; sourceTree = "<group>"; };
-		C0F97B172EA435490063E159 /* CreateOperationCommand.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateOperationCommand.swift; sourceTree = "<group>"; };
 		C0F97B182EA435490063E159 /* CreatePatientCommand.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreatePatientCommand.swift; sourceTree = "<group>"; };
 		C0F97B1A2EA435490063E159 /* ValidationError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ValidationError.swift; sourceTree = "<group>"; };
-		C0F97B252EA437840063E159 /* AttachAssetCommand.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AttachAssetCommand.swift; sourceTree = "<group>"; };
 		C0F97B292EA439080063E159 /* UpdatePatient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UpdatePatient.swift; sourceTree = "<group>"; };
 		C0F97B2D2EA439290063E159 /* UpdatePatientCommand.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UpdatePatientCommand.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -820,6 +852,114 @@
 			path = Components;
 			sourceTree = "<group>";
 		};
+		25E78B522EB90D4600D8CAD2 /* Commands */ = {
+			isa = PBXGroup;
+			children = (
+				25E78BB12EB92A2E00D8CAD2 /* UpdateOperationCommand.swift */,
+				25E78B762EB9164E00D8CAD2 /* AddAssetsCommand.swift */,
+				25E78B772EB9164E00D8CAD2 /* AttachAssetCommand.swift */,
+				25E78B782EB9164E00D8CAD2 /* CreateOperationCommand.swift */,
+			);
+			path = Commands;
+			sourceTree = "<group>";
+		};
+		25E78B532EB90D4600D8CAD2 /* DI */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = DI;
+			sourceTree = "<group>";
+		};
+		25E78B572EB90D4600D8CAD2 /* Entities */ = {
+			isa = PBXGroup;
+			children = (
+				25E78B542EB90D4600D8CAD2 /* Operation.swift */,
+				25E78B552EB90D4600D8CAD2 /* OperationAsset.swift */,
+				25E78B562EB90D4600D8CAD2 /* OperationRecording.swift */,
+			);
+			path = Entities;
+			sourceTree = "<group>";
+		};
+		25E78B592EB90D4600D8CAD2 /* Errors */ = {
+			isa = PBXGroup;
+			children = (
+				25E78B582EB90D4600D8CAD2 /* OperationError.swift */,
+			);
+			path = Errors;
+			sourceTree = "<group>";
+		};
+		25E78B5A2EB90D4600D8CAD2 /* Repositories */ = {
+			isa = PBXGroup;
+			children = (
+				25E78B722EB9164200D8CAD2 /* OperationRepository.swift */,
+			);
+			path = Repositories;
+			sourceTree = "<group>";
+		};
+		25E78B5B2EB90D4600D8CAD2 /* UseCases */ = {
+			isa = PBXGroup;
+			children = (
+				25E78B8D2EB9225600D8CAD2 /* AddAssetsToOperation.swift */,
+				25E78B8E2EB9225600D8CAD2 /* AttachAssetToOperation.swift */,
+				25E78B8F2EB9225600D8CAD2 /* CreateOperation.swift */,
+				25E78B902EB9225600D8CAD2 /* DeleteOperation.swift */,
+				25E78B912EB9225600D8CAD2 /* GetOperation.swift */,
+				25E78B922EB9225600D8CAD2 /* GetTodayOperations.swift */,
+				25E78B932EB9225600D8CAD2 /* RemoveAssetFromOperation.swift */,
+				25E78B942EB9225600D8CAD2 /* UpdateOperationStatus.swift */,
+				25E78B952EB9225600D8CAD2 /* UpsertOperation.swift */,
+			);
+			path = UseCases;
+			sourceTree = "<group>";
+		};
+		25E78B5E2EB90D4600D8CAD2 /* ValueObjects */ = {
+			isa = PBXGroup;
+			children = (
+				25E78B822EB9166900D8CAD2 /* OperationWithPatient.swift */,
+				25E78B5C2EB90D4600D8CAD2 /* OperationAssetExtension.swift */,
+				25E78B5D2EB90D4600D8CAD2 /* OperationStatus.swift */,
+			);
+			path = ValueObjects;
+			sourceTree = "<group>";
+		};
+		25E78B5F2EB90D4600D8CAD2 /* Operations */ = {
+			isa = PBXGroup;
+			children = (
+				25E78B522EB90D4600D8CAD2 /* Commands */,
+				25E78B532EB90D4600D8CAD2 /* DI */,
+				25E78B572EB90D4600D8CAD2 /* Entities */,
+				25E78B592EB90D4600D8CAD2 /* Errors */,
+				25E78B5A2EB90D4600D8CAD2 /* Repositories */,
+				25E78B5B2EB90D4600D8CAD2 /* UseCases */,
+				25E78B5E2EB90D4600D8CAD2 /* ValueObjects */,
+			);
+			path = Operations;
+			sourceTree = "<group>";
+		};
+		25E78B862EB91ACB00D8CAD2 /* DI */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = DI;
+			sourceTree = "<group>";
+		};
+		25E78B882EB91ACB00D8CAD2 /* Repository */ = {
+			isa = PBXGroup;
+			children = (
+				25E78B872EB91ACB00D8CAD2 /* OperationRepositoryImpl.swift */,
+			);
+			path = Repository;
+			sourceTree = "<group>";
+		};
+		25E78B892EB91ACB00D8CAD2 /* Operations */ = {
+			isa = PBXGroup;
+			children = (
+				25E78B862EB91ACB00D8CAD2 /* DI */,
+				25E78B882EB91ACB00D8CAD2 /* Repository */,
+			);
+			path = Operations;
+			sourceTree = "<group>";
+		};
 		C02FFA4E2E9FFF6F00F16742 /* MacApp */ = {
 			isa = PBXGroup;
 			children = (
@@ -888,6 +1028,7 @@
 		C02FFA652E9FFF6F00F16742 /* Data */ = {
 			isa = PBXGroup;
 			children = (
+				25E78B892EB91ACB00D8CAD2 /* Operations */,
 				C0F97AD82EA420E10063E159 /* DI */,
 				C046782E2EA00B3A00D160DA /* Patients */,
 			);
@@ -897,6 +1038,7 @@
 		C02FFA692E9FFF6F00F16742 /* Domain */ = {
 			isa = PBXGroup;
 			children = (
+				25E78B5F2EB90D4600D8CAD2 /* Operations */,
 				C0F97ADD2EA420EB0063E159 /* DI */,
 				C04678012EA00B1F00D160DA /* Patients */,
 			);
@@ -926,9 +1068,6 @@
 		C04677F52EA00B1F00D160DA /* Entities */ = {
 			isa = PBXGroup;
 			children = (
-				C0F97A7E2EA3FDDE0063E159 /* Operation.swift */,
-				C0F97A7F2EA3FDDE0063E159 /* OperationAsset.swift */,
-				C0F97A802EA3FDDE0063E159 /* OperationRecording.swift */,
 				C04677F42EA00B1F00D160DA /* Patient.swift */,
 			);
 			path = Entities;
@@ -945,14 +1084,8 @@
 		C04678002EA00B1F00D160DA /* UseCases */ = {
 			isa = PBXGroup;
 			children = (
-				14DE512B2EB5F7180027D9A0 /* AddAssetsToOperation.swift */,
 				C0F97B292EA439080063E159 /* UpdatePatient.swift */,
 				C0F97B0B2EA4348D0063E159 /* CreatePatient.swift */,
-				C0F97AE12EA4304D0063E159 /* CreateOperation.swift */,
-				C0F97A8A2EA3FDF50063E159 /* AttachAssetToOperation.swift */,
-				C0F97A8B2EA3FDF50063E159 /* DeleteOperation.swift */,
-				C0F97A8C2EA3FDF50063E159 /* RemoveAssetFromOperation.swift */,
-				C0F97A8D2EA3FDF50063E159 /* UpsertOperation.swift */,
 				C04677FA2EA00B1F00D160DA /* DeletePatient.swift */,
 				C04677FB2EA00B1F00D160DA /* GetPatient.swift */,
 				C04677FC2EA00B1F00D160DA /* ListPatients.swift */,
@@ -1192,8 +1325,6 @@
 			isa = PBXGroup;
 			children = (
 				C0F97AFB2EA430880063E159 /* Gender.swift */,
-				C0F97AFC2EA430880063E159 /* OperationAssetExtension.swift */,
-				C0F97AFD2EA430880063E159 /* OperationStatus.swift */,
 			);
 			path = ValueObjects;
 			sourceTree = "<group>";
@@ -1201,10 +1332,7 @@
 		C0F97B192EA435490063E159 /* Commands */ = {
 			isa = PBXGroup;
 			children = (
-				14DE51442EB728140027D9A0 /* AddAssetsCommand.swift */,
 				C0F97B2D2EA439290063E159 /* UpdatePatientCommand.swift */,
-				C0F97B252EA437840063E159 /* AttachAssetCommand.swift */,
-				C0F97B172EA435490063E159 /* CreateOperationCommand.swift */,
 				C0F97B182EA435490063E159 /* CreatePatientCommand.swift */,
 			);
 			path = Commands;
@@ -1379,16 +1507,13 @@
 				1494DE982EA73359000CD284 /* SectionTitle.swift in Sources */,
 				272BD1B52EADE1E200C83F81 /* HeadPose.swift in Sources */,
 				14CC754F2EA6A77C00399562 /* OrnamentButton.swift in Sources */,
-				C0F97A842EA3FDDE0063E159 /* OperationAsset.swift in Sources */,
 				C050AA4B2EA81EBE00352314 /* VisionEnvironmentKey.swift in Sources */,
 				1446FBD52EAF262F000BCF61 /* EntityPlacementService.swift in Sources */,
 				C0F97ADF2EA420EB0063E159 /* DomainDependencies.swift in Sources */,
 				14A17F952EB341D9009D16CF /* OperationInputView.swift in Sources */,
 				14DE514A2EB7407B0027D9A0 /* EmptyTodaySurgeryView.swift in Sources */,
 				14DE513B2EB60E1F0027D9A0 /* ModeFilelListView.swift in Sources */,
-				C0F97A852EA3FDDE0063E159 /* OperationRecording.swift in Sources */,
 				27AD7ACD2EB496D900E84809 /* LayerButton.swift in Sources */,
-				C0F97A862EA3FDDE0063E159 /* Operation.swift in Sources */,
 				14DE51352EB60DEC0027D9A0 /* ModelPreviewCard.swift in Sources */,
 				1494DE7C2EA73205000CD284 /* DetailHeader.swift in Sources */,
 				C046782F2EA00B3A00D160DA /* PatientRepositoryImpl.swift in Sources */,
@@ -1417,6 +1542,15 @@
 				1446FBE42EAF5801000BCF61 /* PatientInputView.swift in Sources */,
 				1446FB9E2EAE69AF000BCF61 /* RecordingIndicator.swift in Sources */,
 				C02FFA9D2E9FFF6F00F16742 /* AppModel.swift in Sources */,
+				25E78BA82EB9225600D8CAD2 /* GetOperation.swift in Sources */,
+				25E78BA92EB9225600D8CAD2 /* GetTodayOperations.swift in Sources */,
+				25E78BAA2EB9225600D8CAD2 /* CreateOperation.swift in Sources */,
+				25E78BAB2EB9225600D8CAD2 /* UpsertOperation.swift in Sources */,
+				25E78BAC2EB9225600D8CAD2 /* AttachAssetToOperation.swift in Sources */,
+				25E78BAD2EB9225600D8CAD2 /* RemoveAssetFromOperation.swift in Sources */,
+				25E78BAE2EB9225600D8CAD2 /* AddAssetsToOperation.swift in Sources */,
+				25E78BAF2EB9225600D8CAD2 /* UpdateOperationStatus.swift in Sources */,
+				25E78BB02EB9225600D8CAD2 /* DeleteOperation.swift in Sources */,
 				C0F97A7B2EA3FD370063E159 /* PatientDTO.swift in Sources */,
 				14A17F8B2EB31411009D16CF /* SurgeonInfoSection.swift in Sources */,
 				27AD7AE02EB5BE2E00E84809 /* OpacityControlPanelHeaderComponent.swift in Sources */,
@@ -1424,7 +1558,6 @@
 				1494DE852EA73229000CD284 /* AssetImageCard.swift in Sources */,
 				C0F97ACC2EA41D4B0063E159 /* SDOperation.swift in Sources */,
 				14DE51432EB64A2F0027D9A0 /* DetailModelSection.swift in Sources */,
-				14DE51452EB7281B0027D9A0 /* AddAssetsCommand.swift in Sources */,
 				C0F97ACD2EA41D4B0063E159 /* SDOperationRecording.swift in Sources */,
 				14CC75562EA6A8BE00399562 /* LogoHeader.swift in Sources */,
 				C0F97ACE2EA41D4B0063E159 /* SwiftDataMappers.swift in Sources */,
@@ -1439,15 +1572,21 @@
 				14CC75602EA6A96700399562 /* TodaySectionView.swift in Sources */,
 				14DE51312EB60DB00027D9A0 /* FileAttachmentPlaceholder.swift in Sources */,
 				C0F97AD22EA41D4B0063E159 /* SDPatient.swift in Sources */,
-				C0F97B222EA435490063E159 /* CreateOperationCommand.swift in Sources */,
 				C0F97B232EA435490063E159 /* ValidationError.swift in Sources */,
 				1446FBB62EAE6C66000BCF61 /* MenuToggleButton.swift in Sources */,
+				25E78B742EB9164200D8CAD2 /* OperationRepository.swift in Sources */,
 				14A17F912EB314B3009D16CF /* EmptyOperationView.swift in Sources */,
 				14A17F8F2EB31482009D16CF /* OperationList.swift in Sources */,
 				C0F97B242EA435490063E159 /* CreatePatientCommand.swift in Sources */,
-				C0F97AE22EA4304D0063E159 /* CreateOperation.swift in Sources */,
+				25E78B6C2EB90D4600D8CAD2 /* OperationStatus.swift in Sources */,
+				25E78B6D2EB90D4600D8CAD2 /* Operation.swift in Sources */,
+				25E78B6E2EB90D4600D8CAD2 /* OperationAsset.swift in Sources */,
+				25E78B6F2EB90D4600D8CAD2 /* OperationRecording.swift in Sources */,
+				25E78B702EB90D4600D8CAD2 /* OperationError.swift in Sources */,
+				25E78B712EB90D4600D8CAD2 /* OperationAssetExtension.swift in Sources */,
 				C046783F2EA00B4A00D160DA /* PatientState.swift in Sources */,
 				C0F97AAE2EA401160063E159 /* PatientMapper.swift in Sources */,
+				25E78BB32EB92A2E00D8CAD2 /* UpdateOperationCommand.swift in Sources */,
 				C0F97AAF2EA401160063E159 /* PatientDisplayModel.swift in Sources */,
 				1446FBF02EAFAD5C000BCF61 /* PatientInputHeader.swift in Sources */,
 				1494DEA02EA7510A000CD284 /* DetailSubPart.swift in Sources */,
@@ -1461,11 +1600,11 @@
 				C0F97AB12EA401160063E159 /* DisplayHelpers.swift in Sources */,
 				14CC75482EA69DE400399562 /* PatientCell.swift in Sources */,
 				C0F97B082EA430880063E159 /* Gender.swift in Sources */,
-				C0F97B092EA430880063E159 /* OperationAssetExtension.swift in Sources */,
 				1446FBEA2EAFA132000BCF61 /* PatientViewModel.swift in Sources */,
-				C0F97B262EA437840063E159 /* AttachAssetCommand.swift in Sources */,
-				C0F97B0A2EA430880063E159 /* OperationStatus.swift in Sources */,
 				1494DEA72EA7C851000CD284 /* Date+Extension.swift in Sources */,
+				25E78B792EB9164E00D8CAD2 /* CreateOperationCommand.swift in Sources */,
+				25E78B7A2EB9164E00D8CAD2 /* AttachAssetCommand.swift in Sources */,
+				25E78B7B2EB9164E00D8CAD2 /* AddAssetsCommand.swift in Sources */,
 				14A17F9F2EB34FF7009D16CF /* OperationInputForm.swift in Sources */,
 				1446FBAE2EAE6BBD000BCF61 /* EndoscopeToggle.swift in Sources */,
 				C0F97AB22EA401160063E159 /* OperationAssetDisplayModel.swift in Sources */,
@@ -1476,19 +1615,16 @@
 				278623372EB8EB7800F97BE3 /* OpacityControlSlider.swift in Sources */,
 				1446FBED2EAFA477000BCF61 /* FormSection.swift in Sources */,
 				278F28BD2EB3877300DF2F73 /* AssetListView.swift in Sources */,
-				C0F97A8E2EA3FDF50063E159 /* DeleteOperation.swift in Sources */,
-				C0F97A8F2EA3FDF50063E159 /* RemoveAssetFromOperation.swift in Sources */,
-				14DE512D2EB5F71F0027D9A0 /* AddAssetsToOperation.swift in Sources */,
 				1446FBE82EAF9E3B000BCF61 /* PatientDetailView.swift in Sources */,
-				C0F97A902EA3FDF50063E159 /* UpsertOperation.swift in Sources */,
-				C0F97A912EA3FDF50063E159 /* AttachAssetToOperation.swift in Sources */,
 				27AD7AC62EB4948A00E84809 /* LayerEyeButton.swift in Sources */,
 				C04678402EA00B4A00D160DA /* HomeViewModel.swift in Sources */,
 				1442546A2EAAC61F00583CC3 /* WindowIDs.swift in Sources */,
 				14DE51562EB779960027D9A0 /* EmptyPatientView.swift in Sources */,
+				25E78B8A2EB91ACB00D8CAD2 /* OperationRepositoryImpl.swift in Sources */,
 				14DE514C2EB740930027D9A0 /* TodayOperationScrollView.swift in Sources */,
 				1446FBF22EAFADCC000BCF61 /* PatientInputForm.swift in Sources */,
 				14CC75442EA6803800399562 /* TodayOperationCard.swift in Sources */,
+				25E78B832EB9166900D8CAD2 /* OperationWithPatient.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1498,25 +1634,35 @@
 			files = (
 				1446FBAA2EAE6B55000BCF61 /* PatientInfoHeader.swift in Sources */,
 				1446FBB52EAE6C66000BCF61 /* MenuToggleButton.swift in Sources */,
+				25E78B962EB9225600D8CAD2 /* GetOperation.swift in Sources */,
+				25E78B972EB9225600D8CAD2 /* GetTodayOperations.swift in Sources */,
+				25E78B982EB9225600D8CAD2 /* CreateOperation.swift in Sources */,
+				25E78B992EB9225600D8CAD2 /* UpsertOperation.swift in Sources */,
+				25E78B9A2EB9225600D8CAD2 /* AttachAssetToOperation.swift in Sources */,
+				25E78B9B2EB9225600D8CAD2 /* RemoveAssetFromOperation.swift in Sources */,
+				25E78B9C2EB9225600D8CAD2 /* AddAssetsToOperation.swift in Sources */,
+				25E78B9D2EB9225600D8CAD2 /* UpdateOperationStatus.swift in Sources */,
+				25E78B9E2EB9225600D8CAD2 /* DeleteOperation.swift in Sources */,
 				C04678042EA00B1F00D160DA /* DeletePatient.swift in Sources */,
-				C0F97A812EA3FDDE0063E159 /* OperationAsset.swift in Sources */,
-				C0F97A822EA3FDDE0063E159 /* OperationRecording.swift in Sources */,
 				1446FBBE2EAE77B5000BCF61 /* SurgeryBottomMenu.swift in Sources */,
 				C0F97AE02EA420EB0063E159 /* DomainDependencies.swift in Sources */,
-				C0F97B1F2EA435490063E159 /* CreateOperationCommand.swift in Sources */,
 				C0F97B202EA435490063E159 /* ValidationError.swift in Sources */,
 				1446FBA42EAE6A27000BCF61 /* GlowingCircleButton.swift in Sources */,
 				1494DEA22EA7510A000CD284 /* DetailSubPart.swift in Sources */,
+				25E78B752EB9164200D8CAD2 /* OperationRepository.swift in Sources */,
 				14DE51412EB64A2F0027D9A0 /* DetailModelSection.swift in Sources */,
 				C0F97B212EA435490063E159 /* CreatePatientCommand.swift in Sources */,
+				25E78B602EB90D4600D8CAD2 /* OperationStatus.swift in Sources */,
+				25E78B612EB90D4600D8CAD2 /* Operation.swift in Sources */,
+				25E78B622EB90D4600D8CAD2 /* OperationAsset.swift in Sources */,
+				25E78B632EB90D4600D8CAD2 /* OperationRecording.swift in Sources */,
+				25E78B642EB90D4600D8CAD2 /* OperationError.swift in Sources */,
+				25E78B652EB90D4600D8CAD2 /* OperationAssetExtension.swift in Sources */,
 				14DE51392EB60E1F0027D9A0 /* ModeFilelListView.swift in Sources */,
-				C0F97A832EA3FDDE0063E159 /* Operation.swift in Sources */,
 				C046783B2EA00B4A00D160DA /* PatientState.swift in Sources */,
 				C0F97AD52EA41FB50063E159 /* PatientLocalDataSource.swift in Sources */,
 				1494DE862EA73229000CD284 /* AssetImageCard.swift in Sources */,
-				C0F97AE32EA4304D0063E159 /* CreateOperation.swift in Sources */,
 				C046783C2EA00B4A00D160DA /* HomeViewModel.swift in Sources */,
-				14DE51462EB7281B0027D9A0 /* AddAssetsCommand.swift in Sources */,
 				27AD7ACC2EB496D900E84809 /* LayerButton.swift in Sources */,
 				27AD7AE12EB5BE2E00E84809 /* OpacityControlPanelHeaderComponent.swift in Sources */,
 				C050AA4E2EA8201A00352314 /* ImmersiveSceneRuntime.swift in Sources */,
@@ -1526,8 +1672,11 @@
 				C0F97A7C2EA3FD370063E159 /* PatientDTO.swift in Sources */,
 				144254352EAA232300583CC3 /* OperationViewModel.swift in Sources */,
 				C046780B2EA00B1F00D160DA /* GetPatient.swift in Sources */,
+				25E78B7F2EB9164E00D8CAD2 /* CreateOperationCommand.swift in Sources */,
+				25E78B842EB9166900D8CAD2 /* OperationWithPatient.swift in Sources */,
+				25E78B802EB9164E00D8CAD2 /* AttachAssetCommand.swift in Sources */,
+				25E78B812EB9164E00D8CAD2 /* AddAssetsCommand.swift in Sources */,
 				1446FBBB2EAE770A000BCF61 /* SurgeryControlBar.swift in Sources */,
-				14DE512C2EB5F71F0027D9A0 /* AddAssetsToOperation.swift in Sources */,
 				14A17F982EB34F46009D16CF /* OperationInputHeader.swift in Sources */,
 				27AD7AC42EB4948A00E84809 /* LayerEyeButton.swift in Sources */,
 				C0F97ABE2EA41D4B0063E159 /* SDOperation.swift in Sources */,
@@ -1544,6 +1693,7 @@
 				C0F97AC32EA41D4B0063E159 /* PatientLocalDataSourceLegacyJSON.swift in Sources */,
 				278623332EB790CE00F97BE3 /* AssetListScrollCard.swift in Sources */,
 				C0F97AC42EA41D4B0063E159 /* SDPatient.swift in Sources */,
+				25E78BB22EB92A2E00D8CAD2 /* UpdateOperationCommand.swift in Sources */,
 				C0F97B2B2EA439080063E159 /* UpdatePatient.swift in Sources */,
 				C04678352EA00B3A00D160DA /* PatientRepositoryImpl.swift in Sources */,
 				144254652EAAC44900583CC3 /* StartOperationButton.swift in Sources */,
@@ -1551,13 +1701,8 @@
 				1442546B2EAAC61F00583CC3 /* WindowIDs.swift in Sources */,
 				2786232F2EB78F2900F97BE3 /* AssetListScrollView.swift in Sources */,
 				14DE51362EB60DEC0027D9A0 /* ModelPreviewCard.swift in Sources */,
-				C0F97A922EA3FDF50063E159 /* DeleteOperation.swift in Sources */,
-				C0F97A932EA3FDF50063E159 /* RemoveAssetFromOperation.swift in Sources */,
-				C0F97A942EA3FDF50063E159 /* UpsertOperation.swift in Sources */,
 				C0F97B302EA439290063E159 /* UpdatePatientCommand.swift in Sources */,
-				C0F97A952EA3FDF50063E159 /* AttachAssetToOperation.swift in Sources */,
 				C04678362EA00B3A00D160DA /* PatientRemoteDataSource.swift in Sources */,
-				C0F97B272EA437840063E159 /* AttachAssetCommand.swift in Sources */,
 				1494DE812EA7321A000CD284 /* AssetSection.swift in Sources */,
 				27AD7ADD2EB5BA2E00E84809 /* OpacityControlPanelButton.swift in Sources */,
 				1446FBA02EAE69AF000BCF61 /* RecordingIndicator.swift in Sources */,
@@ -1571,8 +1716,6 @@
 				272BD1B22EADE1BF00C83F81 /* ARSessionController.swift in Sources */,
 				14A17F932EB341D9009D16CF /* OperationInputView.swift in Sources */,
 				272BD1B62EADE1E200C83F81 /* HeadPose.swift in Sources */,
-				C0F97B012EA430880063E159 /* OperationAssetExtension.swift in Sources */,
-				C0F97B022EA430880063E159 /* OperationStatus.swift in Sources */,
 				27AD7AD52EB5ACD600E84809 /* OpacityControlPanel.swift in Sources */,
 				1494DEA62EA7C851000CD284 /* Date+Extension.swift in Sources */,
 				14A17F9E2EB34FF7009D16CF /* OperationInputForm.swift in Sources */,
@@ -1587,6 +1730,7 @@
 				278F28BB2EB3874800DF2F73 /* GlowingCapsuleButton.swift in Sources */,
 				1446FBAF2EAE6BBD000BCF61 /* EndoscopeToggle.swift in Sources */,
 				C0F97AA82EA401160063E159 /* OperationAssetDisplayModel.swift in Sources */,
+				25E78B8C2EB91ACC00D8CAD2 /* OperationRepositoryImpl.swift in Sources */,
 				C0F97B0C2EA4348D0063E159 /* CreatePatient.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1610,8 +1754,8 @@
 				144254692EAAC61F00583CC3 /* WindowIDs.swift in Sources */,
 				C0F97ACA2EA41D4B0063E159 /* PatientLocalDataSourceLegacyJSON.swift in Sources */,
 				C0F97ADB2EA420E10063E159 /* DataDependencies.swift in Sources */,
-				C0F97AE42EA4304D0063E159 /* CreateOperation.swift in Sources */,
 				278623312EB78F2900F97BE3 /* AssetListScrollView.swift in Sources */,
+				25E78BB42EB92A2E00D8CAD2 /* UpdateOperationCommand.swift in Sources */,
 				C0F97ACB2EA41D4B0063E159 /* SDPatient.swift in Sources */,
 				C0F97B2E2EA439290063E159 /* UpdatePatientCommand.swift in Sources */,
 				C0F97AAA2EA401160063E159 /* PatientDisplayModel.swift in Sources */,
@@ -1635,39 +1779,47 @@
 				1494DE9A2EA73359000CD284 /* SectionTitle.swift in Sources */,
 				C04678332EA00B3A00D160DA /* PatientRemoteDataSource.swift in Sources */,
 				C04678472EA00C2700D160DA /* PatientView.swift in Sources */,
-				14DE512E2EB5F71F0027D9A0 /* AddAssetsToOperation.swift in Sources */,
 				C0F97A7D2EA3FD370063E159 /* PatientDTO.swift in Sources */,
 				C046781C2EA00B1F00D160DA /* DeletePatient.swift in Sources */,
 				C0F97B042EA430880063E159 /* Gender.swift in Sources */,
-				C0F97B052EA430880063E159 /* OperationAssetExtension.swift in Sources */,
-				C0F97B062EA430880063E159 /* OperationStatus.swift in Sources */,
 				14DE51332EB60DB00027D9A0 /* FileAttachmentPlaceholder.swift in Sources */,
 				0667A54A2EB8814100D7BDF3 /* StreamingControlView.swift in Sources */,
+				25E78B7C2EB9164E00D8CAD2 /* CreateOperationCommand.swift in Sources */,
+				25E78B7D2EB9164E00D8CAD2 /* AttachAssetCommand.swift in Sources */,
+				25E78B7E2EB9164E00D8CAD2 /* AddAssetsCommand.swift in Sources */,
 				C046783D2EA00B4A00D160DA /* PatientState.swift in Sources */,
 				144254332EAA232300583CC3 /* OperationViewModel.swift in Sources */,
 				278623352EB790CE00F97BE3 /* AssetListScrollCard.swift in Sources */,
 				C050AA3D2EA8197E00352314 /* ImmersiveIDs.swift in Sources */,
 				C046783E2EA00B4A00D160DA /* HomeViewModel.swift in Sources */,
-				C0F97B282EA437840063E159 /* AttachAssetCommand.swift in Sources */,
-				C0F97A872EA3FDDE0063E159 /* OperationAsset.swift in Sources */,
-				C0F97A882EA3FDDE0063E159 /* OperationRecording.swift in Sources */,
-				C0F97A892EA3FDDE0063E159 /* Operation.swift in Sources */,
 				0667A53A2EB79DBB00D7BDF3 /* HomeView.swift in Sources */,
 				C04678202EA00B1F00D160DA /* Patient.swift in Sources */,
 				C04678232EA00B1F00D160DA /* GetPatient.swift in Sources */,
 				1494DE822EA7321A000CD284 /* AssetSection.swift in Sources */,
 				1446FB9F2EAE69AF000BCF61 /* RecordingIndicator.swift in Sources */,
+				25E78B8B2EB91ACB00D8CAD2 /* OperationRepositoryImpl.swift in Sources */,
 				C04678242EA00B1F00D160DA /* ListPatients.swift in Sources */,
 				C04678252EA00B1F00D160DA /* PatientRepository.swift in Sources */,
-				C0F97B1C2EA435490063E159 /* CreateOperationCommand.swift in Sources */,
+				25E78B9F2EB9225600D8CAD2 /* GetOperation.swift in Sources */,
+				25E78BA02EB9225600D8CAD2 /* GetTodayOperations.swift in Sources */,
+				25E78BA12EB9225600D8CAD2 /* CreateOperation.swift in Sources */,
+				25E78BA22EB9225600D8CAD2 /* UpsertOperation.swift in Sources */,
+				25E78BA32EB9225600D8CAD2 /* AttachAssetToOperation.swift in Sources */,
+				25E78BA42EB9225600D8CAD2 /* RemoveAssetFromOperation.swift in Sources */,
+				25E78BA52EB9225600D8CAD2 /* AddAssetsToOperation.swift in Sources */,
+				25E78BA62EB9225600D8CAD2 /* UpdateOperationStatus.swift in Sources */,
+				25E78BA72EB9225600D8CAD2 /* DeleteOperation.swift in Sources */,
 				C0F97B1D2EA435490063E159 /* ValidationError.swift in Sources */,
 				C0F97B1E2EA435490063E159 /* CreatePatientCommand.swift in Sources */,
 				14DE51422EB64A2F0027D9A0 /* DetailModelSection.swift in Sources */,
-				C0F97A962EA3FDF50063E159 /* DeleteOperation.swift in Sources */,
-				14DE51472EB7281B0027D9A0 /* AddAssetsCommand.swift in Sources */,
-				C0F97A972EA3FDF50063E159 /* RemoveAssetFromOperation.swift in Sources */,
-				C0F97A982EA3FDF50063E159 /* UpsertOperation.swift in Sources */,
-				C0F97A992EA3FDF50063E159 /* AttachAssetToOperation.swift in Sources */,
+				25E78B852EB9166900D8CAD2 /* OperationWithPatient.swift in Sources */,
+				25E78B732EB9164200D8CAD2 /* OperationRepository.swift in Sources */,
+				25E78B662EB90D4600D8CAD2 /* OperationStatus.swift in Sources */,
+				25E78B672EB90D4600D8CAD2 /* Operation.swift in Sources */,
+				25E78B682EB90D4600D8CAD2 /* OperationAsset.swift in Sources */,
+				25E78B692EB90D4600D8CAD2 /* OperationRecording.swift in Sources */,
+				25E78B6A2EB90D4600D8CAD2 /* OperationError.swift in Sources */,
+				25E78B6B2EB90D4600D8CAD2 /* OperationAssetExtension.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

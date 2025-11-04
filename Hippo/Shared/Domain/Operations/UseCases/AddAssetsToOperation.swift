@@ -1,17 +1,13 @@
-//
-//  AddAssetsToOperation.swift
-//  Hippo
-//
-//  Created by 김현기 on 11/1/25.
-//
-
 import Dependencies
 import Foundation
 
+/// Use Case for adding multiple assets to an operation
+/// This use case handles file persistence to Documents directory
+/// and saves asset metadata to the operation
 public struct AddAssetsToOperation: Sendable {
-    private let repository: PatientRepository
+    private let repository: OperationRepository
 
-    public init(repository: PatientRepository) {
+    public init(repository: OperationRepository) {
         self.repository = repository
     }
 
@@ -27,8 +23,12 @@ public struct AddAssetsToOperation: Sendable {
         }
     }
 
+    /// Adds multiple assets to an operation
+    /// - Parameter input: Input containing patient ID, operation ID, and assets command
+    /// - Throws: OperationError.operationNotFound if operation doesn't exist
+    /// - Throws: OperationError.patientNotFound if patient doesn't exist
     public func run(_ input: Input) async throws {
-        // 1. 파일을 영구 저장소로 복사
+        // 1. 파일을 영구 저장소로 복사 (Mac Sandbox 보안 스코프 처리 포함)
         let savedAssets = try await saveFilesToDocuments(input.command.fileURLs)
 
         // 2. OperationAsset 생성

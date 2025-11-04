@@ -36,6 +36,12 @@ extension DependencyValues {
     get { self[PatientRepositoryKey.self] }
     set { self[PatientRepositoryKey.self] = newValue }
   }
+
+  /// Operation repository (facade for operation-centric operations)
+  public var operationRepository: OperationRepository {
+    get { self[OperationRepositoryKey.self] }
+    set { self[OperationRepositoryKey.self] = newValue }
+  }
 }
 
 // MARK: - Dependency Keys
@@ -131,6 +137,20 @@ private enum PatientRepositoryKey: DependencyKey {
       localDataSource: localDataSource,
       remoteDataSource: remoteDataSource
     )
+  }()
+}
+
+private enum OperationRepositoryKey: DependencyKey {
+  static let liveValue: OperationRepository = {
+    @Dependency(\.patientRepository) var patientRepository
+
+    return OperationRepositoryImpl(patientRepository: patientRepository)
+  }()
+
+  static let testValue: OperationRepository = {
+    @Dependency(\.patientRepository) var patientRepository
+
+    return OperationRepositoryImpl(patientRepository: patientRepository)
   }()
 }
 
