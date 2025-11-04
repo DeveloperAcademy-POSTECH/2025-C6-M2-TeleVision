@@ -12,6 +12,8 @@
 		0667A54C2EB8833D00D7BDF3 /* PatientDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0667A54B2EB8833D00D7BDF3 /* PatientDetailView.swift */; };
 		0667A54E2EB8961C00D7BDF3 /* TodaysSurgeryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0667A54D2EB8961C00D7BDF3 /* TodaysSurgeryView.swift */; };
 		0667A5512EB8A34300D7BDF3 /* HomeMockDataModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0667A5502EB8A33400D7BDF3 /* HomeMockDataModel.swift */; };
+		06ADD9CD2EB98B3D0013665B /* OperationListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06ADD9CC2EB98B3D0013665B /* OperationListView.swift */; };
+		06ADD9D22EB98E730013665B /* PatientInputView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06ADD9D12EB98E730013665B /* PatientInputView.swift */; };
 		144254312EA9FF7800583CC3 /* OperationContext.swift in Sources */ = {isa = PBXBuildFile; fileRef = 144254302EA9FF7800583CC3 /* OperationContext.swift */; };
 		144254332EAA232300583CC3 /* OperationViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 144254322EAA232300583CC3 /* OperationViewModel.swift */; };
 		144254342EAA232300583CC3 /* OperationViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 144254322EAA232300583CC3 /* OperationViewModel.swift */; };
@@ -341,6 +343,8 @@
 		0667A54B2EB8833D00D7BDF3 /* PatientDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PatientDetailView.swift; sourceTree = "<group>"; };
 		0667A54D2EB8961C00D7BDF3 /* TodaysSurgeryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TodaysSurgeryView.swift; sourceTree = "<group>"; };
 		0667A5502EB8A33400D7BDF3 /* HomeMockDataModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeMockDataModel.swift; sourceTree = "<group>"; };
+		06ADD9CC2EB98B3D0013665B /* OperationListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OperationListView.swift; sourceTree = "<group>"; };
+		06ADD9D12EB98E730013665B /* PatientInputView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PatientInputView.swift; sourceTree = "<group>"; };
 		144254302EA9FF7800583CC3 /* OperationContext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OperationContext.swift; sourceTree = "<group>"; };
 		144254322EAA232300583CC3 /* OperationViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OperationViewModel.swift; sourceTree = "<group>"; };
 		144254362EAA9FEB00583CC3 /* OperationState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OperationState.swift; sourceTree = "<group>"; };
@@ -532,12 +536,13 @@
 			path = TodaysSurgery;
 			sourceTree = "<group>";
 		};
-		0617C8FE2EB8BBCB003B26E8 /* PatientDetail */ = {
+		0617C8FE2EB8BBCB003B26E8 /* Patient */ = {
 			isa = PBXGroup;
 			children = (
 				0667A54B2EB8833D00D7BDF3 /* PatientDetailView.swift */,
+				06ADD9D12EB98E730013665B /* PatientInputView.swift */,
 			);
-			path = PatientDetail;
+			path = Patient;
 			sourceTree = "<group>";
 		};
 		0667A54F2EB8A2F900D7BDF3 /* Home */ = {
@@ -547,6 +552,14 @@
 				0667A5392EB79DBB00D7BDF3 /* HomeView.swift */,
 			);
 			path = Home;
+			sourceTree = "<group>";
+		};
+		06ADD9CE2EB98DA40013665B /* OperationList */ = {
+			isa = PBXGroup;
+			children = (
+				06ADD9CC2EB98B3D0013665B /* OperationListView.swift */,
+			);
+			path = OperationList;
 			sourceTree = "<group>";
 		};
 		1442542F2EA9FF3900583CC3 /* Context */ = {
@@ -1143,12 +1156,12 @@
 			path = Home;
 			sourceTree = "<group>";
 		};
-		C04678462EA00C2700D160DA /* Patients */ = {
+		C04678462EA00C2700D160DA /* Patients_Legacy */ = {
 			isa = PBXGroup;
 			children = (
 				C04678452EA00C2700D160DA /* PatientView.swift */,
 			);
-			path = Patients;
+			path = Patients_Legacy;
 			sourceTree = "<group>";
 		};
 		C050AA172EA80E5700352314 /* UI */ = {
@@ -1168,12 +1181,13 @@
 		C050AA182EA80E6200352314 /* UI */ = {
 			isa = PBXGroup;
 			children = (
-				0617C8FE2EB8BBCB003B26E8 /* PatientDetail */,
+				06ADD9CE2EB98DA40013665B /* OperationList */,
+				0617C8FE2EB8BBCB003B26E8 /* Patient */,
 				0617C8FD2EB8BBC0003B26E8 /* TodaysSurgery */,
 				0617C8FC2EB8BB9F003B26E8 /* StreamingControl */,
 				0667A54F2EB8A2F900D7BDF3 /* Home */,
 				C02FFA532E9FFF6F00F16742 /* RootView.swift */,
-				C04678462EA00C2700D160DA /* Patients */,
+				C04678462EA00C2700D160DA /* Patients_Legacy */,
 			);
 			path = UI;
 			sourceTree = "<group>";
@@ -1707,6 +1721,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				06ADD9D22EB98E730013665B /* PatientInputView.swift in Sources */,
 				0667A54E2EB8961C00D7BDF3 /* TodaysSurgeryView.swift in Sources */,
 				144254672EAAC44900583CC3 /* StartOperationButton.swift in Sources */,
 				C0F97AA92EA401160063E159 /* PatientMapper.swift in Sources */,
@@ -1733,6 +1748,7 @@
 				C0F97AAB2EA401160063E159 /* OperationDisplayModel.swift in Sources */,
 				1494DEA52EA7C851000CD284 /* Date+Extension.swift in Sources */,
 				0667A5512EB8A34300D7BDF3 /* HomeMockDataModel.swift in Sources */,
+				06ADD9CD2EB98B3D0013665B /* OperationListView.swift in Sources */,
 				1494DEA12EA7510A000CD284 /* DetailSubPart.swift in Sources */,
 				C0F97AAC2EA401160063E159 /* DisplayHelpers.swift in Sources */,
 				C0F97AAD2EA401160063E159 /* OperationAssetDisplayModel.swift in Sources */,
