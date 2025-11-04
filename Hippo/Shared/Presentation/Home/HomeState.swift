@@ -4,7 +4,7 @@ import Observation
 /// State for Patient list view
 @MainActor
 @Observable
-public final class PatientState {
+public final class HomeState {
     public var items: [PatientDisplayModel]
     public var isLoading: Bool
     public var alert: String?

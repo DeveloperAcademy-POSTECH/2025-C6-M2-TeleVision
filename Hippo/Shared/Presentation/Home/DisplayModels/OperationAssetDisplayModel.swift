@@ -18,31 +18,19 @@ public struct OperationAssetDisplayModel: Identifiable, Equatable, Sendable {
     }
 }
 
-// public extension OperationAssetDisplayModel {
-//    func getBookmarkData() -> Data? {
-//        // URL로부터 Bookmark Data를 생성하는 로직
-//        guard fileURL.startAccessingSecurityScopedResource() else {
-//            print("보안 리소스 접근 실패 (북마크 생성용): \(fileURL)")
-//            return nil
-//        }
-//
-//        defer {
-//            fileURL.stopAccessingSecurityScopedResource()
-//        }
-//
-//        do {
-//            // ⭐️ 핵심: 북마크 데이터 생성
-//            let bookmarkData = try fileURL.bookmarkData(
-//                options: .minimalBookmark, // 앱 재설치 후에도 유지하려면 이 옵션
-//                includingResourceValuesForKeys: nil,
-//                relativeTo: nil
-//            )
-//
-//            return bookmarkData
-//
-//        } catch {
-//            print("북마크 생성 실패: \(error.localizedDescription)")
-//            return nil
-//        }
-//    }
-// }
+public extension OperationAssetDisplayModel {
+    func toDomain() -> OperationAsset {
+        let bookmarkData = try? fileURL.bookmarkData(
+            options: .minimalBookmark,
+            includingResourceValuesForKeys: nil,
+            relativeTo: nil
+        )
+
+        return OperationAsset(
+            id: id,
+            bookmarkData: bookmarkData ?? Data(),
+            originalFileName: fileName,
+            createdAt: createdAt
+        )
+    }
+}

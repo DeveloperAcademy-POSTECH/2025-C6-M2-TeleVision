@@ -20,14 +20,11 @@ public struct OperationAsset: Identifiable, Codable, Equatable, Sendable {
             return nil
         }
 
-        defer {
-            url.stopAccessingSecurityScopedResource()
-        }
+        defer { url.stopAccessingSecurityScopedResource() }
 
         do {
-            // ⭐️ 핵심: 북마크 데이터 생성
             let bookmarkData = try url.bookmarkData(
-                options: .minimalBookmark, // 앱 재설치 후에도 유지하려면 이 옵션
+                options: .minimalBookmark,
                 includingResourceValuesForKeys: nil,
                 relativeTo: nil
             )
@@ -58,7 +55,7 @@ public extension OperationAsset {
         do {
             let url = try URL(
                 resolvingBookmarkData: bookmarkData,
-                options: .withoutImplicitStartAccessing, // ⭐️ 매우 중요
+                options: .withoutImplicitStartAccessing,
                 relativeTo: nil,
                 bookmarkDataIsStale: &isStale
             )

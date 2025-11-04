@@ -16,21 +16,24 @@ struct PatientDetailView: View {
     let patientId: String
 
     var body: some View {
-        ZStack {
-            switch viewModel.loadingState {
-            case .idle, .loading:
-                loadingView
-            case let .loaded(patient):
+        Group {
+            if viewModel.state.isLoading {
+                ProgressView()
+            } else if let patient = viewModel.state.patient {
                 contentView(patient: patient)
-            case let .error(error):
-                errorView(error: error)
+            } else {
+                ContentUnavailableView(
+                    "환자 정보를 찾을 수 없습니다",
+                    systemImage: "person.slash"
+                )
             }
         }
+        .environment(viewModel)
         .frame(minWidth: 580, maxWidth: 580, minHeight: 800, maxHeight: 1080)
         .glassBackgroundEffect(displayMode: .always)
         .task {
             await viewModel.load(patientID: patientId)
-            if let patient = viewModel.patient {
+            if let patient = viewModel.state.patient {
                 appModel.operations = patient.operationCount
             }
         }
@@ -40,7 +43,7 @@ struct PatientDetailView: View {
             }
         }
         .ornament(attachmentAnchor: .scene(.bottom)) {
-            if !viewModel.isPresentingOperationInput {
+            if !viewModel.isPresentingOperationInput && !viewModel.isShowingEditSheet {
                 OrnamentButton {
                     viewModel.isPresentingOperationInput = true
                 }
@@ -49,22 +52,14 @@ struct PatientDetailView: View {
             }
         }
         .sheet(isPresented: $viewModel.isPresentingOperationInput) {
-            OperationInputView(patientID: patientId)
+            OperationInputView(mode: .create, patientID: patientId)
+        }
+        .sheet(isPresented: $viewModel.isShowingEditSheet) {
+            PatientInputView()
         }
     }
 
     // MARK: - Subviews
-
-    private var loadingView: some View {
-        VStack {
-            ProgressView()
-                .controlSize(.large)
-            Text("환자 정보를 불러오는 중...")
-                .font(.headline)
-                .foregroundStyle(.secondary)
-                .padding(.top)
-        }
-    }
 
     private func contentView(patient: PatientDisplayModel) -> some View {
         VStack {
@@ -72,6 +67,7 @@ struct PatientDetailView: View {
                 name: patient.name,
                 gender: patient.gender,
                 ageText: patient.ageText,
+                number: patient.patientNumber,
                 onDismiss: { dismiss() }
             )
 

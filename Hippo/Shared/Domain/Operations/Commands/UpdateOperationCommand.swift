@@ -10,6 +10,7 @@ public struct UpdateOperationCommand: Sendable {
     public let surgeon: String?
     public let date: Date?
     public let details: String?
+    public let assets: [OperationAsset]?
     public let status: OperationStatus?
 
     /// Creates an update operation command with validation
@@ -29,6 +30,7 @@ public struct UpdateOperationCommand: Sendable {
         surgeon: String? = nil,
         date: Date? = nil,
         details: String? = nil,
+        assets: [OperationAsset]? = nil,
         status: OperationStatus? = nil
     ) throws {
         // Validate operation ID
@@ -38,7 +40,8 @@ public struct UpdateOperationCommand: Sendable {
 
         // At least one field must be provided for update
         guard title != nil || diagnosis != nil || surgeon != nil ||
-              date != nil || details != nil || status != nil else {
+            date != nil || details != nil || status != nil
+        else {
             throw ValidationError.invalidField("update", "At least one field must be provided for update")
         }
 
@@ -73,6 +76,7 @@ public struct UpdateOperationCommand: Sendable {
         self.operationID = operationID.trimmingCharacters(in: .whitespaces)
         self.date = date
         self.details = details
+        self.assets = assets
         self.status = status
     }
 
@@ -81,14 +85,16 @@ public struct UpdateOperationCommand: Sendable {
     /// - Parameter operation: The existing operation to update
     /// - Returns: Updated Operation instance
     public func applyTo(_ operation: Operation) -> Operation {
-        Operation(
+        print("Applying Title: \(String(describing: title)) Original Title: \(operation.title)")
+        
+        return Operation(
             id: operation.id,
             title: title ?? operation.title,
             diagnosis: diagnosis ?? operation.diagnosis,
             surgeon: surgeon ?? operation.surgeon,
             date: date ?? operation.date,
             details: details ?? operation.details,
-            operationAssets: operation.operationAssets,
+            operationAssets: assets ?? operation.operationAssets,
             recordings: operation.recordings,
             status: status ?? operation.status
         )
