@@ -7,6 +7,7 @@
 
 import SwiftUI
 internal import UniformTypeIdentifiers
+import os.log
 
 /// 파일 첨부 영역 전체를 관리하는 Organism 컴포넌트
 struct FileAttachmentSection: View {
@@ -42,26 +43,19 @@ struct FileAttachmentSection: View {
     private func handleFileImportResult(_ result: Result<[URL], Error>) {
         switch result {
         case let .success(urls):
-            // ⭐️ [핵심 수정] ⭐️
-            // 임시 URL을 즉시 OperationAsset(북마크)으로 변환한다.
-            // OperationAsset.swift의 init?(url: URL)가 이 로직을 수행한다.
             let newAssets = urls.compactMap { url -> OperationAsset? in
                 if let newAsset = OperationAsset(url: url) {
                     return newAsset
                 } else {
-                    print("Failed to create bookmark for URL: \(url.lastPathComponent)")
+                    Logger().log("Failed to create bookmark for URL: \(url.lastPathComponent)")
                     return nil
                 }
             }
 
-            // ✅ [변경 후] 변환된 Asset을 ViewModel의 상태에 추가한다.
             selectedAssets.append(contentsOf: newAssets)
-            print("File import succeeded: \(newAssets.count) assets bookmarked.")
-
-            // ❌ [변경 전] selectedFiles.append(contentsOf: urls)
 
         case let .failure(error):
-            print("File import failed: \(error.localizedDescription)")
+            Logger().log("File import failed: \(error.localizedDescription)")
         }
     }
 }

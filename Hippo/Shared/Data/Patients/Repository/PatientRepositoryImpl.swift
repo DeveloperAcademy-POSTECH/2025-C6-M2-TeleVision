@@ -69,21 +69,17 @@ public actor PatientRepositoryImpl: PatientRepository {
         guard var patient = try await localDataSource.getPatient(id: patientID) else {
             throw PatientError.patientNotFound
         }
-        print("1️⃣ Patient found: \(patient.name)")
 
         // 2. Operation 찾기
         guard let operationIndex = patient.operations.firstIndex(where: { $0.id == operationID }) else {
             throw PatientError.operationNotFound
         }
-        print("2️⃣ Operation found: \(patient.operations[operationIndex].title)")
 
         // 3. assets를 operation에 추가
         patient.operations[operationIndex].operationAssets.append(contentsOf: assets)
-        print("3️⃣ Assets added. Total assets now: \(patient.operations[operationIndex].operationAssets.count)")
 
         // 4. 저장
         try await localDataSource.upsert(patient)
-        print("4️⃣ Patient updated in local data source.")
 
         // 5. 동기화 (옵션)
 //        try? await syncPatient(sdPatient)
@@ -94,6 +90,7 @@ public actor PatientRepositoryImpl: PatientRepository {
         fromOperationID operationID: String,
         inPatientID patientID: String
     ) async throws {
+        print("Starting asset removal process...")
         // 1. 로컬에서 Patient 가져오기
         guard let patient = try await localDataSource.getPatient(id: patientID) else {
             throw PatientError.patientNotFound

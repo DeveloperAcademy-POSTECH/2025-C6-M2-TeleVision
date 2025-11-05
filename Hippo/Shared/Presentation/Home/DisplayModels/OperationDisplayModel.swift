@@ -8,6 +8,7 @@ public struct OperationDisplayModel: Identifiable, Equatable, Sendable {
     public let title: String
     public let diagnosis: String
     public let surgeon: String
+    public let surgicalSite: String
     public let date: Date
     public let dateText: String
     public let details: String
@@ -20,6 +21,7 @@ public struct OperationDisplayModel: Identifiable, Equatable, Sendable {
         title: String,
         diagnosis: String,
         surgeon: String,
+        surgicalSite: String,
         date: Date,
         dateText: String,
         details: String,
@@ -31,6 +33,7 @@ public struct OperationDisplayModel: Identifiable, Equatable, Sendable {
         self.title = title
         self.diagnosis = diagnosis
         self.surgeon = surgeon
+        self.surgicalSite = surgicalSite
         self.date = date
         self.dateText = dateText
         self.details = details
@@ -45,6 +48,7 @@ public struct OperationDisplayModel: Identifiable, Equatable, Sendable {
         title: "Appendectomy",
         diagnosis: "Acute Appendicitis",
         surgeon: "Dr. John Doe",
+        surgicalSite: "Lower Right Abdomen",
         date: Date(),
         dateText: "2024.06.15",
         details: "Laparoscopic appendectomy performed successfully without complications.",
