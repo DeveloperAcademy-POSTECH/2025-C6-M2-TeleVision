@@ -71,8 +71,8 @@ public final class HomeViewModel {
     public init(patient: PatientDisplayModel) {
         self.patientNumber = patient.patientNumber
         self.name = patient.name
-        self.selectedGender = Gender.from(string: patient.gender)
-        self.birthDate = Date.fromTodayDateString(patient.birthDateText) ?? Date()
+        self.selectedGender = patient.gender
+        self.birthDate = patient.birthDate
     }
 
     // MARK: - Actions

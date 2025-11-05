@@ -46,11 +46,6 @@ struct HomeView: View {
                 }
             }
         }
-        .onChange(of: appModel.operationsUpdateTrigger) {
-            Task {
-                await viewModel.load()
-            }
-        }
         .ornament(attachmentAnchor: .scene(.bottom)) {
             if !viewModel.isPresentingCreatePatientSheet {
                 OrnamentButton {

@@ -40,16 +40,6 @@ struct PatientDetailView: View {
                 await viewModel.load(patientID: patientId)
             }
         }
-        .onChange(of: appModel.operationsUpdateTrigger) {
-            Task {
-                await viewModel.load(patientID: patientId)
-            }
-        }
-        .onChange(of: appModel.patientsUpdateTrigger) {
-            Task {
-                await viewModel.load(patientID: patientId)
-            }
-        }
         .ornament(attachmentAnchor: .scene(.bottom)) {
             if !viewModel.isPresentingOperationInput && !viewModel.isShowingEditSheet {
                 OrnamentButton {
@@ -63,7 +53,7 @@ struct PatientDetailView: View {
             OperationInputView(mode: .create, patientID: patientId)
         }
         .sheet(isPresented: $viewModel.isShowingEditSheet) {
-            PatientInputView(mode: .edit(patientID: patientId))
+            PatientInputView(mode: .edit)
         }
     }
 
