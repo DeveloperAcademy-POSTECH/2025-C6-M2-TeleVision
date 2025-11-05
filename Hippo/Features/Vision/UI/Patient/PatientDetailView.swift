@@ -9,38 +9,39 @@ import SwiftUI
 
 struct PatientDetailView: View {
     @Environment(AppModel.self) private var appModel
+    @Environment(HomeViewModel.self) private var viewModel
     @Environment(\.dismiss) private var dismiss
-
-    @State private var viewModel = PatientViewModel()
 
     let patientId: String
 
     var body: some View {
-        ZStack {
-            switch viewModel.loadingState {
-            case .idle, .loading:
-                loadingView
-            case let .loaded(patient):
+        @Bindable var viewModel = viewModel
+
+        Group {
+            if viewModel.state.isLoading {
+                ProgressView()
+            } else if let patient = viewModel.state.selectedPatient {
                 contentView(patient: patient)
-            case let .error(error):
-                errorView(error: error)
+            } else {
+                ContentUnavailableView(
+                    "환자 정보를 찾을 수 없습니다",
+                    systemImage: "person.slash"
+                )
             }
         }
+        .environment(viewModel)
         .frame(minWidth: 580, maxWidth: 580, minHeight: 800, maxHeight: 1080)
         .glassBackgroundEffect(displayMode: .always)
         .task {
             await viewModel.load(patientID: patientId)
-            if let patient = viewModel.patient {
-                appModel.operations = patient.operationCount
-            }
         }
-        .onChange(of: appModel.operations) {
+        .onChange(of: appModel.refreshID) {
             Task {
                 await viewModel.load(patientID: patientId)
             }
         }
         .ornament(attachmentAnchor: .scene(.bottom)) {
-            if !viewModel.isPresentingOperationInput {
+            if !viewModel.isPresentingOperationInput && !viewModel.isShowingEditSheet {
                 OrnamentButton {
                     viewModel.isPresentingOperationInput = true
                 }
@@ -49,31 +50,18 @@ struct PatientDetailView: View {
             }
         }
         .sheet(isPresented: $viewModel.isPresentingOperationInput) {
-            OperationInputView(patientID: patientId)
+            OperationInputView(mode: .create, patientID: patientId)
+        }
+        .sheet(isPresented: $viewModel.isShowingEditSheet) {
+            PatientInputView(mode: .edit)
         }
     }
 
     // MARK: - Subviews
 
-    private var loadingView: some View {
-        VStack {
-            ProgressView()
-                .controlSize(.large)
-            Text("환자 정보를 불러오는 중...")
-                .font(.headline)
-                .foregroundStyle(.secondary)
-                .padding(.top)
-        }
-    }
-
     private func contentView(patient: PatientDisplayModel) -> some View {
         VStack {
-            PatientDetailHeader(
-                name: patient.name,
-                gender: patient.gender,
-                ageText: patient.ageText,
-                onDismiss: { dismiss() }
-            )
+            PatientDetailHeader(onDismiss: { dismiss() })
 
             Spacer()
 

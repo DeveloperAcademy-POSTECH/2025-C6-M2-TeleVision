@@ -38,13 +38,8 @@ struct FormSection<Content: View>: View {
                     }
                 }
             }
-            
+
             content
-                .onTapGesture {
-                    if let addAction {
-                        addAction()
-                    }
-                }
         }
     }
 }

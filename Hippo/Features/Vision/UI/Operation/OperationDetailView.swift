@@ -56,7 +56,7 @@ struct OperationDetailView: View {
                             // 수술 부위 정보
                             DetailSubPart(
                                 title: "수술 부위",
-                                content: "여기 수정해야함"
+                                content: operation.surgicalSite
                             )
 
                             // 진단(병명) 정보
@@ -82,17 +82,19 @@ struct OperationDetailView: View {
                     }
                 }
                 .toolbar {
-                    ToolbarItem(placement: .bottomOrnament) {
-                        StartOperationButton {
-                            Task {
-                                dismissWindow(id: WindowIDs.home)
-                                dismissWindow(id: WindowIDs.operationDetail)
-                                dismissWindow(id: WindowIDs.patientDetail)
-                                let context = OperationContext(
-                                    patientID: patientID,
-                                    operationID: operationID
-                                )
-                                await openImmersiveSpace(id: ImmersiveIDs.surgery, value: context)
+                    if !viewModel.isShowingEditInputView {
+                        ToolbarItem(placement: .bottomOrnament) {
+                            StartOperationButton {
+                                Task {
+                                    dismissWindow(id: WindowIDs.home)
+                                    dismissWindow(id: WindowIDs.operationDetail)
+                                    dismissWindow(id: WindowIDs.patientDetail)
+                                    let context = OperationContext(
+                                        patientID: patientID,
+                                        operationID: operationID
+                                    )
+                                    await openImmersiveSpace(id: ImmersiveIDs.surgery, value: context)
+                                }
                             }
                         }
                     }
@@ -102,10 +104,18 @@ struct OperationDetailView: View {
                     .controlSize(.large)
             }
         }
+        .environment(viewModel)
         .task {
             await viewModel.load(patientID: patientID, operationID: operationID)
-            print("Loaded operation detail for operationID: \(operationID)")
             isLoaded = true
+        }
+        .onChange(of: appModel.refreshID) {
+            Task {
+                await viewModel.load(patientID: patientID, operationID: operationID)
+            }
+        }
+        .sheet(isPresented: $viewModel.isShowingEditInputView) {
+            OperationInputView(mode: .edit(operationID: operationID), patientID: patientID)
         }
     }
 }

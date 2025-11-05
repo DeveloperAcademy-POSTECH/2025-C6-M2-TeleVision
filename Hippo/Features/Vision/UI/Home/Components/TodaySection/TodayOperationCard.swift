@@ -62,7 +62,7 @@ struct TodayOperationCard: View {
                                 .fontWeight(.bold)
                                 .foregroundStyle(.primary)
 
-                            Text("(\(patient.gender) / \(patient.age)세)")
+                            Text("(\(patient.genderText) / \(patient.age)세)")
                                 .font(.subheadline)
                                 .fontWeight(.bold)
                                 .foregroundStyle(.tertiary)
@@ -91,7 +91,7 @@ struct TodayOperationCard: View {
                             .font(.callout)
                             .foregroundStyle(.secondary)
 
-                        Text(operation.diagnosis)
+                        Text(operation.surgicalSite)
                             .font(.title3)
                             .foregroundStyle(.primary)
                     }

@@ -8,9 +8,9 @@
 import SwiftUI
 
 struct PatientDetailHeader: View {
-    let name: String
-    let gender: String
-    let ageText: String
+    @Environment(AppModel.self) private var appModel
+    @Environment(HomeViewModel.self) private var viewModel
+    @Environment(\.dismiss) private var dismiss
     let onDismiss: () -> Void
 
     var body: some View {
@@ -23,20 +23,46 @@ struct PatientDetailHeader: View {
 
             Spacer()
 
-            HStack {
-                Text(name)
-                    .font(.title)
-                    .foregroundStyle(.primary)
+            if let patient = viewModel.state.selectedPatient {
+                HStack {
+                    Text(patient.name)
+                        .font(.title)
+                        .foregroundStyle(.primary)
 
-                Spacer().frame(width: 8)
+                    Spacer().frame(width: 8)
 
-                Text("\(gender) / \(ageText)")
+                    Text("\(patient.genderText) / \(patient.ageText)")
+                        .foregroundStyle(.tertiary)
+
+                    Spacer().frame(width: 4)
+
+                    Text("(\(patient.patientNumber))")
+                        .foregroundStyle(.tertiary)
+                }
             }
 
             Spacer()
 
-            Color.clear
-                .frame(width: 44, height: 44)
+            Menu {
+                Button("환자 편집") {
+                    viewModel.isShowingEditSheet = true
+                }
+                Button("환자 삭제", role: .destructive) {
+                    Task {
+                        await viewModel.deleteCurrentPatient()
+                        appModel.refreshUI()
+                        dismiss()
+                    }
+                }
+            } label: {
+                Image(systemName: "ellipsis")
+                    .foregroundStyle(.primary)
+            }
+            .menuStyle(.borderlessButton)
+            .frame(width: 44, height: 44)
+            .contentShape(.circle)
+            .glassBackgroundEffect()
+            .help("More")
         }
         .padding(.top, 36)
     }
@@ -44,9 +70,6 @@ struct PatientDetailHeader: View {
 
 #Preview {
     PatientDetailHeader(
-        name: "김환자",
-        gender: "남",
-        ageText: "45세",
         onDismiss: {}
     )
 }
