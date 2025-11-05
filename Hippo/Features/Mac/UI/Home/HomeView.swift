@@ -65,7 +65,7 @@ struct HomeView: View {
                 TodaysSurgeryView()
                     .navigationTitle("Today's Surgery")
             } else {
-                PatientDetailView(patientId: selectedPatientID ?? "")
+                PatientDetailView(patientId: selectedPatientID ?? "", isTodaysSurgery: isTodaysSurgery)
             }
         }
         .toolbar {
