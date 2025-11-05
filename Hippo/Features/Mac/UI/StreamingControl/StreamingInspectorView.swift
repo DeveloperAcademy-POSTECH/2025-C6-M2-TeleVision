@@ -168,9 +168,9 @@ struct StreamingInspectorView: View {
                                     Spacer()
                                     Text("ms")
                                     Spacer()
-                                    Text("Right")
-                                    Spacer()
                                     Text("E2E")
+                                    Spacer()
+                                    Text("ms")
                                 }
                             }
 

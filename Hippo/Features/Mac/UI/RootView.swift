@@ -37,10 +37,6 @@ struct RootView: View {
                     .pickerStyle(.segmented)
                 }
             }
-            .sheet(isPresented: $isOperationInputSheetPresented) {
-                OperationInputView(isOperationInputSheetPresented: $isOperationInputSheetPresented)
-            }
-            
         }
     }
 }

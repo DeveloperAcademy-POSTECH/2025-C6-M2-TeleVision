@@ -34,7 +34,7 @@ struct OperationInputView: View {
 
                 Spacer()
                 Button {
-                    //TODO: 3D 모델 추가 UI 구현?
+                    //TODO: 파일 탐색 시스템 UI 띄우기
                 } label: {
                     Image(systemName: "plus")
                 }
@@ -42,6 +42,7 @@ struct OperationInputView: View {
             ScrollView(.horizontal, showsIndicators: false) {
                 HStack(spacing: 12) {
                     //TODO: 3D 모델 파일로 UI 테스트 필요
+                    //TODO: 마우스 호버 시, 배경 Dim처리 + 삭제 버튼 활성화
                     ForEach(0..<10) { index in
                         Rectangle()
                             .frame(width: 50, height: 50)
