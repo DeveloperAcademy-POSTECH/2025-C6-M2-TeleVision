@@ -9,17 +9,18 @@ import SwiftUI
 
 struct PatientDetailView: View {
     @Environment(AppModel.self) private var appModel
+    @Environment(HomeViewModel.self) private var viewModel
     @Environment(\.dismiss) private var dismiss
-
-    @State private var viewModel = PatientViewModel()
 
     let patientId: String
 
     var body: some View {
+        @Bindable var viewModel = viewModel
+
         Group {
             if viewModel.state.isLoading {
                 ProgressView()
-            } else if let patient = viewModel.state.patient {
+            } else if let patient = viewModel.state.selectedPatient {
                 contentView(patient: patient)
             } else {
                 ContentUnavailableView(
@@ -33,11 +34,8 @@ struct PatientDetailView: View {
         .glassBackgroundEffect(displayMode: .always)
         .task {
             await viewModel.load(patientID: patientId)
-            if let patient = viewModel.state.patient {
-                appModel.operations = patient.operationCount
-            }
         }
-        .onChange(of: appModel.operations) {
+        .onChange(of: appModel.refreshID) {
             Task {
                 await viewModel.load(patientID: patientId)
             }
@@ -55,7 +53,7 @@ struct PatientDetailView: View {
             OperationInputView(mode: .create, patientID: patientId)
         }
         .sheet(isPresented: $viewModel.isShowingEditSheet) {
-            PatientInputView()
+            PatientInputView(mode: .edit)
         }
     }
 
@@ -63,13 +61,7 @@ struct PatientDetailView: View {
 
     private func contentView(patient: PatientDisplayModel) -> some View {
         VStack {
-            PatientDetailHeader(
-                name: patient.name,
-                gender: patient.gender,
-                ageText: patient.ageText,
-                number: patient.patientNumber,
-                onDismiss: { dismiss() }
-            )
+            PatientDetailHeader(onDismiss: { dismiss() })
 
             Spacer()
 

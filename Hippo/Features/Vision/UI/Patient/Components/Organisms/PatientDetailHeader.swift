@@ -9,12 +9,8 @@ import SwiftUI
 
 struct PatientDetailHeader: View {
     @Environment(AppModel.self) private var appModel
-    @Environment(PatientViewModel.self) private var viewModel
+    @Environment(HomeViewModel.self) private var viewModel
     @Environment(\.dismiss) private var dismiss
-    let name: String
-    let gender: String
-    let ageText: String
-    let number: String
     let onDismiss: () -> Void
 
     var body: some View {
@@ -27,20 +23,22 @@ struct PatientDetailHeader: View {
 
             Spacer()
 
-            HStack {
-                Text(name)
-                    .font(.title)
-                    .foregroundStyle(.primary)
+            if let patient = viewModel.state.selectedPatient {
+                HStack {
+                    Text(patient.name)
+                        .font(.title)
+                        .foregroundStyle(.primary)
 
-                Spacer().frame(width: 8)
+                    Spacer().frame(width: 8)
 
-                Text("\(gender) / \(ageText)")
-                    .foregroundStyle(.tertiary)
+                    Text("\(patient.genderText) / \(patient.ageText)")
+                        .foregroundStyle(.tertiary)
 
-                Spacer().frame(width: 4)
+                    Spacer().frame(width: 4)
 
-                Text("(\(number))")
-                    .foregroundStyle(.tertiary)
+                    Text("(\(patient.patientNumber))")
+                        .foregroundStyle(.tertiary)
+                }
             }
 
             Spacer()
@@ -52,8 +50,8 @@ struct PatientDetailHeader: View {
                 Button("환자 삭제", role: .destructive) {
                     Task {
                         await viewModel.deleteCurrentPatient()
+                        appModel.refreshUI()
                         dismiss()
-                        appModel.patients -= 1
                     }
                 }
             } label: {
@@ -72,10 +70,6 @@ struct PatientDetailHeader: View {
 
 #Preview {
     PatientDetailHeader(
-        name: "김환자",
-        gender: "남",
-        ageText: "45세",
-        number: "",
         onDismiss: {}
     )
 }
