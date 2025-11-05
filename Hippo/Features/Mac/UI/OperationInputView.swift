@@ -10,7 +10,6 @@ import SwiftUI
 struct OperationInputView: View {
     @Binding var isOperationInputSheetPresented: Bool
     @State private var operationDate = Date()
-    @State private var textEditorValue: String = ""
 
     var body: some View {
         Section(header: Text("수술 추가하기")) {
