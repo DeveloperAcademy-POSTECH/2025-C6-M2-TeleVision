@@ -13,6 +13,7 @@ struct HomeView: View {
     @State private var selectedPatientID: HomeMockDataModel.ID?
     private var selectedPatient: HomeMockDataModel? { mockData.first { $0.id == selectedPatientID } }
     @State var isPatientInputSheetPresented: Bool = false
+    @State var isOperationInputSheetPresented: Bool = false
     
     var body: some View {
         NavigationSplitView {
@@ -71,6 +72,7 @@ struct HomeView: View {
             if !isTodaysSurgery {
                 Button {
                     //TODO: 수술 생성 기능 구현
+                    isOperationInputSheetPresented = true
                 } label: {
                     Label("Create", systemImage: "plus")
                 }
@@ -78,6 +80,9 @@ struct HomeView: View {
         }
         .sheet(isPresented: $isPatientInputSheetPresented) {
             PatientInputView(isPatientInputSheetPresented: $isPatientInputSheetPresented)
+        }
+        .sheet(isPresented: $isOperationInputSheetPresented) {
+            OperationInputView(isOperationInputSheetPresented: $isOperationInputSheetPresented)
         }
     }
 }
