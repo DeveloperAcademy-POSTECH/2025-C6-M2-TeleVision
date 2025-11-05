@@ -7,6 +7,7 @@ public struct Operation: Identifiable, Codable, Equatable, Sendable {
     public var title: String
     public var diagnosis: String
     public var surgeon: String
+    public var surgicalSite: String
     public var date: Date
     public var details: String
     public var operationAssets: [OperationAsset]
@@ -18,6 +19,7 @@ public struct Operation: Identifiable, Codable, Equatable, Sendable {
         title: String,
         diagnosis: String,
         surgeon: String,
+        surgicalSite: String,
         date: Date,
         details: String,
         operationAssets: [OperationAsset] = [],
@@ -28,6 +30,7 @@ public struct Operation: Identifiable, Codable, Equatable, Sendable {
         self.title = title
         self.diagnosis = diagnosis
         self.surgeon = surgeon
+        self.surgicalSite = surgicalSite
         self.date = date
         self.details = details
         self.operationAssets = operationAssets

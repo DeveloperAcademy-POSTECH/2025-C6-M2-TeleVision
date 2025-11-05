@@ -8,6 +8,7 @@ public struct UpdateOperationCommand: Sendable {
     public let title: String?
     public let diagnosis: String?
     public let surgeon: String?
+    public let surgicalSite: String?
     public let date: Date?
     public let details: String?
     public let assets: [OperationAsset]?
@@ -28,6 +29,7 @@ public struct UpdateOperationCommand: Sendable {
         title: String? = nil,
         diagnosis: String? = nil,
         surgeon: String? = nil,
+        surgicalSite: String? = nil,
         date: Date? = nil,
         details: String? = nil,
         assets: [OperationAsset]? = nil,
@@ -72,6 +74,15 @@ public struct UpdateOperationCommand: Sendable {
         } else {
             self.surgeon = nil
         }
+        
+        if let surgicalSite = surgicalSite {
+            guard !surgicalSite.trimmingCharacters(in: .whitespaces).isEmpty else {
+                throw ValidationError.emptyField("surgicalSite")
+            }
+            self.surgicalSite = surgicalSite.trimmingCharacters(in: .whitespaces)
+        } else {
+            self.surgicalSite = nil
+        }
 
         self.operationID = operationID.trimmingCharacters(in: .whitespaces)
         self.date = date
@@ -92,6 +103,7 @@ public struct UpdateOperationCommand: Sendable {
             title: title ?? operation.title,
             diagnosis: diagnosis ?? operation.diagnosis,
             surgeon: surgeon ?? operation.surgeon,
+            surgicalSite: surgicalSite ?? operation.surgicalSite,
             date: date ?? operation.date,
             details: details ?? operation.details,
             operationAssets: assets ?? operation.operationAssets,

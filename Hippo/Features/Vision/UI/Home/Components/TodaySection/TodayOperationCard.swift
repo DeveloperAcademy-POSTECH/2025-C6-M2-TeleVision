@@ -91,7 +91,7 @@ struct TodayOperationCard: View {
                             .font(.callout)
                             .foregroundStyle(.secondary)
 
-                        Text(operation.diagnosis)
+                        Text(operation.surgicalSite)
                             .font(.title3)
                             .foregroundStyle(.primary)
                     }

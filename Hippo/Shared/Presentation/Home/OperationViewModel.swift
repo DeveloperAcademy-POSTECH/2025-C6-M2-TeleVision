@@ -49,6 +49,7 @@ public final class OperationViewModel {
     public var operationTitle: String = ""
     public var operationDiagnosis: String = ""
     public var operationSurgeon: String = ""
+    public var surgicalSite: String = ""
     public var operationDate: Date = .init()
     public var operationDetail: String = ""
     public var operation3DAssets: [OperationAsset] = []
@@ -130,6 +131,7 @@ public final class OperationViewModel {
                 title: operationTitle,
                 diagnosis: operationDiagnosis,
                 surgeon: operationSurgeon,
+                surgicalSite: surgicalSite,
                 date: operationDate,
                 details: operationDetail,
                 assets: operation3DAssets,

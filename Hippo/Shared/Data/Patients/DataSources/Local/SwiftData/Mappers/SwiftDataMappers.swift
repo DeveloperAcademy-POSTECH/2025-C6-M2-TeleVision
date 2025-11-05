@@ -30,6 +30,7 @@ extension SDOperation {
             title: o.title,
             diagnosis: o.diagnosis,
             surgeon: o.surgeon,
+            surgicalSite: o.surgicalSite,
             date: o.date,
             details: o.details,
             statusRaw: o.status.rawValue
@@ -95,6 +96,7 @@ extension Operation {
             title: s.title,
             diagnosis: s.diagnosis,
             surgeon: s.surgeon,
+            surgicalSite: s.surgicalSite,
             date: s.date,
             details: s.details,
             operationAssets: s.assets.map(OperationAsset.fromSwiftData),
