@@ -11,8 +11,11 @@ struct PatientDetailView: View {
     var mockData = HomeMockDataModel.mockList
     var patientOperationSample = OperationMockDataModel.patientOperationSamples
     
-    let patientId: HomeMockDataModel.ID
     private var selectedPatient: HomeMockDataModel? { mockData.first { $0.id == patientId } }
+    
+    let patientId: HomeMockDataModel.ID
+    
+    var isTodaysSurgery: Bool
     
     var body: some View {
         OperationListView(operationMockData: patientOperationSample)

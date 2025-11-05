@@ -24,11 +24,12 @@ struct StreamingInspectorView: View {
     @State private var targetBitrate: Double = 6
     @State private var isControlsCollapsed: Bool = false
     @State private var isStatisticsCollapsed: Bool = false
-
+    
     private let sliderMin = 5.0
     private let sliderMax = 20.0
 
     var body: some View {
+        
         ScrollView {
             //Controls
             Section {
@@ -209,6 +210,6 @@ struct StreamingInspectorView: View {
     }
 }
 
-#Preview {
-    StreamingInspectorView()
-}
+//#Preview {
+//    StreamingInspectorView()
+//}

@@ -8,9 +8,9 @@
 import SwiftUI
 
 struct OperationListView: View {//TODO: 실제 데이터 연결 시에는 환자정보도 같이 가져와야 할 듯?
+    
     var operationMockData: [OperationMockDataModel]
     @State var now = Date()
-    
     
     var body: some View {
         if operationMockData.isEmpty {
@@ -34,7 +34,7 @@ struct OperationListView: View {//TODO: 실제 데이터 연결 시에는 환자
                     // 대기 수술 섹션
                     Section {
                         ForEach(upcoming) { sample in
-                            OperationCardView()
+                            OperationCardView(operation: sample)
                         }
                     } header: {
                         HStack {
@@ -46,7 +46,7 @@ struct OperationListView: View {//TODO: 실제 데이터 연결 시에는 환자
                     // 완료 수술 섹션
                     Section {
                         ForEach(finished) { sample in
-                            OperationCardView()
+                            OperationCardView(operation: sample)
                         }
                     } header: {
                         HStack {
@@ -63,5 +63,5 @@ struct OperationListView: View {//TODO: 실제 데이터 연결 시에는 환자
 }
 
 //#Preview {
-//    OperationListView()
+//    OperationListView(operationMockData:)
 //}

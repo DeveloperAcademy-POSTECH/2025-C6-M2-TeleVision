@@ -29,7 +29,7 @@ struct StreamingControlView: View {
     ]
 
     // MARK: - State
-    @State private var isStreamingInspectorPanelPresented: Bool = false
+    @State private var isStreamingInspectorViewPresented: Bool = false
 
     @State private var videoInputMode: VideoInputMode = .SideBySide
     @State private var cameraInputMode: CameraInputMode = .DualInput
@@ -172,13 +172,15 @@ struct StreamingControlView: View {
             }
         }
         .toolbar {
+            //우측 인스펙터 버튼
             Button {
                 //TODO: 디버깅 패널 토글 기능 구현
-                isStreamingInspectorPanelPresented.toggle()
+                isStreamingInspectorViewPresented.toggle()
+                print("\(isStreamingInspectorViewPresented)")
             } label: { Label("Debug", systemImage: "sidebar.right") }
         }
         .padding()
-        .inspector(isPresented: $isStreamingInspectorPanelPresented) {
+        .inspector(isPresented: $isStreamingInspectorViewPresented) {
             StreamingInspectorView()
         }
     }

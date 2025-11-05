@@ -50,6 +50,7 @@ struct PatientInputView: View {
                 isPatientInputSheetPresented = false
             }
             Button("저장") {
+                //TODO: 수술 저장 기능 구현
                 isPatientInputSheetPresented = false
             }
         }
