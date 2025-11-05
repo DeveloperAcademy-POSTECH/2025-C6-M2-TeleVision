@@ -12,6 +12,9 @@ public final class HomeViewModel {
     @Dependency(\.listPatients) private var listPatients
 
     @ObservationIgnored
+    @Dependency(\.getPatient) private var getPatient
+
+    @ObservationIgnored
     @Dependency(\.createPatient) private var createPatient
 
     @ObservationIgnored
@@ -40,8 +43,7 @@ public final class HomeViewModel {
 
     // MARK: - State
 
-    private let _state = PatientState()
-    public var state: PatientState { _state } // 읽기 전용, 관찰 가능
+    public var state = PatientState()
 
     // Today's operations state
     public var todayOperations: [(patient: PatientDisplayModel, operation: OperationDisplayModel)] = []
@@ -51,6 +53,9 @@ public final class HomeViewModel {
     public var isPresentingCreatePatientSheet: Bool = false
     public var isShowDismissAlert: Bool = false
 
+    public var isPresentingOperationInput = false
+    public var isShowingEditSheet = false
+
     public var patientNumber: String = ""
     public var name: String = ""
     public var birthDate: Date = .init()
@@ -58,9 +63,17 @@ public final class HomeViewModel {
 
     // MARK: - Logger
 
-    private let logger = Logger(subsystem: "com.television.hippo", category: "PatientViewModel")
+    private let logger = Logger(subsystem: "com.television.hippo", category: "HomeViewModel")
 
     public init() {}
+
+    /// 환자 편집을 위한 초기화
+    public init(patient: PatientDisplayModel) {
+        patientNumber = patient.patientNumber
+        name = patient.name
+        selectedGender = patient.gender
+        birthDate = patient.birthDate
+    }
 
     // MARK: - Actions
 
@@ -81,7 +94,7 @@ public final class HomeViewModel {
 
             // Load today's operations
             let operationsWithPatient = try await getTodayOperations.run()
-            self.todayOperations = operationsWithPatient.map { owp in
+            todayOperations = operationsWithPatient.map { owp in
                 (patient: owp.patient.toDisplayModel(), operation: owp.operation.toDisplayModel())
             }
             logger.debug("Loaded \(self.todayOperations.count) today's operations")
@@ -91,6 +104,23 @@ public final class HomeViewModel {
         }
 
         _state.isLoading = false
+    }
+
+    // 환자 로드
+    public func load(patientID: String) async {
+        state.isLoading = true
+
+        do {
+            let p = try await getPatient.run(patientID)
+            logger.debug("🐛 Loaded \(p.name) from repository")
+
+            state.selectedPatient = p.toDisplayModel()
+            state.isLoading = false
+
+        } catch {
+            logger.error("Failed to load patient with ID \(patientID), error: \(error.localizedDescription)")
+            state.isLoading = false
+        }
     }
 
     public func create(
@@ -159,6 +189,66 @@ public final class HomeViewModel {
         )
     }
 
+    // MARK: - InputView Actions
+
+    public func loadPatientInfoToInputView() async {
+        if let patient = state.selectedPatient {
+            patientNumber = patient.patientNumber
+            name = patient.name
+            birthDate = patient.birthDate
+            selectedGender = patient.gender
+        }
+    }
+
+    public func deleteCurrentPatient() async {
+        guard let patient = state.selectedPatient else { return }
+
+        state.isLoading = true
+
+        do {
+            try await deletePatient.run(patient.id)
+            logger.debug("🗑️ Deleted patient \(patient.name)")
+            state.selectedPatient = nil
+            state.isLoading = false
+
+        } catch {
+            logger.error("Failed to delete patient \(patient.id), error: \(error.localizedDescription)")
+            state.isLoading = false
+        }
+    }
+
+    func handleSubmit(mode: PatientInputMode) {
+        Task {
+            switch mode {
+            case .create:
+                await create(
+                    patientNumber: patientNumber,
+                    name: name,
+                    gender: selectedGender,
+                    birthDate: birthDate
+                )
+
+            case .edit:
+                await update(
+                    patientID: state.selectedPatient?.id ?? "",
+                    patientNumber: patientNumber,
+                    name: name,
+                    gender: selectedGender,
+                    birthDate: birthDate
+                )
+            }
+
+            resetInputFields()
+        }
+    }
+
+    func resetInputFields() {
+        patientNumber = ""
+        name = ""
+        birthDate = .init()
+        selectedGender = .male
+    }
+
     // MARK: - Operation Management
 
     public func addOperation(
@@ -166,6 +256,7 @@ public final class HomeViewModel {
         title: String,
         diagnosis: String,
         surgeon: String,
+        surgicalSite: String,
         date: Date,
         details: String = "",
         status: OperationStatus = .planned
@@ -175,6 +266,7 @@ public final class HomeViewModel {
                 title: title,
                 diagnosis: diagnosis,
                 surgeon: surgeon,
+                surgicalSite: surgicalSite,
                 date: date,
                 details: details,
                 status: status

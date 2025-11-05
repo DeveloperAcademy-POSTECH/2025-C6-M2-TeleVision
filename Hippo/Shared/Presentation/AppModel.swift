@@ -14,14 +14,18 @@ import SwiftUI
 class AppModel {
     // MARK: - Logger
 
-    private let logger = Logger(subsystem: "com.television.hippo", category: "PatientViewModel")
+    private let logger = Logger(subsystem: "com.television.hippo", category: "AppModel")
 
     public init() {}
 
-    // MARK: - State
+    // MARK: - Refresh
+    
+    public var refreshID = UUID()
 
-    public var patients: Int = 0
-    public var operations: Int = 0
+    public func refreshUI() {
+        refreshID = UUID()
+        logger.debug("🔄 UI refresh triggered")
+    }
 
     // MARK: - Home Window Size
 

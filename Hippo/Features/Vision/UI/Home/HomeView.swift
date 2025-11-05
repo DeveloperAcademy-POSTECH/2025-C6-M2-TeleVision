@@ -10,13 +10,15 @@ import SwiftUI
 /// 환자 목록 메인 화면 - 컨테이너 역할
 struct HomeView: View {
     @Environment(AppModel.self) private var appModel
+    @Environment(HomeViewModel.self) private var viewModel
 
     // 테스트용
     @Environment(\.openImmersiveSpace) private var openImmersiveSpace
 
-    @State private var viewModel = HomeViewModel()
 
     var body: some View {
+        @Bindable var viewModel = viewModel
+        
         ScrollView {
             VStack(alignment: .leading, spacing: 0) {
                 LogoHeader()
@@ -35,16 +37,13 @@ struct HomeView: View {
         .scrollIndicators(.hidden)
         .task {
             await viewModel.load()
-            appModel.patients = viewModel.state.items.count
         }
-        .onChange(of: appModel.patients) {
+        .onChange(of: appModel.refreshID) {
             Task {
                 await viewModel.load()
-            }
-        }
-        .onChange(of: appModel.operations) {
-            Task {
-                await viewModel.load()
+                if let selectedPatient = viewModel.state.selectedPatient {
+                    await viewModel.load(patientID: selectedPatient.id)
+                }
             }
         }
         .ornament(attachmentAnchor: .scene(.bottom)) {
@@ -55,7 +54,7 @@ struct HomeView: View {
             }
         }
         .sheet(isPresented: $viewModel.isPresentingCreatePatientSheet) {
-            PatientInputView()
+            PatientInputView(mode: .create)
         }
     }
 }

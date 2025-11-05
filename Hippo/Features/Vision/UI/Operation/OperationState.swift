@@ -14,6 +14,10 @@ import Observation
 public final class OperationState {
     public var patient: PatientDisplayModel?
     public var operation: OperationDisplayModel?
+    
+    // MARK: - Input
+    public var selectedAssetID: String?
+    
     public var isLoading: Bool
     public var alert: String?
 
