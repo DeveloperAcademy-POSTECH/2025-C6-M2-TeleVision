@@ -63,6 +63,7 @@ struct OperationInputView: View {
                     Task {
                         await viewModel.addOperation(toPatientID: patientID)
                         appModel.operations += 1
+                        appModel.operationsUpdateTrigger += 1
                         dismiss()
                     }
                 }
@@ -70,13 +71,10 @@ struct OperationInputView: View {
                 .content("저장하기")
             } else {
                 OrnamentButton {
-                    print("Update Operation")
                     Task {
                         await viewModel.updateOperation()
+                        appModel.operationsUpdateTrigger += 1
                         dismiss()
-                        // Trigger after dismiss to ensure proper reload order
-//                        try? await Task.sleep(nanoseconds: 100_000_000) // 0.1 second
-                        appModel.operations += 1
                     }
                 }
                 .systemName("square.and.arrow.down")

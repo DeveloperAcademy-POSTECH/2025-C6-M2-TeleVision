@@ -31,4 +31,12 @@ extension Date {
         formatter.dateFormat = "HH:mm"
         return formatter.string(from: self)
     }
+
+    /// yyyy.MM.dd 형식의 문자열을 Date로 변환
+    static func fromTodayDateString(_ dateString: String) -> Date? {
+        let formatter = DateFormatter()
+        formatter.locale = Locale(identifier: "ko_KR")
+        formatter.dateFormat = "yyyy.MM.dd"
+        return formatter.date(from: dateString)
+    }
 }

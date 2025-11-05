@@ -12,6 +12,9 @@ public final class HomeViewModel {
     @Dependency(\.listPatients) private var listPatients
 
     @ObservationIgnored
+    @Dependency(\.getPatient) var getPatient
+
+    @ObservationIgnored
     @Dependency(\.createPatient) private var createPatient
 
     @ObservationIgnored
@@ -61,6 +64,14 @@ public final class HomeViewModel {
     private let logger = Logger(subsystem: "com.television.hippo", category: "PatientViewModel")
 
     public init() {}
+
+    /// 환자 편집을 위한 초기화
+    public init(patient: PatientDisplayModel) {
+        self.patientNumber = patient.patientNumber
+        self.name = patient.name
+        self.selectedGender = Gender.from(string: patient.gender)
+        self.birthDate = Date.fromTodayDateString(patient.birthDateText) ?? Date()
+    }
 
     // MARK: - Actions
 
