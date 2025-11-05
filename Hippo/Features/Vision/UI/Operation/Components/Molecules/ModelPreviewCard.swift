@@ -13,7 +13,6 @@ import SwiftUI
 
 /// 3D 모델 파일을 미리보기로 표시하는 Molecule 컴포넌트
 struct ModelPreviewCard: View {
-//    let url: URL
     let asset: OperationAssetDisplayModel
     let size: CGFloat
 

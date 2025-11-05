@@ -19,7 +19,6 @@ struct ModelFileListView: View {
                 Spacer().frame(width: 0)
 
                 ForEach(assets, id: \.self.id) { asset in
-                    // FIXME: ModelPreviewCard 구현 필요
                     ModelPreviewCard(asset: asset)
                 }
             }
