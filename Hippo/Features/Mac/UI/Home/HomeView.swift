@@ -9,8 +9,12 @@ import SwiftUI
 
 struct HomeView: View {
     var mockData = HomeMockDataModel.mockList
-    @Binding var isTodaysSurgery: Bool
+    @State private var isTodaysSurgery: Bool = true
     @State private var selectedPatientID: HomeMockDataModel.ID?
+    
+    @State var isPatientInputSheetPresented: Bool = false
+    @State var isOperationInputSheetPresented: Bool = false
+    
     private var selectedPatient: HomeMockDataModel? { mockData.first { $0.id == selectedPatientID } }
     
     var body: some View {
@@ -23,30 +27,35 @@ struct HomeView: View {
                 Text("Today's Surgery")
             }
             List {
-                //Patient List 타이틀 위해서 section 추가
+                //Patient List 타이틀 위해서 section 추가함
                 Section {
                     //TODO: 환자 리스트에 데이터가 없는 경우
                     //환자 리스트에 데이터가 있는 경우
 
                     ForEach(mockData) { data in
-                        Button {
-                            isTodaysSurgery = false
-                            selectedPatientID = data.id
-                        } label: {
-                            Text(data.patientNumber)
-                            Text(data.name)
-                            Text(data.gender)
-                            Text("\(data.age)세")
+                        HStack {
+                            Button {
+                                isTodaysSurgery = false
+                                selectedPatientID = data.id
+                            } label: {
+                                Text(data.patientNumber)
+                                Text(data.name)
+                                Text(data.gender)
+                                Text("\(data.age)세")
+                            }
+                            //TODO: 호버 시 편집 버튼 추가
                         }
                     }
                 } header: {
                     HStack {
+                        //헤더 텍스트
                         Text("Patient List")
                         Spacer()
-                        
+                    
                         //환자 추가 버튼
                         Button {
-                            //TODO: 환자 추가 기능 구현
+                            //TODO: PatientInputView 구현
+                            isPatientInputSheetPresented = true
                         } label: {
                             Image(systemName: "person.badge.plus")
                         }
@@ -58,10 +67,24 @@ struct HomeView: View {
                 TodaysSurgeryView()
                     .navigationTitle("Today's Surgery")
             } else {
-                PatientDetailView()
-                    .navigationTitle(selectedPatient.map { "\($0.name) \($0.gender) \($0.age)세" } ?? "환자 상세 정보")
-                    .navigationSubtitle(selectedPatient?.patientNumber ?? "환자 번호")
+                PatientDetailView(patientId: selectedPatientID ?? "")
             }
+        }
+        .toolbar {
+            if !isTodaysSurgery {
+                Button {
+                    //TODO: 수술 생성 기능 구현
+                    isOperationInputSheetPresented = true
+                } label: {
+                    Label("Create", systemImage: "plus")
+                }
+            }
+        }
+        .sheet(isPresented: $isPatientInputSheetPresented) {
+            PatientInputView(isPatientInputSheetPresented: $isPatientInputSheetPresented)
+        }
+        .sheet(isPresented: $isOperationInputSheetPresented) {
+            OperationInputView(isOperationInputSheetPresented: $isOperationInputSheetPresented)
         }
     }
 }
