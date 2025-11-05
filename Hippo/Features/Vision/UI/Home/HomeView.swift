@@ -42,7 +42,17 @@ struct HomeView: View {
                 await viewModel.load()
             }
         }
+        .onChange(of: appModel.patientsUpdateTrigger) {
+            Task {
+                await viewModel.load()
+            }
+        }
         .onChange(of: appModel.operations) {
+            Task {
+                await viewModel.load()
+            }
+        }
+        .onChange(of: appModel.operationsUpdateTrigger) {
             Task {
                 await viewModel.load()
             }

@@ -41,6 +41,7 @@ struct DetailHeader: View {
                         Task {
                             await viewModel.deleteOperation()
                             appModel.operations -= 1
+                            appModel.operationsUpdateTrigger += 1
                             dismiss()
                         }
                     }

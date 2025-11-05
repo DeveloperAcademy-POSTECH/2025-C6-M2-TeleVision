@@ -116,6 +116,12 @@ struct OperationDetailView: View {
                 print("Reloaded operation detail after update")
             }
         }
+        .onChange(of: appModel.operationsUpdateTrigger) {
+            Task {
+                await viewModel.load(patientID: patientID, operationID: operationID)
+                print("Reloaded operation detail after operationsUpdateTrigger")
+            }
+        }
         .sheet(isPresented: $viewModel.isShowingEditInputView) {
             OperationInputView(mode: .edit(operationID: operationID), patientID: patientID)
         }

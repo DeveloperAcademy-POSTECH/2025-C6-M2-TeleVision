@@ -23,6 +23,12 @@ class AppModel {
     public var patients: Int = 0
     public var operations: Int = 0
 
+    /// 환자 데이터 변경 트리거 (생성, 수정, 삭제 시 변경)
+    public var patientsUpdateTrigger: Int = 0
+
+    /// 수술 데이터 변경 트리거 (생성, 수정, 삭제 시 변경)
+    public var operationsUpdateTrigger: Int = 0
+
     // MARK: - Home Window Size
 
     public var homeWindowSize: CGSize = .init(width: 580, height: 760)

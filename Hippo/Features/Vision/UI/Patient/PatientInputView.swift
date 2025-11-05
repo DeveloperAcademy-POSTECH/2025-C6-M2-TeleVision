@@ -17,20 +17,11 @@ struct PatientInputView: View {
     @Environment(AppModel.self) private var appModel
     @State private var viewModel = HomeViewModel()
 
-    // TODO: - 환자 정보 수정 기능 구현
-//    let mode: PatientInputMode
-//
-//    init(mode: PatientInputMode) {
-//        self.mode = mode
-//
-//        switch mode {
-//        case .create:
-//            _viewModel = State(initialValue: HomeViewModel())
-//        case let .edit(patientID):
-//            // 실제로는 patientID로 환자 정보를 불러와서 초기화해야 합니다
-//            _viewModel = State(initialValue: HomeViewModel(patientID: patientID))
-//        }
-//    }
+    let mode: PatientInputMode
+
+    init(mode: PatientInputMode = .create) {
+        self.mode = mode
+    }
 
     var body: some View {
         VStack(spacing: 0) {
@@ -57,7 +48,7 @@ struct PatientInputView: View {
                 handleSubmit()
             }
             .systemName("square.and.arrow.down")
-            .content("추가하기")
+            .content(mode == .create ? "추가하기" : "수정하기")
         }
         .alert("작성을 취소할까요?", isPresented: $viewModel.isShowDismissAlert) {
             Button("네", role: .destructive) { dismiss() }
@@ -65,17 +56,51 @@ struct PatientInputView: View {
         } message: {
             Text("지금까지 입력한 내용이\n모두 사라집니다")
         }
+        .task {
+            if case let .edit(patientID) = mode {
+                await loadPatientData(patientID: patientID)
+            }
+        }
+    }
+
+    private func loadPatientData(patientID: String) async {
+        // getPatient dependency를 사용하여 환자 데이터 로드
+        do {
+            let patient = try await viewModel.getPatient.run(patientID)
+            let displayModel = patient.toDisplayModel()
+
+            // ViewModel에 데이터 설정
+            viewModel.patientNumber = displayModel.patientNumber
+            viewModel.name = displayModel.name
+            viewModel.selectedGender = Gender.from(string: displayModel.gender)
+            viewModel.birthDate = Date.fromTodayDateString(displayModel.birthDateText) ?? Date()
+        } catch {
+            // 에러 처리 - 필요시 alert 표시
+            print("Failed to load patient data: \(error)")
+        }
     }
 
     private func handleSubmit() {
         Task {
-            await viewModel.create(
-                patientNumber: viewModel.patientNumber,
-                name: viewModel.name,
-                gender: viewModel.selectedGender,
-                birthDate: viewModel.birthDate
-            )
-            appModel.patients += 1
+            switch mode {
+            case .create:
+                await viewModel.create(
+                    patientNumber: viewModel.patientNumber,
+                    name: viewModel.name,
+                    gender: viewModel.selectedGender,
+                    birthDate: viewModel.birthDate
+                )
+                appModel.patients += 1
+            case let .edit(patientID):
+                await viewModel.update(
+                    patientID: patientID,
+                    patientNumber: viewModel.patientNumber,
+                    name: viewModel.name,
+                    gender: viewModel.selectedGender,
+                    birthDate: viewModel.birthDate
+                )
+                appModel.patientsUpdateTrigger += 1
+            }
             dismiss()
         }
     }
