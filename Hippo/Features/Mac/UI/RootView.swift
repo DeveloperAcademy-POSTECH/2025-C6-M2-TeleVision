@@ -15,6 +15,7 @@ enum Tabs {
 struct RootView: View {
     @State private var selectedTab: Tabs = .Home
     @State private var isTodaysSurgery: Bool = true
+    @State private var isOperationInputSheetPresented: Bool = false
 
     var body: some View {
         NavigationStack {
@@ -37,7 +38,6 @@ struct RootView: View {
                 }
             }
             .toolbar {
-
                 ToolbarItemGroup(placement: .primaryAction) { //.primaryAction: 툴바 아이템을 우측정렬
                     // 상단에 탭 전환용 세그먼트 컨트롤
                     Picker("Section", selection: $selectedTab) {
@@ -54,6 +54,7 @@ struct RootView: View {
                             case .Home:
                                 //CASE 1: HomeView에서 환자를 선택하면 수술 생성 버튼
                                 print("홈뷰기능")
+                                isOperationInputSheetPresented = true
                                 //TODO: 환자 생성 기능 구현
                             case .StreamingControl:
                                 //CASE 2: StreamingControlView에서는 우측 디버깅 창 토글 버튼
@@ -71,6 +72,10 @@ struct RootView: View {
                     }
                 }
             }
+            .sheet(isPresented: $isOperationInputSheetPresented) {
+                OperationInputView(isOperationInputSheetPresented: $isOperationInputSheetPresented)
+            }
+            
         }
     }
 }
