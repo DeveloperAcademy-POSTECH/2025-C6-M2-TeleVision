@@ -1,5 +1,5 @@
 //
-//  StreamingMonitorPanel.swift
+//  StreamingInspectorView.swift
 //  HippoMac
 //
 //  Created by Hyeok Cho on 11/4/25.
@@ -151,7 +151,7 @@ struct StreamingInspectorView: View {
                             Spacer()
                         }
 
-                        //Ratencies
+                        //Latencies
                         Section {
                             VStack {
                                 HStack {
@@ -177,7 +177,7 @@ struct StreamingInspectorView: View {
                             .padding(.bottom)
                         } header: {
                             HStack {
-                                Text("Ratencies")
+                                Text("Latencies")
                                 Spacer()
                             }
                             Spacer()
