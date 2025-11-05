@@ -257,6 +257,7 @@ public final class HomeViewModel {
         title: String,
         diagnosis: String,
         surgeon: String,
+        surgicalSite: String,
         date: Date,
         details: String = "",
         status: OperationStatus = .planned
@@ -266,6 +267,7 @@ public final class HomeViewModel {
                 title: title,
                 diagnosis: diagnosis,
                 surgeon: surgeon,
+                surgicalSite: surgicalSite,
                 date: date,
                 details: details,
                 status: status

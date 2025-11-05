@@ -35,6 +35,7 @@ public extension Operation {
             title: title,
             diagnosis: diagnosis,
             surgeon: surgeon,
+            surgicalSite: surgicalSite,
             date: date,
             dateText: date.toOperationDateString(),
             details: details,

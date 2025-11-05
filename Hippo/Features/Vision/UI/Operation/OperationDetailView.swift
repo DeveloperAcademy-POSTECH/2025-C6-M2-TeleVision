@@ -56,7 +56,7 @@ struct OperationDetailView: View {
                             // 수술 부위 정보
                             DetailSubPart(
                                 title: "수술 부위",
-                                content: "여기 수정해야함"
+                                content: operation.surgicalSite
                             )
 
                             // 진단(병명) 정보

@@ -13,6 +13,7 @@ struct OperationInputForm: View {
     @Binding var title: String
     @Binding var diagnosis: String
     @Binding var surgeon: String
+    @Binding var surgicalSite: String
     @Binding var operationDate: Date
     @Binding var detail: String
     @Binding var selectedAssets: [OperationAsset]
@@ -47,6 +48,15 @@ struct OperationInputForm: View {
                     .cornerRadius(12)
             }
             .title("집도의")
+
+            FormSection {
+                TextField("수술 부위를 입력해주세요", text: $surgicalSite)
+                    .padding(.horizontal)
+                    .padding(.vertical, 12)
+                    .background(.thinMaterial)
+                    .cornerRadius(12)
+            }
+            .title("수술 부위")
 
             FormSection {
                 HStack {

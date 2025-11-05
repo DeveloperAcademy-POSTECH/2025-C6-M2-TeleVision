@@ -43,6 +43,7 @@ struct OperationInputView: View {
                     title: $viewModel.operationTitle,
                     diagnosis: $viewModel.operationDiagnosis,
                     surgeon: $viewModel.operationSurgeon,
+                    surgicalSite: $viewModel.surgicalSite,
                     operationDate: $viewModel.operationDate,
                     detail: $viewModel.operationDetail,
                     selectedAssets: $viewModel.operation3DAssets,
