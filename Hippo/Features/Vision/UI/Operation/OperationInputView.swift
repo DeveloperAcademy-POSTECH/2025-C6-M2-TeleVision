@@ -72,7 +72,7 @@ struct OperationInputView: View {
                 OrnamentButton {
                     Task {
                         await viewModel.updateOperation()
-                        appModel.operationsUpdateTrigger += 1
+                        appModel.refreshUI()
                         dismiss()
                     }
                 }
