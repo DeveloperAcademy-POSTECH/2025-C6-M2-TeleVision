@@ -34,7 +34,7 @@ extension OperationMockDataModel{
         status: .planned
     )
 
-    public static let samples: [OperationMockDataModel] = [
+    public static let patientOperationSamples: [OperationMockDataModel] = [
         .sample,
         OperationMockDataModel(
             id: "OP-2025-0002",
@@ -67,6 +67,47 @@ extension OperationMockDataModel{
             status: .completed
         )
     ]
+    
+
+    public static let todayOperationSamples: [OperationMockDataModel] = {
+        let now = Date()
+        let cal = Calendar.current
+        let startOfDay = cal.startOfDay(for: now)
+        let dateText = DateFormatter.localizedString(from: now, dateStyle: .medium, timeStyle: .short)
+
+        return [
+            OperationMockDataModel(
+                id: "OP-\(cal.component(.year, from: now))-T-0001",
+                title: "우측 무릎 관절경 수술",
+                diagnosis: "내측 반월상연골 파열",
+                surgeon: "Dr. Kim",
+                date: cal.date(byAdding: .hour, value: 9, to: startOfDay)!,
+                dateText: dateText,
+                details: "오전 첫 케이스. 관절경적 부분 절제술 예정.",
+                status: .planned
+            ),
+            OperationMockDataModel(
+                id: "OP-\(cal.component(.year, from: now))-T-0002",
+                title: "좌측 어깨 회전근개 봉합술",
+                diagnosis: "회전근개 부분 파열",
+                surgeon: "Dr. Lee",
+                date: cal.date(byAdding: .hour, value: 13, to: startOfDay)!,
+                dateText: dateText,
+                details: "점심 이후 스케줄. 관절경하 봉합술 예정.",
+                status: .planned
+            ),
+            OperationMockDataModel(
+                id: "OP-\(cal.component(.year, from: now))-T-0003",
+                title: "요추 4-5 추간판 절제술",
+                diagnosis: "요추간판 탈출증",
+                surgeon: "Dr. Park",
+                date: cal.date(byAdding: .hour, value: 16, to: startOfDay)!,
+                dateText: dateText,
+                details: "오후 마지막 케이스. 미세현미경하 절제술 예정.",
+                status: .planned
+            )
+        ]
+    }()
 
     public static func random(id: String = UUID().uuidString, dayOffset: Int = Int.random(in: -14...14)) -> OperationMockDataModel {
         let date = Calendar.current.date(byAdding: .day, value: dayOffset, to: Date())!
@@ -89,3 +130,4 @@ extension OperationMockDataModel{
         )
     }
 }
+
