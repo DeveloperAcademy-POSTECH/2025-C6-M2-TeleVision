@@ -80,6 +80,9 @@ struct HomeView: View {
                 }
             }
         }
+        .sheet(isPresented: $isPatientInputSheetPresented) {
+            PatientInputView(isPatientInputSheetPresented: $isPatientInputSheetPresented)
+        }
         .sheet(isPresented: $isOperationInputSheetPresented) {
             OperationInputView(isOperationInputSheetPresented: $isOperationInputSheetPresented)
         }
