@@ -53,10 +53,18 @@ struct OperationInputView: View {
                 Spacer()
             }
         }
+        .environment(viewModel)
         .scrollIndicators(.hidden)
         .padding(.horizontal, 32)
         .frame(width: 460, height: 680)
         .glassBackgroundEffect(displayMode: .always)
+        .onChange(of: appModel.refreshID) {
+            Task {
+                if case let .edit(operationID) = mode {
+                    await viewModel.load(patientID: patientID, operationID: operationID)
+                }
+            }
+        }
         .ornament(attachmentAnchor: .parent(.bottom)) {
             if mode == .create {
                 OrnamentButton {

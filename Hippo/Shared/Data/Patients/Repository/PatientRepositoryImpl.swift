@@ -94,6 +94,7 @@ public actor PatientRepositoryImpl: PatientRepository {
         fromOperationID operationID: String,
         inPatientID patientID: String
     ) async throws {
+        print("Starting asset removal process...")
         // 1. 로컬에서 Patient 가져오기
         guard let patient = try await localDataSource.getPatient(id: patientID) else {
             throw PatientError.patientNotFound

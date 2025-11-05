@@ -31,6 +31,9 @@ public final class OperationViewModel {
     @ObservationIgnored
     @Dependency(\.deleteOperation) private var deleteOperation
 
+    @ObservationIgnored
+    @Dependency(\.removeAssetFromOperation) private var removeAssetFromOperation
+
     // MARK: - Logger
 
     private let logger = Logger(subsystem: "com.television.hippo", category: "OperationViewModel")
@@ -84,6 +87,7 @@ public final class OperationViewModel {
 
     public var isShowingFilePicker: Bool = false
     public var isShowingEditInputView: Bool = false
+    public var isModelFileSelected: Bool = false
 
     // 수술 중
     public var isMenuActive: Bool = true
@@ -169,6 +173,29 @@ public final class OperationViewModel {
             _state.alert = validationError.localizedDescription
         } catch {
             _state.alert = "Failed to update operation: \(error.localizedDescription)"
+        }
+    }
+
+    // MARK: - Operation Input (Update, Delete)
+
+    public func selectModelAsset(_ id: String) {
+        state.selectedAssetID = id
+    }
+
+    public func deleteModelAsset(_ id: String) async {
+        do {
+            if let patientID = state.patient?.id, let operationID = state.operation?.id {
+                try await removeAssetFromOperation.run(
+                    RemoveAssetFromOperation.Input(
+                        patientID: patientID,
+                        operationID: operationID,
+                        assetID: id
+                    )
+                )
+            }
+            state.selectedAssetID = nil
+        } catch {
+            _state.alert = "Failed to remove asset: \(error.localizedDescription)"
         }
     }
 

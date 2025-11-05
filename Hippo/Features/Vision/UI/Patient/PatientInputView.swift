@@ -60,6 +60,9 @@ struct PatientInputView: View {
         } message: {
             Text("지금까지 입력한 내용이\n모두 사라집니다")
         }
+        .onDisappear {
+            viewModel.resetInputFields()
+        }
     }
 
     // MARK: - Subviews
