@@ -33,7 +33,7 @@ public final class OperationViewModel {
 
     // MARK: - Logger
 
-    private let logger = Logger(subsystem: "com.television.hippo", category: "PatientViewModel")
+    private let logger = Logger(subsystem: "com.television.hippo", category: "OperationViewModel")
 
     // MARK: - State
 

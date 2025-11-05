@@ -62,8 +62,7 @@ struct OperationInputView: View {
                 OrnamentButton {
                     Task {
                         await viewModel.addOperation(toPatientID: patientID)
-                        appModel.operations += 1
-                        appModel.operationsUpdateTrigger += 1
+                        appModel.refreshUI()
                         dismiss()
                     }
                 }

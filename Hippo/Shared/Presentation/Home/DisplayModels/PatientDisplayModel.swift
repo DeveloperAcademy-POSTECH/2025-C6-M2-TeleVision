@@ -7,10 +7,12 @@ public struct PatientDisplayModel: Identifiable, Equatable, Sendable {
     public let id: String
     public let patientNumber: String
     public let name: String
-    public let gender: String
+    public let gender: Gender
+    public let genderText: String
     public let genderIcon: String
     public let age: Int
     public let ageText: String
+    public let birthDate: Date
     public let birthDateText: String
     public let operations: [OperationDisplayModel]
     public let operationCount: Int
@@ -22,10 +24,12 @@ public struct PatientDisplayModel: Identifiable, Equatable, Sendable {
         id: String,
         patientNumber: String,
         name: String,
-        gender: String,
+        gender: Gender,
+        genderText: String,
         genderIcon: String,
         age: Int,
         ageText: String,
+        birthDate: Date,
         birthDateText: String,
         operations: [OperationDisplayModel],
         operationCount: Int,
@@ -37,9 +41,11 @@ public struct PatientDisplayModel: Identifiable, Equatable, Sendable {
         self.patientNumber = patientNumber
         self.name = name
         self.gender = gender
+        self.genderText = genderText
         self.genderIcon = genderIcon
         self.age = age
         self.ageText = ageText
+        self.birthDate = birthDate
         self.birthDateText = birthDateText
         self.operations = operations
         self.operationCount = operationCount
@@ -79,10 +85,12 @@ public struct PatientDisplayModel: Identifiable, Equatable, Sendable {
         id: "sample-001",
         patientNumber: "12345678",
         name: "김철수",
-        gender: "남",
+        gender: .male,
+        genderText: "남성",
         genderIcon: "person.fill",
         age: 45,
         ageText: "45세",
+        birthDate: Date(),
         birthDateText: "1979.03.15",
         operations: [operation1, operation2],
         operationCount: 2,

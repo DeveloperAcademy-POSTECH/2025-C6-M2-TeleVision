@@ -10,12 +10,14 @@ import SwiftUI
 @main
 struct HippoVisionApp: App {
     @State private var appModel = AppModel()
+    @State private var homeViewModel = HomeViewModel()
 
     var body: some Scene {
         // 홈 화면
         WindowGroup(id: WindowIDs.home) {
             RootView()
                 .environment(appModel)
+                .environment(homeViewModel)
                 .frame(minWidth: 580, maxWidth: 1020, minHeight: 760, maxHeight: 1020)
         }
         .windowResizability(.contentSize)
@@ -25,6 +27,7 @@ struct HippoVisionApp: App {
             if let id = id {
                 PatientDetailView(patientId: id)
                     .environment(appModel)
+                    .environment(homeViewModel)
             }
         }
         .windowResizability(.contentSize)

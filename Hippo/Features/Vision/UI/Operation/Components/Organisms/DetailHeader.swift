@@ -31,8 +31,10 @@ struct DetailHeader: View {
 
                 Menu {
                     Button("수술 완료") {
-                        // 수술 완료 처리
-                        
+                        Task {
+                            await viewModel.updateOperationStatus(to: .completed)
+                            appModel.refreshUI()
+                        }
                     }
                     Button("수술 편집") {
                         viewModel.isShowingEditInputView = true
@@ -40,8 +42,7 @@ struct DetailHeader: View {
                     Button("수술 삭제", role: .destructive) {
                         Task {
                             await viewModel.deleteOperation()
-                            appModel.operations -= 1
-                            appModel.operationsUpdateTrigger += 1
+                            appModel.refreshUI()
                             dismiss()
                         }
                     }
