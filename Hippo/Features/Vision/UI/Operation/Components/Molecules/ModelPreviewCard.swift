@@ -10,6 +10,7 @@
 import QuickLookThumbnailing
 import RealityKit
 import SwiftUI
+import os.log
 
 /// 3D 모델 파일을 미리보기로 표시하는 Molecule 컴포넌트
 struct ModelPreviewCard: View {
@@ -48,7 +49,6 @@ struct ModelPreviewCard: View {
                         .frame(width: size - 20, height: size - 20)
                         .onDisappear {
                             asset.fileURL.stopAccessingSecurityScopedResource()
-                            print("Stopped access for \(asset.fileName)")
                         }
                 } else {
                     ProgressView()
@@ -94,19 +94,18 @@ struct ModelPreviewCard: View {
         do {
             let representation = try await generator.generateBestRepresentation(for: request)
             thumbnailImage = Image(uiImage: representation.uiImage)
-            print("썸네일 생성 성공 for \(asset.fileName)")
-
         } catch {
-            print("썸네일 생성 실패: \(error.localizedDescription)")
+            Logger().log("썸네일 생성 실패: \(error.localizedDescription)")
         }
     }
 }
 
-// #Preview {
-//    ModelPreviewCard(
-//        asset: OperationAssetDisplayModel(
-//
-//        )
-//    )
-//    .padding()
-// }
+ #Preview {
+    ModelPreviewCard(
+        asset: OperationAssetDisplayModel(id: "", fileName: "", createdAt: Date(), fileURL: URL(string: "")!),
+        isSelected: false,
+        onSelect: {},
+        onDelete: {}
+    )
+    .padding()
+ }

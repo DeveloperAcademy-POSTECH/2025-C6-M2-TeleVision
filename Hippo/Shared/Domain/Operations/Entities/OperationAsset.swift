@@ -16,7 +16,6 @@ public struct OperationAsset: Identifiable, Codable, Equatable, Sendable {
         // URL로부터 Bookmark Data를 생성하는 로직
         // 이 작업은 파일에 대한 임시 접근 권한이 있을 때 즉시 수행해야 함.
         guard url.startAccessingSecurityScopedResource() else {
-            print("보안 리소스 접근 실패 (북마크 생성용): \(url)")
             return nil
         }
 
@@ -35,7 +34,6 @@ public struct OperationAsset: Identifiable, Codable, Equatable, Sendable {
             createdAt = Date()
 
         } catch {
-            print("북마크 생성 실패: \(error.localizedDescription)")
             return nil
         }
     }
@@ -65,10 +63,8 @@ public extension OperationAsset {
             }
 
             if url.startAccessingSecurityScopedResource() {
-                print("Started access for \(originalFileName)")
                 return url
             } else {
-                print("Failed to start security access for \(originalFileName)")
                 return nil
             }
 

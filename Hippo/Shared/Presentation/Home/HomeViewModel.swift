@@ -193,7 +193,6 @@ public final class HomeViewModel {
 
     public func loadPatientInfoToInputView() async {
         if let patient = state.selectedPatient {
-            print("Loading patient info for editing: \(patient.id)")
             patientNumber = patient.patientNumber
             name = patient.name
             birthDate = patient.birthDate
