@@ -11,6 +11,8 @@ import SwiftUI
 
 /// 3D 모델 파일 목록을 수평 스크롤로 표시하는 Molecule 컴포넌트
 struct ModelFileListView: View {
+    @Environment(AppModel.self) private var appModel
+    @Environment(OperationViewModel.self) private var viewModel
     let assets: [OperationAssetDisplayModel]
 
     var body: some View {
@@ -19,7 +21,22 @@ struct ModelFileListView: View {
                 Spacer().frame(width: 0)
 
                 ForEach(assets, id: \.self.id) { asset in
-                    ModelPreviewCard(asset: asset)
+                    ModelPreviewCard(
+                        asset: asset,
+                        isSelected: viewModel.state.selectedAssetID == asset.id,
+                        onSelect: {
+                            withAnimation(.easeInOut(duration: 0.2)) {
+                                viewModel.selectModelAsset(asset.id)
+                            }
+                        },
+                        onDelete: {
+                            print("🗑️ Delete asset with id: \(asset.id)")
+                            Task {
+                                await viewModel.deleteModelAsset(asset.id)
+                                appModel.refreshUI()
+                            }
+                        }
+                    )
                 }
             }
             .padding(.vertical)

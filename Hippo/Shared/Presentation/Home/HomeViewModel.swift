@@ -69,10 +69,10 @@ public final class HomeViewModel {
 
     /// 환자 편집을 위한 초기화
     public init(patient: PatientDisplayModel) {
-        self.patientNumber = patient.patientNumber
-        self.name = patient.name
-        self.selectedGender = patient.gender
-        self.birthDate = patient.birthDate
+        patientNumber = patient.patientNumber
+        name = patient.name
+        selectedGender = patient.gender
+        birthDate = patient.birthDate
     }
 
     // MARK: - Actions
@@ -238,7 +238,16 @@ public final class HomeViewModel {
                     birthDate: birthDate
                 )
             }
+
+            resetInputFields()
         }
+    }
+
+    func resetInputFields() {
+        patientNumber = ""
+        name = ""
+        birthDate = .init()
+        selectedGender = .male
     }
 
     // MARK: - Operation Management

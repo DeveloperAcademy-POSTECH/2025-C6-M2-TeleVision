@@ -15,10 +15,22 @@ import SwiftUI
 struct ModelPreviewCard: View {
     let asset: OperationAssetDisplayModel
     let size: CGFloat
+    let isSelected: Bool
+    let onSelect: () -> Void
+    let onDelete: () -> Void
 
-    init(asset: OperationAssetDisplayModel, size: CGFloat = 130) {
+    init(
+        asset: OperationAssetDisplayModel,
+        size: CGFloat = 130,
+        isSelected: Bool,
+        onSelect: @escaping () -> Void,
+        onDelete: @escaping () -> Void
+    ) {
         self.asset = asset
         self.size = size
+        self.isSelected = isSelected
+        self.onSelect = onSelect
+        self.onDelete = onDelete
     }
 
     @State private var thumbnailImage: Image?
@@ -42,10 +54,30 @@ struct ModelPreviewCard: View {
                     ProgressView()
                         .frame(width: size, height: size)
                 }
+
+                // 삭제 오버레이
+                if isSelected {
+                    RoundedRectangle(cornerRadius: 12)
+                        .fill(.hippoBlack)
+                        .frame(width: size, height: size)
+
+                    Image(systemName: "trash.fill")
+                        .font(.system(size: 40))
+                        .foregroundStyle(.white)
+                }
             }
         }
+        .onTapGesture { handleTap() }
         .task {
             await generateThumbnail()
+        }
+    }
+
+    private func handleTap() {
+        if isSelected {
+            onDelete()
+        } else {
+            onSelect()
         }
     }
 
