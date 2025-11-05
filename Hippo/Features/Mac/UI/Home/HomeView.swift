@@ -8,13 +8,17 @@
 import SwiftUI
 
 struct HomeView: View {
+    // ViewModel 초기화
+    @State private var rootVM = MacRootViewModel()
+
+    // Mock 데이터 (UI 개발용 - 나중에 rootVM.homeViewModel.state.items로 교체)
     var mockData = HomeMockDataModel.mockList
     @State private var isTodaysSurgery: Bool = true
     @State private var selectedPatientID: HomeMockDataModel.ID?
-    
+
     @State var isPatientInputSheetPresented: Bool = false
     @State var isOperationInputSheetPresented: Bool = false
-    
+
     private var selectedPatient: HomeMockDataModel? { mockData.first { $0.id == selectedPatientID } }
     
     var body: some View {
@@ -64,10 +68,13 @@ struct HomeView: View {
             }
         } detail: {
             if isTodaysSurgery {
-                TodaysSurgeryView()
+                TodaysSurgeryView(viewModel: rootVM.homeViewModel)
                     .navigationTitle("Today's Surgery")
             } else {
-                PatientDetailView(patientId: selectedPatientID ?? "")
+                PatientDetailView(
+                    viewModel: PatientDetailViewModel(rootVM: rootVM),
+                    patientId: selectedPatientID ?? ""
+                )
             }
         }
         .toolbar {
@@ -81,10 +88,35 @@ struct HomeView: View {
             }
         }
         .sheet(isPresented: $isPatientInputSheetPresented) {
-            PatientInputView(isPatientInputSheetPresented: $isPatientInputSheetPresented)
+            PatientInputView(
+                isPatientInputSheetPresented: $isPatientInputSheetPresented,
+                state: $rootVM.patientInputState,
+                mode: rootVM.navigationState.patientInputMode,
+                onSave: {
+                    Task {
+                        if rootVM.navigationState.patientInputMode == .create {
+                            await rootVM.createPatient()
+                        } else {
+                            await rootVM.updatePatient()
+                        }
+                    }
+                }
+            )
         }
         .sheet(isPresented: $isOperationInputSheetPresented) {
-            OperationInputView(isOperationInputSheetPresented: $isOperationInputSheetPresented)
+            OperationInputView(
+                isOperationInputSheetPresented: $isOperationInputSheetPresented,
+                state: $rootVM.operationInputState,
+                onSave: {
+                    Task {
+                        await rootVM.createOperation()
+                    }
+                }
+            )
+        }
+        .task {
+            // 데이터 로드
+            await rootVM.load()
         }
     }
 }
