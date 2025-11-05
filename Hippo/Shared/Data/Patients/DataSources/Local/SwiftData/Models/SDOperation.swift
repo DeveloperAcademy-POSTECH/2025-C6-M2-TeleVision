@@ -11,6 +11,7 @@ final class SDOperation {
     var title: String
     var diagnosis: String
     var surgeon: String
+    var surgicalSite: String
     var date: Date
     var details: String
     var statusRaw: String // "planned" | "inProgress" | "completed" | "cancelled"
@@ -28,6 +29,7 @@ final class SDOperation {
         title: String,
         diagnosis: String,
         surgeon: String,
+        surgicalSite: String,
         date: Date,
         details: String,
         statusRaw: String
@@ -36,6 +38,7 @@ final class SDOperation {
         self.title = title
         self.diagnosis = diagnosis
         self.surgeon = surgeon
+        self.surgicalSite = surgicalSite
         self.date = date
         self.details = details
         self.statusRaw = statusRaw
@@ -49,6 +52,7 @@ extension SDOperation {
             title: title,
             diagnosis: diagnosis,
             surgeon: surgeon,
+            surgicalSite: surgicalSite,
             date: date,
             details: details,
             operationAssets: assets.map { $0.toDomain() },

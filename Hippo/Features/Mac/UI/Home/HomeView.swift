@@ -11,9 +11,11 @@ struct HomeView: View {
     var mockData = HomeMockDataModel.mockList
     @State private var isTodaysSurgery: Bool = true
     @State private var selectedPatientID: HomeMockDataModel.ID?
-    private var selectedPatient: HomeMockDataModel? { mockData.first { $0.id == selectedPatientID } }
+    
     @State var isPatientInputSheetPresented: Bool = false
     @State var isOperationInputSheetPresented: Bool = false
+    
+    private var selectedPatient: HomeMockDataModel? { mockData.first { $0.id == selectedPatientID } }
     
     var body: some View {
         NavigationSplitView {

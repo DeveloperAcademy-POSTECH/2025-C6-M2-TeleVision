@@ -27,8 +27,8 @@ struct PatientCell: View {
                     .foregroundStyle(.primary)
 
                 Spacer().frame(width: 12)
-
-                Text("\(patient.gender) / \(patient.age)세")
+                
+                Text("\(patient.genderText) / \(patient.age)세")
                     .font(.headline)
                     .foregroundStyle(.tertiary)
             }

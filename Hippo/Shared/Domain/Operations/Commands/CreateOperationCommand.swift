@@ -6,6 +6,7 @@ public struct CreateOperationCommand: Sendable {
     public let title: String
     public let diagnosis: String
     public let surgeon: String
+    public let surgicalSite: String
     public let date: Date
     public let details: String
     public let assets: [OperationAsset]
@@ -25,6 +26,7 @@ public struct CreateOperationCommand: Sendable {
         title: String,
         diagnosis: String,
         surgeon: String,
+        surgicalSite: String,
         date: Date,
         details: String = "",
         assets: [OperationAsset] = [],
@@ -46,6 +48,7 @@ public struct CreateOperationCommand: Sendable {
         self.title = title.trimmingCharacters(in: .whitespaces)
         self.diagnosis = diagnosis.trimmingCharacters(in: .whitespaces)
         self.surgeon = surgeon.trimmingCharacters(in: .whitespaces)
+        self.surgicalSite = surgicalSite.trimmingCharacters(in: .whitespaces)
         self.date = date
         self.details = details
         self.assets = assets
@@ -60,6 +63,7 @@ public struct CreateOperationCommand: Sendable {
             title: title,
             diagnosis: diagnosis,
             surgeon: surgeon,
+            surgicalSite: surgicalSite,
             date: date,
             details: details,
             operationAssets: assets,

@@ -7,10 +7,12 @@ public struct PatientDisplayModel: Identifiable, Equatable, Sendable {
     public let id: String
     public let patientNumber: String
     public let name: String
-    public let gender: String
+    public let gender: Gender
+    public let genderText: String
     public let genderIcon: String
     public let age: Int
     public let ageText: String
+    public let birthDate: Date
     public let birthDateText: String
     public let operations: [OperationDisplayModel]
     public let operationCount: Int
@@ -22,10 +24,12 @@ public struct PatientDisplayModel: Identifiable, Equatable, Sendable {
         id: String,
         patientNumber: String,
         name: String,
-        gender: String,
+        gender: Gender,
+        genderText: String,
         genderIcon: String,
         age: Int,
         ageText: String,
+        birthDate: Date,
         birthDateText: String,
         operations: [OperationDisplayModel],
         operationCount: Int,
@@ -37,9 +41,11 @@ public struct PatientDisplayModel: Identifiable, Equatable, Sendable {
         self.patientNumber = patientNumber
         self.name = name
         self.gender = gender
+        self.genderText = genderText
         self.genderIcon = genderIcon
         self.age = age
         self.ageText = ageText
+        self.birthDate = birthDate
         self.birthDateText = birthDateText
         self.operations = operations
         self.operationCount = operationCount
@@ -53,6 +59,7 @@ public struct PatientDisplayModel: Identifiable, Equatable, Sendable {
         title: "고관절 전치환술",
         diagnosis: "퇴행성 관절염",
         surgeon: "Dr. 홍길동",
+        surgicalSite: "좌측 고관절",
         date: Date(),
         dateText: "2024.06.20",
         details: "환자는 70대 남성으로, 좌측 고관절의 심한 퇴행성 변화로 인해 전치환술을 시행하였습니다. 수술은 성공적으로 마무리되었으며, 현재 재활 치료 중입니다.",
@@ -66,6 +73,7 @@ public struct PatientDisplayModel: Identifiable, Equatable, Sendable {
         title: "간암 절제술",
         diagnosis: "간세포암",
         surgeon: "Dr. 이순신",
+        surgicalSite: "간",
         date: Date(),
         dateText: "2024.05.15",
         details: "환자는 70대 남성으로, 좌측 고관절의 심한 퇴행성 변화로 인해 전치환술을 시행하였습니다. 수술은 성공적으로 마무리되었으며, 현재 재활 치료 중입니다.",
@@ -79,10 +87,12 @@ public struct PatientDisplayModel: Identifiable, Equatable, Sendable {
         id: "sample-001",
         patientNumber: "12345678",
         name: "김철수",
-        gender: "남",
+        gender: .male,
+        genderText: "남성",
         genderIcon: "person.fill",
         age: 45,
         ageText: "45세",
+        birthDate: Date(),
         birthDateText: "1979.03.15",
         operations: [operation1, operation2],
         operationCount: 2,
