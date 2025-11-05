@@ -67,6 +67,14 @@ public final class HomeViewModel {
 
     public init() {}
 
+    /// 환자 편집을 위한 초기화
+    public init(patient: PatientDisplayModel) {
+        self.patientNumber = patient.patientNumber
+        self.name = patient.name
+        self.selectedGender = patient.gender
+        self.birthDate = patient.birthDate
+    }
+
     // MARK: - Actions
 
     public func load() async {

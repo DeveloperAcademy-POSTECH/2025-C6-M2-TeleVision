@@ -19,9 +19,13 @@ struct PatientInputView: View {
 
     let mode: PatientInputMode
 
+    init(mode: PatientInputMode = .create) {
+        self.mode = mode
+    }
+
     var body: some View {
         @Bindable var viewModel = viewModel
-        
+
         VStack(spacing: 0) {
             VStack(spacing: 0) {
                 if viewModel.state.isLoading {
@@ -63,7 +67,7 @@ struct PatientInputView: View {
     @ViewBuilder
     private var contentView: some View {
         @Bindable var viewModel = viewModel
-        
+
         VStack(spacing: 0) {
             PatientInputHeader(onDismiss: {
                 viewModel.isShowDismissAlert = true
@@ -80,13 +84,29 @@ struct PatientInputView: View {
 
             Spacer()
         }
-    }
-}
-
-extension PatientInputMode {
-    var isEditMode: Bool {
-        if case .edit = self { return true }
-        return false
+        .padding(.horizontal, 28)
+        .frame(width: 460, height: 680)
+        .glassBackgroundEffect(displayMode: .always)
+        .ornament(attachmentAnchor: .parent(.bottom)) {
+            OrnamentButton {
+                viewModel.handleSubmit(mode: mode)
+                appModel.refreshUI()
+                dismiss()
+            }
+            .systemName("square.and.arrow.down")
+            .content(mode == .create ? "추가하기" : "수정하기")
+        }
+        .alert("작성을 취소할까요?", isPresented: $viewModel.isShowDismissAlert) {
+            Button("네", role: .destructive) { dismiss() }
+            Button("아니요", role: .cancel) { viewModel.isShowDismissAlert = false }
+        } message: {
+            Text("지금까지 입력한 내용이\n모두 사라집니다")
+        }
+        .task {
+            if case .edit = mode {
+                await viewModel.loadPatientInfoToInputView()
+            }
+        }
     }
 }
 

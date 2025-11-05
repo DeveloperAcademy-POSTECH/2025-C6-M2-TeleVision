@@ -18,6 +18,18 @@ public extension Gender {
         case .female: return "person.fill"
         }
     }
+
+    /// Display text (M/F) 또는 한글(남/여)로부터 Gender를 생성
+    static func from(string: String) -> Gender {
+        switch string.uppercased() {
+        case "M", "남", "MALE":
+            return .male
+        case "F", "여", "FEMALE":
+            return .female
+        default:
+            return .male // 기본값
+        }
+    }
 }
 
 // MARK: - OperationStatus Display

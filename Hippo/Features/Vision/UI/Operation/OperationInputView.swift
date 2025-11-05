@@ -70,9 +70,9 @@ struct OperationInputView: View {
                 .content("저장하기")
             } else {
                 OrnamentButton {
-                    print("Update Operation")
                     Task {
                         await viewModel.updateOperation()
+                        appModel.refreshUI()
                         dismiss()
                     }
                 }
