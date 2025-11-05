@@ -20,7 +20,7 @@ struct SurgeryBottomMenu: View {
         VStack {
             PatientInfoHeader(
                 name: patient.name,
-                gender: patient.gender,
+                gender: patient.genderText,
                 ageText: patient.ageText
             )
             Spacer().frame(height: 6)
