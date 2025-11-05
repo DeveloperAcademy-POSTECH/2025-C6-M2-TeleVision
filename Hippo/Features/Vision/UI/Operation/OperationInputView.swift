@@ -74,6 +74,9 @@ struct OperationInputView: View {
                     Task {
                         await viewModel.updateOperation()
                         dismiss()
+                        // Trigger after dismiss to ensure proper reload order
+//                        try? await Task.sleep(nanoseconds: 100_000_000) // 0.1 second
+                        appModel.operations += 1
                     }
                 }
                 .systemName("square.and.arrow.down")

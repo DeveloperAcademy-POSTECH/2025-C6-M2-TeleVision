@@ -52,15 +52,33 @@ public final class OperationViewModel {
 
     init(patientID: String, operationID: String) {
         Task {
-            let operation = try await getOperation.run(
-                GetOperation.Input(patientID: patientID, operationID: operationID)
-            )
-            self.operationTitle = operation.title
-            self.operationDiagnosis = operation.diagnosis
-            self.operationSurgeon = operation.surgeon
-            self.operationDate = operation.date
-            self.operationDetail = operation.details
-            self.operation3DAssets = operation.operationAssets
+            do {
+                // Load patient
+                let patient = try await getPatient.run(patientID)
+                let patientDisplayModel = patient.toDisplayModel()
+                _state.patient = patientDisplayModel
+
+                // Load operation
+                let operation = try await getOperation.run(
+                    GetOperation.Input(patientID: patientID, operationID: operationID)
+                )
+
+                // Set UI properties
+                self.operationTitle = operation.title
+                self.operationDiagnosis = operation.diagnosis
+                self.operationSurgeon = operation.surgeon
+                self.operationDate = operation.date
+                self.operationDetail = operation.details
+                self.operation3DAssets = operation.operationAssets
+
+                // Set state
+                _state.operation = operation.toDisplayModel()
+
+                logger.debug("OperationViewModel initialized with patientID: \(patientID), operationID: \(operationID)")
+            } catch {
+                logger.error("Failed to initialize OperationViewModel: \(error.localizedDescription)")
+                _state.alert = "Failed to load operation data: \(error.localizedDescription)"
+            }
         }
     }
 
@@ -139,7 +157,13 @@ public final class OperationViewModel {
                     UpsertOperation.Input(patientID: patientID, command: command)
                 )
 
-                print("Operation updated successfully.")
+                // Reload operation from DB to update state
+                let updatedOperation = try await getOperation.run(
+                    GetOperation.Input(patientID: patientID, operationID: operationID)
+                )
+                _state.operation = updatedOperation.toDisplayModel()
+
+                logger.debug("Operation status updated and state refreshed successfully.")
             }
         } catch let validationError as ValidationError {
             _state.alert = validationError.localizedDescription
@@ -167,7 +191,13 @@ public final class OperationViewModel {
                     UpsertOperation.Input(patientID: patientID, command: command)
                 )
 
-                print("Operation updated successfully.")
+                // Reload operation from DB to update state
+                let updatedOperation = try await getOperation.run(
+                    GetOperation.Input(patientID: patientID, operationID: operationID)
+                )
+                _state.operation = updatedOperation.toDisplayModel()
+
+                logger.debug("Operation updated and state refreshed successfully.")
             }
         } catch let validationError as ValidationError {
             _state.alert = validationError.localizedDescription
