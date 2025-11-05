@@ -107,13 +107,11 @@ struct OperationDetailView: View {
         .environment(viewModel)
         .task {
             await viewModel.load(patientID: patientID, operationID: operationID)
-            print("Loaded operation detail for operationID: \(operationID)")
             isLoaded = true
         }
         .onChange(of: appModel.refreshID) {
             Task {
                 await viewModel.load(patientID: patientID, operationID: operationID)
-                print("Reloaded operation detail after update")
             }
         }
         .sheet(isPresented: $viewModel.isShowingEditInputView) {

@@ -7,6 +7,7 @@
 
 import SwiftUI
 internal import UniformTypeIdentifiers
+import os.log
 
 /// 파일 첨부 영역 전체를 관리하는 Organism 컴포넌트
 struct FileAttachmentSection: View {
@@ -46,16 +47,15 @@ struct FileAttachmentSection: View {
                 if let newAsset = OperationAsset(url: url) {
                     return newAsset
                 } else {
-                    print("Failed to create bookmark for URL: \(url.lastPathComponent)")
+                    Logger().log("Failed to create bookmark for URL: \(url.lastPathComponent)")
                     return nil
                 }
             }
 
             selectedAssets.append(contentsOf: newAssets)
-            print("File import succeeded: \(newAssets.count) assets bookmarked.")
 
         case let .failure(error):
-            print("File import failed: \(error.localizedDescription)")
+            Logger().log("File import failed: \(error.localizedDescription)")
         }
     }
 }

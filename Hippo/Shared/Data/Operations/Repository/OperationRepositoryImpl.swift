@@ -57,8 +57,6 @@ public actor OperationRepositoryImpl: OperationRepository {
         // Patient 타임스탬프 업데이트 및 저장
         let updatedPatient = await patient.withUpdatedTimestamp()
         _ = try await patientRepository.upsertPatient(updatedPatient)
-
-        print("✏️ Operation \(operation.id) updated for Patient \(patientID)")
     }
 
     public func deleteOperation(id: String, fromPatientID patientID: String) async throws {
