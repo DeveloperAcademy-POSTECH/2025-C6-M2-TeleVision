@@ -8,13 +8,20 @@
 import SwiftUI
 
 struct OperationCardView: View {
+    @State var isCardCollapsed: Bool = false
+    
     var body: some View {
         VStack(alignment: .leading) {
             HStack {
                 Button {
-                    
+                    isCardCollapsed.toggle()
                 } label: {
-                    Image(systemName: "chevron.up")
+                    if !isCardCollapsed {
+                        Image(systemName: "chevron.up")
+                    } else {
+                        Image(systemName: "chevron.down")
+                    }
+                   
                 }
                 .padding(.horizontal)
                 
@@ -44,71 +51,72 @@ struct OperationCardView: View {
                 }
             }
             
-            Divider()
-            
-            //환자정보/집도의/수술부위/진단(병명)
-            HStack {
-                VStack(alignment: .leading) {
-                    Text("환자 정보")
-                        .padding(.vertical, 4)
-                    Text("이름 성별 / 나이")
+            if !isCardCollapsed {
+                Divider()
+                
+                //환자정보/집도의/수술부위/진단(병명)
+                HStack {
+                    VStack(alignment: .leading) {
+                        Text("환자 정보")
+                            .padding(.vertical, 4)
+                        Text("이름 성별 / 나이")
+                    }
+                    
+                    Spacer()
+                    
+                    VStack(alignment: .leading) {
+                        Text("집도의")
+                            .padding(.vertical, 4)
+                        Text("이름")
+                    }
+                    
+                    Spacer()
+                    
+                    VStack(alignment: .leading) {
+                        Text("수술 부위")
+                            .padding(.vertical, 4)
+                        Text("abd")
+                    }
+                    
+                    Spacer()
+                    
+                    VStack(alignment: .leading) {
+                        Text("진단(병명)")
+                            .padding(.vertical, 4)
+                        Text("간암")
+                    }
+                    
+                    Spacer()
                 }
                 
-                Spacer()
+                Divider()
                 
+                //상세 내용
                 VStack(alignment: .leading) {
                     Text("집도의")
                         .padding(.vertical, 4)
-                    Text("이름")
+                    Text("상세 내용")
                 }
                 
-                Spacer()
+                Divider()
                 
                 VStack(alignment: .leading) {
-                    Text("수술 부위")
+                    Text("3D 모델 파일")
                         .padding(.vertical, 4)
-                    Text("abd")
-                }
-                
-                Spacer()
-                
-                VStack(alignment: .leading) {
-                    Text("진단(병명)")
-                        .padding(.vertical, 4)
-                    Text("간암")
-                }
-                
-                Spacer()
-            }
-            
-            Divider()
-            
-            //상세 내용
-            VStack(alignment: .leading) {
-                Text("집도의")
-                    .padding(.vertical, 4)
-                Text("상세 내용")
-            }
-            
-            Divider()
-            
-            VStack(alignment: .leading) {
-                Text("3D 모델 파일")
-                    .padding(.vertical, 4)
-                
-                ScrollView(.horizontal, showsIndicators: false) {
-                    HStack(spacing: 12) {
-                        //TODO: 3D 모델 파일로 UI 테스트 필요
-                        //TODO: 마우스 호버 시, 배경 Dim처리 + 삭제 버튼 활성화
-                        ForEach(0..<10) { index in
-                            Rectangle()
-                                .frame(width: 50, height: 50)
+                    
+                    ScrollView(.horizontal, showsIndicators: false) {
+                        HStack(spacing: 12) {
+                            //TODO: 3D 모델 파일로 UI 테스트 필요
+                            //TODO: 마우스 호버 시, 배경 Dim처리 + 삭제 버튼 활성화
+                            ForEach(0..<10) { index in
+                                Rectangle()
+                                    .frame(width: 50, height: 50)
+                            }
                         }
+                        .padding(.vertical)
                     }
-                    .padding(.vertical)
                 }
             }
-            
         }
         .padding()
         .background(

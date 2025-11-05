@@ -8,8 +8,11 @@
 import SwiftUI
 
 struct TodaysSurgeryView: View {
+    var mockData = HomeMockDataModel.mockList
+    var todaysOperationSample = OperationMockDataModel.todayOperationSamples
+    
     var body: some View {
-        Text("오늘의 수술이 없습니다.")
+        OperationListView(operationMockData: todaysOperationSample)
     }
 }
 
