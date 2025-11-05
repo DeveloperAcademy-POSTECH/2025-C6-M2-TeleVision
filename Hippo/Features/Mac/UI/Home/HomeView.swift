@@ -41,7 +41,7 @@ struct HomeView: View {
                                 Text(data.gender)
                                 Text("\(data.age)세")
                             }
-                            //TODO: 호버 시 편집 버튼 추가
+                            //TODO: 호버 시 편집 버튼 띄우기 추가
                         }
                     }
                 } header: {
