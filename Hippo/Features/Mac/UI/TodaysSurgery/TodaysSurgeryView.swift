@@ -23,8 +23,10 @@ struct TodaysSurgeryView: View {
 //        let todaysOperations = OperationMockDataModel.patientOperationSamples
 //            .filter { $0.date >= startOfToday && $0.date < startOfTomorrow }
 //            .sorted { $0.date < $1.date }
+        
+        let operations = viewModel.todayOperations.map { $0.operation }
 
-        return OperationListView(operations: [], onDelete: { _ in })
+        return OperationListView(operations: operations, onDelete: { _ in })
     }
 }
 
