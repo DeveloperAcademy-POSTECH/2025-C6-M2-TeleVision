@@ -10,7 +10,6 @@ import SwiftUI
 struct HomeView: View {
     // ViewModel 초기화
     @State private var rootVM = MacRootViewModel()
-    @State private var selectedPatientID: String?
     
     // Mock 데이터 (UI 개발용 - 나중에 rootVM.homeViewModel.state.items로 교체)
 //    var mockData = HomeMockDataModel.mockList
@@ -18,15 +17,11 @@ struct HomeView: View {
 //    private var selectedPatient: HomeMockDataModel? { mockData.first { $0.id == selectedPatientID } }
     
     var body: some View {
-        @Bindable var rootVM = self.rootVM
-        var isTodaysSurgerySelected = rootVM.navigationState.isTodaysSurgerySelected
-        let patients = rootVM.homeViewModel.state.items
         
         NavigationSplitView {
             //오늘의 수술 버튼
             Button {
-                isTodaysSurgerySelected = true
-                selectedPatientID = nil
+                rootVM.selectTodaysSurgery()
             } label: {
                 Text("Today's Surgery")
             }
@@ -34,13 +29,12 @@ struct HomeView: View {
                 //Patient List 타이틀 위해서 section 추가함
                 Section {
                     //TODO: 환자 리스트에 데이터가 없는 경우
+                    
                     //환자 리스트에 데이터가 있는 경우
-
-                    ForEach(patients) { data in
+                    ForEach(rootVM.loadedPatients, id: \.id) { data in
                         HStack {
                             Button {
-                                isTodaysSurgerySelected = false
-                                selectedPatientID = data.id
+                                rootVM.selectPatient(data.id)
                             } label: {
                                 Text(data.patientNumber)
                                 Text(data.name)
@@ -58,8 +52,7 @@ struct HomeView: View {
                     
                         //환자 추가 버튼
                         Button {
-                            //TODO: PatientInputView 구현
-                            rootVM.navigationState.isPresentingPatientInput = true
+                            rootVM.openPatientCreateSheet()
                         } label: {
                             Image(systemName: "person.badge.plus")
                         }
@@ -67,22 +60,22 @@ struct HomeView: View {
                 }
             }
         } detail: {
-            if isTodaysSurgerySelected {
+            if rootVM.isTodaysSurgerySelected {
                 TodaysSurgeryView(viewModel: rootVM.homeViewModel)
                     .navigationTitle("Today's Surgery")
             } else {
                 PatientDetailView(
                     viewModel: PatientDetailViewModel(rootVM: rootVM),
-                    patientId: selectedPatientID ?? "",
-                    isTodaysSurgerySelected: rootVM.navigationState.isTodaysSurgerySelected
+                    selectedPatient: rootVM.selectedPatient,
+                    isTodaysSurgerySelected: rootVM.isTodaysSurgerySelected
                 )
             }
         }
         .toolbar {
-            if !rootVM.navigationState.isTodaysSurgerySelected {
+            if !rootVM.isTodaysSurgerySelected {
                 Button {
                     //TODO: 수술 생성 기능 구현
-                    rootVM.navigationState.isPresentingOperationInput = true
+                    rootVM.openOperationCreateSheet()
                 } label: {
                     Label("Create", systemImage: "plus")
                 }
@@ -116,8 +109,16 @@ struct HomeView: View {
             )
         }
         .task {
-            // 데이터 로드
+            // 데이터 로드 (비어 있으면 목업 주입 후 실제 로드)
             await rootVM.load()
+            
+            // 목업 데이터 주입
+            if rootVM.homeViewModel.state.items.isEmpty {
+                rootVM.homeViewModel.state.items = [
+                    PatientDisplayModel.MockData,
+                ]
+            }
+          
         }
     }
 }
@@ -125,3 +126,4 @@ struct HomeView: View {
 #Preview {
     RootView()
 }
+

@@ -14,9 +14,11 @@ struct PatientDetailView: View {
     // Mock 데이터 (UI 개발용)
     var mockData = HomeMockDataModel.mockList
 
-    private var selectedPatient: HomeMockDataModel? { mockData.first { $0.id == patientId } }
+    var selectedPatient: PatientDisplayModel?
     
-    let patientId: HomeMockDataModel.ID
+//    private var selectedPatientId: HomeMockDataModel? { mockData.first { $0.id == patientId } }
+    
+//    let patientId: HomeMockDataModel.ID
     
     var isTodaysSurgerySelected: Bool
     
@@ -42,7 +44,7 @@ struct PatientDetailView: View {
     let rootVM = MacRootViewModel()
     PatientDetailView(
         viewModel: PatientDetailViewModel(rootVM: rootVM),
-        patientId: "",
+//        patientId: "",
         isTodaysSurgerySelected: isTodaysSurgery
     )
 }
