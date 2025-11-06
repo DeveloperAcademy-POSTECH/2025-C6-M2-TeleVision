@@ -14,8 +14,11 @@
 		0667A5512EB8A34300D7BDF3 /* HomeMockDataModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0667A5502EB8A33400D7BDF3 /* HomeMockDataModel.swift */; };
 		06ADD9CD2EB98B3D0013665B /* OperationListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06ADD9CC2EB98B3D0013665B /* OperationListView.swift */; };
 		06ADD9D22EB98E730013665B /* PatientInputView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06ADD9D12EB98E730013665B /* PatientInputView.swift */; };
+<<<<<<< HEAD
 		06BF173C2EBB25AF00996C86 /* OperationMockDataModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06BF173B2EBB25AF00996C86 /* OperationMockDataModel.swift */; };
 		06BF173E2EBB27C700996C86 /* OperationCardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06BF173D2EBB27C700996C86 /* OperationCardView.swift */; };
+=======
+>>>>>>> develop
 		06F8CA722EB9D49400926483 /* OperationInputView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06F8CA712EB9D49400926483 /* OperationInputView.swift */; };
 		06F8CAC12EBA2DF100926483 /* DevicePreview.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06F8CAC02EBA2DF100926483 /* DevicePreview.swift */; };
 		06F8CAC32EBA459B00926483 /* StreamingInspectorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06F8CAC22EBA459B00926483 /* StreamingInspectorView.swift */; };
@@ -129,6 +132,11 @@
 		14DE51542EB771420027D9A0 /* HIPPO.icon in Resources */ = {isa = PBXBuildFile; fileRef = 14DE51512EB771420027D9A0 /* HIPPO.icon */; };
 		14DE51562EB779960027D9A0 /* EmptyPatientView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 14DE51552EB7798B0027D9A0 /* EmptyPatientView.swift */; };
 		14F6B0342EAAC73F003F28EB /* ImmersiveSurgeryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 14F6B0332EAAC73F003F28EB /* ImmersiveSurgeryView.swift */; };
+		2581FCE52EBBC6870059678D /* OperationInputState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2581FCE42EBBC6870059678D /* OperationInputState.swift */; };
+		2581FCE92EBBC6FA0059678D /* MacNavigationState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2581FCE62EBBC6FA0059678D /* MacNavigationState.swift */; };
+		2581FCEA2EBBC6FA0059678D /* MacRootViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2581FCE72EBBC6FA0059678D /* MacRootViewModel.swift */; };
+		2581FCED2EBBC76D0059678D /* PatientDetailViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2581FCEB2EBBC76D0059678D /* PatientDetailViewModel.swift */; };
+		2581FCEE2EBBC76D0059678D /* PatientInputState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2581FCEC2EBBC76D0059678D /* PatientInputState.swift */; };
 		25E78B602EB90D4600D8CAD2 /* OperationStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = 25E78B5D2EB90D4600D8CAD2 /* OperationStatus.swift */; };
 		25E78B612EB90D4600D8CAD2 /* Operation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 25E78B542EB90D4600D8CAD2 /* Operation.swift */; };
 		25E78B622EB90D4600D8CAD2 /* OperationAsset.swift in Sources */ = {isa = PBXBuildFile; fileRef = 25E78B552EB90D4600D8CAD2 /* OperationAsset.swift */; };
@@ -348,8 +356,11 @@
 		0667A5502EB8A33400D7BDF3 /* HomeMockDataModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeMockDataModel.swift; sourceTree = "<group>"; };
 		06ADD9CC2EB98B3D0013665B /* OperationListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OperationListView.swift; sourceTree = "<group>"; };
 		06ADD9D12EB98E730013665B /* PatientInputView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PatientInputView.swift; sourceTree = "<group>"; };
+<<<<<<< HEAD
 		06BF173B2EBB25AF00996C86 /* OperationMockDataModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OperationMockDataModel.swift; sourceTree = "<group>"; };
 		06BF173D2EBB27C700996C86 /* OperationCardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OperationCardView.swift; sourceTree = "<group>"; };
+=======
+>>>>>>> develop
 		06F8CA712EB9D49400926483 /* OperationInputView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OperationInputView.swift; sourceTree = "<group>"; };
 		06F8CAC02EBA2DF100926483 /* DevicePreview.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DevicePreview.swift; sourceTree = "<group>"; };
 		06F8CAC22EBA459B00926483 /* StreamingInspectorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StreamingInspectorView.swift; sourceTree = "<group>"; };
@@ -415,6 +426,11 @@
 		14DE51512EB771420027D9A0 /* HIPPO.icon */ = {isa = PBXFileReference; lastKnownFileType = folder.iconcomposer.icon; path = HIPPO.icon; sourceTree = "<group>"; };
 		14DE51552EB7798B0027D9A0 /* EmptyPatientView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmptyPatientView.swift; sourceTree = "<group>"; };
 		14F6B0332EAAC73F003F28EB /* ImmersiveSurgeryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImmersiveSurgeryView.swift; sourceTree = "<group>"; };
+		2581FCE42EBBC6870059678D /* OperationInputState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OperationInputState.swift; sourceTree = "<group>"; };
+		2581FCE62EBBC6FA0059678D /* MacNavigationState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MacNavigationState.swift; sourceTree = "<group>"; };
+		2581FCE72EBBC6FA0059678D /* MacRootViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MacRootViewModel.swift; sourceTree = "<group>"; };
+		2581FCEB2EBBC76D0059678D /* PatientDetailViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PatientDetailViewModel.swift; sourceTree = "<group>"; };
+		2581FCEC2EBBC76D0059678D /* PatientInputState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PatientInputState.swift; sourceTree = "<group>"; };
 		25E78B542EB90D4600D8CAD2 /* Operation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Operation.swift; sourceTree = "<group>"; };
 		25E78B552EB90D4600D8CAD2 /* OperationAsset.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OperationAsset.swift; sourceTree = "<group>"; };
 		25E78B562EB90D4600D8CAD2 /* OperationRecording.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OperationRecording.swift; sourceTree = "<group>"; };
@@ -548,6 +564,8 @@
 		0617C8FE2EB8BBCB003B26E8 /* Patient */ = {
 			isa = PBXGroup;
 			children = (
+				2581FCEB2EBBC76D0059678D /* PatientDetailViewModel.swift */,
+				2581FCEC2EBBC76D0059678D /* PatientInputState.swift */,
 				0667A54B2EB8833D00D7BDF3 /* PatientDetailView.swift */,
 				06ADD9D12EB98E730013665B /* PatientInputView.swift */,
 			);
@@ -864,6 +882,15 @@
 				14DE51492EB740710027D9A0 /* EmptyTodaySurgeryView.swift */,
 			);
 			path = Components;
+			sourceTree = "<group>";
+		};
+		2581FCE82EBBC6FA0059678D /* Root */ = {
+			isa = PBXGroup;
+			children = (
+				2581FCE62EBBC6FA0059678D /* MacNavigationState.swift */,
+				2581FCE72EBBC6FA0059678D /* MacRootViewModel.swift */,
+			);
+			path = Root;
 			sourceTree = "<group>";
 		};
 		25E78B522EB90D4600D8CAD2 /* Commands */ = {
@@ -1192,12 +1219,24 @@
 		C050AA182EA80E6200352314 /* UI */ = {
 			isa = PBXGroup;
 			children = (
+<<<<<<< HEAD
 				C02FFA532E9FFF6F00F16742 /* RootView.swift */,
 				0667A54F2EB8A2F900D7BDF3 /* Home */,
+=======
+				2581FCE82EBBC6FA0059678D /* Root */,
+				2581FCE42EBBC6870059678D /* OperationInputState.swift */,
+				06ADD9CE2EB98DA40013665B /* OperationList */,
+>>>>>>> develop
 				0617C8FE2EB8BBCB003B26E8 /* Patient */,
 				0617C8FD2EB8BBC0003B26E8 /* TodaysSurgery */,
 				06ADD9CE2EB98DA40013665B /* Operation */,
 				0617C8FC2EB8BB9F003B26E8 /* StreamingControl */,
+<<<<<<< HEAD
+=======
+				0667A54F2EB8A2F900D7BDF3 /* Home */,
+				C02FFA532E9FFF6F00F16742 /* RootView.swift */,
+				06F8CA712EB9D49400926483 /* OperationInputView.swift */,
+>>>>>>> develop
 				C04678462EA00C2700D160DA /* Patients_Legacy */,
 			);
 			path = UI;
@@ -1745,6 +1784,8 @@
 				144254372EAA9FF000583CC3 /* OperationState.swift in Sources */,
 				C0F97AC92EA41D4B0063E159 /* SDOperationAsset.swift in Sources */,
 				144254692EAAC61F00583CC3 /* WindowIDs.swift in Sources */,
+				2581FCE92EBBC6FA0059678D /* MacNavigationState.swift in Sources */,
+				2581FCEA2EBBC6FA0059678D /* MacRootViewModel.swift in Sources */,
 				C0F97ACA2EA41D4B0063E159 /* PatientLocalDataSourceLegacyJSON.swift in Sources */,
 				C0F97ADB2EA420E10063E159 /* DataDependencies.swift in Sources */,
 				25E78BB42EB92A2E00D8CAD2 /* UpdateOperationCommand.swift in Sources */,
@@ -1753,6 +1794,8 @@
 				C0F97AAA2EA401160063E159 /* PatientDisplayModel.swift in Sources */,
 				1446FBB12EAE6C23000BCF61 /* RecordButton.swift in Sources */,
 				C0F97B2A2EA439080063E159 /* UpdatePatient.swift in Sources */,
+				2581FCED2EBBC76D0059678D /* PatientDetailViewModel.swift in Sources */,
+				2581FCEE2EBBC76D0059678D /* PatientInputState.swift in Sources */,
 				1494DE842EA73229000CD284 /* AssetImageCard.swift in Sources */,
 				C0F97AAB2EA401160063E159 /* OperationDisplayModel.swift in Sources */,
 				1494DEA52EA7C851000CD284 /* Date+Extension.swift in Sources */,
@@ -1811,6 +1854,7 @@
 				25E78B662EB90D4600D8CAD2 /* OperationStatus.swift in Sources */,
 				25E78B672EB90D4600D8CAD2 /* Operation.swift in Sources */,
 				25E78B682EB90D4600D8CAD2 /* OperationAsset.swift in Sources */,
+				2581FCE52EBBC6870059678D /* OperationInputState.swift in Sources */,
 				25E78B692EB90D4600D8CAD2 /* OperationRecording.swift in Sources */,
 				25E78B6A2EB90D4600D8CAD2 /* OperationError.swift in Sources */,
 				25E78B6B2EB90D4600D8CAD2 /* OperationAssetExtension.swift in Sources */,
