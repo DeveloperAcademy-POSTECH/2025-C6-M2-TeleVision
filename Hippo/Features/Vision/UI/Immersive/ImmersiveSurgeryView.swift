@@ -11,26 +11,25 @@ import SwiftUI
 struct ImmersiveSurgeryView: View {
     @Environment(\.dismissImmersiveSpace) private var dismissImmersiveSpace
     @Environment(\.openWindow) private var openWindow
-    
-    // 테스트 용
     @Environment(\.dismissWindow) private var dismissWindow
     
     let patientID: String
     let operationID: String
     
     @State private var runtime: ImmersiveSceneRuntime
-    @State private var viewModel: OperationViewModel
+    @State private var dataViewModel: OperationViewModel
     @State private var opacityViewModel: OpacityControlViewModel
+    @State private var immersiveViewModel: ImmersiveViewModel
     
     private var patient: PatientDisplayModel {
-        guard let patient = viewModel.state.patient else {
+        guard let patient = dataViewModel.state.patient else {
             return PatientDisplayModel.MockData
         }
         return patient
     }
     
     private var operation: OperationDisplayModel {
-        guard let operation = viewModel.state.operation else {
+        guard let operation = dataViewModel.state.operation else {
             return OperationDisplayModel.MockData
         }
         return operation
@@ -43,9 +42,9 @@ struct ImmersiveSurgeryView: View {
         
         let runtime = ImmersiveSceneRuntime()
         self._runtime = State(initialValue: runtime)
-        
+        self._immersiveViewModel = State(initialValue: ImmersiveViewModel())
         self._opacityViewModel = State(initialValue: OpacityControlViewModel(runtime: runtime))
-        self._viewModel = State(initialValue: OperationViewModel())
+        self._dataViewModel = State(initialValue: OperationViewModel())
     }
     
     var body: some View {
@@ -54,81 +53,89 @@ struct ImmersiveSurgeryView: View {
         } attachments: {
             // 상단 토글 아이콘
             Attachment(id: AttachmentIDs.topToggleButton) {
-                MenuToggleButton(isActive: viewModel.isMenuActive) {
+                MenuToggleButton(isActive: immersiveViewModel.isMenuActive) {
                     // 메뉴 토글
-                    viewModel.isMenuActive.toggle()
+                    immersiveViewModel.isMenuActive.toggle()
                 }
             }
             // 하단 메뉴 바
             Attachment(id: AttachmentIDs.bottomMenuBar) {
                 SurgeryBottomMenu(
                     patient: patient,
-                    isEndoscopicActive: $viewModel.isEndoscopicActive,
+                    isEndoscopicActive: $immersiveViewModel.isEndoscopicActive,
                     isAssetListOpen:
-                        $viewModel.isShowingAssetListView,
-                    isVisible: viewModel.isMenuActive,
-                    onOpenEntityPanel: { viewModel.isShowingAssetListView = true },
-                    onRecord: viewModel.recordPassThroughVideo,
-                    onFinishSurgery: { viewModel.isShowingFinishAlert = true }
+                        $immersiveViewModel.isShowingAssetListView,
+                    isVisible: immersiveViewModel.isMenuActive,
+                    onOpenEntityPanel: { immersiveViewModel.isShowingAssetListView = true },
+                    onRecord: immersiveViewModel.recordPassThroughVideo,
+                    onFinishSurgery: { immersiveViewModel.isShowingFinishAlert = true }
                 )
             }
-            // 수술 나가기 Alert
-            Attachment(id: AttachmentIDs.finishSurgeryAlert) {
-                HippoAlertView(
-                    isPresented: $viewModel.isShowingFinishAlert
-                ) {
-                    Task {
-                        await dismissImmersiveSpace()
-                        openWindow(id: WindowIDs.home)
-                    }
-                }
-            }
-            // 3D 애셋 생성 (AssetListView)
-            Attachment(id: AttachmentIDs.assetListView) {
-                AssetListView(
-                    isPresented: $viewModel.isShowingAssetListView,
-                    operation: operation,
-                    onCreateEntity: { url in
-                        Task {
-                            await runtime.placeEntity(url: url)
-                            viewModel.isShowingAssetListView = false
-                        }
-                    }
-                )
-            }
-            // Opacity Control Panel
-            Attachment(id: AttachmentIDs.opacityControlPanel) {
-                OpacityControlPanel(viewModel: opacityViewModel)
-            }
+//            // 수술 나가기 Alert
+//            Attachment(id: AttachmentIDs.finishSurgeryAlert) {
+//                HippoAlertView(
+//                    isPresented: $dataViewModel.isShowingFinishAlert
+//                ) {
+//                    Task {
+//                        await dismissImmersiveSpace()
+//                        openWindow(id: WindowIDs.home)
+//                    }
+//                }
+//            }
+//            // 3D 애셋 생성 (AssetListView)
+//            Attachment(id: AttachmentIDs.assetListView) {
+//                AssetListView(
+//                    isPresented: $dataViewModel.isShowingAssetListView,
+//                    operation: operation,
+//                    onCreateEntity: { url in
+//                        Task {
+//                            await runtime.placeEntity(url: url)
+//                            dataViewModel.isShowingAssetListView = false
+//                        }
+//                    }
+//                )
+//            }
+//            // Opacity Control Panel
+//            Attachment(id: AttachmentIDs.opacityControlPanel) {
+//                OpacityControlPanel(viewModel: opacityViewModel)
+//            }
         }
+        .environment(runtime)
+        .environment(dataViewModel)
+        .environment(immersiveViewModel)
+        .environment(opacityViewModel)
+        .environment(WindowController(
+            dismissSpace: dismissImmersiveSpace,
+            openWindow: openWindow,
+            dismissWindow: dismissWindow)
+        )
         .task {
-            await viewModel.load(patientID: patientID, operationID: operationID)
-            // 테스트 용
-            Task {
-                dismissWindow(id: WindowIDs.home)
-            }
+            await dataViewModel.load(patientID: patientID, operationID: operationID)
+            dismissWindow(id: WindowIDs.home)
         }
-        .onChange(of: viewModel.isMenuActive) {
-            if viewModel.isMenuActive {
-                ARSessionController.shared.runARSession()
-                
-            } else {
-                ARSessionController.shared.stopARSession()
-            }
-            runtime.setOpacityPanelVisibility(isVisible: viewModel.isMenuActive)
-        }
-        .onChange(of: viewModel.isShowingAssetListView) { _, isVisible in
-            runtime.setAssetListVisibility(isVisible: isVisible)
-            runtime.setOpacityPanelVisibility(isVisible: !isVisible)
-        }
-        .onChange(of: viewModel.isShowingFinishAlert) { _, isVisible in
-            runtime.setFinishAlertVisibility(isVisible: isVisible)
-        }
-        .onChange(of: runtime.selectedEntity) { _, newValue in
-            runtime.setOpacityPanelVisibility(isVisible: newValue != nil)
-        }
-        .onAppear { runtime.start() }
-        .onDisappear { runtime.stop() }
+        
+        
+//        .onChange(of: dataViewModel.isMenuActive) {
+//            if dataViewModel.isMenuActive {
+//                ARSessionController.shared.runARSession()
+//                
+//            } else {
+//                ARSessionController.shared.stopARSession()
+//            }
+//            runtime.setOpacityPanelVisibility(isVisible: dataViewModel.isMenuActive)
+//        }
+//        .onChange(of: dataViewModel.isShowingAssetListView) { _, isVisible in
+//            runtime.setAssetListVisibility(isVisible: isVisible)
+//            runtime.setOpacityPanelVisibility(isVisible: !isVisible)
+//        }
+//        .onChange(of: dataViewModel.isShowingFinishAlert) { _, isVisible in
+//            runtime.setFinishAlertVisibility(isVisible: isVisible)
+//        }
+//        .onChange(of: runtime.selectedEntity) { _, newValue in
+//            runtime.setOpacityPanelVisibility(isVisible: newValue != nil)
+//        }
+//        .onAppear { runtime.start() }
+//        .onDisappear { runtime.stop() }
     }
 }
 
