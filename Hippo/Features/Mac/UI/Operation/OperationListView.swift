@@ -9,19 +9,22 @@ import SwiftUI
 
 struct OperationListView: View {//TODO: 실제 데이터 연결 시에는 환자정보도 같이 가져와야 할 듯?
     
-    var operationMockData: [OperationMockDataModel]
+//    var operationMockData: [OperationDisplayModel] //삭제 예정
+    var operations: [OperationDisplayModel]
+    let onDelete: (OperationDisplayModel) -> Void //TODO: 이거 맞는지 확인 필요
+    
     @State var now = Date()
     
     var body: some View {
-        if operationMockData.isEmpty {
+        if operations.isEmpty {
             Text("입력된 수술이 없습니다.")
                 .padding()
         } else {
             // 오늘을 기준으로 수술 데이터 나누기
-            let upcoming = operationMockData //TODO: 실제 데이터 배열과 연결하기
+            let upcoming = operations //TODO: 실제 데이터 배열과 연결하기
                 .filter { $0.date > now }
                 .sorted { $0.date < $1.date }
-            let finished = operationMockData //TODO: 실제 데이터 배열과 연결하기
+            let finished = operations //TODO: 실제 데이터 배열과 연결하기
                 .filter { $0.date <= now }
                 .sorted { $0.date > $1.date }
             
@@ -65,3 +68,4 @@ struct OperationListView: View {//TODO: 실제 데이터 연결 시에는 환자
 //#Preview {
 //    OperationListView(operationMockData:)
 //}
+
