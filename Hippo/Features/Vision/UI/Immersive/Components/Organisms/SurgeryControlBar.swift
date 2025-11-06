@@ -9,7 +9,8 @@ import SwiftUI
 
 struct SurgeryControlBar: View {
     @Environment(ImmersiveViewModel.self) var immersiveViewModel
-    
+    @Environment(WindowController.self) var windowController
+
     var body: some View {
         @Bindable var immersiveViewModel = immersiveViewModel
         
@@ -52,6 +53,18 @@ struct SurgeryControlBar: View {
             Circle()
                 .fill(.clear)
                 .frame(width: 80, height: 80)
+        }
+        .alert("수술을 종료하시겠습니까?", isPresented: $immersiveViewModel.isShowingFinishAlert) {
+            Button("종료", role: .destructive) {
+                Task {
+                    await windowController.finishSurgeryAndDismissSpace()
+                }
+            }
+            Button("취소", role: .cancel) {
+                immersiveViewModel.isShowingFinishAlert = false
+            }
+        } message : {
+            Text("나가면 다시 돌아올 수는 있지만, 현재 상태가 초기화될 수 있습니다.")
         }
     }
 }

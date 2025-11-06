@@ -8,6 +8,8 @@
 import SwiftUI
 
 struct MenuToggleButton: View {
+    
+    @Environment(ImmersiveViewModel.self) private var immersiveViewModel
     let isActive: Bool
     let action: () -> Void
 
@@ -15,7 +17,7 @@ struct MenuToggleButton: View {
         Image("TopButton")
             .resizable()
             .frame(width: 120, height: 120)
-            .opacity(isActive ? 1.0 : 0.25)
+            .opacity(immersiveViewModel.isMenuActive ? 1.0 : 0.25)
             .onTapGesture(perform: action)
     }
 }

@@ -83,8 +83,9 @@ struct OpacityControlPanel: View {
         .onChange(of: runtime.selectedEntity) {
             manager.reloadLayers()
         }
-//        .frame(width: 658, height: 522)
         .padding()
-//        .glassBackgroundEffect()
+        .onDisappear {
+            runtime.selectedEntity = nil
+        }
     }
 }

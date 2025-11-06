@@ -42,7 +42,7 @@ struct ImmersiveSurgeryView: View {
             Attachment(id: AttachmentIDs.topToggleButton) {
                 MenuToggleButton(isActive: immersiveViewModel.isMenuActive) {
                     // 메뉴 토글
-                    immersiveViewModel.isMenuActive.toggle()
+                    immersiveViewModel.toggleMenu(windowController: windowController)
                 }
             }
             
@@ -53,41 +53,29 @@ struct ImmersiveSurgeryView: View {
         }
         .task {
             await dataViewModel.load(patientID: patientID, operationID: operationID)
-            dismissWindow(id: WindowIDs.home)
-            openWindow(id: WindowIDs.surgeryBottomMenu)
+            windowController.dismissWindow(id: WindowIDs.home)
+            windowController.openWindow(id: WindowIDs.surgeryBottomMenu)
         }
         .onChange(of: immersiveViewModel.isShowingAssetListView) { _, isVisible in
             runtime.setAssetListVisibility(isVisible: isVisible)
         }
         .onChange(of: runtime.selectedEntity) { _, newValue in
-            if newValue != nil {
-                windowController.openWindow(id: WindowIDs.opacityControlPanel)
+            if newValue != nil && immersiveViewModel.isMenuActive { // 컨트롤러 on 일 때만 열림
+                // 창이 켜져 있으면 정보만 재로드 (OpactiyControlPanel에서 처리됨)
+                if !immersiveViewModel.isOpacityControlPanelOpen {
+                    // 창이 꺼져 있으면 새로운 창 띄우기
+                    windowController.openWindow(id: WindowIDs.opacityControlPanel)
+                }
             } else {
+                // selectedEntity가 nil이 되거나, 메뉴가 꺼지면 창 닫기
                 windowController.dismissWindow(id: WindowIDs.opacityControlPanel)
             }
         }
-        .alert("수술을 종료하시겠습니까?", isPresented: $immersiveViewModel.isShowingFinishAlert) {
-            Button("종료", role: .destructive) {
-                Task {
-                    await windowController.finishSurgeryAndDismissSpace()
-                }
-            }
-            Button("취소", role: .cancel) { }
-        } message : {
-            Text("나가면 다시 돌아올 수는 있지만, 현재 상태가 초기화될 수 있습니다.")
-        }
+        
         .onAppear { runtime.start() }
         .onDisappear {
             runtime.stop()
-            windowController.dismissWindow(id: WindowIDs.opacityControlPanel)
-            
         }
     }
 }
 
-//#Preview {
-//    ImmersiveSurgeryView(
-//        patientID: PatientDisplayModel.MockData.id,
-//        operationID: OperationDisplayModel.MockData.id
-//    )
-//}

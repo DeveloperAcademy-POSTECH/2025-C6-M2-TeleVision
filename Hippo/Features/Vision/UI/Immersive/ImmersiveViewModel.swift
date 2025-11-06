@@ -15,10 +15,14 @@ final class ImmersiveViewModel {
     public var isEndoscopicActive: Bool = false
     public var isShowingFinishAlert: Bool = false
     public var isShowingAssetListView: Bool = false
+    
+    // MARK: -- 윈도우 라이프사이클 추적 변수
+    public var isSurgeryBottomMenuOpen: Bool = false
+    public var isOpacityControlPanelOpen: Bool = false
+    
     // MARK: -- 이벤트 처리 : UI 이벤트 -> WindowController 에 전달
     
     func openAssetListView() {
-        // WindowController에 Window Open을 요청하는 로직이 들어갈 곳
         self.isShowingAssetListView = true
     }
     
@@ -34,15 +38,25 @@ final class ImmersiveViewModel {
         
     }
     
-    func toggleMenu() {
+    func toggleMenu(windowController: WindowController) {
         isMenuActive.toggle()
         
         // AR Session 관리
         // TODO: 컨트롤러 상태에 따른 메뉴바 및 패널 시각화 조정
         if isMenuActive {
             ARSessionController.shared.runARSession()
+            if !isSurgeryBottomMenuOpen {
+                windowController.openWindow(id: WindowIDs.surgeryBottomMenu)
+            }
         } else {
             ARSessionController.shared.stopARSession()
+            if isSurgeryBottomMenuOpen {
+                windowController.dismissWindow(id: WindowIDs.surgeryBottomMenu)
+            }
+            
+            if isOpacityControlPanelOpen {
+                windowController.dismissWindow(id: WindowIDs.opacityControlPanel)
+            }
         }
     }
 }
