@@ -30,7 +30,6 @@ struct SurgeryBottomMenu: View {
         
         VStack {
             Spacer()
-            
             PatientInfoHeader()
             Spacer().frame(height: 8)
             SurgeryControlBar()

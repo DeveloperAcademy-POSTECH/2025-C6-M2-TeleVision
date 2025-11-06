@@ -30,7 +30,8 @@ final class WindowController {
     }
     
     func finishSurgeryAndDismissSpace() async {
-        await dismissImmersiveSpaceAction()
+        dismissWindowAction(id: WindowIDs.surgeryBottomMenu)
         openWindowAction(id: WindowIDs.home)
+        await dismissImmersiveSpaceAction()
     }
 }
