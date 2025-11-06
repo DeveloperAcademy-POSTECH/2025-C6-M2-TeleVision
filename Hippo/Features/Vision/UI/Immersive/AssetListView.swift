@@ -8,19 +8,19 @@
 import SwiftUI
 
 struct AssetListView: View {
-    @Binding var isPresented: Bool
+    
+    // ImmersiveView에서 주입된 모델들 참조
+    @Environment(ImmersiveSceneRuntime.self) var runtime
+    @Environment(OperationViewModel.self) var dataViewModel
+    @Environment(ImmersiveViewModel.self) var immersiveViewModel
 
     @State private var selectedURL: URL?
-    let operation: OperationDisplayModel
-
-    var onCreateEntity: (URL) -> Void
-
+    
     private var fileURLs: [URL] {
-        operation.assets.map { $0.fileURL }
+        dataViewModel.state.operation?.assets.map { $0.fileURL } ?? []
     }
 
     var body: some View {
-        if isPresented {
             VStack {
                 HStack {
                     Text("3D Asset List")
@@ -40,7 +40,10 @@ struct AssetListView: View {
 
                 GlowingCapsuleButton(buttonText: "생성하기", action: {
                     if let url = selectedURL {
-                        onCreateEntity(url)
+                        Task {
+                            await runtime.placeEntity(url: url)
+                            immersiveViewModel.closeAssetListView()
+                        }
                     }
                 })
                 .disabled(selectedURL == nil)
@@ -54,16 +57,10 @@ struct AssetListView: View {
                     selectedURL = fileURLs.first
                 }
             }
-        }
+        
     }
 }
 
 #Preview {
-    AssetListView(
-        isPresented: .constant(true),
-        operation: OperationDisplayModel.MockData,
-        onCreateEntity: { entityID in
-            print("Creating entity: \(entityID)")
-        }
-    )
+    AssetListView()
 }

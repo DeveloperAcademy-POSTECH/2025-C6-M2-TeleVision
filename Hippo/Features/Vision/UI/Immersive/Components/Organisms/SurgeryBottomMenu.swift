@@ -8,43 +8,26 @@
 import SwiftUI
 
 struct SurgeryBottomMenu: View {
-    let patient: PatientDisplayModel
-    @Binding var isEndoscopicActive: Bool
-    @Binding var isAssetListOpen: Bool
-    let isVisible: Bool
-    let onOpenEntityPanel: () -> Void
-    let onRecord: () -> Void
-    let onFinishSurgery: () -> Void
+    
+    @Environment(OperationViewModel.self) var dataViewModel
+    @Environment(ImmersiveViewModel.self) var immersiveViewModel
+    @Environment(WindowController.self) var windowController
+    
+    private var patient: PatientDisplayModel {
+        dataViewModel.state.patient ?? PatientDisplayModel.MockData
+    }
     
     var body: some View {
         VStack {
-            PatientInfoHeader(
-                name: patient.name,
-                gender: patient.genderText,
-                ageText: patient.ageText
-            )
+            PatientInfoHeader()
             Spacer().frame(height: 6)
             
-            SurgeryControlBar(
-                isEndoscopicActive: $isEndoscopicActive,
-                isAssetListOpen: $isAssetListOpen,
-                onOpenEntityPanel: onOpenEntityPanel,
-                onRecord: onRecord,
-                onFinishSurgery: onFinishSurgery
-            )
+            SurgeryControlBar()
         }
-        .opacity(isVisible ? 1.0 : 0.0)
+        .opacity(immersiveViewModel.isMenuActive ? 1.0 : 0.0)
     }
 }
 
 #Preview {
-    SurgeryBottomMenu(
-        patient: PatientDisplayModel.MockData,
-        isEndoscopicActive: .constant(true),
-        isAssetListOpen: .constant(true),
-        isVisible: true,
-        onOpenEntityPanel: {},
-        onRecord: {},
-        onFinishSurgery: {}
-    )
+    SurgeryBottomMenu()
 }

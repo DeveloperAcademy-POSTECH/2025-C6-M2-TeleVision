@@ -8,44 +8,41 @@
 import SwiftUI
 
 struct SurgeryControlBar: View {
-    @Binding var isEndoscopicActive: Bool
-    @Binding var isAssetListOpen: Bool
-    
-    let onOpenEntityPanel: () -> Void
-    let onRecord: () -> Void
-    let onFinishSurgery: () -> Void
+    @Environment(ImmersiveViewModel.self) var immersiveViewModel
     
     var body: some View {
+        @Bindable var immersiveViewModel = immersiveViewModel
+        
         HStack {
             CircleIconButton(
                 systemName: "iphone.and.arrow.forward.outward",
                 buttonSize: 28,
                 iconSize: 10,
-                action: onFinishSurgery
+                action: { immersiveViewModel.showFinishSurgeryAlert() }
             )
             
             ZStack {
                 HStack {
                     Spacer()
-                    if isAssetListOpen {
+                    if immersiveViewModel.isShowingAssetListView {
                         GlowingCircleButton(
                             imageName: "CloseIcon",
                             action: {
-                                isAssetListOpen = false
+                                immersiveViewModel.closeAssetListView()
                             }
                         )
                     } else {
                         GlowingCircleButton(
                             imageName: "AddEntityIcon",
-                            action: onOpenEntityPanel
+                            action: { immersiveViewModel.openAssetListView() }
                         )
                     }
                     Spacer()
                 }
                 HStack {
-                    EndoscopeToggle(isOn: $isEndoscopicActive)
+                    EndoscopeToggle(isOn: $immersiveViewModel.isEndoscopicActive)
                     Spacer()
-                    RecordButton(action: onRecord)
+                    RecordButton(action: immersiveViewModel.recordPassThroughVideo)
                 }
             }
             .padding(10)
@@ -61,12 +58,6 @@ struct SurgeryControlBar: View {
 
 
 #Preview {
-    SurgeryControlBar(
-        isEndoscopicActive: .constant(false),
-        isAssetListOpen: .constant(false),
-        onOpenEntityPanel: {},
-        onRecord: {},
-        onFinishSurgery: {}
-    )
+    SurgeryControlBar()
     .padding()
 }
