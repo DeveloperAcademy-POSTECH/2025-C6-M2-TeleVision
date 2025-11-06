@@ -1,5 +1,5 @@
 //
-//  OpacityControlViewModel.swift
+//  OpacityManager.swift
 //  Hippo
 //
 //  Created by yunsly on 10/27/25.
@@ -10,7 +10,7 @@ import SwiftUI
 import Combine
 
 @Observable
-final class OpacityControlViewModel {
+final class OpacityManager {
     
     struct Layer: Identifiable {
         let id: String
@@ -151,13 +151,6 @@ final class OpacityControlViewModel {
         for index in layers.indices {
             layers[index].isVisible = isVisible
             layers[index].entity.isEnabled = isVisible
-        }
-    }
-    
-    // MARK: -- 객체 삭제
-    func deleteSelectedEntity() {
-        Task {
-            await runtime.deleteSelectedEntity()
         }
     }
 }

@@ -10,7 +10,8 @@ import RealityKit
 
 struct OpacityControlPanel: View {
     
-    @Bindable var viewModel: OpacityControlViewModel
+    @Bindable var viewModel: OpacityManager
+    @Environment(ImmersiveSceneRuntime.self) var runtime
     
     // Grid 레이아웃 설정 (4열)
     private let columns: [GridItem] = [
@@ -26,7 +27,9 @@ struct OpacityControlPanel: View {
                 isAllSelected: viewModel.isAllSelected,
                 isAllVisible: viewModel.isAllVisible,
                 onDeleteTapped: {
-                    viewModel.deleteSelectedEntity()
+                    Task {
+                        await runtime.deleteSelectedEntity()
+                    }
                 },
                 onSelectAllToggle: { shouldSelectAll in
                     viewModel.selectAllLayers(shouldSelectAll: shouldSelectAll)
@@ -75,7 +78,7 @@ struct OpacityControlPanel: View {
         .onAppear {
             viewModel.reloadLayers()
         }
-        .onChange(of: viewModel.runtime.selectedEntity) {
+        .onChange(of: runtime.selectedEntity) {
             viewModel.reloadLayers()
         }
         .frame(width: 658, height: 522)
