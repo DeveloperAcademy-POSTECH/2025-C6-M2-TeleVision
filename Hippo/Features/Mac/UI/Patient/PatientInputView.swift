@@ -9,6 +9,12 @@ import SwiftUI
 
 struct PatientInputView: View {
     @Binding var isPatientInputSheetPresented: Bool
+
+    // ViewModel State 바인딩 (HomeView의 rootVM에서 전달받음)
+    @Binding var state: PatientInputState
+    let mode: PatientInputMode
+    let onSave: () async -> Void
+
     @State private var birthDate = Date()
 
     private var age: Int {

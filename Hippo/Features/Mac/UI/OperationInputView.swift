@@ -9,6 +9,11 @@ import SwiftUI
 
 struct OperationInputView: View {
     @Binding var isOperationInputSheetPresented: Bool
+
+    // ViewModel State 바인딩 (HomeView의 rootVM에서 전달받음)
+    @Binding var state: OperationInputState
+    let onSave: () async -> Void
+
     @State private var operationDate = Date()
 
     var body: some View {
@@ -66,5 +71,10 @@ struct OperationInputView: View {
 }
 
 #Preview {
-    RootView()
+    @Previewable @State var state = OperationInputState()
+    OperationInputView(
+        isOperationInputSheetPresented: .constant(true),
+        state: $state,
+        onSave: { }
+    )
 }
