@@ -16,10 +16,6 @@ struct PatientDetailView: View {
 
     var selectedPatient: PatientDisplayModel?
     
-//    private var selectedPatientId: HomeMockDataModel? { mockData.first { $0.id == patientId } }
-    
-//    let patientId: HomeMockDataModel.ID
-    
     var isTodaysSurgerySelected: Bool
     
     var body: some View {
