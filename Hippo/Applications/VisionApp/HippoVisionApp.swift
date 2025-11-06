@@ -11,6 +11,11 @@ import SwiftUI
 struct HippoVisionApp: App {
     @State private var appModel = AppModel()
     @State private var homeViewModel = HomeViewModel()
+    
+    // Immersive Space 내에서 필요한 모델
+    @State private var runtime = ImmersiveSceneRuntime()
+    @State private var immersiveViewModel = ImmersiveViewModel()
+    
 
     var body: some Scene {
         // 홈 화면
@@ -58,6 +63,8 @@ struct HippoVisionApp: App {
             return WindowPlacement()
         }
 
+        // MARK: -- 수술 시작 후
+        
         // 몰입형 수술 화면
         ImmersiveSpace(id: ImmersiveIDs.surgery, for: OperationContext.self) { $context in
             if let context = context {
@@ -68,5 +75,6 @@ struct HippoVisionApp: App {
                 .environment(appModel)
             }
         }
+
     }
 }
