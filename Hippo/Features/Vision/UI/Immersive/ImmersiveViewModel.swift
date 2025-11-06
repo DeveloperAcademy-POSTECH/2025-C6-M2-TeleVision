@@ -15,7 +15,6 @@ final class ImmersiveViewModel {
     public var isEndoscopicActive: Bool = false
     public var isShowingFinishAlert: Bool = false
     public var isShowingAssetListView: Bool = false
-    
     // MARK: -- 이벤트 처리 : UI 이벤트 -> WindowController 에 전달
     
     func openAssetListView() {
@@ -28,7 +27,7 @@ final class ImmersiveViewModel {
     }
     
     func showFinishSurgeryAlert() {
-        
+        self.isShowingFinishAlert = true
     }
     
     func recordPassThroughVideo() {

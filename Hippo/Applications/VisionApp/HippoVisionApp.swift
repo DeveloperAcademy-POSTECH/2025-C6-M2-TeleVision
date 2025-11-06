@@ -13,9 +13,16 @@ struct HippoVisionApp: App {
     @State private var homeViewModel = HomeViewModel()
     
     // Immersive Space 내에서 필요한 모델
-    @State private var runtime = ImmersiveSceneRuntime()
-    @State private var immersiveViewModel = ImmersiveViewModel()
-    
+    @State private var runtime: ImmersiveSceneRuntime
+    @State private var immersiveViewModel: ImmersiveViewModel
+    @State private var opacityManager: OpacityManager
+
+    init() {
+        self._immersiveViewModel = State(initialValue: ImmersiveViewModel())
+        let runtime = ImmersiveSceneRuntime()
+        self._runtime = State(initialValue: runtime)
+        self._opacityManager = State(initialValue: OpacityManager(runtime: runtime))
+    }
 
     var body: some Scene {
         // 홈 화면
@@ -73,8 +80,18 @@ struct HippoVisionApp: App {
                     operationID: context.operationID
                 )
                 .environment(appModel)
+                .environment(runtime)
+                .environment(immersiveViewModel)
             }
         }
+        
+        // OpacityControlPanel
+        WindowGroup(id: WindowIDs.opacityControlPanel) {
+            OpacityControlPanel()
+                .environment(opacityManager)
+                .environment(runtime)
+        }
+        .defaultSize(width: 658, height: 522)
 
     }
 }
