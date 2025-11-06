@@ -13,12 +13,7 @@ struct PatientDetailView: View {
 
     // Mock 데이터 (UI 개발용)
     var mockData = HomeMockDataModel.mockList
-<<<<<<< HEAD
-    var patientOperationSample = OperationMockDataModel.patientOperationSamples
-    
-=======
-    let patientId: HomeMockDataModel.ID
->>>>>>> develop
+
     private var selectedPatient: HomeMockDataModel? { mockData.first { $0.id == patientId } }
     
     let patientId: HomeMockDataModel.ID
@@ -26,29 +21,28 @@ struct PatientDetailView: View {
     var isTodaysSurgery: Bool
     
     var body: some View {
-<<<<<<< HEAD
-        OperationListView(operationMockData: patientOperationSample)
-            .navigationTitle(selectedPatient.map { "\($0.name) \($0.gender) \($0.age)세" } ?? "환자 상세 정보")
-            .navigationSubtitle(selectedPatient?.patientNumber ?? "환자 번호")
-=======
+
         OperationListView(
             operations: viewModel.operations,
             onDelete: { operationID in
-                Task {
-                    await viewModel.deleteOperation(operationID)
-                }
+//                Task {
+//                    await viewModel.deleteOperation(operationID)
+//                }
+                //TODO: 원띵과 논의 필요
             }
         )
         .navigationTitle(selectedPatient.map { "\($0.name) \($0.gender) \($0.age)세" } ?? "환자 상세 정보")
         .navigationSubtitle(selectedPatient?.patientNumber ?? "환자 번호")
->>>>>>> develop
     }
 }
 
 #Preview {
+    @Previewable @State var isTodaysSurgery: Bool = false
+    
     let rootVM = MacRootViewModel()
     PatientDetailView(
         viewModel: PatientDetailViewModel(rootVM: rootVM),
-        patientId: ""
+        patientId: "",
+        isTodaysSurgery: isTodaysSurgery
     )
 }

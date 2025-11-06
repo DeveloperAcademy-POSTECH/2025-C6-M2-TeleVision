@@ -10,7 +10,7 @@ import SwiftUI
 struct OperationCardView: View {
     @State var isCardCollapsed: Bool = false
 
-    let operation: OperationMockDataModel
+    let operation: OperationDisplayModel
 
     var body: some View {
         VStack(alignment: .leading) {

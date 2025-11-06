@@ -73,7 +73,8 @@ struct HomeView: View {
             } else {
                 PatientDetailView(
                     viewModel: PatientDetailViewModel(rootVM: rootVM),
-                    patientId: selectedPatientID ?? ""
+                    patientId: selectedPatientID ?? "",
+                    isTodaysSurgery: isTodaysSurgery
                 )
             }
         }

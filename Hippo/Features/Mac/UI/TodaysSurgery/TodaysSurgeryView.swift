@@ -8,13 +8,9 @@
 import SwiftUI
 
 struct TodaysSurgeryView: View {
-<<<<<<< HEAD
-    
-=======
     // HomeView의 homeViewModel 전달받기 (todayOperations 사용)
     let viewModel: HomeViewModel
 
->>>>>>> develop
     var body: some View {
         
         // 오늘 날짜(자정 기준) 범위 계산
@@ -28,7 +24,7 @@ struct TodaysSurgeryView: View {
             .filter { $0.date >= startOfToday && $0.date < startOfTomorrow }
             .sorted { $0.date < $1.date }
 
-        return OperationListView(operationMockData: todaysOperations)
+        return OperationListView(operations: [], onDelete: { _ in })
     }
 }
 
