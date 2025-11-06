@@ -11,4 +11,5 @@ enum WindowIDs {
     static let operationDetail = "OperationDetailWindow"
     
     static let opacityControlPanel = "OpacityControlPanel"
+    static let surgeryBottomMenu = "SurgeryBottomMenu"
 }

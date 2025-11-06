@@ -13,51 +13,51 @@ struct AssetListView: View {
     @Environment(ImmersiveSceneRuntime.self) var runtime
     @Environment(OperationViewModel.self) var dataViewModel
     @Environment(ImmersiveViewModel.self) var immersiveViewModel
-
+    
     @State private var selectedURL: URL?
     
     private var fileURLs: [URL] {
         dataViewModel.state.operation?.assets.map { $0.fileURL } ?? []
     }
-
+    
     var body: some View {
-            VStack {
-                HStack {
-                    Text("3D Asset List")
-                        .font(.title)
-                    Spacer()
-                }
-                .padding()
-                .padding(.leading, 10)
-
+        VStack {
+            HStack {
+                Text("3D Asset List")
+                    .font(.title)
                 Spacer()
-
-                AssetListScrollView(
-                    fileURLs: fileURLs,
-                    selectedURL: $selectedURL
-                )
-                Spacer()
-
-                GlowingCapsuleButton(buttonText: "생성하기", action: {
-                    if let url = selectedURL {
-                        Task {
-                            await runtime.placeEntity(url: url)
-                            immersiveViewModel.closeAssetListView()
-                        }
-                    }
-                })
-                .disabled(selectedURL == nil)
-                .padding(.bottom, 20)
             }
-            .frame(width: 680, height: 440)
             .padding()
-            .glassBackgroundEffect()
-            .onAppear {
-                if selectedURL == nil {
-                    selectedURL = fileURLs.first
+            .padding(.leading, 10)
+            
+            Spacer()
+            
+            AssetListScrollView(
+                fileURLs: fileURLs,
+                selectedURL: $selectedURL
+            )
+            Spacer()
+            
+            GlowingCapsuleButton(buttonText: "생성하기", action: {
+                if let url = selectedURL {
+                    Task {
+                        await runtime.placeEntity(url: url)
+                        immersiveViewModel.closeAssetListView()
+                    }
                 }
+            })
+            .disabled(selectedURL == nil)
+            .padding(.bottom, 20)
+        }
+        .frame(width: 680, height: 440)
+        .padding()
+        .glassBackgroundEffect()
+        .onAppear {
+            if selectedURL == nil {
+                selectedURL = fileURLs.first
             }
-        
+        }
+
     }
 }
 

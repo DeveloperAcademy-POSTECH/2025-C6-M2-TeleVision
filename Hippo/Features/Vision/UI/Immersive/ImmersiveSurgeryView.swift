@@ -15,18 +15,15 @@ struct ImmersiveSurgeryView: View {
     
     @Environment(ImmersiveSceneRuntime.self) private var runtime
     @Environment(ImmersiveViewModel.self) private var immersiveViewModel
+    @Environment(OperationViewModel.self) private var dataViewModel: OperationViewModel
     
     let patientID: String
     let operationID: String
-    
-    @State private var dataViewModel: OperationViewModel
 
     // 생성한 runtime 을 ViewModel에 주입시키기 위한 init
     init(patientID: String, operationID: String) {
         self.patientID = patientID
         self.operationID = operationID
-        
-        self._dataViewModel = State(initialValue: OperationViewModel())
     }
     
     var body: some View {
@@ -48,38 +45,20 @@ struct ImmersiveSurgeryView: View {
                     immersiveViewModel.isMenuActive.toggle()
                 }
             }
-            // 하단 메뉴 바
-            Attachment(id: AttachmentIDs.bottomMenuBar) {
-                SurgeryBottomMenu()
-            }
+            
             // 3D 애셋 생성 (AssetListView)
             Attachment(id: AttachmentIDs.assetListView) {
                 AssetListView()
             }
         }
-        .environment(runtime)
-        .environment(dataViewModel)
-        .environment(immersiveViewModel)
-        .environment(windowController)
         .task {
             await dataViewModel.load(patientID: patientID, operationID: operationID)
             dismissWindow(id: WindowIDs.home)
+            openWindow(id: WindowIDs.surgeryBottomMenu)
         }
-        
-        
-//        .onChange(of: dataViewModel.isMenuActive) {
-//            if dataViewModel.isMenuActive {
-//                ARSessionController.shared.runARSession()
-//                
-//            } else {
-//                ARSessionController.shared.stopARSession()
-//            }
-//            runtime.setOpacityPanelVisibility(isVisible: dataViewModel.isMenuActive)
-//        }
         .onChange(of: immersiveViewModel.isShowingAssetListView) { _, isVisible in
             runtime.setAssetListVisibility(isVisible: isVisible)
         }
-
         .onChange(of: runtime.selectedEntity) { _, newValue in
             if newValue != nil {
                 windowController.openWindow(id: WindowIDs.opacityControlPanel)
