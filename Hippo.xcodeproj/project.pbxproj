@@ -217,7 +217,7 @@
 		27AD7AE52EB5BEA400E84809 /* OpacityControlPanelHeader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 27AD7AE32EB5BEA400E84809 /* OpacityControlPanelHeader.swift */; };
 		27D1DB492EBC781200AC7F3D /* ImmersiveViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 27D1DB482EBC781200AC7F3D /* ImmersiveViewModel.swift */; };
 		27D1DB4D2EBC953D00AC7F3D /* WindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 27D1DB4C2EBC953D00AC7F3D /* WindowController.swift */; };
-		27D8A2BE2EAF682B009429F0 /* OpacityControlViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 27D8A2BD2EAF67CE009429F0 /* OpacityControlViewModel.swift */; };
+		27D8A2BE2EAF682B009429F0 /* OpacityManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 27D8A2BD2EAF67CE009429F0 /* OpacityManager.swift */; };
 		C02FFA752E9FFF6F00F16742 /* HippoVisionApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = C02FFA4F2E9FFF6F00F16742 /* HippoVisionApp.swift */; };
 		C02FFA762E9FFF6F00F16742 /* HippoMacApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = C02FFA4C2E9FFF6F00F16742 /* HippoMacApp.swift */; };
 		C02FFA792E9FFF6F00F16742 /* AppModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = C02FFA6A2E9FFF6F00F16742 /* AppModel.swift */; };
@@ -458,7 +458,7 @@
 		27AD7AE32EB5BEA400E84809 /* OpacityControlPanelHeader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OpacityControlPanelHeader.swift; sourceTree = "<group>"; };
 		27D1DB482EBC781200AC7F3D /* ImmersiveViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImmersiveViewModel.swift; sourceTree = "<group>"; };
 		27D1DB4C2EBC953D00AC7F3D /* WindowController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WindowController.swift; sourceTree = "<group>"; };
-		27D8A2BD2EAF67CE009429F0 /* OpacityControlViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OpacityControlViewModel.swift; sourceTree = "<group>"; };
+		27D8A2BD2EAF67CE009429F0 /* OpacityManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OpacityManager.swift; sourceTree = "<group>"; };
 		C02FFA4C2E9FFF6F00F16742 /* HippoMacApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HippoMacApp.swift; sourceTree = "<group>"; };
 		C02FFA4D2E9FFF6F00F16742 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		C02FFA4F2E9FFF6F00F16742 /* HippoVisionApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HippoVisionApp.swift; sourceTree = "<group>"; };
@@ -1240,7 +1240,7 @@
 			children = (
 				1446FB9B2EAE6987000BCF61 /* Components */,
 				14F6B0332EAAC73F003F28EB /* ImmersiveSurgeryView.swift */,
-				27D8A2BD2EAF67CE009429F0 /* OpacityControlViewModel.swift */,
+				27D8A2BD2EAF67CE009429F0 /* OpacityManager.swift */,
 				278F28BC2EB3877200DF2F73 /* AssetListView.swift */,
 				27AD7AD32EB5ACD600E84809 /* OpacityControlPanel.swift */,
 				27D1DB482EBC781200AC7F3D /* ImmersiveViewModel.swift */,
@@ -1582,7 +1582,7 @@
 				C0F97ACD2EA41D4B0063E159 /* SDOperationRecording.swift in Sources */,
 				14CC75562EA6A8BE00399562 /* LogoHeader.swift in Sources */,
 				C0F97ACE2EA41D4B0063E159 /* SwiftDataMappers.swift in Sources */,
-				27D8A2BE2EAF682B009429F0 /* OpacityControlViewModel.swift in Sources */,
+				27D8A2BE2EAF682B009429F0 /* OpacityManager.swift in Sources */,
 				C0F97ACF2EA41D4B0063E159 /* PatientLocalDataSourceSwiftData.swift in Sources */,
 				C050AA3C2EA8197E00352314 /* ImmersiveIDs.swift in Sources */,
 				27D1DB4D2EBC953D00AC7F3D /* WindowController.swift in Sources */,

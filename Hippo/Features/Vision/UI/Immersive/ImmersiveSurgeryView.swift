@@ -18,7 +18,7 @@ struct ImmersiveSurgeryView: View {
     
     @State private var runtime: ImmersiveSceneRuntime
     @State private var dataViewModel: OperationViewModel
-    @State private var opacityViewModel: OpacityControlViewModel
+    @State private var opacityViewModel: OpacityManager
     @State private var immersiveViewModel: ImmersiveViewModel
     
     private var patient: PatientDisplayModel {
@@ -43,7 +43,7 @@ struct ImmersiveSurgeryView: View {
         let runtime = ImmersiveSceneRuntime()
         self._runtime = State(initialValue: runtime)
         self._immersiveViewModel = State(initialValue: ImmersiveViewModel())
-        self._opacityViewModel = State(initialValue: OpacityControlViewModel(runtime: runtime))
+        self._opacityViewModel = State(initialValue: OpacityManager(runtime: runtime))
         self._dataViewModel = State(initialValue: OperationViewModel())
     }
     
