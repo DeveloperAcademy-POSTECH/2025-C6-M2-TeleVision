@@ -37,7 +37,6 @@ struct RootView: View {
                     .pickerStyle(.segmented)
                 }
             }
-            
         }
     }
 }
