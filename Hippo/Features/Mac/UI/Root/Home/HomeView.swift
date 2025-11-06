@@ -10,22 +10,22 @@ import SwiftUI
 struct HomeView: View {
     // ViewModel 초기화
     @State private var rootVM = MacRootViewModel()
-    @State private var selectedPatientID: String?
-    
+
     // Mock 데이터 (UI 개발용 - 나중에 rootVM.homeViewModel.state.items로 교체)
-//    var mockData = HomeMockDataModel.mockList
-//    @State private var selectedPatientID: HomeMockDataModel.ID?
-//    private var selectedPatient: HomeMockDataModel? { mockData.first { $0.id == selectedPatientID } }
+    var mockData = HomeMockDataModel.mockList
+    @State private var isTodaysSurgery: Bool = true
+    @State private var selectedPatientID: HomeMockDataModel.ID?
+
+    @State var isPatientInputSheetPresented: Bool = false
+    @State var isOperationInputSheetPresented: Bool = false
+
+    private var selectedPatient: HomeMockDataModel? { mockData.first { $0.id == selectedPatientID } }
     
     var body: some View {
-        @Bindable var rootVM = self.rootVM
-        var isTodaysSurgerySelected = rootVM.navigationState.isTodaysSurgerySelected
-        let patients = rootVM.homeViewModel.state.items
-        
         NavigationSplitView {
             //오늘의 수술 버튼
             Button {
-                isTodaysSurgerySelected = true
+                isTodaysSurgery = true
                 selectedPatientID = nil
             } label: {
                 Text("Today's Surgery")
@@ -36,15 +36,15 @@ struct HomeView: View {
                     //TODO: 환자 리스트에 데이터가 없는 경우
                     //환자 리스트에 데이터가 있는 경우
 
-                    ForEach(patients) { data in
+                    ForEach(mockData) { data in
                         HStack {
                             Button {
-                                isTodaysSurgerySelected = false
+                                isTodaysSurgery = false
                                 selectedPatientID = data.id
                             } label: {
                                 Text(data.patientNumber)
                                 Text(data.name)
-                                Text(data.genderText)
+                                Text(data.gender)
                                 Text("\(data.age)세")
                             }
                             //TODO: 호버 시 편집 버튼 띄우기 추가
@@ -59,7 +59,7 @@ struct HomeView: View {
                         //환자 추가 버튼
                         Button {
                             //TODO: PatientInputView 구현
-                            rootVM.navigationState.isPresentingPatientInput = true
+                            isPatientInputSheetPresented = true
                         } label: {
                             Image(systemName: "person.badge.plus")
                         }
@@ -67,30 +67,30 @@ struct HomeView: View {
                 }
             }
         } detail: {
-            if isTodaysSurgerySelected {
+            if isTodaysSurgery {
                 TodaysSurgeryView(viewModel: rootVM.homeViewModel)
                     .navigationTitle("Today's Surgery")
             } else {
                 PatientDetailView(
                     viewModel: PatientDetailViewModel(rootVM: rootVM),
                     patientId: selectedPatientID ?? "",
-                    isTodaysSurgerySelected: rootVM.navigationState.isTodaysSurgerySelected
+                    isTodaysSurgery: isTodaysSurgery
                 )
             }
         }
         .toolbar {
-            if !rootVM.navigationState.isTodaysSurgerySelected {
+            if !isTodaysSurgery {
                 Button {
                     //TODO: 수술 생성 기능 구현
-                    rootVM.navigationState.isPresentingOperationInput = true
+                    isOperationInputSheetPresented = true
                 } label: {
                     Label("Create", systemImage: "plus")
                 }
             }
         }
-        .sheet(isPresented: $rootVM.navigationState.isPresentingPatientInput) {
+        .sheet(isPresented: $isPatientInputSheetPresented) {
             PatientInputView(
-                isPresentingPatientInput: $rootVM.navigationState.isPresentingPatientInput,
+                isPatientInputSheetPresented: $isPatientInputSheetPresented,
                 state: $rootVM.patientInputState,
                 mode: rootVM.navigationState.patientInputMode,
                 onSave: {
@@ -104,9 +104,9 @@ struct HomeView: View {
                 }
             )
         }
-        .sheet(isPresented: $rootVM.navigationState.isPresentingOperationInput) {
+        .sheet(isPresented: $isOperationInputSheetPresented) {
             OperationInputView(
-                isPresentingOperationInput: $rootVM.navigationState.isPresentingOperationInput,
+                isOperationInputSheetPresented: $isOperationInputSheetPresented,
                 state: $rootVM.operationInputState,
                 onSave: {
                     Task {

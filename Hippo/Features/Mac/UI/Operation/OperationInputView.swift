@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct OperationInputView: View {
-    @Binding var isOperationInputSheetPresented: Bool
+    @Binding var isPresentingOperationInput: Bool
 
     // ViewModel State 바인딩 (HomeView의 rootVM에서 전달받음)
     @Binding var state: OperationInputState
@@ -61,10 +61,10 @@ struct OperationInputView: View {
         //취소/저장 버튼
         HStack {
             Button("취소") {
-                isOperationInputSheetPresented = false
+                isPresentingOperationInput = false
             }
             Button("저장") {
-                isOperationInputSheetPresented = false
+                isPresentingOperationInput = false
             }
         }
         .padding()
@@ -74,7 +74,7 @@ struct OperationInputView: View {
 #Preview {
     @Previewable @State var state = OperationInputState()
     OperationInputView(
-        isOperationInputSheetPresented: .constant(true),
+        isPresentingOperationInput: .constant(true),
         state: $state,
         onSave: { }
     )

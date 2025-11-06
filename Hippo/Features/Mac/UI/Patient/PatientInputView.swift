@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct PatientInputView: View {
-    @Binding var isPatientInputSheetPresented: Bool
+    @Binding var isPresentingPatientInput: Bool
 
     // ViewModel State 바인딩 (HomeView의 rootVM에서 전달받음)
     @Binding var state: PatientInputState
@@ -53,11 +53,11 @@ struct PatientInputView: View {
         
         HStack {
             Button("취소") {
-                isPatientInputSheetPresented = false
+                isPresentingPatientInput = false
             }
             Button("저장") {
                 //TODO: 수술 저장 기능 구현
-                isPatientInputSheetPresented = false
+                isPresentingPatientInput = false
             }
         }
         .padding()
