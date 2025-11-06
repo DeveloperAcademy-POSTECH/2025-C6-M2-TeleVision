@@ -16,15 +16,18 @@ struct HippoVisionApp: App {
     @State private var runtime: ImmersiveSceneRuntime
     @State private var immersiveViewModel: ImmersiveViewModel
     @State private var opacityManager: OpacityManager
+    @State private var dataViewModel: OperationViewModel
 
     init() {
         self._immersiveViewModel = State(initialValue: ImmersiveViewModel())
         let runtime = ImmersiveSceneRuntime()
         self._runtime = State(initialValue: runtime)
+        self._dataViewModel = State(initialValue: OperationViewModel())
         self._opacityManager = State(initialValue: OpacityManager(runtime: runtime))
     }
 
     var body: some Scene {
+        
         // 홈 화면
         WindowGroup(id: WindowIDs.home) {
             RootView()
@@ -82,6 +85,7 @@ struct HippoVisionApp: App {
                 .environment(appModel)
                 .environment(runtime)
                 .environment(immersiveViewModel)
+                .environment(dataViewModel)
             }
         }
         
@@ -92,6 +96,18 @@ struct HippoVisionApp: App {
                 .environment(runtime)
         }
         .defaultSize(width: 658, height: 522)
-
+        
+        // surgeryBottomMenu
+        WindowGroup(id: WindowIDs.surgeryBottomMenu) {
+            SurgeryBottomMenu()
+                .environment(immersiveViewModel)
+                .environment(dataViewModel)
+                .environment(runtime)
+        }
+        .windowStyle(.plain)
+        .defaultSize(width: 896, height: 500)
+        .defaultWindowPlacement { _, context in
+            return WindowPlacement(.utilityPanel)
+        }
     }
 }

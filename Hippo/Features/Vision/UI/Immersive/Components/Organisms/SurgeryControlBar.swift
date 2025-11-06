@@ -16,8 +16,8 @@ struct SurgeryControlBar: View {
         HStack {
             CircleIconButton(
                 systemName: "iphone.and.arrow.forward.outward",
-                buttonSize: 28,
-                iconSize: 10,
+                buttonSize: 80,
+                iconSize: 28,
                 action: { immersiveViewModel.showFinishSurgeryAlert() }
             )
             
@@ -46,12 +46,12 @@ struct SurgeryControlBar: View {
                 }
             }
             .padding(10)
-            .frame(width: 180, height: 40)
+            .frame(width: 680, height: 120)
             .glassBackgroundEffect(in: .capsule, displayMode: .always)
             
             Circle()
                 .fill(.clear)
-                .frame(width: 28, height: 28)
+                .frame(width: 80, height: 80)
         }
     }
 }

@@ -17,9 +17,8 @@ final class ImmersiveSceneRuntime {
     // MARK: - State
     
     private var topAnchor: AnchorEntity?
-    private var bottomAnchor: AnchorEntity?
     private var assetListAnchor: AnchorEntity?
-
+    
     
     //MARK: - 3D model 들이 추가될 루트 엔티티
     private var sceneRoot: Entity?
@@ -39,28 +38,18 @@ final class ImmersiveSceneRuntime {
             anchor1.addChild(topButton)
         }
         
-        let anchor2 = AnchorEntity(.head)
-        anchor2.position = [0, -0.1, -0.45] // 시야 아래쪽에 배치
-        if let bottomMenuBar = attachments.entity(for: AttachmentIDs.bottomMenuBar) {
-            // 회전
-            let pitchUp = simd_quatf(angle: -(20 * .pi / 180), axis: [1, 0, 0])
-            bottomMenuBar.setOrientation(pitchUp, relativeTo: anchor2)
-            anchor2.addChild(bottomMenuBar)
-        }
         
-        let anchor3 = AnchorEntity(.head)
+        let anchor3 = AnchorEntity()
         anchor3.position = [0, -0.15, -1.0]
-        if let assetList = attachments.entity(for: AttachmentIDs.assetListView) {
-            anchor3.addChild(assetList)
-        }
-
+//        if let assetList = attachments.entity(for: AttachmentIDs.assetListView) {
+//            anchor2.addChild(assetList)
+//        }
+        
         
         content.add(anchor1)
-        content.add(anchor2)
         content.add(anchor3)
         
         topAnchor = anchor1
-        bottomAnchor = anchor2
         assetListAnchor = anchor3
         
         // 3D 모델들의 월드 앵커의 부모
@@ -122,7 +111,6 @@ final class ImmersiveSceneRuntime {
     func stop() {
         logger.debug("🐛 ImmersiveSceneRuntime stopped")
         topAnchor = nil
-        bottomAnchor = nil
         assetListAnchor = nil
         
         // 제스쳐 이벤트 구독 정리
