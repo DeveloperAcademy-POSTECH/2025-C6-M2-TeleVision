@@ -18,7 +18,7 @@ struct PatientDetailView: View {
     
     let patientId: HomeMockDataModel.ID
     
-    var isTodaysSurgery: Bool
+    var isTodaysSurgerySelected: Bool
     
     var body: some View {
 
@@ -43,6 +43,6 @@ struct PatientDetailView: View {
     PatientDetailView(
         viewModel: PatientDetailViewModel(rootVM: rootVM),
         patientId: "",
-        isTodaysSurgery: isTodaysSurgery
+        isTodaysSurgerySelected: isTodaysSurgery
     )
 }
