@@ -1,10 +1,3 @@
-//
-//  OperationInputState.swift
-//  HippoMac
-//
-//  Created by Claude on 11/6/25.
-//
-
 import Foundation
 
 /// 수술 입력 폼의 상태를 관리하는 구조체
