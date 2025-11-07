@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		065DA5582EBD844600B454BC /* PatientButtonView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 065DA5572EBD844600B454BC /* PatientButtonView.swift */; };
 		0667A53A2EB79DBB00D7BDF3 /* HomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0667A5392EB79DBB00D7BDF3 /* HomeView.swift */; };
 		0667A54A2EB8814100D7BDF3 /* StreamingControlView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0667A5492EB8814100D7BDF3 /* StreamingControlView.swift */; };
 		0667A54C2EB8833D00D7BDF3 /* PatientDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0667A54B2EB8833D00D7BDF3 /* PatientDetailView.swift */; };
@@ -346,6 +347,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		065DA5572EBD844600B454BC /* PatientButtonView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PatientButtonView.swift; sourceTree = "<group>"; };
 		0667A5392EB79DBB00D7BDF3 /* HomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeView.swift; sourceTree = "<group>"; };
 		0667A5492EB8814100D7BDF3 /* StreamingControlView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StreamingControlView.swift; sourceTree = "<group>"; };
 		0667A54B2EB8833D00D7BDF3 /* PatientDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PatientDetailView.swift; sourceTree = "<group>"; };
@@ -571,6 +573,7 @@
 			children = (
 				0667A5502EB8A33400D7BDF3 /* HomeMockDataModel.swift */,
 				0667A5392EB79DBB00D7BDF3 /* HomeView.swift */,
+				065DA5572EBD844600B454BC /* PatientButtonView.swift */,
 			);
 			path = Home;
 			sourceTree = "<group>";
@@ -1842,6 +1845,7 @@
 				25E78B692EB90D4600D8CAD2 /* OperationRecording.swift in Sources */,
 				25E78B6A2EB90D4600D8CAD2 /* OperationError.swift in Sources */,
 				25E78B6B2EB90D4600D8CAD2 /* OperationAssetExtension.swift in Sources */,
+				065DA5582EBD844600B454BC /* PatientButtonView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

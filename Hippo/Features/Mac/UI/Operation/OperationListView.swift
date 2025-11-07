@@ -9,7 +9,6 @@ import SwiftUI
 
 struct OperationListView: View {//TODO: 실제 데이터 연결 시에는 환자정보도 같이 가져와야 할 듯?
     
-//    var operationMockData: [OperationDisplayModel] //삭제 예정
     var operations: [OperationDisplayModel]
     let onDelete: (OperationDisplayModel) -> Void //TODO: 이거 맞는지 확인 필요
     

@@ -46,7 +46,6 @@ struct PatientInputView: View {
                 isPresentingPatientInput = false
             }
             Button("저장") {
-                //TODO: 수술 저장 기능 구현
                 if state.isValid {
                     Task {
                         await onSave()
