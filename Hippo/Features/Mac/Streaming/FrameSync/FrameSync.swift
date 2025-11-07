@@ -54,8 +54,8 @@ public final class FrameSync: FrameSyncing {
     // MARK: Configuration
 
     /// Maximum time difference for frame matching
-    /// Increased to 20ms to handle FPS mismatches (e.g., 30fps + 60fps)
-    private let matchTolerance: CMTime = CMTime(value: 20, timescale: 1000)  // 20ms
+    /// Set to 35ms to handle phase offset between cameras (typically ~31ms)
+    private let matchTolerance: CMTime = CMTime(value: 35, timescale: 1000)  // 35ms
 
     /// Maximum age for buffered frames before dropping
     /// Set to 1 second to handle camera start time differences
@@ -145,10 +145,10 @@ public final class FrameSync: FrameSyncing {
         let elapsedSinceStart = ptsSeconds - (referenceTime ?? ptsSeconds)
         let normalizedPTS = CMTime(seconds: elapsedSinceStart, preferredTimescale: 1000000)
 
-        // Log first few frames for debugging
+        // Log first frame only
         let frameCount = source == .left ? _stats.leftFrameCount : _stats.rightFrameCount
-        if frameCount <= 3 {
-            logger.info("🔄 \(source.rawValue) frame #\(frameCount): arrival=\(String(format: "%.3f", ptsSeconds))s → normalized=\(String(format: "%.3f", elapsedSinceStart))s")
+        if frameCount == 1 {
+            logger.info("🔄 \(source.rawValue) first frame: normalized=\(String(format: "%.3f", elapsedSinceStart))s")
         }
 
         return normalizedPTS
@@ -216,12 +216,8 @@ public final class FrameSync: FrameSyncing {
         let toleranceSeconds = CMTimeGetSeconds(matchTolerance)
         let toleranceMs = toleranceSeconds * 1000.0
 
-        // Debug logging
-        logger.debug("🔍 Match attempt: L=\(CMTimeGetSeconds(leftPTS), format: .fixed(precision: 3))s, R=\(CMTimeGetSeconds(rightPTS), format: .fixed(precision: 3))s, delta=\(deltaMs, format: .fixed(precision: 2))ms, tolerance=\(toleranceMs, format: .fixed(precision: 2))ms")
-
         if deltaMs <= toleranceMs {
             // Match found!
-            logger.info("✅ MATCH! delta=\(deltaMs, format: .fixed(precision: 2))ms")
 
             // Calculate synchronized PTS (average)
             let syncPTS = CMTimeAdd(leftPTS, rightPTS)
@@ -247,7 +243,17 @@ public final class FrameSync: FrameSyncing {
                 timeDelta: deltaMs
             )
         } else {
-            logger.debug("❌ No match: delta (\(deltaMs, format: .fixed(precision: 2))ms) > tolerance (\(toleranceMs, format: .fixed(precision: 2))ms)")
+            // No match - remove the older frame to prevent buffer buildup
+            // Drop the older frame (the one that's further behind)
+            if CMTimeCompare(leftPTS, rightPTS) < 0 {
+                // Left is older, drop it
+                leftBuffer.removeLast()
+                _stats.leftDropCount += 1
+            } else {
+                // Right is older, drop it
+                rightBuffer.removeLast()
+                _stats.rightDropCount += 1
+            }
         }
 
         return nil
@@ -282,7 +288,6 @@ public final class FrameSync: FrameSyncing {
         let leftDropped = oldLeftCount - leftBuffer.count
         if leftDropped > 0 {
             _stats.leftDropCount += leftDropped
-            logger.warning("⚠️ Dropped \(leftDropped) old left frames")
         }
 
         // Drop right frames that are too old relative to the drop threshold
@@ -295,7 +300,6 @@ public final class FrameSync: FrameSyncing {
         let rightDropped = oldRightCount - rightBuffer.count
         if rightDropped > 0 {
             _stats.rightDropCount += rightDropped
-            logger.warning("⚠️ Dropped \(rightDropped) old right frames")
         }
     }
 
@@ -305,14 +309,12 @@ public final class FrameSync: FrameSyncing {
             let dropCount = leftBuffer.count - maxBufferSize
             leftBuffer.removeFirst(dropCount)
             _stats.leftDropCount += dropCount
-            logger.warning("⚠️ Buffer limit: dropped \(dropCount) left frames")
         }
 
         if rightBuffer.count > maxBufferSize {
             let dropCount = rightBuffer.count - maxBufferSize
             rightBuffer.removeFirst(dropCount)
             _stats.rightDropCount += dropCount
-            logger.warning("⚠️ Buffer limit: dropped \(dropCount) right frames")
         }
     }
 

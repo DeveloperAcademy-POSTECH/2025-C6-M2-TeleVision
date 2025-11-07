@@ -206,13 +206,6 @@ open class BaseCaptureSession: NSObject {
         // Configure frame rate
         let targetFrameDuration = CMTime(value: 1, timescale: CMTimeScale(settings.frameRate))
 
-        // Log supported frame rates
-        logger.info("📹 [\(self.source.rawValue)] Supported frame rates for selected format:")
-        for range in format.videoSupportedFrameRateRanges {
-            let minFPS = 1.0 / CMTimeGetSeconds(range.maxFrameDuration)
-            let maxFPS = 1.0 / CMTimeGetSeconds(range.minFrameDuration)
-            logger.info("   \(String(format: "%.1f", minFPS)) - \(String(format: "%.1f", maxFPS)) fps")
-        }
 
         if format.videoSupportedFrameRateRanges.contains(where: { range in
             range.minFrameDuration <= targetFrameDuration &&
