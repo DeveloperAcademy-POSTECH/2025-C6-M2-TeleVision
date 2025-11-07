@@ -1,10 +1,3 @@
-//
-//  MacRootViewModel.swift
-//  HippoMac
-//
-//  Created by Claude on 11/6/25.
-//
-
 import Foundation
 import Observation
 import os.log
@@ -47,6 +40,9 @@ public final class MacRootViewModel {
     }
 
     // MARK: - Navigation Actions
+    
+    /// 현재 뷰가 오늘의 수술 화면인지 여부
+    public var isTodaysSurgerySelected: Bool { navigationState.isTodaysSurgerySelected }
 
     /// 오늘의 수술 화면으로 이동
     public func selectTodaysSurgery() {
@@ -59,14 +55,14 @@ public final class MacRootViewModel {
         navigationState.selectPatient(patientID)
         logger.debug("Selected patient: \(patientID)")
     }
-
+    
     /// 환자 생성 시트 열기
     public func openPatientCreateSheet() {
         navigationState.openPatientCreateSheet()
         patientInputState.reset()
         logger.debug("Opening patient create sheet")
     }
-
+    
     /// 환자 수정 시트 열기
     public func openPatientEditSheet(patient: PatientDisplayModel) {
         navigationState.openPatientEditSheet(patient: patient)
@@ -227,4 +223,10 @@ public final class MacRootViewModel {
     public var selectedPatientOperations: [OperationDisplayModel] {
         selectedPatient?.operations ?? []
     }
+    
+    /// 로드된 전체 환자 목록
+    public var loadedPatients: [PatientDisplayModel] {
+        homeViewModel.state.items
+    }
 }
+

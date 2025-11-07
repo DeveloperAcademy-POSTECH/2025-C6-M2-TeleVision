@@ -8,14 +8,29 @@
 import SwiftUI
 
 struct TodaysSurgeryView: View {
-    // HomeView의 homeViewModel 전달받기 (todayOperations 사용)
-    let viewModel: HomeViewModel
+    // TodaysSurgeryViewModel 사용
+    let viewModel: TodaysSurgeryViewModel
 
     var body: some View {
-        Text("오늘의 수술이 없습니다.")
+        
+        // 오늘 날짜(자정 기준) 범위 계산
+        let calendar = Calendar.current
+        let now = Date()
+        let startOfToday = calendar.startOfDay(for: now)
+        let startOfTomorrow = calendar.date(byAdding: .day, value: 1, to: startOfToday)!
+
+        // 오늘에 해당하는 수술만 필터링
+//        let todaysOperations = OperationMockDataModel.patientOperationSamples
+//            .filter { $0.date >= startOfToday && $0.date < startOfTomorrow }
+//            .sorted { $0.date < $1.date }
+        
+        let operations = viewModel.todayOperations.map { $0.operation }
+
+        return OperationListView(operations: operations, onDelete: { _ in })
     }
 }
 
 #Preview {
-    TodaysSurgeryView(viewModel: HomeViewModel())
+    let rootVM = MacRootViewModel()
+    TodaysSurgeryView(viewModel: TodaysSurgeryViewModel(rootVM: rootVM))
 }

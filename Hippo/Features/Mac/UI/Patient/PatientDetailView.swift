@@ -13,16 +13,20 @@ struct PatientDetailView: View {
 
     // Mock 데이터 (UI 개발용)
     var mockData = HomeMockDataModel.mockList
-    let patientId: HomeMockDataModel.ID
-    private var selectedPatient: HomeMockDataModel? { mockData.first { $0.id == patientId } }
+
+    var selectedPatient: PatientDisplayModel?
+    
+    var isTodaysSurgerySelected: Bool
     
     var body: some View {
+
         OperationListView(
             operations: viewModel.operations,
             onDelete: { operationID in
-                Task {
-                    await viewModel.deleteOperation(operationID)
-                }
+//                Task {
+//                    await viewModel.deleteOperation(operationID)
+//                }
+                //TODO: 원띵과 논의 필요
             }
         )
         .navigationTitle(selectedPatient.map { "\($0.name) \($0.gender) \($0.age)세" } ?? "환자 상세 정보")
@@ -31,9 +35,12 @@ struct PatientDetailView: View {
 }
 
 #Preview {
+    @Previewable @State var isTodaysSurgery: Bool = false
+    
     let rootVM = MacRootViewModel()
     PatientDetailView(
         viewModel: PatientDetailViewModel(rootVM: rootVM),
-        patientId: ""
+//        patientId: "",
+        isTodaysSurgerySelected: isTodaysSurgery
     )
 }
