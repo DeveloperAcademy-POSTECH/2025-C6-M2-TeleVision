@@ -11,4 +11,5 @@ enum AttachmentIDs {
     static let finishSurgeryAlert = "FinishSurgeryAlert"
     static let assetListView = "AssetListView"
     static let opacityControlPanel = "OpacityControlPanel"
+    static let endoscopeStream = "EndoscopeStream"  // 내시경 스트리밍 뷰
 }

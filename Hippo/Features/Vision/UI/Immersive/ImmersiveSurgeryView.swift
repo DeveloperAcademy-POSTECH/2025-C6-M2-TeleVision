@@ -21,6 +21,7 @@ struct ImmersiveSurgeryView: View {
     @State private var runtime: ImmersiveSceneRuntime
     @State private var viewModel: OperationViewModel
     @State private var opacityViewModel: OpacityControlViewModel
+    @StateObject private var webRTCReceiver = WebRTCReceiver()
     
     private var patient: PatientDisplayModel {
         guard let patient = viewModel.state.patient else {
@@ -100,6 +101,13 @@ struct ImmersiveSurgeryView: View {
             Attachment(id: AttachmentIDs.opacityControlPanel) {
                 OpacityControlPanel(viewModel: opacityViewModel)
             }
+            // Endoscope Stream View
+            Attachment(id: AttachmentIDs.endoscopeStream) {
+                EndoscopeStreamView(
+                    receiver: webRTCReceiver,
+                    isVisible: viewModel.isEndoscopicActive
+                )
+            }
         }
         .task {
             await viewModel.load(patientID: patientID, operationID: operationID)
@@ -127,8 +135,25 @@ struct ImmersiveSurgeryView: View {
         .onChange(of: runtime.selectedEntity) { _, newValue in
             runtime.setOpacityPanelVisibility(isVisible: newValue != nil)
         }
-        .onAppear { runtime.start() }
-        .onDisappear { runtime.stop() }
+        .onChange(of: viewModel.isEndoscopicActive) { _, isActive in
+            Task {
+                if isActive {
+                    try? await webRTCReceiver.start()
+                } else {
+                    await webRTCReceiver.stop()
+                }
+            }
+            runtime.setEndoscopeStreamVisibility(isVisible: isActive)
+        }
+        .onAppear {
+            runtime.start()
+        }
+        .onDisappear {
+            runtime.stop()
+            Task {
+                await webRTCReceiver.stop()
+            }
+        }
     }
 }
 

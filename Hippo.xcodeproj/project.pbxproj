@@ -16,7 +16,6 @@
 		06ADD9D22EB98E730013665B /* PatientInputView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06ADD9D12EB98E730013665B /* PatientInputView.swift */; };
 		06BF173C2EBB25AF00996C86 /* OperationMockDataModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06BF173B2EBB25AF00996C86 /* OperationMockDataModel.swift */; };
 		06BF173E2EBB27C700996C86 /* OperationCardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06BF173D2EBB27C700996C86 /* OperationCardView.swift */; };
-		06F8CAC12EBA2DF100926483 /* DevicePreview.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06F8CAC02EBA2DF100926483 /* DevicePreview.swift */; };
 		06F8CAC32EBA459B00926483 /* StreamingInspectorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06F8CAC22EBA459B00926483 /* StreamingInspectorView.swift */; };
 		06F9D6362EBC765A00AD1EE6 /* OperationInputView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06F9D6352EBC765A00AD1EE6 /* OperationInputView.swift */; };
 		144254312EA9FF7800583CC3 /* OperationContext.swift in Sources */ = {isa = PBXBuildFile; fileRef = 144254302EA9FF7800583CC3 /* OperationContext.swift */; };
@@ -135,6 +134,54 @@
 		2581FCED2EBBC76D0059678D /* PatientDetailViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2581FCEB2EBBC76D0059678D /* PatientDetailViewModel.swift */; };
 		2581FCEE2EBBC76D0059678D /* PatientInputState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2581FCEC2EBBC76D0059678D /* PatientInputState.swift */; };
 		2581FCF42EBCB2B80059678D /* TodaysSurgeryViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2581FCF32EBCB2B80059678D /* TodaysSurgeryViewModel.swift */; };
+		2581FEFF2EBE18A70059678D /* ITransport.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2581FEFA2EBE18A70059678D /* ITransport.swift */; };
+		2581FF002EBE18A70059678D /* CaptureSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2581FEF92EBE18A70059678D /* CaptureSource.swift */; };
+		2581FF012EBE18A70059678D /* SyncedPair.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2581FEFC2EBE18A70059678D /* SyncedPair.swift */; };
+		2581FF022EBE18A70059678D /* ReconnectionPolicy.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2581FEFB2EBE18A70059678D /* ReconnectionPolicy.swift */; };
+		2581FF032EBE18A70059678D /* VideoError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2581FEFD2EBE18A70059678D /* VideoError.swift */; };
+		2581FF042EBE18A70059678D /* ITransport.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2581FEFA2EBE18A70059678D /* ITransport.swift */; };
+		2581FF052EBE18A70059678D /* CaptureSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2581FEF92EBE18A70059678D /* CaptureSource.swift */; };
+		2581FF062EBE18A70059678D /* SyncedPair.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2581FEFC2EBE18A70059678D /* SyncedPair.swift */; };
+		2581FF072EBE18A70059678D /* ReconnectionPolicy.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2581FEFB2EBE18A70059678D /* ReconnectionPolicy.swift */; };
+		2581FF082EBE18A70059678D /* VideoError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2581FEFD2EBE18A70059678D /* VideoError.swift */; };
+		2581FF092EBE18A70059678D /* ITransport.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2581FEFA2EBE18A70059678D /* ITransport.swift */; };
+		2581FF0A2EBE18A70059678D /* CaptureSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2581FEF92EBE18A70059678D /* CaptureSource.swift */; };
+		2581FF0B2EBE18A70059678D /* SyncedPair.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2581FEFC2EBE18A70059678D /* SyncedPair.swift */; };
+		2581FF0C2EBE18A70059678D /* ReconnectionPolicy.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2581FEFB2EBE18A70059678D /* ReconnectionPolicy.swift */; };
+		2581FF0D2EBE18A70059678D /* VideoError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2581FEFD2EBE18A70059678D /* VideoError.swift */; };
+		2581FF132EBE19AE0059678D /* ConvertingModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2581FF0E2EBE19AE0059678D /* ConvertingModel.swift */; };
+		2581FF142EBE19AE0059678D /* StereoVideoRenderer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2581FF102EBE19AE0059678D /* StereoVideoRenderer.swift */; };
+		2581FF152EBE19AE0059678D /* WebRTCReceiver.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2581FF112EBE19AE0059678D /* WebRTCReceiver.swift */; };
+		2581FF162EBE19AE0059678D /* StereoMetadata.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2581FF0F2EBE19AE0059678D /* StereoMetadata.swift */; };
+		2581FF182EBE19FF0059678D /* EndoscopeStreamView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2581FF172EBE19FF0059678D /* EndoscopeStreamView.swift */; };
+		2581FF1B2EBE21680059678D /* LiveKit in Frameworks */ = {isa = PBXBuildFile; productRef = 2581FF1A2EBE21680059678D /* LiveKit */; };
+		2581FF1D2EBE24520059678D /* LiveKit in Frameworks */ = {isa = PBXBuildFile; productRef = 2581FF1C2EBE24520059678D /* LiveKit */; };
+		2581FF342EBE2CB20059678D /* NormalizePolicy.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2581FF282EBE2CB20059678D /* NormalizePolicy.swift */; };
+		2581FF352EBE2CB20059678D /* LatencyMeter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2581FF2C2EBE2CB20059678D /* LatencyMeter.swift */; };
+		2581FF362EBE2CB20059678D /* AppModule.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2581FF1E2EBE2CB20059678D /* AppModule.swift */; };
+		2581FF372EBE2CB20059678D /* CI_SBSComposer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2581FF272EBE2CB20059678D /* CI_SBSComposer.swift */; };
+		2581FF382EBE2CB20059678D /* PipelineConfigurationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2581FF1F2EBE2CB20059678D /* PipelineConfigurationManager.swift */; };
+		2581FF392EBE2CB20059678D /* FrameSync.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2581FF2E2EBE2CB20059678D /* FrameSync.swift */; };
+		2581FF3A2EBE2CB20059678D /* CaptureSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2581FF232EBE2CB20059678D /* CaptureSettings.swift */; };
+		2581FF3B2EBE2CB20059678D /* SBSMode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2581FF2A2EBE2CB20059678D /* SBSMode.swift */; };
+		2581FF3C2EBE2CB20059678D /* BaseCaptureSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2581FF212EBE2CB20059678D /* BaseCaptureSession.swift */; };
+		2581FF3D2EBE2CB20059678D /* LeftCaptureSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2581FF242EBE2CB20059678D /* LeftCaptureSession.swift */; };
+		2581FF3E2EBE2CB20059678D /* CaptureOutputDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2581FF222EBE2CB20059678D /* CaptureOutputDelegate.swift */; };
+		2581FF3F2EBE2CB20059678D /* WebRTCManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2581FF312EBE2CB20059678D /* WebRTCManager.swift */; };
+		2581FF402EBE2CB20059678D /* RightCaptureSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2581FF252EBE2CB20059678D /* RightCaptureSession.swift */; };
+		2581FF422EBE2CB20059678D /* SBSComposerConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2581FF292EBE2CB20059678D /* SBSComposerConfig.swift */; };
+		2581FF442EBE32200059678D /* SignalingClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2581FF432EBE32200059678D /* SignalingClient.swift */; };
+		2581FF452EBE32200059678D /* SignalingClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2581FF432EBE32200059678D /* SignalingClient.swift */; };
+		2581FF462EBE32200059678D /* SignalingClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2581FF432EBE32200059678D /* SignalingClient.swift */; };
+		2581FF482EBE4AC70059678D /* StreamingControlViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2581FF472EBE4AC70059678D /* StreamingControlViewModel.swift */; };
+		2581FF4C2EBE576E0059678D /* CameraInputToggle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2581FF492EBE576E0059678D /* CameraInputToggle.swift */; };
+		2581FF4D2EBE576E0059678D /* ModeButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2581FF4A2EBE576E0059678D /* ModeButton.swift */; };
+		2581FF522EBE5E8F0059678D /* ModeSectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2581FF502EBE5E8F0059678D /* ModeSectionView.swift */; };
+		2581FF532EBE5E8F0059678D /* CameraPickerRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2581FF4E2EBE5E8F0059678D /* CameraPickerRow.swift */; };
+		2581FF542EBE5E8F0059678D /* CameraSectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2581FF4F2EBE5E8F0059678D /* CameraSectionView.swift */; };
+		2581FF552EBE5E8F0059678D /* StreamingButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2581FF512EBE5E8F0059678D /* StreamingButton.swift */; };
+		2581FF572EBE63A20059678D /* PreviewSectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2581FF562EBE63A20059678D /* PreviewSectionView.swift */; };
+		2581FF592EBE6AE00059678D /* DevicePreview.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2581FF582EBE6AE00059678D /* DevicePreview.swift */; };
 		25E78B602EB90D4600D8CAD2 /* OperationStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = 25E78B5D2EB90D4600D8CAD2 /* OperationStatus.swift */; };
 		25E78B612EB90D4600D8CAD2 /* Operation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 25E78B542EB90D4600D8CAD2 /* Operation.swift */; };
 		25E78B622EB90D4600D8CAD2 /* OperationAsset.swift in Sources */ = {isa = PBXBuildFile; fileRef = 25E78B552EB90D4600D8CAD2 /* OperationAsset.swift */; };
@@ -356,7 +403,6 @@
 		06ADD9D12EB98E730013665B /* PatientInputView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PatientInputView.swift; sourceTree = "<group>"; };
 		06BF173B2EBB25AF00996C86 /* OperationMockDataModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OperationMockDataModel.swift; sourceTree = "<group>"; };
 		06BF173D2EBB27C700996C86 /* OperationCardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OperationCardView.swift; sourceTree = "<group>"; };
-		06F8CAC02EBA2DF100926483 /* DevicePreview.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DevicePreview.swift; sourceTree = "<group>"; };
 		06F8CAC22EBA459B00926483 /* StreamingInspectorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StreamingInspectorView.swift; sourceTree = "<group>"; };
 		06F9D6352EBC765A00AD1EE6 /* OperationInputView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OperationInputView.swift; sourceTree = "<group>"; };
 		144254302EA9FF7800583CC3 /* OperationContext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OperationContext.swift; sourceTree = "<group>"; };
@@ -427,6 +473,40 @@
 		2581FCEB2EBBC76D0059678D /* PatientDetailViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PatientDetailViewModel.swift; sourceTree = "<group>"; };
 		2581FCEC2EBBC76D0059678D /* PatientInputState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PatientInputState.swift; sourceTree = "<group>"; };
 		2581FCF32EBCB2B80059678D /* TodaysSurgeryViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TodaysSurgeryViewModel.swift; sourceTree = "<group>"; };
+		2581FEF92EBE18A70059678D /* CaptureSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CaptureSource.swift; sourceTree = "<group>"; };
+		2581FEFA2EBE18A70059678D /* ITransport.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ITransport.swift; sourceTree = "<group>"; };
+		2581FEFB2EBE18A70059678D /* ReconnectionPolicy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReconnectionPolicy.swift; sourceTree = "<group>"; };
+		2581FEFC2EBE18A70059678D /* SyncedPair.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SyncedPair.swift; sourceTree = "<group>"; };
+		2581FEFD2EBE18A70059678D /* VideoError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoError.swift; sourceTree = "<group>"; };
+		2581FF0E2EBE19AE0059678D /* ConvertingModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConvertingModel.swift; sourceTree = "<group>"; };
+		2581FF0F2EBE19AE0059678D /* StereoMetadata.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StereoMetadata.swift; sourceTree = "<group>"; };
+		2581FF102EBE19AE0059678D /* StereoVideoRenderer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StereoVideoRenderer.swift; sourceTree = "<group>"; };
+		2581FF112EBE19AE0059678D /* WebRTCReceiver.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebRTCReceiver.swift; sourceTree = "<group>"; };
+		2581FF172EBE19FF0059678D /* EndoscopeStreamView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EndoscopeStreamView.swift; sourceTree = "<group>"; };
+		2581FF1E2EBE2CB20059678D /* AppModule.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppModule.swift; sourceTree = "<group>"; };
+		2581FF1F2EBE2CB20059678D /* PipelineConfigurationManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PipelineConfigurationManager.swift; sourceTree = "<group>"; };
+		2581FF212EBE2CB20059678D /* BaseCaptureSession.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BaseCaptureSession.swift; sourceTree = "<group>"; };
+		2581FF222EBE2CB20059678D /* CaptureOutputDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CaptureOutputDelegate.swift; sourceTree = "<group>"; };
+		2581FF232EBE2CB20059678D /* CaptureSettings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CaptureSettings.swift; sourceTree = "<group>"; };
+		2581FF242EBE2CB20059678D /* LeftCaptureSession.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LeftCaptureSession.swift; sourceTree = "<group>"; };
+		2581FF252EBE2CB20059678D /* RightCaptureSession.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RightCaptureSession.swift; sourceTree = "<group>"; };
+		2581FF272EBE2CB20059678D /* CI_SBSComposer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CI_SBSComposer.swift; sourceTree = "<group>"; };
+		2581FF282EBE2CB20059678D /* NormalizePolicy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NormalizePolicy.swift; sourceTree = "<group>"; };
+		2581FF292EBE2CB20059678D /* SBSComposerConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SBSComposerConfig.swift; sourceTree = "<group>"; };
+		2581FF2A2EBE2CB20059678D /* SBSMode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SBSMode.swift; sourceTree = "<group>"; };
+		2581FF2C2EBE2CB20059678D /* LatencyMeter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LatencyMeter.swift; sourceTree = "<group>"; };
+		2581FF2E2EBE2CB20059678D /* FrameSync.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FrameSync.swift; sourceTree = "<group>"; };
+		2581FF312EBE2CB20059678D /* WebRTCManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebRTCManager.swift; sourceTree = "<group>"; };
+		2581FF432EBE32200059678D /* SignalingClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignalingClient.swift; sourceTree = "<group>"; };
+		2581FF472EBE4AC70059678D /* StreamingControlViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StreamingControlViewModel.swift; sourceTree = "<group>"; };
+		2581FF492EBE576E0059678D /* CameraInputToggle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CameraInputToggle.swift; sourceTree = "<group>"; };
+		2581FF4A2EBE576E0059678D /* ModeButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModeButton.swift; sourceTree = "<group>"; };
+		2581FF4E2EBE5E8F0059678D /* CameraPickerRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CameraPickerRow.swift; sourceTree = "<group>"; };
+		2581FF4F2EBE5E8F0059678D /* CameraSectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CameraSectionView.swift; sourceTree = "<group>"; };
+		2581FF502EBE5E8F0059678D /* ModeSectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModeSectionView.swift; sourceTree = "<group>"; };
+		2581FF512EBE5E8F0059678D /* StreamingButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StreamingButton.swift; sourceTree = "<group>"; };
+		2581FF562EBE63A20059678D /* PreviewSectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreviewSectionView.swift; sourceTree = "<group>"; };
+		2581FF582EBE6AE00059678D /* DevicePreview.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DevicePreview.swift; sourceTree = "<group>"; };
 		25E78B542EB90D4600D8CAD2 /* Operation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Operation.swift; sourceTree = "<group>"; };
 		25E78B552EB90D4600D8CAD2 /* OperationAsset.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OperationAsset.swift; sourceTree = "<group>"; };
 		25E78B562EB90D4600D8CAD2 /* OperationRecording.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OperationRecording.swift; sourceTree = "<group>"; };
@@ -517,6 +597,7 @@
 				146F102D2EA3AD1500DDDC35 /* HippoAssets in Frameworks */,
 				C04677B92EA006FB00D160DA /* Dependencies in Frameworks */,
 				C050AA442EA81D6300352314 /* DependenciesMacros in Frameworks */,
+				2581FF1D2EBE24520059678D /* LiveKit in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -533,6 +614,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				C04677BD2EA0070D00D160DA /* Dependencies in Frameworks */,
+				2581FF1B2EBE21680059678D /* LiveKit in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -542,9 +624,10 @@
 		0617C8FC2EB8BB9F003B26E8 /* StreamingControl */ = {
 			isa = PBXGroup;
 			children = (
+				2581FF4B2EBE576E0059678D /* Components */,
+				2581FF472EBE4AC70059678D /* StreamingControlViewModel.swift */,
 				0667A5492EB8814100D7BDF3 /* StreamingControlView.swift */,
 				06F8CAC22EBA459B00926483 /* StreamingInspectorView.swift */,
-				06F8CAC02EBA2DF100926483 /* DevicePreview.swift */,
 			);
 			path = StreamingControl;
 			sourceTree = "<group>";
@@ -889,6 +972,114 @@
 			path = Root;
 			sourceTree = "<group>";
 		};
+		2581FEFE2EBE18A70059678D /* Core */ = {
+			isa = PBXGroup;
+			children = (
+				2581FF432EBE32200059678D /* SignalingClient.swift */,
+				2581FEF92EBE18A70059678D /* CaptureSource.swift */,
+				2581FEFA2EBE18A70059678D /* ITransport.swift */,
+				2581FEFB2EBE18A70059678D /* ReconnectionPolicy.swift */,
+				2581FEFC2EBE18A70059678D /* SyncedPair.swift */,
+				2581FEFD2EBE18A70059678D /* VideoError.swift */,
+			);
+			path = Core;
+			sourceTree = "<group>";
+		};
+		2581FF122EBE19AE0059678D /* WebRTC */ = {
+			isa = PBXGroup;
+			children = (
+				2581FF0E2EBE19AE0059678D /* ConvertingModel.swift */,
+				2581FF0F2EBE19AE0059678D /* StereoMetadata.swift */,
+				2581FF102EBE19AE0059678D /* StereoVideoRenderer.swift */,
+				2581FF112EBE19AE0059678D /* WebRTCReceiver.swift */,
+			);
+			path = WebRTC;
+			sourceTree = "<group>";
+		};
+		2581FF202EBE2CB20059678D /* AppModule */ = {
+			isa = PBXGroup;
+			children = (
+				2581FF1E2EBE2CB20059678D /* AppModule.swift */,
+				2581FF1F2EBE2CB20059678D /* PipelineConfigurationManager.swift */,
+			);
+			path = AppModule;
+			sourceTree = "<group>";
+		};
+		2581FF262EBE2CB20059678D /* CaptureKit */ = {
+			isa = PBXGroup;
+			children = (
+				2581FF212EBE2CB20059678D /* BaseCaptureSession.swift */,
+				2581FF222EBE2CB20059678D /* CaptureOutputDelegate.swift */,
+				2581FF232EBE2CB20059678D /* CaptureSettings.swift */,
+				2581FF242EBE2CB20059678D /* LeftCaptureSession.swift */,
+				2581FF252EBE2CB20059678D /* RightCaptureSession.swift */,
+			);
+			path = CaptureKit;
+			sourceTree = "<group>";
+		};
+		2581FF2B2EBE2CB20059678D /* Composer */ = {
+			isa = PBXGroup;
+			children = (
+				2581FF272EBE2CB20059678D /* CI_SBSComposer.swift */,
+				2581FF282EBE2CB20059678D /* NormalizePolicy.swift */,
+				2581FF292EBE2CB20059678D /* SBSComposerConfig.swift */,
+				2581FF2A2EBE2CB20059678D /* SBSMode.swift */,
+			);
+			path = Composer;
+			sourceTree = "<group>";
+		};
+		2581FF2D2EBE2CB20059678D /* Diagnostics */ = {
+			isa = PBXGroup;
+			children = (
+				2581FF2C2EBE2CB20059678D /* LatencyMeter.swift */,
+			);
+			path = Diagnostics;
+			sourceTree = "<group>";
+		};
+		2581FF2F2EBE2CB20059678D /* FrameSync */ = {
+			isa = PBXGroup;
+			children = (
+				2581FF2E2EBE2CB20059678D /* FrameSync.swift */,
+			);
+			path = FrameSync;
+			sourceTree = "<group>";
+		};
+		2581FF322EBE2CB20059678D /* RTCTransport */ = {
+			isa = PBXGroup;
+			children = (
+				2581FF312EBE2CB20059678D /* WebRTCManager.swift */,
+			);
+			path = RTCTransport;
+			sourceTree = "<group>";
+		};
+		2581FF332EBE2CB20059678D /* Streaming */ = {
+			isa = PBXGroup;
+			children = (
+				2581FF202EBE2CB20059678D /* AppModule */,
+				2581FF262EBE2CB20059678D /* CaptureKit */,
+				2581FF2B2EBE2CB20059678D /* Composer */,
+				2581FF2D2EBE2CB20059678D /* Diagnostics */,
+				2581FF2F2EBE2CB20059678D /* FrameSync */,
+				2581FF322EBE2CB20059678D /* RTCTransport */,
+			);
+			path = Streaming;
+			sourceTree = "<group>";
+		};
+		2581FF4B2EBE576E0059678D /* Components */ = {
+			isa = PBXGroup;
+			children = (
+				2581FF582EBE6AE00059678D /* DevicePreview.swift */,
+				2581FF562EBE63A20059678D /* PreviewSectionView.swift */,
+				2581FF4E2EBE5E8F0059678D /* CameraPickerRow.swift */,
+				2581FF4F2EBE5E8F0059678D /* CameraSectionView.swift */,
+				2581FF502EBE5E8F0059678D /* ModeSectionView.swift */,
+				2581FF512EBE5E8F0059678D /* StreamingButton.swift */,
+				2581FF492EBE576E0059678D /* CameraInputToggle.swift */,
+				2581FF4A2EBE576E0059678D /* ModeButton.swift */,
+			);
+			path = Components;
+			sourceTree = "<group>";
+		};
 		25E78B522EB90D4600D8CAD2 /* Commands */ = {
 			isa = PBXGroup;
 			children = (
@@ -1009,6 +1200,7 @@
 		C02FFA542E9FFF6F00F16742 /* Mac */ = {
 			isa = PBXGroup;
 			children = (
+				2581FF332EBE2CB20059678D /* Streaming */,
 				C050AA182EA80E6200352314 /* UI */,
 			);
 			path = Mac;
@@ -1017,6 +1209,7 @@
 		C02FFA582E9FFF6F00F16742 /* Vision */ = {
 			isa = PBXGroup;
 			children = (
+				2581FF122EBE19AE0059678D /* WebRTC */,
 				1442542F2EA9FF3900583CC3 /* Context */,
 				C050AA192EA80E9E00352314 /* Runtime */,
 				C050AA172EA80E5700352314 /* UI */,
@@ -1077,6 +1270,7 @@
 		C02FFA6C2E9FFF6F00F16742 /* Shared */ = {
 			isa = PBXGroup;
 			children = (
+				2581FEFE2EBE18A70059678D /* Core */,
 				C02FFA652E9FFF6F00F16742 /* Data */,
 				C02FFA692E9FFF6F00F16742 /* Domain */,
 				C02FFA6B2E9FFF6F00F16742 /* Presentation */,
@@ -1243,6 +1437,7 @@
 		C050AA242EA8150500352314 /* Immersive */ = {
 			isa = PBXGroup;
 			children = (
+				2581FF172EBE19FF0059678D /* EndoscopeStreamView.swift */,
 				1446FB9B2EAE6987000BCF61 /* Components */,
 				14F6B0332EAAC73F003F28EB /* ImmersiveSurgeryView.swift */,
 				27D8A2BD2EAF67CE009429F0 /* OpacityControlViewModel.swift */,
@@ -1389,6 +1584,7 @@
 				C04677B82EA006FB00D160DA /* Dependencies */,
 				146F102C2EA3AD1500DDDC35 /* HippoAssets */,
 				C050AA432EA81D6300352314 /* DependenciesMacros */,
+				2581FF1C2EBE24520059678D /* LiveKit */,
 			);
 			productName = Hippo;
 			productReference = 145E0F4D2E9C0F3900CE6C97 /* HippoVision.app */;
@@ -1430,6 +1626,7 @@
 			name = HippoMac;
 			packageProductDependencies = (
 				C04677BC2EA0070D00D160DA /* Dependencies */,
+				2581FF1A2EBE21680059678D /* LiveKit */,
 			);
 			productName = HippoMac;
 			productReference = C05F32242E9FF303009C5974 /* HippoMac.app */;
@@ -1468,6 +1665,7 @@
 			minimizedProjectReferenceProxies = 1;
 			packageReferences = (
 				C04677B72EA006FB00D160DA /* XCRemoteSwiftPackageReference "swift-dependencies" */,
+				2581FF192EBE21680059678D /* XCRemoteSwiftPackageReference "client-sdk-swift" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 145E0F4E2E9C0F3900CE6C97 /* Products */;
@@ -1548,12 +1746,21 @@
 				144254342EAA232300583CC3 /* OperationViewModel.swift in Sources */,
 				C04678142EA00B1F00D160DA /* Patient.swift in Sources */,
 				27AD7AE52EB5BEA400E84809 /* OpacityControlPanelHeader.swift in Sources */,
+				2581FF132EBE19AE0059678D /* ConvertingModel.swift in Sources */,
+				2581FF142EBE19AE0059678D /* StereoVideoRenderer.swift in Sources */,
+				2581FF152EBE19AE0059678D /* WebRTCReceiver.swift in Sources */,
+				2581FF162EBE19AE0059678D /* StereoMetadata.swift in Sources */,
 				278F28B92EB3874800DF2F73 /* GlowingCapsuleButton.swift in Sources */,
 				14C8FF6D2EABA4250089101B /* AttachmentIDs.swift in Sources */,
 				14A17F872EB31397009D16CF /* PatientDetailHeader.swift in Sources */,
 				14CC756C2EA6A99300399562 /* PatientGridView.swift in Sources */,
 				14CC755B2EA6A8C700399562 /* SectionHeader.swift in Sources */,
 				C04678172EA00B1F00D160DA /* GetPatient.swift in Sources */,
+				2581FF092EBE18A70059678D /* ITransport.swift in Sources */,
+				2581FF0A2EBE18A70059678D /* CaptureSource.swift in Sources */,
+				2581FF0B2EBE18A70059678D /* SyncedPair.swift in Sources */,
+				2581FF0C2EBE18A70059678D /* ReconnectionPolicy.swift in Sources */,
+				2581FF0D2EBE18A70059678D /* VideoError.swift in Sources */,
 				1494DE802EA7321A000CD284 /* AssetSection.swift in Sources */,
 				C04678182EA00B1F00D160DA /* ListPatients.swift in Sources */,
 				C04678192EA00B1F00D160DA /* PatientRepository.swift in Sources */,
@@ -1564,6 +1771,7 @@
 				1446FBB22EAE6C23000BCF61 /* RecordButton.swift in Sources */,
 				1446FBE42EAF5801000BCF61 /* PatientInputView.swift in Sources */,
 				1446FB9E2EAE69AF000BCF61 /* RecordingIndicator.swift in Sources */,
+				2581FF452EBE32200059678D /* SignalingClient.swift in Sources */,
 				C02FFA9D2E9FFF6F00F16742 /* AppModel.swift in Sources */,
 				25E78BA82EB9225600D8CAD2 /* GetOperation.swift in Sources */,
 				25E78BA92EB9225600D8CAD2 /* GetTodayOperations.swift in Sources */,
@@ -1609,6 +1817,7 @@
 				25E78B712EB90D4600D8CAD2 /* OperationAssetExtension.swift in Sources */,
 				C046783F2EA00B4A00D160DA /* PatientState.swift in Sources */,
 				C0F97AAE2EA401160063E159 /* PatientMapper.swift in Sources */,
+				2581FF182EBE19FF0059678D /* EndoscopeStreamView.swift in Sources */,
 				25E78BB32EB92A2E00D8CAD2 /* UpdateOperationCommand.swift in Sources */,
 				C0F97AAF2EA401160063E159 /* PatientDisplayModel.swift in Sources */,
 				1446FBF02EAFAD5C000BCF61 /* PatientInputHeader.swift in Sources */,
@@ -1695,6 +1904,7 @@
 				25E78B7F2EB9164E00D8CAD2 /* CreateOperationCommand.swift in Sources */,
 				25E78B842EB9166900D8CAD2 /* OperationWithPatient.swift in Sources */,
 				25E78B802EB9164E00D8CAD2 /* AttachAssetCommand.swift in Sources */,
+				2581FF442EBE32200059678D /* SignalingClient.swift in Sources */,
 				1446FBBB2EAE770A000BCF61 /* SurgeryControlBar.swift in Sources */,
 				14A17F982EB34F46009D16CF /* OperationInputHeader.swift in Sources */,
 				27AD7AC42EB4948A00E84809 /* LayerEyeButton.swift in Sources */,
@@ -1728,6 +1938,11 @@
 				C046780C2EA00B1F00D160DA /* ListPatients.swift in Sources */,
 				C046780D2EA00B1F00D160DA /* PatientRepository.swift in Sources */,
 				C0F97B002EA430880063E159 /* Gender.swift in Sources */,
+				2581FEFF2EBE18A70059678D /* ITransport.swift in Sources */,
+				2581FF002EBE18A70059678D /* CaptureSource.swift in Sources */,
+				2581FF012EBE18A70059678D /* SyncedPair.swift in Sources */,
+				2581FF022EBE18A70059678D /* ReconnectionPolicy.swift in Sources */,
+				2581FF032EBE18A70059678D /* VideoError.swift in Sources */,
 				C050AA3B2EA8197E00352314 /* ImmersiveIDs.swift in Sources */,
 				144254392EAA9FF000583CC3 /* OperationState.swift in Sources */,
 				14DE51322EB60DB00027D9A0 /* FileAttachmentPlaceholder.swift in Sources */,
@@ -1762,14 +1977,39 @@
 				144254672EAAC44900583CC3 /* StartOperationButton.swift in Sources */,
 				C0F97AA92EA401160063E159 /* PatientMapper.swift in Sources */,
 				0667A54C2EB8833D00D7BDF3 /* PatientDetailView.swift in Sources */,
+				2581FF462EBE32200059678D /* SignalingClient.swift in Sources */,
 				C0F97AC52EA41D4B0063E159 /* SDOperation.swift in Sources */,
 				C0F97ADE2EA420EB0063E159 /* DomainDependencies.swift in Sources */,
+				2581FF342EBE2CB20059678D /* NormalizePolicy.swift in Sources */,
+				2581FF352EBE2CB20059678D /* LatencyMeter.swift in Sources */,
+				2581FF362EBE2CB20059678D /* AppModule.swift in Sources */,
+				2581FF372EBE2CB20059678D /* CI_SBSComposer.swift in Sources */,
+				2581FF382EBE2CB20059678D /* PipelineConfigurationManager.swift in Sources */,
+				2581FF522EBE5E8F0059678D /* ModeSectionView.swift in Sources */,
+				2581FF532EBE5E8F0059678D /* CameraPickerRow.swift in Sources */,
+				2581FF542EBE5E8F0059678D /* CameraSectionView.swift in Sources */,
+				2581FF552EBE5E8F0059678D /* StreamingButton.swift in Sources */,
+				2581FF392EBE2CB20059678D /* FrameSync.swift in Sources */,
+				2581FF3A2EBE2CB20059678D /* CaptureSettings.swift in Sources */,
+				2581FF3B2EBE2CB20059678D /* SBSMode.swift in Sources */,
+				2581FF3C2EBE2CB20059678D /* BaseCaptureSession.swift in Sources */,
+				2581FF3D2EBE2CB20059678D /* LeftCaptureSession.swift in Sources */,
+				2581FF3E2EBE2CB20059678D /* CaptureOutputDelegate.swift in Sources */,
+				2581FF3F2EBE2CB20059678D /* WebRTCManager.swift in Sources */,
+				2581FF402EBE2CB20059678D /* RightCaptureSession.swift in Sources */,
+				2581FF422EBE2CB20059678D /* SBSComposerConfig.swift in Sources */,
 				C0F97AD42EA41FB50063E159 /* PatientLocalDataSource.swift in Sources */,
 				C0F97AC62EA41D4B0063E159 /* SDOperationRecording.swift in Sources */,
 				C0F97AC72EA41D4B0063E159 /* SwiftDataMappers.swift in Sources */,
+				2581FF482EBE4AC70059678D /* StreamingControlViewModel.swift in Sources */,
 				C0F97AC82EA41D4B0063E159 /* PatientLocalDataSourceSwiftData.swift in Sources */,
 				144254372EAA9FF000583CC3 /* OperationState.swift in Sources */,
 				C0F97AC92EA41D4B0063E159 /* SDOperationAsset.swift in Sources */,
+				2581FF042EBE18A70059678D /* ITransport.swift in Sources */,
+				2581FF052EBE18A70059678D /* CaptureSource.swift in Sources */,
+				2581FF062EBE18A70059678D /* SyncedPair.swift in Sources */,
+				2581FF072EBE18A70059678D /* ReconnectionPolicy.swift in Sources */,
+				2581FF082EBE18A70059678D /* VideoError.swift in Sources */,
 				144254692EAAC61F00583CC3 /* WindowIDs.swift in Sources */,
 				2581FCE92EBBC6FA0059678D /* MacNavigationState.swift in Sources */,
 				2581FCEA2EBBC6FA0059678D /* MacRootViewModel.swift in Sources */,
@@ -1798,10 +2038,11 @@
 				C0F97B0D2EA4348D0063E159 /* CreatePatient.swift in Sources */,
 				C04678322EA00B3A00D160DA /* PatientRepositoryImpl.swift in Sources */,
 				1446FBA92EAE6B55000BCF61 /* PatientInfoHeader.swift in Sources */,
+				2581FF4C2EBE576E0059678D /* CameraInputToggle.swift in Sources */,
+				2581FF4D2EBE576E0059678D /* ModeButton.swift in Sources */,
 				1446FBB72EAE6C66000BCF61 /* MenuToggleButton.swift in Sources */,
 				1494DE9A2EA73359000CD284 /* SectionTitle.swift in Sources */,
 				C04678332EA00B3A00D160DA /* PatientRemoteDataSource.swift in Sources */,
-				06F8CAC12EBA2DF100926483 /* DevicePreview.swift in Sources */,
 				C04678472EA00C2700D160DA /* PatientView.swift in Sources */,
 				C0F97A7D2EA3FD370063E159 /* PatientDTO.swift in Sources */,
 				C046781C2EA00B1F00D160DA /* DeletePatient.swift in Sources */,
@@ -1823,6 +2064,7 @@
 				C04678242EA00B1F00D160DA /* ListPatients.swift in Sources */,
 				C04678252EA00B1F00D160DA /* PatientRepository.swift in Sources */,
 				25E78B9F2EB9225600D8CAD2 /* GetOperation.swift in Sources */,
+				2581FF572EBE63A20059678D /* PreviewSectionView.swift in Sources */,
 				25E78BA02EB9225600D8CAD2 /* GetTodayOperations.swift in Sources */,
 				25E78BA12EB9225600D8CAD2 /* CreateOperation.swift in Sources */,
 				25E78BA22EB9225600D8CAD2 /* UpsertOperation.swift in Sources */,
@@ -1841,6 +2083,7 @@
 				25E78B732EB9164200D8CAD2 /* OperationRepository.swift in Sources */,
 				25E78B662EB90D4600D8CAD2 /* OperationStatus.swift in Sources */,
 				25E78B672EB90D4600D8CAD2 /* Operation.swift in Sources */,
+				2581FF592EBE6AE00059678D /* DevicePreview.swift in Sources */,
 				25E78B682EB90D4600D8CAD2 /* OperationAsset.swift in Sources */,
 				2581FCE52EBBC6870059678D /* OperationInputState.swift in Sources */,
 				25E78B692EB90D4600D8CAD2 /* OperationRecording.swift in Sources */,
@@ -2100,6 +2343,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = HIPPO;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = Hippo/Applications/MacApp/HippoMac.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				CURRENT_PROJECT_VERSION = 1;
@@ -2136,6 +2380,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = HIPPO;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = Hippo/Applications/MacApp/HippoMac.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				CURRENT_PROJECT_VERSION = 1;
@@ -2209,6 +2454,14 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
+		2581FF192EBE21680059678D /* XCRemoteSwiftPackageReference "client-sdk-swift" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/livekit/client-sdk-swift.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 2.9.0;
+			};
+		};
 		C04677B72EA006FB00D160DA /* XCRemoteSwiftPackageReference "swift-dependencies" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/pointfreeco/swift-dependencies";
@@ -2223,6 +2476,16 @@
 		146F102C2EA3AD1500DDDC35 /* HippoAssets */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = HippoAssets;
+		};
+		2581FF1A2EBE21680059678D /* LiveKit */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 2581FF192EBE21680059678D /* XCRemoteSwiftPackageReference "client-sdk-swift" */;
+			productName = LiveKit;
+		};
+		2581FF1C2EBE24520059678D /* LiveKit */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 2581FF192EBE21680059678D /* XCRemoteSwiftPackageReference "client-sdk-swift" */;
+			productName = LiveKit;
 		};
 		C04677B82EA006FB00D160DA /* Dependencies */ = {
 			isa = XCSwiftPackageProductDependency;
