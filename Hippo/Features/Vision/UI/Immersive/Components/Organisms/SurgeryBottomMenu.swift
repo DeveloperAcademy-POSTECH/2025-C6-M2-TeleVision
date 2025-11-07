@@ -12,6 +12,7 @@ struct SurgeryBottomMenu: View {
     @Environment(\.dismissImmersiveSpace) private var dismissImmersiveSpace
     @Environment(\.openWindow) private var openWindow
     @Environment(\.dismissWindow) private var dismissWindow
+    @Environment(\.pushWindow) private var pushWindow
     
     @Environment(OperationViewModel.self) var dataViewModel
     @Environment(ImmersiveViewModel.self) var immersiveViewModel
@@ -25,22 +26,22 @@ struct SurgeryBottomMenu: View {
         let windowController = WindowController(
             dismissSpace: dismissImmersiveSpace,
             openWindow: openWindow,
-            dismissWindow: dismissWindow
+            dismissWindow: dismissWindow,
+            pushWindowAction: pushWindow
         )
         
         VStack {
-            Spacer()
             PatientInfoHeader()
             Spacer().frame(height: 8)
             SurgeryControlBar()
         }
         .opacity(immersiveViewModel.isMenuActive ? 1.0 : 0.0)
         .environment(windowController)
-        .ornament(
-            visibility: immersiveViewModel.isShowingAssetListView ? .visible : .hidden,
-            attachmentAnchor: .scene(.top)) {
-                AssetListView()
-            }
+//        .ornament(
+//            visibility: immersiveViewModel.isShowingAssetListView ? .visible : .hidden,
+//            attachmentAnchor: .scene(.top)) {
+//                AssetListView()
+//            }
     }
         
 }

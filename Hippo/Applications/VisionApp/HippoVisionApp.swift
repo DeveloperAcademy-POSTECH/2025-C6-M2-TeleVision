@@ -95,13 +95,15 @@ struct HippoVisionApp: App {
                 .environment(opacityManager)
                 .environment(runtime)
                 .onAppear { immersiveViewModel.isOpacityControlPanelOpen = true }
-                .onDisappear { immersiveViewModel.isOpacityControlPanelOpen = false }
+                .onDisappear {
+                    immersiveViewModel.isOpacityControlPanelOpen = false
+                }
             
         }
         .defaultSize(width: 658, height: 522)
         .defaultWindowPlacement { _, context in
-            if let patientDetailWindow = context.windows.first(where: { $0.id == WindowIDs.surgeryBottomMenu }) {
-                return WindowPlacement(.trailing(patientDetailWindow))
+            if let surgeryBottomMenu = context.windows.first(where: { $0.id == WindowIDs.surgeryBottomMenu }) {
+                return WindowPlacement(.trailing(surgeryBottomMenu))
             }
             return WindowPlacement()
         }
@@ -113,17 +115,43 @@ struct HippoVisionApp: App {
                 .environment(dataViewModel)
                 .environment(runtime)
                 .onAppear { immersiveViewModel.isSurgeryBottomMenuOpen = true }
+                .task {
+                    immersiveViewModel.isSurgeryBottomMenuOpen = true
+                    print("ddddgdd")
+                    await Task.waitTillCancel()
+                    immersiveViewModel.isSurgeryBottomMenuOpen = false
+                    immersiveViewModel.isMenuActive = false
+                    print("ddgdd")
+                }
                 .onDisappear {
                     immersiveViewModel.isSurgeryBottomMenuOpen = false
                     immersiveViewModel.isMenuActive = false
-                    
+                    print("dddd")
                 }
-            
         }
         .windowStyle(.plain)
-        .defaultSize(width: 896, height: 500)
+        .windowResizability(.contentSize)
         .defaultWindowPlacement { _, context in
             return WindowPlacement(.utilityPanel)
         }
+        
+        // AssetListView
+        WindowGroup(id: WindowIDs.assetListView) {
+            AssetListView()
+                .environment(runtime)
+                .environment(immersiveViewModel)
+                .environment(dataViewModel)
+        }
+        .windowStyle(.plain)
+        .windowResizability(.contentSize)
+        
+    }
+}
+
+
+extension Task where Success == Void, Failure == Never {
+    static func waitTillCancel() async {
+        let asyncStream = AsyncStream<Int> { _ in }
+        for await _ in asyncStream { }
     }
 }

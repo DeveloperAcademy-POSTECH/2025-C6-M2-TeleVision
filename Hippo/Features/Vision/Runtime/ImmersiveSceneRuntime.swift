@@ -17,7 +17,6 @@ final class ImmersiveSceneRuntime {
     // MARK: - State
     
     private var topAnchor: AnchorEntity?
-    private var assetListAnchor: AnchorEntity?
     
     
     //MARK: - 3D model 들이 추가될 루트 엔티티
@@ -38,19 +37,9 @@ final class ImmersiveSceneRuntime {
             anchor1.addChild(topButton)
         }
         
-        
-        let anchor3 = AnchorEntity()
-        anchor3.position = [0, -0.15, -1.0]
-//        if let assetList = attachments.entity(for: AttachmentIDs.assetListView) {
-//            anchor2.addChild(assetList)
-//        }
-        
-        
         content.add(anchor1)
-        content.add(anchor3)
-        
+
         topAnchor = anchor1
-        assetListAnchor = anchor3
         
         // 3D 모델들의 월드 앵커의 부모
         let rootEntity = Entity()
@@ -58,20 +47,12 @@ final class ImmersiveSceneRuntime {
         content.add(rootEntity)
         self.sceneRoot = rootEntity
         
-        // Attachment View 앵커 비활성화
-        self.assetListAnchor?.isEnabled = false
-        
         // 마지막 조작 Entity 정보 저장
         eventSubscription = content.subscribe(to: ManipulationEvents.WillBegin.self)  { event in
             self.selectedEntity = event.entity
         }
     }
-    
-    func setAssetListVisibility(isVisible: Bool) {
-        self.assetListAnchor?.isEnabled = isVisible
-        logger.debug("Asset List Anchor 'isEnabled' set to: \(isVisible)")
-    }
-    
+
     func placeEntity(url: URL) async {
         guard let sceneRoot = self.sceneRoot else {
             logger.error("Scene root is not yet set up.")
@@ -111,7 +92,6 @@ final class ImmersiveSceneRuntime {
     func stop() {
         logger.debug("🐛 ImmersiveSceneRuntime stopped")
         topAnchor = nil
-        assetListAnchor = nil
         
         // 제스쳐 이벤트 구독 정리
         eventSubscription?.cancel()

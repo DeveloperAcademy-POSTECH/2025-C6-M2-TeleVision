@@ -40,7 +40,7 @@ struct ImmersiveSurgeryView: View {
         } attachments: {
             // 상단 토글 아이콘
             Attachment(id: AttachmentIDs.topToggleButton) {
-                MenuToggleButton(isActive: immersiveViewModel.isMenuActive) {
+                MenuToggleButton() {
                     // 메뉴 토글
                     immersiveViewModel.toggleMenu(windowController: windowController)
                 }
@@ -55,9 +55,6 @@ struct ImmersiveSurgeryView: View {
             await dataViewModel.load(patientID: patientID, operationID: operationID)
             windowController.dismissWindow(id: WindowIDs.home)
             windowController.openWindow(id: WindowIDs.surgeryBottomMenu)
-        }
-        .onChange(of: immersiveViewModel.isShowingAssetListView) { _, isVisible in
-            runtime.setAssetListVisibility(isVisible: isVisible)
         }
         .onChange(of: runtime.selectedEntity) { _, newValue in
             if newValue != nil && immersiveViewModel.isMenuActive { // 컨트롤러 on 일 때만 열림

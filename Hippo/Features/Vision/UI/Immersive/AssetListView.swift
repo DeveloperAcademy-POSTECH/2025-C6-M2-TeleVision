@@ -14,6 +14,8 @@ struct AssetListView: View {
     @Environment(OperationViewModel.self) var dataViewModel
     @Environment(ImmersiveViewModel.self) var immersiveViewModel
     
+    @Environment(\.dismissWindow) private var dismissWindow
+    
     @State private var selectedURL: URL?
     
     private var fileURLs: [URL] {
@@ -42,7 +44,7 @@ struct AssetListView: View {
                 if let url = selectedURL {
                     Task {
                         await runtime.placeEntity(url: url)
-                        immersiveViewModel.closeAssetListView()
+                        dismissWindow(id: WindowIDs.assetListView)
                     }
                 }
             })
