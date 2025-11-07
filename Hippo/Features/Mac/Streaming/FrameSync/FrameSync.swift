@@ -9,6 +9,7 @@
 import Foundation
 import CoreVideo
 import CoreMedia
+import QuartzCore
 import os.log
 
 // MARK: - Frame Syncing Protocol
@@ -52,11 +53,13 @@ public final class FrameSync: FrameSyncing {
 
     // MARK: Configuration
 
-    /// Maximum time difference for frame matching (8ms for 60fps)
-    private let matchTolerance: CMTime = CMTime(value: 8, timescale: 1000)  // 8ms
+    /// Maximum time difference for frame matching
+    /// Increased to 20ms to handle FPS mismatches (e.g., 30fps + 60fps)
+    private let matchTolerance: CMTime = CMTime(value: 20, timescale: 1000)  // 20ms
 
-    /// Maximum age for buffered frames before dropping (50ms ~= 3 frames at 60fps)
-    private let maxFrameAge: CMTime = CMTime(value: 50, timescale: 1000)  // 50ms
+    /// Maximum age for buffered frames before dropping
+    /// Set to 1 second to handle camera start time differences
+    private let maxFrameAge: CMTime = CMTime(value: 1000, timescale: 1000)  // 1000ms (1 second)
 
     /// Maximum buffer size per source
     private let maxBufferSize: Int = 10
@@ -73,6 +76,12 @@ public final class FrameSync: FrameSyncing {
     /// Buffered frames: [(pixelBuffer, pts, size)]
     private var leftBuffer: [(CVPixelBuffer, CMTime, CGSize)] = []
     private var rightBuffer: [(CVPixelBuffer, CMTime, CGSize)] = []
+
+    // MARK: Timestamp Normalization
+
+    /// Reference time for normalizing timestamps from different sources
+    /// Uses CACurrentMediaTime() which provides a consistent clock across all sources
+    private var referenceTime: CFTimeInterval?
 
     // MARK: Statistics
 
@@ -121,6 +130,30 @@ public final class FrameSync: FrameSyncing {
 
     // MARK: - Private Methods
 
+    /// Normalizes timestamps relative to first frame
+    /// PTS is already set to arrival time by BaseCaptureSession
+    private func normalizeTimestamp(_ pts: CMTime, source: CaptureSource) -> CMTime {
+        let ptsSeconds = CMTimeGetSeconds(pts)
+
+        // Initialize reference time on VERY FIRST frame from either camera
+        if referenceTime == nil {
+            referenceTime = ptsSeconds
+            logger.info("🕐 Reference time initialized: \(String(format: "%.3f", ptsSeconds))s (from \(source.rawValue))")
+        }
+
+        // Normalize relative to reference
+        let elapsedSinceStart = ptsSeconds - (referenceTime ?? ptsSeconds)
+        let normalizedPTS = CMTime(seconds: elapsedSinceStart, preferredTimescale: 1000000)
+
+        // Log first few frames for debugging
+        let frameCount = source == .left ? _stats.leftFrameCount : _stats.rightFrameCount
+        if frameCount <= 3 {
+            logger.info("🔄 \(source.rawValue) frame #\(frameCount): arrival=\(String(format: "%.3f", ptsSeconds))s → normalized=\(String(format: "%.3f", elapsedSinceStart))s")
+        }
+
+        return normalizedPTS
+    }
+
     private func handleFrame(_ pb: CVPixelBuffer, pts: CMTime, source: CaptureSource) {
         // Update statistics
         switch source {
@@ -130,17 +163,20 @@ public final class FrameSync: FrameSyncing {
             _stats.rightFrameCount += 1
         }
 
+        // Normalize timestamp using arrival time
+        let normalizedPTS = normalizeTimestamp(pts, source: source)
+
         // Get frame size
         let width = CVPixelBufferGetWidth(pb)
         let height = CVPixelBufferGetHeight(pb)
         let size = CGSize(width: width, height: height)
 
-        // Add to appropriate buffer
+        // Add to appropriate buffer with normalized timestamp
         switch source {
         case .left:
-            leftBuffer.append((pb, pts, size))
+            leftBuffer.append((pb, normalizedPTS, size))
         case .right:
-            rightBuffer.append((pb, pts, size))
+            rightBuffer.append((pb, normalizedPTS, size))
         }
 
         // Limit buffer size
@@ -180,8 +216,13 @@ public final class FrameSync: FrameSyncing {
         let toleranceSeconds = CMTimeGetSeconds(matchTolerance)
         let toleranceMs = toleranceSeconds * 1000.0
 
+        // Debug logging
+        logger.debug("🔍 Match attempt: L=\(CMTimeGetSeconds(leftPTS), format: .fixed(precision: 3))s, R=\(CMTimeGetSeconds(rightPTS), format: .fixed(precision: 3))s, delta=\(deltaMs, format: .fixed(precision: 2))ms, tolerance=\(toleranceMs, format: .fixed(precision: 2))ms")
+
         if deltaMs <= toleranceMs {
             // Match found!
+            logger.info("✅ MATCH! delta=\(deltaMs, format: .fixed(precision: 2))ms")
+
             // Calculate synchronized PTS (average)
             let syncPTS = CMTimeAdd(leftPTS, rightPTS)
             let avgPTS = CMTimeMultiplyByFloat64(syncPTS, multiplier: 0.5)
@@ -205,6 +246,8 @@ public final class FrameSync: FrameSyncing {
                 rightSize: rightSize,
                 timeDelta: deltaMs
             )
+        } else {
+            logger.debug("❌ No match: delta (\(deltaMs, format: .fixed(precision: 2))ms) > tolerance (\(toleranceMs, format: .fixed(precision: 2))ms)")
         }
 
         return nil
@@ -215,13 +258,25 @@ public final class FrameSync: FrameSyncing {
     }
 
     private func dropOldFrames(relativeTo referencePTS: CMTime) {
-        let now = referencePTS
+        // Only drop frames if both buffers have content
+        // This prevents dropping all frames when one camera starts later
+        guard !leftBuffer.isEmpty && !rightBuffer.isEmpty else {
+            return
+        }
 
-        // Drop old left frames
+        // Get the newest timestamp from each buffer
+        let newestLeft = leftBuffer.last?.1 ?? referencePTS
+        let newestRight = rightBuffer.last?.1 ?? referencePTS
+
+        // Use the older of the two newest timestamps as reference
+        // This ensures we keep frames that could still potentially match
+        let dropThreshold = CMTimeCompare(newestLeft, newestRight) < 0 ? newestLeft : newestRight
+
+        // Drop left frames that are too old relative to the drop threshold
         let oldLeftCount = leftBuffer.count
         leftBuffer.removeAll { item in
             let (_, pts, _) = item
-            let age = CMTimeSubtract(now, pts)
+            let age = CMTimeSubtract(dropThreshold, pts)
             return CMTimeCompare(age, maxFrameAge) > 0
         }
         let leftDropped = oldLeftCount - leftBuffer.count
@@ -230,11 +285,11 @@ public final class FrameSync: FrameSyncing {
             logger.warning("⚠️ Dropped \(leftDropped) old left frames")
         }
 
-        // Drop old right frames
+        // Drop right frames that are too old relative to the drop threshold
         let oldRightCount = rightBuffer.count
         rightBuffer.removeAll { item in
             let (_, pts, _) = item
-            let age = CMTimeSubtract(now, pts)
+            let age = CMTimeSubtract(dropThreshold, pts)
             return CMTimeCompare(age, maxFrameAge) > 0
         }
         let rightDropped = oldRightCount - rightBuffer.count

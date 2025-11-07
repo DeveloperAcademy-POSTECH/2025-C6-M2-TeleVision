@@ -34,6 +34,8 @@ public final class StreamingControlViewModel {
 
     var videoMode: VideoMode = .fullSBS {
         didSet {
+            logger.info("🔄 Video mode changed: \(oldValue.rawValue) → \(self.videoMode.rawValue)")
+
             // Single 카메라일 때는 Mono로만 가능
             if cameraInputMode == .single && videoMode != .mono {
                 videoMode = .mono
@@ -42,6 +44,7 @@ public final class StreamingControlViewModel {
 
             // 스트리밍 중이면 재시작
             if isStreaming {
+                logger.info("🔄 Restarting streaming due to video mode change...")
                 Task {
                     stopStreaming()
                     try? await Task.sleep(for: .milliseconds(100))
@@ -53,13 +56,25 @@ public final class StreamingControlViewModel {
 
     var cameraInputMode: CameraInputMode = .dual {
         didSet {
+            logger.info("🔄 Camera input mode changed: \(oldValue.rawValue) → \(self.cameraInputMode.rawValue)")
+
             // Single로 변경되면 자동으로 Mono로 설정
             if cameraInputMode == .single {
-                videoMode = .mono
+                if videoMode != .mono {
+                    videoMode = .mono
+                    return  // videoMode didSet에서 재시작하므로 여기서는 return
+                }
+            } else {
+                // Dual로 변경되면 stereo 모드로 설정
+                if videoMode == .mono {
+                    videoMode = .fullSBS
+                    return  // videoMode didSet에서 재시작하므로 여기서는 return
+                }
             }
 
-            // 스트리밍 중이면 재시작
+            // 스트리밍 중이면 재시작 (videoMode가 변경되지 않은 경우만)
             if isStreaming {
+                logger.info("🔄 Restarting streaming due to camera input mode change...")
                 Task {
                     stopStreaming()
                     try? await Task.sleep(for: .milliseconds(100))
@@ -232,6 +247,13 @@ public final class StreamingControlViewModel {
 
         logger.info("🚀 Starting dual camera capture...")
 
+        // Find common capture settings for both cameras
+        let captureSettings = CaptureSettings.findCommonSettings(
+            for: [leftDevice, rightDevice]
+        ) ?? .standard
+
+        logger.info("📹 Using capture settings: \(captureSettings.width)×\(captureSettings.height)@\(captureSettings.frameRate)fps")
+
         // Initialize components
         let sync = FrameSync()
         let comp = CI_SBSComposer()
@@ -251,13 +273,13 @@ public final class StreamingControlViewModel {
         // Left camera 시작
         let leftSession = LeftCaptureSession(preferredDeviceUniqueID: leftDevice.uniqueID)
         leftSession.delegate = self
-        try leftSession.start(settings: .standard)
+        try leftSession.start(settings: captureSettings)
         self.leftCapture = leftSession
 
         // Right camera 시작
         let rightSession = RightCaptureSession(preferredDeviceUniqueID: rightDevice.uniqueID)
         rightSession.delegate = self
-        try rightSession.start(settings: .standard)
+        try rightSession.start(settings: captureSettings)
         self.rightCapture = rightSession
 
         // Start WebRTC transport
@@ -306,7 +328,10 @@ public final class StreamingControlViewModel {
     // MARK: - Private Methods: Frame Handling
 
     private func handleSyncedPair(_ pair: SyncedPair) async {
-        guard let composer = self.composer else { return }
+        guard let composer = self.composer else {
+            logger.error("❌ Composer is nil in handleSyncedPair")
+            return
+        }
 
         do {
             // Determine SBS mode from video mode
@@ -424,22 +449,26 @@ public final class StreamingControlViewModel {
 extension StreamingControlViewModel: CaptureOutputDelegate {
     nonisolated public func didOutput(pixelBuffer: CVPixelBuffer, pts: CMTime, source: CaptureSource) {
         Task { @MainActor in
-            if videoMode == .mono {
+            if self.videoMode == .mono {
                 // Mono mode: send frame directly
                 if source == .left {  // Only process left camera in mono mode
-                    await handleMonoFrame(pixelBuffer, pts: pts)
+                    await self.handleMonoFrame(pixelBuffer, pts: pts)
                 }
             } else {
                 // Stereo mode: push to frame sync
-                frameSync?.push(pixelBuffer, pts: pts, source: source)
+                if self.frameSync == nil {
+                    self.logger.error("❌ FrameSync is nil in stereo mode! Mode: \(self.videoMode.rawValue), Source: \(source.rawValue)")
+                } else {
+                    self.frameSync?.push(pixelBuffer, pts: pts, source: source)
+                }
             }
         }
     }
 
     nonisolated public func didEncounterError(_ error: Error, source: CaptureSource) {
         Task { @MainActor in
-            logger.error("❌ Capture error [\(source.rawValue)]: \(error.localizedDescription)")
-            errorMessage = error.localizedDescription
+            self.logger.error("❌ Capture error [\(source.rawValue)]: \(error.localizedDescription)")
+            self.errorMessage = error.localizedDescription
         }
     }
 }
