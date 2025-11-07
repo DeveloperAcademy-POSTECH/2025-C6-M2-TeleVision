@@ -13,7 +13,7 @@ struct HippoMacApp: App {
         WindowGroup {
             RootView()
                 .toolbarBackgroundVisibility(.hidden, for: .windowToolbar)
-                .frame(minWidth: 1024, maxWidth: .infinity, minHeight: 576, maxHeight: .infinity)
+                .frame(minWidth: 1136, maxWidth: .infinity, minHeight: 640, maxHeight: .infinity)
         }
     }
 }

@@ -1,11 +1,6 @@
-//
-//  MacNavigationState.swift
-//  HippoMac
-//
-//  Created by Claude on 11/6/25.
-//
-
 import Foundation
+import SwiftUI
+
 
 /// Mac 앱의 네비게이션 상태를 관리하는 구조체
 public struct MacNavigationState {
