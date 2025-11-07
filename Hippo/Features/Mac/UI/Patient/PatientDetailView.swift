@@ -11,8 +11,6 @@ struct PatientDetailView: View {
     // ViewModel 초기화 (HomeView에서 rootVM 전달받음)
     let viewModel: PatientDetailViewModel
 
-    // Mock 데이터 (UI 개발용)
-    var mockData = HomeMockDataModel.mockList
 
     var selectedPatient: PatientDisplayModel?
     
@@ -21,16 +19,18 @@ struct PatientDetailView: View {
     var body: some View {
 
         OperationListView(
-            operations: viewModel.operations,
+            operations: viewModel.operationCards,
+            onEdit: { operationID in
+                //TODO: 수술 수정
+            },
             onDelete: { operationID in
-//                Task {
-//                    await viewModel.deleteOperation(operationID)
-//                }
-                //TODO: 원띵과 논의 필요
+                Task {
+                    await viewModel.deleteOperation(operationID)
+                }
             }
         )
-        .navigationTitle(selectedPatient.map { "\($0.name) \($0.gender) \($0.age)세" } ?? "환자 상세 정보")
-        .navigationSubtitle(selectedPatient?.patientNumber ?? "환자 번호")
+        .navigationTitle(selectedPatient.map { "\($0.name) \($0.gender) Age\($0.age)" } ?? "환자 상세 정보")
+        .navigationSubtitle(selectedPatient?.patientNumber ?? "Patient Number")
     }
 }
 
@@ -40,7 +40,6 @@ struct PatientDetailView: View {
     let rootVM = MacRootViewModel()
     PatientDetailView(
         viewModel: PatientDetailViewModel(rootVM: rootVM),
-//        patientId: "",
         isTodaysSurgerySelected: isTodaysSurgery
     )
 }

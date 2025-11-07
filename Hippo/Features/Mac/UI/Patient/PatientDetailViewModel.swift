@@ -11,6 +11,8 @@ public final class PatientDetailViewModel {
     public init(rootVM: MacRootViewModel) {
         self.rootVM = rootVM
     }
+    
+    public var operationCardDisplayModel = OperationCardDisplayModel()
 
     // MARK: - Computed Properties (rootVM 재사용)
 
@@ -35,5 +37,32 @@ public final class PatientDetailViewModel {
     /// 수술 삭제
     public func deleteOperation(_ operationID: String) async {
         await rootVM.deleteOperation(operationID: operationID)
+    }
+    
+    /// 데이터 새로고침
+    public func refresh() async {
+        await rootVM.load()
+    }
+}
+
+extension PatientDetailViewModel {
+    public var operationCards: [OperationCardDisplayModel] {
+        guard let patient = patient else { return [] }
+        return operations.map { op in
+            OperationCardDisplayModel(
+                id: op.id,
+                patientId: patient.id,
+                name: nil,
+                gender: nil,
+                birthDate: nil,
+                title: op.title,
+                diagnosis: op.diagnosis,
+                surgeon: op.surgeon,
+                surgicalSite: op.surgicalSite,
+                operationDate: op.date,
+                details: op.details,
+                assets: op.assets
+            )
+        }
     }
 }
