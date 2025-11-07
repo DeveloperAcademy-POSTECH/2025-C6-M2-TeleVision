@@ -10,7 +10,6 @@ import SwiftUI
 struct MenuToggleButton: View {
     
     @Environment(ImmersiveViewModel.self) private var immersiveViewModel
-    let isActive: Bool
     let action: () -> Void
 
     var body: some View {
@@ -24,7 +23,7 @@ struct MenuToggleButton: View {
 
 #Preview {
     VStack(spacing: 20) {
-        MenuToggleButton(isActive: true, action: {})
-        MenuToggleButton(isActive: false, action: {})
+        MenuToggleButton(action: {})
+        MenuToggleButton(action: {})
     }
 }

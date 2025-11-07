@@ -29,13 +29,13 @@ struct SurgeryControlBar: View {
                         GlowingCircleButton(
                             imageName: "CloseIcon",
                             action: {
-                                immersiveViewModel.closeAssetListView()
+                                windowController.dismissWindow(id: WindowIDs.assetListView)
                             }
                         )
                     } else {
                         GlowingCircleButton(
                             imageName: "AddEntityIcon",
-                            action: { immersiveViewModel.openAssetListView() }
+                            action: { windowController.pushWindow(id: WindowIDs.assetListView) }
                         )
                     }
                     Spacer()
@@ -58,6 +58,9 @@ struct SurgeryControlBar: View {
             Button("종료", role: .destructive) {
                 Task {
                     await windowController.finishSurgeryAndDismissSpace()
+                    if immersiveViewModel.isOpacityControlPanelOpen {
+                        windowController.dismissWindow(id: WindowIDs.opacityControlPanel)
+                    }
                 }
             }
             Button("취소", role: .cancel) {

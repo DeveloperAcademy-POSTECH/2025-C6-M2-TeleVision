@@ -12,13 +12,15 @@ final class WindowController {
     private let dismissImmersiveSpaceAction: DismissImmersiveSpaceAction
     private let openWindowAction: OpenWindowAction
     private let dismissWindowAction: DismissWindowAction
+    private var pushWindowAction: PushWindowAction?
     
     init(dismissSpace: DismissImmersiveSpaceAction,
          openWindow: OpenWindowAction,
-         dismissWindow: DismissWindowAction) {
+         dismissWindow: DismissWindowAction, pushWindowAction: PushWindowAction? = nil) {
         self.dismissImmersiveSpaceAction = dismissSpace
         self.openWindowAction = openWindow
         self.dismissWindowAction = dismissWindow
+        self.pushWindowAction = pushWindowAction
     }
     
     func openWindow(id: String) {
@@ -27,6 +29,11 @@ final class WindowController {
     
     func dismissWindow(id: String) {
         dismissWindowAction(id: id)
+    }
+    
+    func pushWindow(id: String) {
+        guard let pushWindowAction = pushWindowAction else { return }
+        pushWindowAction(id: id)
     }
     
     func finishSurgeryAndDismissSpace() async {

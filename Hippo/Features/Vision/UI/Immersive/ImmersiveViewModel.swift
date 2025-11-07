@@ -22,17 +22,10 @@ final class ImmersiveViewModel {
     
     // MARK: -- 이벤트 처리 : UI 이벤트 -> WindowController 에 전달
     
-    func openAssetListView() {
-        self.isShowingAssetListView = true
-    }
-    
-    func closeAssetListView() {
-        self.isShowingAssetListView = false
-    }
-    
     func showFinishSurgeryAlert() {
         self.isShowingFinishAlert = true
     }
+    
     
     func recordPassThroughVideo() {
         
