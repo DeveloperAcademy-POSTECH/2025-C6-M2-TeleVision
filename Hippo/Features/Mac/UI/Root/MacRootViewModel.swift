@@ -23,6 +23,9 @@ public final class MacRootViewModel {
 
     /// 수술 입력 폼 상태
     public var operationInputState = OperationInputState()
+    
+    ///
+    
 
     // MARK: - Shared ViewModels (비즈니스 로직)
 

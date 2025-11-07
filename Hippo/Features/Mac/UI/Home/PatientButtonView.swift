@@ -21,7 +21,7 @@ struct PatientButtonView: View {
                     Text(data.patientNumber)
                     Text(data.name)
                     Text(data.genderText)
-                    Text("\(data.age)세")
+                    Text("Age: \(data.age)")
                 }
             }
 

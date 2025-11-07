@@ -16,32 +16,35 @@ struct OperationInputView: View {
     let onSave: () async -> Void
 
     var body: some View {
-        Section(header: Text("수술 추가하기")) {
-            
+        Section(header: Text("Add Operation")) {
+
             //텍스트필드 영역
             Form {
-                TextField("수술 타이틀", text: $state.title)
+                TextField("Title", text: $state.title)
                 HStack {
-                    DatePicker("수술날짜", selection: $state.operationDate)
-                        .environment(\.locale, Locale(identifier: "ko_KR"))
+                    DatePicker(
+                        "Operation Date",
+                        selection: $state.operationDate
+                    )
+                    .environment(\.locale, Locale(identifier: "ko_KR"))
                 }
-                TextField("집도의 성명", text: $state.surgeon)
-                TextField("수술부위", text: $state.surgicalSite)
-                TextField("진단(병명)", text: $state.diagnosis)
-                TextField("수술상세", text: $state.details, axis: .vertical)
+                TextField("Surgeon", text: $state.surgeon)
+                TextField("Surgical Site", text: $state.surgicalSite)
+                TextField("Diagnosis", text: $state.diagnosis)
+                TextField("Details", text: $state.details, axis: .vertical)
                     .lineLimit(5...10)
             }
-            
+
             //3D 모델링 추가 뷰
             HStack {
-                Text("3D 모델링 파일")
+                Text("3D Models")
 
                 Spacer()
-                
+
                 Button {
                     let selections = state.pickAssets()
                     for (url, fileName) in selections {
-                        state.addAsset(fileURL: url, fileName: fileName) // 한 번에 하나씩 추가
+                        state.addAsset(fileURL: url, fileName: fileName)  // 한 번에 하나씩 추가
                     }
                 } label: {
                     Image(systemName: "plus")
@@ -63,14 +66,12 @@ struct OperationInputView: View {
 
         //취소/저장 버튼
         HStack {
-            Button("취소") {
+            Button("Cancel") {
                 isPresentingOperationInput = false
             }
-            Button("저장") {
-                if state.isValid {
-                    Task {
-                        await onSave()
-                    }
+            Button("Save") {
+                Task {
+                    await onSave()
                 }
                 isPresentingOperationInput = false
             }
@@ -78,7 +79,6 @@ struct OperationInputView: View {
         .padding()
     }
 
-    
 }
 
 #Preview {
@@ -86,6 +86,6 @@ struct OperationInputView: View {
     OperationInputView(
         isPresentingOperationInput: .constant(true),
         state: $state,
-        onSave: { }
+        onSave: {}
     )
 }
