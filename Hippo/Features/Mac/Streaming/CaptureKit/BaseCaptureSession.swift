@@ -41,6 +41,11 @@ open class BaseCaptureSession: NSObject {
     private var frameCount: Int = 0
     private var lastStatsTime: Date = Date()
 
+    // MARK: Timestamp Generation
+
+    private var captureStartTime: CFTimeInterval?
+    private var frameNumber: Int64 = 0
+
     // MARK: Initialization
 
     public init(source: CaptureSource, preferredDeviceUniqueID: String? = nil) {
@@ -186,6 +191,12 @@ open class BaseCaptureSession: NSObject {
 
         guard let format = targetFormat else {
             logger.warning("⚠️ [\(self.source.rawValue)] Exact format not found, using default")
+            logger.warning("   Available formats:")
+            for (idx, fmt) in device.formats.enumerated() {
+                let dims = CMVideoFormatDescriptionGetDimensions(fmt.formatDescription)
+                let pixelFmt = CMFormatDescriptionGetMediaSubType(fmt.formatDescription)
+                logger.warning("   [\(idx)] \(dims.width)×\(dims.height) format=\(pixelFmt)")
+            }
             // Don't throw, use default format
             return
         }
@@ -195,6 +206,14 @@ open class BaseCaptureSession: NSObject {
         // Configure frame rate
         let targetFrameDuration = CMTime(value: 1, timescale: CMTimeScale(settings.frameRate))
 
+        // Log supported frame rates
+        logger.info("📹 [\(self.source.rawValue)] Supported frame rates for selected format:")
+        for range in format.videoSupportedFrameRateRanges {
+            let minFPS = 1.0 / CMTimeGetSeconds(range.maxFrameDuration)
+            let maxFPS = 1.0 / CMTimeGetSeconds(range.minFrameDuration)
+            logger.info("   \(String(format: "%.1f", minFPS)) - \(String(format: "%.1f", maxFPS)) fps")
+        }
+
         if format.videoSupportedFrameRateRanges.contains(where: { range in
             range.minFrameDuration <= targetFrameDuration &&
             range.maxFrameDuration >= targetFrameDuration
@@ -203,7 +222,8 @@ open class BaseCaptureSession: NSObject {
             device.activeVideoMaxFrameDuration = targetFrameDuration
             logger.info("✅ [\(self.source.rawValue)] Frame rate set to \(settings.frameRate) fps")
         } else {
-            logger.warning("⚠️ [\(self.source.rawValue)] Frame rate \(settings.frameRate) not supported")
+            logger.warning("⚠️ [\(self.source.rawValue)] Frame rate \(settings.frameRate) not supported, using default")
+            logger.warning("   Requested: \(settings.frameRate) fps")
         }
 
         logger.info("✅ [\(self.source.rawValue)] Device configured: \(settings.width)×\(settings.height)@\(settings.frameRate)fps")
@@ -237,7 +257,21 @@ extension BaseCaptureSession: AVCaptureVideoDataOutputSampleBufferDelegate {
             return
         }
 
-        let pts = CMSampleBufferGetPresentationTimeStamp(sampleBuffer)
+        // Initialize start time on first frame
+        if captureStartTime == nil {
+            let hostTime = mach_absolute_time()
+            var timebaseInfo = mach_timebase_info_data_t()
+            mach_timebase_info(&timebaseInfo)
+            let nanoseconds = hostTime * UInt64(timebaseInfo.numer) / UInt64(timebaseInfo.denom)
+            captureStartTime = Double(nanoseconds) / 1_000_000_000.0
+        }
+
+        // Generate synthetic timestamp based on frame number and expected FPS
+        // This ensures perfectly regular intervals regardless of actual capture timing
+        let expectedFrameDuration = 1.0 / 30.0  // 30 fps = 33.33ms per frame
+        let syntheticTimestamp = (captureStartTime ?? 0) + (Double(frameNumber) * expectedFrameDuration)
+        let pts = CMTime(seconds: syntheticTimestamp, preferredTimescale: 1000000)
+        frameNumber += 1
 
         // Update statistics
         frameCount += 1
