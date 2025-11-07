@@ -10,14 +10,10 @@ import SwiftUI
 struct HomeView: View {
     // ViewModel 초기화
     @State private var rootVM = MacRootViewModel()
-    
-    // Mock 데이터 (UI 개발용 - 나중에 rootVM.homeViewModel.state.items로 교체)
-//    var mockData = HomeMockDataModel.mockList
-//    @State private var selectedPatientID: HomeMockDataModel.ID?
-//    private var selectedPatient: HomeMockDataModel? { mockData.first { $0.id == selectedPatientID } }
-    
+    @State private var hoveredPatientID: String? = nil
+
     var body: some View {
-        
+
         NavigationSplitView {
             //오늘의 수술 버튼
             Button {
@@ -29,19 +25,29 @@ struct HomeView: View {
                 //Patient List 타이틀 위해서 section 추가함
                 Section {
                     //TODO: 환자 리스트에 데이터가 없는 경우
-                    
+
                     //환자 리스트에 데이터가 있는 경우
                     ForEach(rootVM.loadedPatients, id: \.id) { data in
+                        //TODO: 컴포넌트로 분리하기. 뷰가 해석을 못 함
                         HStack {
-                            Button {
-                                rootVM.selectPatient(data.id)
-                            } label: {
-                                Text(data.patientNumber)
-                                Text(data.name)
-                                Text(data.genderText)
-                                Text("\(data.age)세")
+                            Button { rootVM.selectPatient(data.id)} label: {
+                                HStack {
+                                    Text(data.patientNumber)
+                                    Text(data.name)
+                                    Text(data.genderText)
+                                    Text("\(data.age)세")
+                                }
                             }
-                            //TODO: 호버 시 편집 버튼 띄우기 추가
+                            .onHover { hovering in
+                                hoveredPatientID = hovering ? data.id : (hoveredPatientID == data.id ? nil : hoveredPatientID)
+                            }
+
+                            Button {
+                                // TODO: 환자 수정&삭제
+                            } label: {
+                                Image(systemName: "ellipsis.circle")
+                            }
+                            .opacity(hoveredPatientID == data.id ? 1 : 0)
                         }
                     }
                 } header: {
@@ -49,7 +55,7 @@ struct HomeView: View {
                         //헤더 텍스트
                         Text("Patient List")
                         Spacer()
-                    
+
                         //환자 추가 버튼
                         Button {
                             rootVM.openPatientCreateSheet()
@@ -83,7 +89,8 @@ struct HomeView: View {
         }
         .sheet(isPresented: $rootVM.navigationState.isPresentingPatientInput) {
             PatientInputView(
-                isPresentingPatientInput: $rootVM.navigationState.isPresentingPatientInput,
+                isPresentingPatientInput: $rootVM.navigationState
+                    .isPresentingPatientInput,
                 state: $rootVM.patientInputState,
                 mode: rootVM.navigationState.patientInputMode,
                 onSave: {
@@ -97,9 +104,11 @@ struct HomeView: View {
                 }
             )
         }
-        .sheet(isPresented: $rootVM.navigationState.isPresentingOperationInput) {
+        .sheet(isPresented: $rootVM.navigationState.isPresentingOperationInput)
+        {
             OperationInputView(
-                isPresentingOperationInput: $rootVM.navigationState.isPresentingOperationInput,
+                isPresentingOperationInput: $rootVM.navigationState
+                    .isPresentingOperationInput,
                 state: $rootVM.operationInputState,
                 onSave: {
                     Task {
@@ -111,14 +120,14 @@ struct HomeView: View {
         .task {
             // 데이터 로드 (비어 있으면 목업 주입 후 실제 로드)
             await rootVM.load()
-            
+
             // 목업 데이터 주입
             if rootVM.homeViewModel.state.items.isEmpty {
                 rootVM.homeViewModel.state.items = [
-                    PatientDisplayModel.MockData,
+                    PatientDisplayModel.MockData
                 ]
             }
-          
+
         }
     }
 }
