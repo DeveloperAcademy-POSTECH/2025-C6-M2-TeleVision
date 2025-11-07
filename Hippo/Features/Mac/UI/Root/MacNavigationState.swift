@@ -1,10 +1,3 @@
-//
-//  MacNavigationState.swift
-//  HippoMac
-//
-//  Created by Claude on 11/6/25.
-//
-
 import Foundation
 import SwiftUI
 

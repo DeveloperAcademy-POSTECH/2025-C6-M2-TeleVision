@@ -66,8 +66,9 @@ struct HomeView: View {
                 }
             }
         } detail: {
+
             if rootVM.isTodaysSurgerySelected {
-                TodaysSurgeryView(viewModel: rootVM.homeViewModel)
+                TodaysSurgeryView(viewModel: TodaysSurgeryViewModel(rootVM: rootVM))
                     .navigationTitle("Today's Surgery")
             } else {
                 PatientDetailView(
