@@ -78,7 +78,7 @@ struct OperationCardView: View {
                     VStack(alignment: .leading) {
                         Text("수술 부위")
                             .padding(.vertical, 4)
-                        Text("abd")
+                        Text(operation.surgicalSite)
                     }
 
                     Spacer()
