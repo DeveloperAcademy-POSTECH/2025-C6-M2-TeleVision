@@ -14,13 +14,16 @@ wss.on('connection', (ws) => {
 
       switch (data.type) {
         case 'register':
-          clients.set(data.clientId, ws);
-          console.log(`Client registered: ${data.clientId}`);
+          const clientId = data.clientId || data.role || 'unknown';
+          clients.set(clientId, ws);
+          ws.clientId = clientId;
+          console.log(`Client registered: ${clientId}`);
           break;
 
         case 'offer':
         case 'answer':
         case 'ice-candidate':
+        case 'iceCandidate':
           const targetClient = clients.get(data.targetId);
           if (targetClient && targetClient.readyState === WebSocket.OPEN) {
             targetClient.send(JSON.stringify(data));
@@ -39,13 +42,10 @@ wss.on('connection', (ws) => {
   });
 
   ws.on('close', () => {
-    // Remove client from map
-    for (const [clientId, client] of clients.entries()) {
-      if (client === ws) {
-        clients.delete(clientId);
-        console.log(`Client disconnected: ${clientId}`);
-        break;
-      }
+    // Remove client from map using stored clientId
+    if (ws.clientId) {
+      clients.delete(ws.clientId);
+      console.log(`Client disconnected: ${ws.clientId}`);
     }
   });
 
