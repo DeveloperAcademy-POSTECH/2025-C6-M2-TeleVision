@@ -226,6 +226,7 @@ public final class MacRootViewModel {
         if operationViewModel.state.alert == nil {
             closeOperationInputSheet()
             logger.debug("Operation updated successfully")
+            await load()
             return true
         } else {
             operationInputState.errorMessage = operationViewModel.state.alert
