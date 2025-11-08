@@ -12,11 +12,11 @@ struct RecordingIndicator: View {
         ZStack {
             Circle()
                 .fill(.thinMaterial)
-                .frame(width: 12, height: 12)
+                .frame(width: 28, height: 28)
             
             Circle()
                 .fill(.red)
-                .frame(width: 8, height: 8)
+                .frame(width: 20, height: 20)
         }
     }
 }

@@ -90,12 +90,6 @@ public final class OperationViewModel {
     public var isShowingEditInputView: Bool = false
     public var isModelFileSelected: Bool = false
 
-    // 수술 중
-    public var isMenuActive: Bool = true
-    public var isEndoscopicActive: Bool = false
-    public var isShowingFinishAlert: Bool = false
-    public var isShowingAssetListView: Bool = false
-
     // MARK: - Actions
 
     public func load(patientID: String, operationID: String) async {
@@ -250,10 +244,4 @@ public final class OperationViewModel {
             _state.alert = "Failed to delete operation: \(error.localizedDescription)"
         }
     }
-
-    // MARK: - Actions in Immersive Surgery Mode
-
-    public func openEntityPanel() {}
-
-    public func recordPassThroughVideo() {}
 }

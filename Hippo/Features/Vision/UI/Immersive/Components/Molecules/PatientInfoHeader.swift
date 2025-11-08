@@ -8,27 +8,26 @@
 import SwiftUI
 
 struct PatientInfoHeader: View {
-    let name: String
-    let gender: String
-    let ageText: String
+    @Environment(OperationViewModel.self) var dataViewModel
+    
+    private var patient: PatientDisplayModel {
+        dataViewModel.state.patient ?? PatientDisplayModel.MockData
+    }
+    
 
     var body: some View {
         HStack {
-            Text(name)
-                .font(.system(size: 10))
+            Text(patient.name)
+                .font(.extraLargeTitle2)
                 .foregroundStyle(.primary)
-            Spacer().frame(width: 4)
-            Text("\(gender) / \(ageText)")
-                .font(.system(size: 8))
+            Spacer().frame(width: 10)
+            Text("\(patient.genderText) / \(patient.ageText)")
+                .font(.title)
                 .foregroundStyle(.primary)
         }
     }
 }
 
 #Preview {
-    PatientInfoHeader(
-        name: "김현기",
-        gender: "M",
-        ageText: "28세"
-    )
+    PatientInfoHeader()
 }
