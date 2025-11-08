@@ -12,14 +12,14 @@ struct EndoscopeToggle: View {
     
     var body: some View {
         Toggle("내시경", isOn: $isOn)
-            .toggleStyle(SizedSwitchToggleStyle(width: 28, height: 14, onTint: .hippoPrimary))
-            .frame(width: 49, height: 14)
+            .toggleStyle(SizedSwitchToggleStyle(width: 70, height: 40, onTint: .hippoPrimary))
+            .frame(width: 127, height: 40)
     }
 }
 
 struct SizedSwitchToggleStyle: ToggleStyle {
-    var width: CGFloat = 28
-    var height: CGFloat = 14
+    var width: CGFloat = 70
+    var height: CGFloat = 40
     var onTint: Color = .hippoPrimary
     var offTint: Color = .gray.opacity(0.3)
     
@@ -28,7 +28,7 @@ struct SizedSwitchToggleStyle: ToggleStyle {
         
         HStack(spacing: 4) {
             configuration.label
-                .font(.system(size: 6))
+                .font(.headline)
                 .foregroundStyle(.secondary)
             Button {
                 withAnimation(.easeInOut(duration: 0.15)) {
