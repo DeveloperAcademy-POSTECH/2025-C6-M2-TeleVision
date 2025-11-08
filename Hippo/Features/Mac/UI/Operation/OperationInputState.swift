@@ -1,4 +1,6 @@
 import Foundation
+import AppKit
+import UniformTypeIdentifiers
 
 /// 수술 입력 폼의 상태를 관리하는 구조체
 public struct OperationInputState {
@@ -54,6 +56,20 @@ public struct OperationInputState {
         isShowingFilePicker = false
         errorMessage = nil
     }
+    
+    
+    /// 3D 모델 탐색 시스템 창 띄우기 + 파일 선택 (선택된 URL과 파일명을 반환)
+    public func pickAssets() -> [(url: URL, fileName: String)] {
+        let panel = NSOpenPanel()
+        panel.title = "3D 모델 파일 선택"
+        panel.allowedContentTypes = [.usdz, .obj, .stl]
+        panel.allowsMultipleSelection = true
+        panel.canChooseFiles = true
+        panel.canChooseDirectories = false
+
+        guard panel.runModal() == .OK else { return [] }
+        return panel.urls.map { ($0, $0.lastPathComponent) }
+    }
 
     /// 3D 모델 파일 추가
     public mutating func addAsset(fileURL: URL, fileName: String) {
@@ -82,3 +98,10 @@ public struct OperationInputState {
         !title.isEmpty && !diagnosis.isEmpty && !surgeon.isEmpty && !surgicalSite.isEmpty
     }
 }
+
+///3d 파일 탐색 지원 확장자.
+extension UTType {
+    static let obj = UTType(filenameExtension: "obj")!
+    static let stl = UTType(filenameExtension: "stl")!
+}
+

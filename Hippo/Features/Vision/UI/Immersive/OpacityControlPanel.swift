@@ -10,7 +10,8 @@ import RealityKit
 
 struct OpacityControlPanel: View {
     
-    @Bindable var viewModel: OpacityControlViewModel
+    @Environment(OpacityManager.self) var opacityManager: OpacityManager
+    @Environment(ImmersiveSceneRuntime.self) var runtime: ImmersiveSceneRuntime
     
     // Grid 레이아웃 설정 (4열)
     private let columns: [GridItem] = [
@@ -21,43 +22,47 @@ struct OpacityControlPanel: View {
     ]
     
     var body: some View {
+        @Bindable var manager = opacityManager
+        
         VStack {
             OpacityControlPanelHeader(
-                isAllSelected: viewModel.isAllSelected,
-                isAllVisible: viewModel.isAllVisible,
+                isAllSelected: manager.isAllSelected,
+                isAllVisible: manager.isAllVisible,
                 onDeleteTapped: {
-                    viewModel.deleteSelectedEntity()
+                    Task {
+                        await runtime.deleteSelectedEntity()
+                    }
                 },
                 onSelectAllToggle: { shouldSelectAll in
-                    viewModel.selectAllLayers(shouldSelectAll: shouldSelectAll)
+                    manager.selectAllLayers(shouldSelectAll: shouldSelectAll)
                 },
                 onShowAllToggle: {_ in
-                    viewModel.setVisibilityForAll(to: !viewModel.isAllVisible)
+                    manager.setVisibilityForAll(to: !manager.isAllVisible)
                 }
             )
             
             // 투명도 슬라이더
             OpacityControlSlider(
-                currentOpacity: $viewModel.currentOpacity,
-                selectedLayerIDS: viewModel.selectedLayerIDs,
-                isMixed: viewModel.isMixed
+                currentOpacity: $manager.currentOpacity,
+                selectedLayerIDS: manager.selectedLayerIDs,
+                isMixed: manager.isMixed
             )
             
             // 2. 레이어 버튼 그리드
-            if viewModel.hasAnyLayers {
+            if manager.hasAnyLayers {
                 ScrollView {
                     LazyVGrid(columns: columns, spacing: 16) {
-                        ForEach(viewModel.layers) { layer in
+                        ForEach(manager.layers) { layer in
                             LayerButton(
                                 title: layer.name,
                                 opacity: layer.opacity,
-                                isSelected: viewModel.selectedLayerIDs.contains(layer.id),
+                                isSelected: manager.selectedLayerIDs.contains(layer.id),
                                 isVisible: layer.isVisible,
                                 onSelect: { shouldSelect in
-                                    viewModel.selectLayer(id: layer.id, shouldSelect: shouldSelect)
+                                    manager.selectLayer(id: layer.id, shouldSelect: shouldSelect)
                                 },
                                 onEyeToggle: { _ in
-                                    viewModel.toggleVisibility(for: layer.id)
+                                    manager.toggleVisibility(for: layer.id)
                                 }
                             )
                         }
@@ -73,14 +78,14 @@ struct OpacityControlPanel: View {
             }
         }
         .onAppear {
-            viewModel.reloadLayers()
+            manager.reloadLayers()
         }
-        .onChange(of: viewModel.runtime.selectedEntity) {
-            viewModel.reloadLayers()
+        .onChange(of: runtime.selectedEntity) {
+            manager.reloadLayers()
         }
-        .frame(width: 658, height: 522)
         .padding()
-        .glassBackgroundEffect()
+        .onDisappear {
+            runtime.selectedEntity = nil
+        }
     }
 }
-

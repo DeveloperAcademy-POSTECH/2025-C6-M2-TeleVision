@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		065DA5582EBD844600B454BC /* PatientButtonView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 065DA5572EBD844600B454BC /* PatientButtonView.swift */; };
 		0667A53A2EB79DBB00D7BDF3 /* HomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0667A5392EB79DBB00D7BDF3 /* HomeView.swift */; };
 		0667A54A2EB8814100D7BDF3 /* StreamingControlView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0667A5492EB8814100D7BDF3 /* StreamingControlView.swift */; };
 		0667A54C2EB8833D00D7BDF3 /* PatientDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0667A54B2EB8833D00D7BDF3 /* PatientDetailView.swift */; };
@@ -265,7 +266,9 @@
 		27AD7AE12EB5BE2E00E84809 /* OpacityControlPanelHeaderComponent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 27AD7ADF2EB5BE2E00E84809 /* OpacityControlPanelHeaderComponent.swift */; };
 		27AD7AE42EB5BEA400E84809 /* OpacityControlPanelHeader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 27AD7AE32EB5BEA400E84809 /* OpacityControlPanelHeader.swift */; };
 		27AD7AE52EB5BEA400E84809 /* OpacityControlPanelHeader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 27AD7AE32EB5BEA400E84809 /* OpacityControlPanelHeader.swift */; };
-		27D8A2BE2EAF682B009429F0 /* OpacityControlViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 27D8A2BD2EAF67CE009429F0 /* OpacityControlViewModel.swift */; };
+		27D1DB492EBC781200AC7F3D /* ImmersiveViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 27D1DB482EBC781200AC7F3D /* ImmersiveViewModel.swift */; };
+		27D1DB4D2EBC953D00AC7F3D /* WindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 27D1DB4C2EBC953D00AC7F3D /* WindowController.swift */; };
+		27D8A2BE2EAF682B009429F0 /* OpacityManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 27D8A2BD2EAF67CE009429F0 /* OpacityManager.swift */; };
 		C02FFA752E9FFF6F00F16742 /* HippoVisionApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = C02FFA4F2E9FFF6F00F16742 /* HippoVisionApp.swift */; };
 		C02FFA762E9FFF6F00F16742 /* HippoMacApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = C02FFA4C2E9FFF6F00F16742 /* HippoMacApp.swift */; };
 		C02FFA792E9FFF6F00F16742 /* AppModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = C02FFA6A2E9FFF6F00F16742 /* AppModel.swift */; };
@@ -394,6 +397,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		065DA5572EBD844600B454BC /* PatientButtonView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PatientButtonView.swift; sourceTree = "<group>"; };
 		0667A5392EB79DBB00D7BDF3 /* HomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeView.swift; sourceTree = "<group>"; };
 		0667A5492EB8814100D7BDF3 /* StreamingControlView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StreamingControlView.swift; sourceTree = "<group>"; };
 		0667A54B2EB8833D00D7BDF3 /* PatientDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PatientDetailView.swift; sourceTree = "<group>"; };
@@ -540,7 +544,9 @@
 		27AD7ADB2EB5BA2E00E84809 /* OpacityControlPanelButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OpacityControlPanelButton.swift; sourceTree = "<group>"; };
 		27AD7ADF2EB5BE2E00E84809 /* OpacityControlPanelHeaderComponent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OpacityControlPanelHeaderComponent.swift; sourceTree = "<group>"; };
 		27AD7AE32EB5BEA400E84809 /* OpacityControlPanelHeader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OpacityControlPanelHeader.swift; sourceTree = "<group>"; };
-		27D8A2BD2EAF67CE009429F0 /* OpacityControlViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OpacityControlViewModel.swift; sourceTree = "<group>"; };
+		27D1DB482EBC781200AC7F3D /* ImmersiveViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImmersiveViewModel.swift; sourceTree = "<group>"; };
+		27D1DB4C2EBC953D00AC7F3D /* WindowController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WindowController.swift; sourceTree = "<group>"; };
+		27D8A2BD2EAF67CE009429F0 /* OpacityManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OpacityManager.swift; sourceTree = "<group>"; };
 		C02FFA4C2E9FFF6F00F16742 /* HippoMacApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HippoMacApp.swift; sourceTree = "<group>"; };
 		C02FFA4D2E9FFF6F00F16742 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		C02FFA4F2E9FFF6F00F16742 /* HippoVisionApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HippoVisionApp.swift; sourceTree = "<group>"; };
@@ -657,6 +663,7 @@
 			children = (
 				0667A5502EB8A33400D7BDF3 /* HomeMockDataModel.swift */,
 				0667A5392EB79DBB00D7BDF3 /* HomeView.swift */,
+				065DA5572EBD844600B454BC /* PatientButtonView.swift */,
 			);
 			path = Home;
 			sourceTree = "<group>";
@@ -667,6 +674,8 @@
 				06ADD9CC2EB98B3D0013665B /* OperationListView.swift */,
 				06BF173D2EBB27C700996C86 /* OperationCardView.swift */,
 				06BF173B2EBB25AF00996C86 /* OperationMockDataModel.swift */,
+				06F9D6352EBC765A00AD1EE6 /* OperationInputView.swift */,
+				2581FCE42EBBC6870059678D /* OperationInputState.swift */,
 			);
 			path = Operation;
 			sourceTree = "<group>";
@@ -966,6 +975,7 @@
 		2581FCE82EBBC6FA0059678D /* Root */ = {
 			isa = PBXGroup;
 			children = (
+				C02FFA532E9FFF6F00F16742 /* RootView.swift */,
 				2581FCE62EBBC6FA0059678D /* MacNavigationState.swift */,
 				2581FCE72EBBC6FA0059678D /* MacRootViewModel.swift */,
 			);
@@ -1410,14 +1420,11 @@
 			isa = PBXGroup;
 			children = (
 				2581FCE82EBBC6FA0059678D /* Root */,
-				2581FCE42EBBC6870059678D /* OperationInputState.swift */,
+				0667A54F2EB8A2F900D7BDF3 /* Home */,
+				0617C8FC2EB8BB9F003B26E8 /* StreamingControl */,
 				0617C8FE2EB8BBCB003B26E8 /* Patient */,
 				0617C8FD2EB8BBC0003B26E8 /* TodaysSurgery */,
 				06ADD9CE2EB98DA40013665B /* Operation */,
-				0617C8FC2EB8BB9F003B26E8 /* StreamingControl */,
-				0667A54F2EB8A2F900D7BDF3 /* Home */,
-				C02FFA532E9FFF6F00F16742 /* RootView.swift */,
-				06F9D6352EBC765A00AD1EE6 /* OperationInputView.swift */,
 				C04678462EA00C2700D160DA /* Patients_Legacy */,
 			);
 			path = UI;
@@ -1440,9 +1447,11 @@
 				2581FF172EBE19FF0059678D /* EndoscopeStreamView.swift */,
 				1446FB9B2EAE6987000BCF61 /* Components */,
 				14F6B0332EAAC73F003F28EB /* ImmersiveSurgeryView.swift */,
-				27D8A2BD2EAF67CE009429F0 /* OpacityControlViewModel.swift */,
+				27D8A2BD2EAF67CE009429F0 /* OpacityManager.swift */,
 				278F28BC2EB3877200DF2F73 /* AssetListView.swift */,
 				27AD7AD32EB5ACD600E84809 /* OpacityControlPanel.swift */,
+				27D1DB482EBC781200AC7F3D /* ImmersiveViewModel.swift */,
+				27D1DB4C2EBC953D00AC7F3D /* WindowController.swift */,
 			);
 			path = Immersive;
 			sourceTree = "<group>";
@@ -1715,6 +1724,7 @@
 			files = (
 				C04678102EA00B1F00D160DA /* DeletePatient.swift in Sources */,
 				278623342EB790CE00F97BE3 /* AssetListScrollCard.swift in Sources */,
+				27D1DB492EBC781200AC7F3D /* ImmersiveViewModel.swift in Sources */,
 				C0F97B0E2EA4348D0063E159 /* CreatePatient.swift in Sources */,
 				C050AA3F2EA81A5800352314 /* View+VisionDependencies.swift in Sources */,
 				1446FBBA2EAE770A000BCF61 /* SurgeryControlBar.swift in Sources */,
@@ -1792,9 +1802,10 @@
 				C0F97ACD2EA41D4B0063E159 /* SDOperationRecording.swift in Sources */,
 				14CC75562EA6A8BE00399562 /* LogoHeader.swift in Sources */,
 				C0F97ACE2EA41D4B0063E159 /* SwiftDataMappers.swift in Sources */,
-				27D8A2BE2EAF682B009429F0 /* OpacityControlViewModel.swift in Sources */,
+				27D8A2BE2EAF682B009429F0 /* OpacityManager.swift in Sources */,
 				C0F97ACF2EA41D4B0063E159 /* PatientLocalDataSourceSwiftData.swift in Sources */,
 				C050AA3C2EA8197E00352314 /* ImmersiveIDs.swift in Sources */,
+				27D1DB4D2EBC953D00AC7F3D /* WindowController.swift in Sources */,
 				C0F97AD02EA41D4B0063E159 /* SDOperationAsset.swift in Sources */,
 				C0F97AD12EA41D4B0063E159 /* PatientLocalDataSourceLegacyJSON.swift in Sources */,
 				C050AA362EA8176300352314 /* RootView.swift in Sources */,
@@ -2089,6 +2100,7 @@
 				25E78B692EB90D4600D8CAD2 /* OperationRecording.swift in Sources */,
 				25E78B6A2EB90D4600D8CAD2 /* OperationError.swift in Sources */,
 				25E78B6B2EB90D4600D8CAD2 /* OperationAssetExtension.swift in Sources */,
+				065DA5582EBD844600B454BC /* PatientButtonView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2112,7 +2124,7 @@
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = 4FCV7BL65G;
+				DEVELOPMENT_TEAM = H2WD8C55D7;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = "$(SRCROOT)/Hippo/Applications/VisionApp/Info.plist";
@@ -2145,7 +2157,7 @@
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = 4FCV7BL65G;
+				DEVELOPMENT_TEAM = H2WD8C55D7;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = "$(SRCROOT)/Hippo/Applications/VisionApp/Info.plist";

@@ -1,11 +1,12 @@
 {
   "fill" : {
-    "automatic-gradient" : "srgb:0.00000,0.00000,0.00000,1.00000"
+    "automatic-gradient" : "extended-gray:1.00000,1.00000"
   },
   "groups" : [
     {
       "layers" : [
         {
+          "glass" : false,
           "image-name" : "glow.png",
           "name" : "glow",
           "position" : {
@@ -27,56 +28,19 @@
       }
     },
     {
+      "blur-material" : 0.5,
       "layers" : [
         {
-          "glass" : false,
-          "image-name" : "Intersect.png",
-          "name" : "Intersect"
+          "image-name" : "Middle 1.png",
+          "name" : "Middle 1"
         }
       ],
       "shadow" : {
         "kind" : "neutral",
-        "opacity" : 0.5
+        "opacity" : 1
       },
       "translucency" : {
-        "enabled" : true,
-        "value" : 0.5
-      }
-    },
-    {
-      "blend-mode" : "lighten",
-      "layers" : [
-        {
-          "image-name" : "Ellipse 59.png",
-          "name" : "Ellipse 59",
-          "position" : {
-            "scale" : 1,
-            "translation-in-points" : [
-              -106,
-              -108
-            ]
-          }
-        },
-        {
-          "image-name" : "Ellipse 58.png",
-          "name" : "Ellipse 58",
-          "position" : {
-            "scale" : 1,
-            "translation-in-points" : [
-              106,
-              108
-            ]
-          }
-        }
-      ],
-      "lighting" : "combined",
-      "shadow" : {
-        "kind" : "neutral",
-        "opacity" : 0.5
-      },
-      "specular" : true,
-      "translucency" : {
-        "enabled" : true,
+        "enabled" : false,
         "value" : 0.5
       }
     }

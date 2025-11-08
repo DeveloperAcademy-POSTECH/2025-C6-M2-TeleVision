@@ -14,19 +14,19 @@ struct RecordButton: View {
         Button(action: action) {
             HStack {
                 Text("녹화")
-                    .font(.system(size: 6))
+                    .font(.headline)
                 Spacer()
                 RecordingIndicator()
             }
-            .padding(.horizontal, 4)
+            .padding(.horizontal, 20)
         }
         .contentShape(.capsule)
-        .frame(width: 40, height: 20)
+        .frame(width: 140, height: 56)
         .buttonStyle(.plain)
         .background(.clear)
         .overlay {
             Capsule()
-                .stroke(.white, lineWidth: 0.5)
+                .stroke(.white, lineWidth: 1)
         }
     }
 }
