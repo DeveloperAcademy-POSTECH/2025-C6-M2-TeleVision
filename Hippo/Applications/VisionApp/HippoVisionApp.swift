@@ -11,8 +11,23 @@ import SwiftUI
 struct HippoVisionApp: App {
     @State private var appModel = AppModel()
     @State private var homeViewModel = HomeViewModel()
-
+    
+    // Immersive Space 내에서 필요한 모델
+    @State private var runtime: ImmersiveSceneRuntime
+    @State private var immersiveViewModel: ImmersiveViewModel
+    @State private var opacityManager: OpacityManager
+    @State private var dataViewModel: OperationViewModel
+    
+    init() {
+        self._immersiveViewModel = State(initialValue: ImmersiveViewModel())
+        let runtime = ImmersiveSceneRuntime()
+        self._runtime = State(initialValue: runtime)
+        self._dataViewModel = State(initialValue: OperationViewModel())
+        self._opacityManager = State(initialValue: OpacityManager(runtime: runtime))
+    }
+    
     var body: some Scene {
+        
         // 홈 화면
         WindowGroup(id: WindowIDs.home) {
             RootView()
@@ -21,7 +36,7 @@ struct HippoVisionApp: App {
                 .frame(minWidth: 580, maxWidth: 1020, minHeight: 760, maxHeight: 1020)
         }
         .windowResizability(.contentSize)
-
+        
         // 환자 상세 화면
         WindowGroup(id: WindowIDs.patientDetail, for: String.self) { $id in
             if let id = id {
@@ -31,7 +46,7 @@ struct HippoVisionApp: App {
             }
         }
         .windowResizability(.contentSize)
-
+        
         // 수술 상세 화면
         WindowGroup(id: WindowIDs.operationDetail, for: OperationContext.self) { $context in
             if let context = context {
@@ -48,16 +63,18 @@ struct HippoVisionApp: App {
             if let patientDetailWindow = context.windows.first(where: { $0.id == WindowIDs.patientDetail }) {
                 return WindowPlacement(.trailing(patientDetailWindow))
             }
-
+            
             // 2. 환자 상세 창이 없으면 홈 창 옆에 배치
             if let homeWindow = context.windows.first(where: { $0.id == WindowIDs.home }) {
                 return WindowPlacement(.trailing(homeWindow))
             }
-
+            
             // 3. 둘 다 없으면 기본 배치
             return WindowPlacement()
         }
-
+        
+        // MARK: -- 수술 시작 후
+        
         // 몰입형 수술 화면
         ImmersiveSpace(id: ImmersiveIDs.surgery, for: OperationContext.self) { $context in
             if let context = context {
@@ -66,7 +83,59 @@ struct HippoVisionApp: App {
                     operationID: context.operationID
                 )
                 .environment(appModel)
+                .environment(runtime)
+                .environment(immersiveViewModel)
+                .environment(dataViewModel)
             }
         }
+        
+        // OpacityControlPanel
+        WindowGroup(id: WindowIDs.opacityControlPanel) {
+            OpacityControlPanel()
+                .environment(opacityManager)
+                .environment(runtime)
+                .onAppear { immersiveViewModel.isOpacityControlPanelOpen = true }
+                .onDisappear {
+                    immersiveViewModel.isOpacityControlPanelOpen = false
+                }
+            
+        }
+        .defaultSize(width: 658, height: 522)
+        .defaultWindowPlacement { _, context in
+            if let surgeryBottomMenu = context.windows.first(where: { $0.id == WindowIDs.surgeryBottomMenu }) {
+                return WindowPlacement(.trailing(surgeryBottomMenu))
+            }
+            return WindowPlacement()
+        }
+        
+        // surgeryBottomMenu
+        WindowGroup(id: WindowIDs.surgeryBottomMenu) {
+            SurgeryBottomMenu()
+                .environment(immersiveViewModel)
+                .environment(dataViewModel)
+                .environment(runtime)
+                .onAppear { immersiveViewModel.isSurgeryBottomMenuOpen = true }
+                .onDisappear {
+                    immersiveViewModel.isSurgeryBottomMenuOpen = false
+                    immersiveViewModel.isMenuActive = false
+                }
+        }
+        .windowStyle(.plain)
+        .windowResizability(.contentSize)
+        .defaultWindowPlacement { _, context in
+            return WindowPlacement(.utilityPanel)
+        }
+        
+        // AssetListView
+        WindowGroup(id: WindowIDs.assetListView) {
+            AssetListView()
+                .environment(runtime)
+                .environment(immersiveViewModel)
+                .environment(dataViewModel)
+        }
+        .windowStyle(.plain)
+        .windowResizability(.contentSize)
+        
     }
 }
+
