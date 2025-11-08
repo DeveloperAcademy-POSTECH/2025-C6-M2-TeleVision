@@ -26,16 +26,13 @@ final class ImmersiveViewModel {
         self.isShowingFinishAlert = true
     }
     
-    
     func recordPassThroughVideo() {
         
     }
     
     func toggleMenu(windowController: WindowController) {
         isMenuActive.toggle()
-        
-        // AR Session 관리
-        // TODO: 컨트롤러 상태에 따른 메뉴바 및 패널 시각화 조정
+
         if isMenuActive {
             ARSessionController.shared.runARSession()
             if !isSurgeryBottomMenuOpen {

@@ -147,7 +147,6 @@ final class OpacityManager {
     
     // MARK: -- 전체 Layer
     func setVisibilityForAll(to isVisible: Bool) {
-        // ViewModel의 'layers' 배열 상태를 업데이트
         for index in layers.indices {
             layers[index].isVisible = isVisible
             layers[index].entity.isEnabled = isVisible

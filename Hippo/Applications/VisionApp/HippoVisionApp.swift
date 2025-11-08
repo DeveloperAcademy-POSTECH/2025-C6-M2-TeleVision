@@ -17,7 +17,7 @@ struct HippoVisionApp: App {
     @State private var immersiveViewModel: ImmersiveViewModel
     @State private var opacityManager: OpacityManager
     @State private var dataViewModel: OperationViewModel
-
+    
     init() {
         self._immersiveViewModel = State(initialValue: ImmersiveViewModel())
         let runtime = ImmersiveSceneRuntime()
@@ -25,7 +25,7 @@ struct HippoVisionApp: App {
         self._dataViewModel = State(initialValue: OperationViewModel())
         self._opacityManager = State(initialValue: OpacityManager(runtime: runtime))
     }
-
+    
     var body: some Scene {
         
         // 홈 화면
@@ -36,7 +36,7 @@ struct HippoVisionApp: App {
                 .frame(minWidth: 580, maxWidth: 1020, minHeight: 760, maxHeight: 1020)
         }
         .windowResizability(.contentSize)
-
+        
         // 환자 상세 화면
         WindowGroup(id: WindowIDs.patientDetail, for: String.self) { $id in
             if let id = id {
@@ -46,7 +46,7 @@ struct HippoVisionApp: App {
             }
         }
         .windowResizability(.contentSize)
-
+        
         // 수술 상세 화면
         WindowGroup(id: WindowIDs.operationDetail, for: OperationContext.self) { $context in
             if let context = context {
@@ -63,16 +63,16 @@ struct HippoVisionApp: App {
             if let patientDetailWindow = context.windows.first(where: { $0.id == WindowIDs.patientDetail }) {
                 return WindowPlacement(.trailing(patientDetailWindow))
             }
-
+            
             // 2. 환자 상세 창이 없으면 홈 창 옆에 배치
             if let homeWindow = context.windows.first(where: { $0.id == WindowIDs.home }) {
                 return WindowPlacement(.trailing(homeWindow))
             }
-
+            
             // 3. 둘 다 없으면 기본 배치
             return WindowPlacement()
         }
-
+        
         // MARK: -- 수술 시작 후
         
         // 몰입형 수술 화면
@@ -115,18 +115,9 @@ struct HippoVisionApp: App {
                 .environment(dataViewModel)
                 .environment(runtime)
                 .onAppear { immersiveViewModel.isSurgeryBottomMenuOpen = true }
-                .task {
-                    immersiveViewModel.isSurgeryBottomMenuOpen = true
-                    print("ddddgdd")
-                    await Task.waitTillCancel()
-                    immersiveViewModel.isSurgeryBottomMenuOpen = false
-                    immersiveViewModel.isMenuActive = false
-                    print("ddgdd")
-                }
                 .onDisappear {
                     immersiveViewModel.isSurgeryBottomMenuOpen = false
                     immersiveViewModel.isMenuActive = false
-                    print("dddd")
                 }
         }
         .windowStyle(.plain)
@@ -148,10 +139,3 @@ struct HippoVisionApp: App {
     }
 }
 
-
-extension Task where Success == Void, Failure == Never {
-    static func waitTillCancel() async {
-        let asyncStream = AsyncStream<Int> { _ in }
-        for await _ in asyncStream { }
-    }
-}
