@@ -38,7 +38,7 @@ final class ImmersiveSceneRuntime {
         }
         
         content.add(anchor1)
-
+        
         topAnchor = anchor1
         
         // 3D 모델들의 월드 앵커의 부모
@@ -52,7 +52,7 @@ final class ImmersiveSceneRuntime {
             self.selectedEntity = event.entity
         }
     }
-
+    
     func placeEntity(url: URL) async {
         guard let sceneRoot = self.sceneRoot else {
             logger.error("Scene root is not yet set up.")

@@ -59,7 +59,7 @@ struct AssetListView: View {
                 selectedURL = fileURLs.first
             }
         }
-
+        
     }
 }
 

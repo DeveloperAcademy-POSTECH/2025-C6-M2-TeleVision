@@ -37,13 +37,8 @@ struct SurgeryBottomMenu: View {
         }
         .opacity(immersiveViewModel.isMenuActive ? 1.0 : 0.0)
         .environment(windowController)
-//        .ornament(
-//            visibility: immersiveViewModel.isShowingAssetListView ? .visible : .hidden,
-//            attachmentAnchor: .scene(.top)) {
-//                AssetListView()
-//            }
     }
-        
+    
 }
 
 #Preview {
