@@ -23,9 +23,6 @@ public final class MacRootViewModel {
 
     /// 수술 입력 폼 상태
     public var operationInputState = OperationInputState()
-    
-    ///
-    
 
     // MARK: - Shared ViewModels (비즈니스 로직)
 
@@ -33,13 +30,16 @@ public final class MacRootViewModel {
     public let homeViewModel: HomeViewModel
 
     /// Operation ViewModel (Shared 재사용)
-    public var operationViewModel: OperationViewModel?
+    public var operationViewModel: OperationViewModel
 
     // MARK: - Initialization
 
     public init() {
         self.homeViewModel = HomeViewModel()
-        logger.debug("MacRootViewModel initialized with Shared ViewModels")
+        logger.debug("MacRootViewModel initialized with Shared HomeViewModels")
+        
+        self.operationViewModel = OperationViewModel()
+        logger.debug("MacRootViewModel initialized with Shared OperationViewModels")
     }
 
     // MARK: - Navigation Actions
@@ -82,6 +82,17 @@ public final class MacRootViewModel {
         navigationState.openOperationCreateSheet()
         operationInputState.reset()
         logger.debug("Opening operation create sheet for patient: \(patientID)")
+    }
+    
+    /// 수술 수정 시트 열기
+    public func openOperationEditSheet(operation: OperationDisplayModel) {
+        guard let patientID = navigationState.selectedPatientID else {
+            logger.warning("Cannot open operation sheet: no patient selected")
+            return
+        }
+        navigationState.openOperationEditSheet(operation: operation)
+        operationInputState = OperationInputState(from: operation)
+        logger.debug("Opening operation edit sheet for patient: \(patientID)")
     }
 
     /// 환자 입력 시트 닫기
@@ -185,6 +196,40 @@ public final class MacRootViewModel {
         } else {
             operationInputState.errorMessage = homeViewModel.state.alert
             logger.error("Failed to create operation")
+            return false
+        }
+    }
+    
+    /// 수술 수정. 추가됨.
+    public func updateOperation() async -> Bool {
+        guard let patientID = navigationState.selectedPatientID else {
+            logger.error("Cannot update operation: no patient selected")
+            return false
+        }
+        
+        guard let operationID = navigationState.selectedOperationID else {
+            logger.error("Cannot update operation: no operation selected")
+            return false
+        }
+        
+        await operationViewModel.updateOperation(
+            patientID: patientID,
+            operationID: operationID,
+            title: operationInputState.title,
+            diagnosis: operationInputState.diagnosis,
+            surgeon: operationInputState.surgeon,
+            surgicalSite: operationInputState.surgicalSite,
+            date: operationInputState.operationDate,
+            details: operationInputState.details
+        )
+        
+        if operationViewModel.state.alert == nil {
+            closeOperationInputSheet()
+            logger.debug("Operation updated successfully")
+            return true
+        } else {
+            operationInputState.errorMessage = operationViewModel.state.alert
+            logger.error("Failed to update operation")
             return false
         }
     }

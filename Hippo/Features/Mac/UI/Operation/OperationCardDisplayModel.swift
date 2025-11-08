@@ -8,47 +8,58 @@
 import Foundation
 
 ///OperationCardView용 데이터 모델
-public struct OperationCardDisplayModel: Equatable, Identifiable {
-    
-    /// 수술 id
-    public var id: String = ""
-    
-    /// 환자 id
-    public var patientId: String = ""
-    
-    /// 이름
-    public var name: String? = nil
+public struct OperationCardDisplayModel: Equatable, Identifiable, Sendable {
+    public let id: String
+    public let patientId: String
+    public let name: String?
+    public let gender: String?
+    public let birthDate: Date?
+    public let title: String
+    public let diagnosis: String
+    public let surgeon: String
+    public let surgicalSite: String
+    public let operationDate: Date
+    public let details: String
+    public let assets: [OperationAssetDisplayModel]
 
-    /// 성별
-    public var gender: String? = nil
-    
-    /// 생년월일
-    public var birthDate: Date? = nil
-    
-    /// 수술 제목
-    public var title: String = ""
-
-    /// 진단(병명)
-    public var diagnosis: String = ""
-
-    /// 집도의
-    public var surgeon: String = ""
-
-    /// 수술 부위
-    public var surgicalSite: String = ""
-
-    /// 수술 날짜
-    public var operationDate: Date = Date()
-
-    /// 수술 상세
-    public var details: String = ""
-
-    /// 3D 모델 에셋 목록
-    public var assets: [OperationAssetDisplayModel] = []
-
-    
-    /// 나이(문자열)
     public var age: String {
-        String(max(Calendar.current.dateComponents([.year], from: birthDate ?? Date(), to: Date()).year ?? 0, 0))
+        String(
+            max(
+                Calendar.current.dateComponents(
+                    [.year],
+                    from: birthDate ?? Date(),
+                    to: Date()
+                ).year ?? 0,
+                0
+            )
+        )
+    }
+
+    public init(
+        id: String,
+        patientId: String,
+        name: String? = nil,
+        gender: String? = nil,
+        birthDate: Date? = nil,
+        title: String,
+        diagnosis: String,
+        surgeon: String,
+        surgicalSite: String,
+        operationDate: Date,
+        details: String,
+        assets: [OperationAssetDisplayModel]
+    ) {
+        self.id = id
+        self.patientId = patientId
+        self.name = name
+        self.gender = gender
+        self.birthDate = birthDate
+        self.title = title
+        self.diagnosis = diagnosis
+        self.surgeon = surgeon
+        self.surgicalSite = surgicalSite
+        self.operationDate = operationDate
+        self.details = details
+        self.assets = assets
     }
 }
