@@ -19,10 +19,10 @@ struct PatientInputView: View {
         Section(header: Text("Add Patient")) {
             Form {
                 TextField("Patient Number", text: $state.patientNumber)
-                TextField("name", text: $state.name)
-                Picker("gender", selection: $state.selectedGender) {
-                    Text("male").tag(Gender.male)
-                    Text("female").tag(Gender.female)
+                TextField("Name", text: $state.name)
+                Picker("Gender", selection: $state.selectedGender) {
+                    Text("Male").tag(Gender.male)
+                    Text("Female").tag(Gender.female)
                 }
                 .pickerStyle(.segmented)
                 HStack {
