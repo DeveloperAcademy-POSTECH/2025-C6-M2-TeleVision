@@ -18,11 +18,11 @@ struct TodaysSurgeryView: View {
         return OperationListView(
             operations: operations,
             onEdit: { operationID in
-                if let op = operations.first(where: { $0.id == operationID }) {
-                    let patientId = op.patientId
-                    Task {
-                        
-                    }
+                viewModel.selectedOperationID = operationID
+                viewModel.selectedPatientID = viewModel.patientID(for: operationID)
+                
+                if let op = viewModel.operation(by: operationID) {
+                    viewModel.openOperationEditSheet(operation: op)
                 }
             },
             onDelete: { operationID in

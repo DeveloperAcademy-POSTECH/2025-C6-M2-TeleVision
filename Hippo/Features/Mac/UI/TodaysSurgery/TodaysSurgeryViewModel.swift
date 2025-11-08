@@ -24,6 +24,18 @@ public final class TodaysSurgeryViewModel {
     public var todayOperations: [(patient: PatientDisplayModel, operation: OperationDisplayModel)] {
         rootVM.homeViewModel.todayOperations
     }
+    
+    /// 선택된 환자
+    public var selectedPatientID: String? {
+        get { rootVM.navigationState.selectedPatientID }
+        set { rootVM.navigationState.selectedPatientID = newValue }
+    }
+    
+    /// 선택된 수술
+    public var selectedOperationID: String? {
+        get { rootVM.navigationState.selectedOperationID }
+        set { rootVM.navigationState.selectedOperationID = newValue }
+    }
 
     /// 로딩 상태
     public var isLoading: Bool {
@@ -70,14 +82,18 @@ extension TodaysSurgeryViewModel {
         }
     }
     
-    /// 수술 카드 수정
-    public func updateOperationCard(_ operationID: String, in patientID: String) async {
-        await rootVM.operationViewModel.updateOperation()
+    /// 수술 카드 수정 시트 열기
+    public func openOperationEditSheet(operation: OperationDisplayModel) {
+        rootVM.openOperationEditSheet(operation: operation)
     }
     
-    /// 수술 카드 수정 시트 열기
-    public func openOperationEditSheet(operation: OperationDisplayModel) async {
-        rootVM.openOperationEditSheet(operation: operation)
+    /// 하위 뷰로부터 받은 ID 기반으로 수술 조회. 추가됨
+    public func operation(by id: String) -> OperationDisplayModel? {
+        todayOperations.first { $0.operation.id == id }?.operation
+    }
+    
+    public func patientID(for operationID: String) -> String? {
+        todayOperations.first { $0.operation.id == operationID }?.patient.id
     }
     
     /// 수술 카드 삭제

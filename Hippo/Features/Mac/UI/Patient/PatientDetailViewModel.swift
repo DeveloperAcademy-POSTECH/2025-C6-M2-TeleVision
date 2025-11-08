@@ -15,21 +15,6 @@ public final class PatientDetailViewModel {
         self.rootVM = rootVM
     }
     
-    public var isPresentingOperationInput: Bool {
-        get { rootVM.navigationState.isPresentingOperationInput }
-        set { rootVM.navigationState.isPresentingOperationInput = newValue }
-    }
-
-    public var operationInputMode: OperationInputMode {
-        get { rootVM.navigationState.operationInputMode }
-        set { rootVM.navigationState.operationInputMode = newValue}
-    }
-    
-    public var operationInputState: OperationInputState {
-        get { rootVM.operationInputState }
-        set { rootVM.operationInputState = newValue }
-    }
-    
     public var selectedOperationID: String? {
         get { rootVM.navigationState.selectedOperationID }
         set { rootVM.navigationState.selectedOperationID = newValue }
@@ -46,27 +31,8 @@ public final class PatientDetailViewModel {
     public var operations: [OperationDisplayModel] {
         rootVM.selectedPatientOperations
     }
-
-    // MARK: - Actions (rootVM 위임)
-
-    /// 환자 삭제
-    public func deletePatient() async {
-        guard let patientID = patient?.id else { return }
-        await rootVM.deletePatient(patientID)
-    }
-
-    /// 수술 삭제
-    public func deleteOperation(_ operationID: String) async {
-        await rootVM.deleteOperation(operationID: operationID)
-    }
     
-    /// 데이터 새로고침
-    public func refresh() async {
-        await rootVM.load()
-    }
-}
-
-extension PatientDetailViewModel {
+    /// 수술 카드뷰로 변환 OperationDisplayModel -> OperationCardDisplayModel
     public var operationCards: [OperationCardDisplayModel] {
         guard let patient = patient else { return [] }
         return operations.map { op in
@@ -86,6 +52,8 @@ extension PatientDetailViewModel {
             )
         }
     }
+
+    // MARK: - Actions (rootVM 위임)
     
     /// 수술 수정 시트 열기. 추가됨
     public func openOperationEditSheet(operation: OperationDisplayModel) {
@@ -96,5 +64,24 @@ extension PatientDetailViewModel {
     public func operation(by id: String) -> OperationDisplayModel? {
         operations.first { $0.id == id }
     }
+
+    /// 환자 삭제
+    public func deletePatient() async {
+        guard let patientID = patient?.id else { return }
+        await rootVM.deletePatient(patientID)
+    }
+
+    /// 수술 삭제
+    public func deleteOperation(_ operationID: String) async {
+        await rootVM.deleteOperation(operationID: operationID)
+    }
+    
+    /// 데이터 새로고침
+    public func refresh() async {
+        await rootVM.load()
+    }
+}
+
+extension PatientDetailViewModel {
 
 }
