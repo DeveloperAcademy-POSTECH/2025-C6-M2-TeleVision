@@ -33,6 +33,9 @@ public final class WebRTCReceiver: NSObject, ObservableObject {
     // Optional: legacy converting model for tagged stereo CMSampleBuffer (kept for experimentation)
     private var convertingModel: ConvertingModel?
 
+    // I420 buffer converter for non-CVPixelBuffer frames
+    private var i420Converter: I420BufferConverter?
+
     private let logger = Logger(subsystem: "com.television.hippo", category: "WebRTCReceiver")
 
     private var peerConnectionFactory: LKRTCPeerConnectionFactory!
@@ -113,6 +116,10 @@ public final class WebRTCReceiver: NSObject, ObservableObject {
         // Keep legacy converting model available (optional)
         convertingModel = ConvertingModel(stereoMetadata: .default)
         logger.info("✅ ConvertingModel initialized (optional)")
+
+        // Initialize I420 buffer converter
+        i420Converter = I420BufferConverter()
+        logger.info("✅ I420BufferConverter initialized")
 
         // Configure AVSampleBufferVideoRenderer (Path A)
         setupStereoRenderer()
@@ -541,79 +548,84 @@ extension WebRTCReceiver: LKRTCVideoRenderer {
             return
         }
 
-        // Prefer CVPixelBuffer-backed frames to avoid CPU conversions
-        guard let cvBuffer = frame.buffer as? LKRTCCVPixelBuffer else {
-            print("⚠️ Non-CVPixelBuffer frame received, dropping to avoid CPU conversion: \(type(of: frame.buffer))")
+        // Get pixel buffer (either directly or via conversion)
+        let pixelBuffer: CVPixelBuffer?
+
+        if let cvBuffer = frame.buffer as? LKRTCCVPixelBuffer {
+            // Fast path: already CVPixelBuffer
+            pixelBuffer = cvBuffer.pixelBuffer
+            print("🎬 Frame received! Size: \(CVPixelBufferGetWidth(cvBuffer.pixelBuffer))×\(CVPixelBufferGetHeight(cvBuffer.pixelBuffer))")
+        } else if let i420Buffer = frame.buffer as? LKRTCI420Buffer {
+            // Convert I420 to CVPixelBuffer
+            print("🔄 I420 frame received, converting: \(i420Buffer.width)×\(i420Buffer.height)")
+
+            Task { @MainActor [weak self] in
+                guard let self = self, let converter = self.i420Converter else { return }
+
+                if let converted = await converter.convert(i420Buffer) {
+                    print("✅ I420 converted successfully")
+                    self.processFrame(converted, from: frame)
+                } else {
+                    print("❌ I420 conversion failed")
+                }
+            }
+            return
+        } else {
+            print("⚠️ Non-CVPixelBuffer frame received, dropping: \(type(of: frame.buffer))")
             return
         }
 
-        let pixelBuffer = cvBuffer.pixelBuffer
-        print("🎬 Frame received! Size: \(CVPixelBufferGetWidth(pixelBuffer))×\(CVPixelBufferGetHeight(pixelBuffer))")
+        guard let pb = pixelBuffer else { return }
 
         Task { @MainActor in
-            // Update current frame for debugging
-            self.currentFrame = pixelBuffer
-            self.framesReceived += 1
-
-            // Update stats
-            self.stats = ReceiverStats(framesReceived: self.framesReceived)
-
-            // Compute timing
-            let timeStampSeconds = Double(frame.timeStampNs) / 1_000_000_000.0
-            let pts = CMTime(seconds: timeStampSeconds, preferredTimescale: 1_000_000_000)
-            let duration: CMTime
-            if let last = self.lastPTS {
-                duration = CMTimeSubtract(pts, last)
-            } else {
-                duration = CMTime(value: 1, timescale: 60)
-            }
-            self.lastPTS = pts
-
-            // PATH A: Use ConvertingModel to create tagged stereo CMSampleBuffer
-            do {
-                if let convertingModel = self.convertingModel {
-                    // 🔍 DIAGNOSTIC: Log renderer status every frame (temporary for debugging)
-                    if self.framesReceived <= 10 || self.framesReceived % 10 == 0 {
-                        self.logger.info("🔍 [DIAGNOSTIC] Frame #\(self.framesReceived): Renderer ready=\(self.stereoRenderer.isReadyForMoreMediaData) status=\(self.stereoRenderer.status.rawValue)")
-                    }
-
-                    if self.stereoRenderer.isReadyForMoreMediaData,
-                       let stereoSampleBuffer = try await convertingModel.process(pixelBuffer, pts: pts, duration: duration) {
-                        self.stereoRenderer.enqueue(stereoSampleBuffer)
-                        self.logger.info("🔍 [DIAGNOSTIC] ✅ Enqueued frame #\(self.framesReceived) to renderer")
-
-                        // Log every 60 frames
-                        if self.framesReceived % 60 == 0 {
-                            self.logger.info("📊 Enqueued \(self.framesReceived) tagged stereo frames to renderer")
-                        }
-                    } else {
-                        if !self.stereoRenderer.isReadyForMoreMediaData {
-                            self.logger.warning("🔍 [DIAGNOSTIC] ⚠️ Frame #\(self.framesReceived): Renderer NOT ready (ready=\(self.stereoRenderer.isReadyForMoreMediaData))")
-                        } else {
-                            self.logger.error("🔍 [DIAGNOSTIC] ❌ Frame #\(self.framesReceived): Failed to process stereo sample buffer")
-                        }
-                    }
-                }
-            } catch {
-                self.logger.error("❌ Failed to process stereo frame: \(error.localizedDescription)")
-            }
-
-            // PATH B: Update Stereo Metal renderer with BGRA frames (backup)
-            // self.feedStereoMetal(with: pixelBuffer)
-
-            // Optional: keep legacy converting model working behind a flag if needed
-            /*
-            do {
-                if let convertingModel = self.convertingModel,
-                   let stereoSampleBuffer = try await convertingModel.process(pixelBuffer, pts: pts, duration: duration) {
-                    self.stereoRenderer.enqueue(stereoSampleBuffer)
-                    self.logger.debug("✅ (Legacy) Stereo tagged frame enqueued")
-                }
-            } catch {
-                self.logger.error("❌ (Legacy) Failed to process stereo frame: \(error.localizedDescription)")
-            }
-            */
+            self.processFrame(pb, from: frame)
         }
+    }
+
+    private func processFrame(_ pixelBuffer: CVPixelBuffer, from frame: LKRTCVideoFrame) {
+        print("🎬 Processing frame: \(CVPixelBufferGetWidth(pixelBuffer))×\(CVPixelBufferGetHeight(pixelBuffer))")
+
+        // Update current frame for debugging
+        self.currentFrame = pixelBuffer
+        self.framesReceived += 1
+
+        // Update stats
+        self.stats = ReceiverStats(framesReceived: self.framesReceived)
+
+        // Compute timing
+        let timeStampSeconds = Double(frame.timeStampNs) / 1_000_000_000.0
+        let pts = CMTime(seconds: timeStampSeconds, preferredTimescale: 1_000_000_000)
+        let duration: CMTime
+        if let last = self.lastPTS {
+            duration = CMTimeSubtract(pts, last)
+        } else {
+            duration = CMTime(value: 1, timescale: 60)
+        }
+        self.lastPTS = pts
+
+        print("📤 Feeding frame to StereoMetal renderer")
+
+        // PATH B: Update Stereo Metal renderer with BGRA frames
+        // This is the working path for RealityKit stereo display
+        self.feedStereoMetal(with: pixelBuffer)
+
+        // Log frames received every 60 frames
+        if self.framesReceived % 60 == 0 {
+            self.logger.info("📊 Received \(self.framesReceived) frames, feeding to StereoVideoRenderer")
+        }
+
+        // Optional: keep legacy converting model working behind a flag if needed
+        /*
+        do {
+            if let convertingModel = self.convertingModel,
+               let stereoSampleBuffer = try await convertingModel.process(pixelBuffer, pts: pts, duration: duration) {
+                self.stereoRenderer.enqueue(stereoSampleBuffer)
+                self.logger.debug("✅ (Legacy) Stereo tagged frame enqueued")
+            }
+        } catch {
+            self.logger.error("❌ (Legacy) Failed to process stereo frame: \(error.localizedDescription)")
+        }
+        */
     }
 }
 

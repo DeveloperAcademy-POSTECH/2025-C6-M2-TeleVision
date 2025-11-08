@@ -79,9 +79,11 @@ public final class WebRTCManager: NSObject, IVideoTransport {
 
     public func start() throws {
         logger.info("🚀 WebRTC starting...")
+        print("🚀 [WebRTCManager] Starting WebRTC transport...")
         state = .connecting
 
         // 1. Initialize WebRTC factory
+        print("🔧 [WebRTCManager] Initializing WebRTC SSL and tracer...")
         LKRTCInitializeSSL()
         LKRTCSetupInternalTracer()
 
@@ -92,24 +94,30 @@ public final class WebRTCManager: NSObject, IVideoTransport {
             encoderFactory: encoderFactory,
             decoderFactory: decoderFactory
         )
+        print("✅ [WebRTCManager] Peer connection factory created")
 
-        // 2. Setup signaling
+        // 2. Setup signaling FIRST (before creating peer connection)
         let serverURL = URL(string: "ws://127.0.0.1:8080")!
+        print("📡 [WebRTCManager] Creating SignalingClient for: \(serverURL.absoluteString)")
         signalingClient = SignalingClient(serverURL: serverURL)
         signalingClient?.delegate = self
 
+        print("📡 [WebRTCManager] Connecting to signaling server as 'sender'...")
         try signalingClient?.connect(as: "sender")
 
-        // 3. Create peer connection
+        // 3. Create peer connection (but DON'T create offer yet)
+        print("🔗 [WebRTCManager] Creating peer connection...")
         try createPeerConnection()
 
         // 4. Create video track
+        print("🎥 [WebRTCManager] Creating video track...")
         createVideoTrack()
 
-        // 5. Create offer
-        createOffer()
+        // 5. Offer will be created in signalingClient(_:didChangeState:) when connected
+        print("⏳ [WebRTCManager] Waiting for signaling connection before creating offer...")
 
-        logger.info("✅ WebRTC initialized")
+        logger.info("✅ WebRTC initialized (waiting for signaling)")
+        print("✅ [WebRTCManager] WebRTC initialization complete (waiting for signaling)")
     }
 
     public func stop() {
@@ -204,6 +212,8 @@ public final class WebRTCManager: NSObject, IVideoTransport {
     }
 
     private func createOffer() {
+        print("📝 [WebRTCManager] Creating offer (signaling state: \(signalingClient?.state.self ?? .disconnected))")
+
         let constraints = LKRTCMediaConstraints(
             mandatoryConstraints: nil,
             optionalConstraints: ["OfferToReceiveVideo": "false"]
@@ -212,17 +222,25 @@ public final class WebRTCManager: NSObject, IVideoTransport {
         peerConnection?.offer(for: constraints) { [weak self] sdp, error in
             guard let self = self, let sdp = sdp, error == nil else {
                 self?.logger.error("❌ Failed to create offer: \(error?.localizedDescription ?? "unknown")")
+                print("❌ [WebRTCManager] Failed to create offer: \(error?.localizedDescription ?? "unknown")")
                 return
             }
+
+            print("✅ [WebRTCManager] Offer created successfully")
 
             self.peerConnection?.setLocalDescription(sdp) { error in
                 if let error = error {
                     self.logger.error("❌ Failed to set local description: \(error.localizedDescription)")
+                    print("❌ [WebRTCManager] Failed to set local description: \(error.localizedDescription)")
                     return
                 }
 
                 self.logger.info("✅ Local description set (offer)")
+                print("✅ [WebRTCManager] Local description set (offer)")
+
+                print("📤 [WebRTCManager] Sending offer to receiver...")
                 self.signalingClient?.send(offer: sdp.sdp)
+                print("✅ [WebRTCManager] Offer sent successfully")
             }
         }
     }
@@ -388,6 +406,11 @@ extension WebRTCManager: SignalingDelegate {
         switch state {
         case .connected:
             logger.info("✅ Signaling connected")
+            print("✅ [WebRTCManager] Signaling connected, now creating offer...")
+
+            // Now that signaling is connected, create the offer
+            createOffer()
+
         case .failed:
             self.state = .failed
         default:

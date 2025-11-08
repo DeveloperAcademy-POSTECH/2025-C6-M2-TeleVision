@@ -191,38 +191,50 @@ final class SignalingClient {
 
     // MARK: - Sending Messages
 
-    func send(offer sdp: String) {
+    func send(offer sdp: String, to targetId: String = "receiver") {
         let message = SignalingMessage.offer(sdp: sdp)
-        sendMessage(message)
+        sendMessage(message, to: targetId)
     }
 
-    func send(answer sdp: String) {
+    func send(answer sdp: String, to targetId: String = "sender") {
         let message = SignalingMessage.answer(sdp: sdp)
-        sendMessage(message)
+        sendMessage(message, to: targetId)
     }
 
-    func send(iceCandidate candidate: LKRTCIceCandidate) {
+    func send(iceCandidate candidate: LKRTCIceCandidate, to targetId: String? = nil) {
+        // Auto-detect targetId based on role
+        let target = targetId ?? (currentRole == "sender" ? "receiver" : "sender")
         let message = SignalingMessage.iceCandidate(
             candidate: candidate.sdp,
             sdpMid: candidate.sdpMid,
             sdpMLineIndex: candidate.sdpMLineIndex
         )
-        sendMessage(message)
+        sendMessage(message, to: target)
     }
 
-    private func sendMessage(_ message: SignalingMessage) {
+    private func sendMessage(_ message: SignalingMessage, to targetId: String) {
         guard state == .connected else {
             logger.error("❌ Cannot send message: not connected")
             return
         }
 
         do {
-            let data = try JSONEncoder().encode(message)
-            if let jsonString = String(data: data, encoding: .utf8) {
-                let wsMessage = URLSessionWebSocketTask.Message.string(jsonString)
-                webSocketTask?.send(wsMessage) { [weak self] error in
-                    if let error = error {
-                        self?.logger.error("❌ Failed to send message: \(error.localizedDescription)")
+            let encoder = JSONEncoder()
+            let data = try encoder.encode(message)
+
+            // Parse the JSON and add targetId
+            if var json = try JSONSerialization.jsonObject(with: data) as? [String: Any] {
+                json["targetId"] = targetId
+
+                let finalData = try JSONSerialization.data(withJSONObject: json)
+                if let jsonString = String(data: finalData, encoding: .utf8) {
+                    let wsMessage = URLSessionWebSocketTask.Message.string(jsonString)
+                    webSocketTask?.send(wsMessage) { [weak self] error in
+                        if let error = error {
+                            self?.logger.error("❌ Failed to send message: \(error.localizedDescription)")
+                        } else {
+                            self?.logger.debug("📤 Sent message to '\(targetId)'")
+                        }
                     }
                 }
             }
