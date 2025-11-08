@@ -31,14 +31,8 @@ final class ImmersiveViewModel {
 
     }
 
-    func toggleEndoscope(windowController: WindowController) {
+    func toggleEndoscope() {
         isEndoscopicActive.toggle()
-
-        if isEndoscopicActive {
-            windowController.openWindow(id: WindowIDs.endoscopeStream)
-        } else {
-            windowController.dismissWindow(id: WindowIDs.endoscopeStream)
-        }
     }
 
     func handleEndoscopeStreamWindowAppear() {

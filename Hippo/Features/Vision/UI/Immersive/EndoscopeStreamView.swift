@@ -32,9 +32,9 @@ struct EndoscopeStreamView: View {
     var body: some View {
         ZStack {
             if isVisible {
-                // RealityKit VideoMaterial로 스테레오/모노 렌더링
-                VideoPlayerView(
-                    renderer: receiver.stereoRenderer,
+                // Use StereoVideoRenderer for proper stereo display
+                StereoVideoView(
+                    renderer: receiver.stereoMetalRenderer,
                     displayMode: displayMode
                 )
                     .frame(width: 600, height: 338)  // 16:9 비율 (1920×1080 스케일)
@@ -62,42 +62,24 @@ struct EndoscopeStreamView: View {
     }
 }
 
-// MARK: - Video Player View
+// MARK: - Stereo Video View (using StereoVideoRenderer)
 
-struct VideoPlayerView: View {
-    let renderer: AVSampleBufferVideoRenderer
+struct StereoVideoView: View {
+    @ObservedObject var renderer: StereoVideoRenderer
     let displayMode: VideoDisplayMode
 
     var body: some View {
         #if os(visionOS)
         RealityView { content in
-            // VideoMaterial with stereo-tagged CMSampleBuffer
-            let videoMaterial = VideoMaterial(avPlayer: AVPlayer())
-
-            // Plane mesh for video display
-            let mesh = MeshResource.generatePlane(width: 1.0, depth: 0.5625)  // 16:9
-            let modelComponent = ModelComponent(mesh: mesh, materials: [videoMaterial])
-
-            let videoEntity = Entity()
-            videoEntity.components.set(modelComponent)
-
-            // Configure stereo/mono display based on mode
-            // Note: Actual stereo rendering is controlled by CMTaggedBuffer tags
-            // This setting primarily affects how the video material interprets the buffer
-            switch displayMode {
-            case .stereo:
-                // Enable stereo rendering (both eyes see different views)
-                videoEntity.components.set(modelComponent)
-            case .mono:
-                // Enable mono rendering (both eyes see same view)
-                // In mono mode, only display left eye or full frame
-                videoEntity.components.set(modelComponent)
-            }
-
-            content.add(videoEntity)
+            // Setup the stereo video scene with left/right planes
+            renderer.setupScene(in: content)
         }
         #else
         Color.black
+            .overlay(
+                Text("Stereo video requires visionOS")
+                    .foregroundColor(.white)
+            )
         #endif
     }
 }

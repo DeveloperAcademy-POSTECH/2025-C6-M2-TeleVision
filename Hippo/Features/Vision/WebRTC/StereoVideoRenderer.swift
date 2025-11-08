@@ -14,6 +14,14 @@ import MetalKit
 import os.log
 import Combine
 
+// MARK: - Eye Enum
+
+/// Specifies which eye a plane is for
+private enum Eye {
+    case left
+    case right
+}
+
 // MARK: - Stereo Video Renderer
 
 /// Renders SBS video to RealityKit stereo planes
@@ -42,10 +50,10 @@ public final class StereoVideoRenderer: ObservableObject {
     private var textureCache: CVMetalTextureCache?
     private var commandQueue: MTLCommandQueue?
 
-    // Video configuration - optimized for viewing
-    private let planeWidth: Float = 1.6     // meters (16:9 aspect ratio)
-    private let planeHeight: Float = 0.9    // meters
-    private let planeDistance: Float = 1.5  // meters from user (closer for better visibility)
+    // Video configuration - optimized for window viewing
+    private let planeWidth: Float = 0.4     // meters (small for window fit)
+    private let planeHeight: Float = 0.225  // meters (16:9 aspect ratio)
+    private let planeDistance: Float = 1.5  // meters from user
     private let eyeSeparation: Float = 0.063 // 63mm IPD
 
     // Cached textures to avoid reallocation every frame
@@ -86,31 +94,29 @@ public final class StereoVideoRenderer: ObservableObject {
 
     /// Setup stereo planes in RealityKit scene
     public func setupScene(in content: RealityViewContent) {
-        // Create anchor entity at world origin (fixed position in front of user)
-        let anchor = AnchorEntity(world: [0, 0, -planeDistance])
-
-        // Create left eye plane
-        let leftPlane = createVideoPlane(offset: -eyeSeparation / 2)
+        // For window-based RealityView, add planes directly without anchor
+        // Create left eye plane positioned for left eye viewing
+        let leftPlane = createVideoPlane(forEye: .left)
+        // Don't override position - it's already set in createVideoPlane
         leftPlaneEntity = leftPlane
-        anchor.addChild(leftPlane)
-        logger.info("👁️ Left eye plane created and added to anchor")
+        content.add(leftPlane)
+        logger.info("👁️ Left eye plane created and added to content at position: \(leftPlane.position)")
 
-        // Create right eye plane
-        let rightPlane = createVideoPlane(offset: eyeSeparation / 2)
+        // Create right eye plane positioned for right eye viewing
+        let rightPlane = createVideoPlane(forEye: .right)
+        // Don't override position - it's already set in createVideoPlane
         rightPlaneEntity = rightPlane
-        anchor.addChild(rightPlane)
-        logger.info("👁️ Right eye plane created and added to anchor")
-
-        // Add anchor to scene
-        content.add(anchor)
-        logger.info("⚓ Anchor entity added to scene at world position [0, 0, -\(self.planeDistance)]")
+        content.add(rightPlane)
+        logger.info("👁️ Right eye plane created and added to content at position: \(rightPlane.position)")
 
         isReady = true
-        logger.info("✅ Stereo scene ready")
+        logger.info("✅ Stereo scene ready - planes added directly to RealityView content")
     }
 
     /// Update video texture with new SBS frame (variable size)
     public func updateFrame(_ pixelBuffer: CVPixelBuffer) {
+        logger.info("🔍 updateFrame called - isReady: \(self.isReady), leftPlane: \(self.leftPlaneEntity != nil), rightPlane: \(self.rightPlaneEntity != nil)")
+
         guard isReady else {
             logger.warning("⚠️ Renderer not ready")
             return
@@ -216,8 +222,11 @@ public final class StereoVideoRenderer: ObservableObject {
         logger.info("✅ Metal setup complete")
     }
 
-    /// Create video plane entity
-    private func createVideoPlane(offset: Float) -> ModelEntity {
+    /// Create video plane entity for specific eye
+    /// Note: In visionOS, both eyes will see both planes. For true stereo separation,
+    /// you would need to use Reality Composer Pro with Camera Index Switch shader graphs.
+    /// This simpler approach positions planes side-by-side for basic stereo effect.
+    private func createVideoPlane(forEye eye: Eye) -> ModelEntity {
         // Create plane mesh
         let mesh = MeshResource.generatePlane(
             width: planeWidth,
@@ -226,10 +235,11 @@ public final class StereoVideoRenderer: ObservableObject {
 
         // Create material with bright color for debugging
         var material = UnlitMaterial()
-        // Start with magenta to verify plane is visible
-        material.color = .init(tint: .init(red: 1.0, green: 0.0, blue: 1.0, alpha: 1.0))
+        // Start with green to verify plane is visible (bright green)
+        material.color = .init(tint: .init(red: 0.0, green: 1.0, blue: 0.0, alpha: 1.0))
 
-        logger.info("🎨 Creating plane with magenta color at offset \(offset)")
+        let eyeDesc = eye == .left ? "left" : "right"
+        logger.info("🎨 Creating plane for \(eyeDesc) eye")
 
         // Create entity
         let entity = ModelEntity(
@@ -237,14 +247,11 @@ public final class StereoVideoRenderer: ObservableObject {
             materials: [material]
         )
 
-        // Position plane (relative to anchor, which is already at z=-planeDistance)
-        entity.position = SIMD3(
-            x: offset,
-            y: 0,
-            z: 0  // Changed from -planeDistance to 0 (anchor already positioned)
-        )
+        // Position planes at center for window-based view
+        // Both planes at same position - will show left/right separately via material
+        entity.position = SIMD3(x: 0, y: 0, z: 0)  // Center of RealityView
 
-        logger.info("📍 Plane positioned at x=\(offset), y=0, z=0 (relative to anchor)")
+        logger.info("📍 Plane created for \(eyeDesc) eye at position (0, 0, 0)")
 
         return entity
     }
@@ -329,7 +336,12 @@ public final class StereoVideoRenderer: ObservableObject {
     /// Update plane material with Metal texture directly (no CPU copy)
     private func updatePlaneMaterial(_ entity: ModelEntity?, with texture: MTLTexture?) {
         guard let entity, let texture else {
-            logger.warning("⚠️ updatePlaneMaterial: entity or texture is nil")
+            logger.warning("⚠️ updatePlaneMaterial: entity or texture is nil (entity=\(entity != nil), texture=\(texture != nil))")
+            return
+        }
+
+        guard entity.model != nil else {
+            logger.error("❌ updatePlaneMaterial: entity.model is nil!")
             return
         }
 
@@ -338,7 +350,7 @@ public final class StereoVideoRenderer: ObservableObject {
             var material = UnlitMaterial()
             material.color = .init(texture: .init(resource))
             entity.model?.materials = [material]
-            logger.debug("✅ Texture updated via fast path")
+            logger.info("✅ Texture updated via fast path (texture: \(texture.width)×\(texture.height))")
             return
         }
 
@@ -348,7 +360,7 @@ public final class StereoVideoRenderer: ObservableObject {
             var material = UnlitMaterial()
             material.color = .init(texture: .init(resource))
             entity.model?.materials = [material]
-            logger.debug("✅ Texture updated via CPU fallback")
+            logger.info("✅ Texture updated via CPU fallback (texture: \(texture.width)×\(texture.height))")
         } catch {
             logger.error("❌ Failed to create TextureResource: \(error.localizedDescription)")
         }

@@ -49,6 +49,9 @@ struct SurgeryControlBar: View {
             .padding(10)
             .frame(width: 680, height: 120)
             .glassBackgroundEffect(in: .capsule, displayMode: .always)
+            .onChange(of: immersiveViewModel.isEndoscopicActive) { oldValue, newValue in
+                handleEndoscopeToggle()
+            }
             
             Circle()
                 .fill(.clear)
@@ -68,6 +71,14 @@ struct SurgeryControlBar: View {
             }
         } message : {
             Text("나가면 다시 돌아올 수는 있지만, 현재 상태가 초기화될 수 있습니다.")
+        }
+    }
+    
+    func handleEndoscopeToggle() {
+        if immersiveViewModel.isEndoscopicActive {
+            windowController.openWindow(id: WindowIDs.endoscopeStream)
+        } else {
+            windowController.dismissWindow(id: WindowIDs.endoscopeStream)
         }
     }
 }
