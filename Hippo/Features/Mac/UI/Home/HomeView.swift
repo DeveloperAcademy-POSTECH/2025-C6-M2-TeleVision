@@ -29,7 +29,8 @@ struct HomeView: View {
                     //환자 리스트에 데이터가 있는 경우
                     ForEach(rootVM.loadedPatients, id: \.id) { data in
                         HStack {
-                            Button { rootVM.selectPatient(data.id)
+                            Button {
+                                rootVM.selectPatient(data.id)
                             } label: {
                                 HStack {
                                     Text(data.patientNumber)
@@ -39,22 +40,30 @@ struct HomeView: View {
                                 }
                             }
                             .onHover { hovering in
-                                hoveredPatientID = hovering ? data.id : (hoveredPatientID == data.id ? nil : hoveredPatientID)
+                                hoveredPatientID =
+                                    hovering
+                                    ? data.id
+                                    : (hoveredPatientID == data.id
+                                        ? nil : hoveredPatientID)
                             }
 
                             Button {
-                                // TODO: 환자 수정&삭제
-//                                rootVM.openPatientEditSheet(patient: data)
-                                Task {
-                                    await rootVM.deletePatient(data.id)
-                                }
-                                
+                                // 환자 수정 버튼
+                                rootVM.openPatientEditSheet(patient: data)
+                                //                                Task {
+                                //                                    await rootVM.deletePatient(data.id)
+                                //                                }
+
                             } label: {
                                 Image(systemName: "ellipsis.circle")
                             }
                             .opacity(hoveredPatientID == data.id ? 1 : 0)
                             .onHover { hovering in
-                                hoveredPatientID = hovering ? data.id : (hoveredPatientID == data.id ? nil : hoveredPatientID)
+                                hoveredPatientID =
+                                    hovering
+                                    ? data.id
+                                    : (hoveredPatientID == data.id
+                                        ? nil : hoveredPatientID)
                             }
                         }
                     }
@@ -76,8 +85,10 @@ struct HomeView: View {
         } detail: {
 
             if rootVM.isTodaysSurgerySelected {
-                TodaysSurgeryView(viewModel: TodaysSurgeryViewModel(rootVM: rootVM))
-                    .navigationTitle("Today's Surgery")
+                TodaysSurgeryView(
+                    viewModel: TodaysSurgeryViewModel(rootVM: rootVM)
+                )
+                .navigationTitle("Today's Surgery")
             } else {
                 PatientDetailView(
                     viewModel: PatientDetailViewModel(rootVM: rootVM),
@@ -88,6 +99,7 @@ struct HomeView: View {
         }
         .toolbar {
             if !rootVM.isTodaysSurgerySelected {
+                //수술 생성 버튼
                 Button {
                     rootVM.openOperationCreateSheet()
                 } label: {
@@ -118,9 +130,14 @@ struct HomeView: View {
                 isPresentingOperationInput: $rootVM.navigationState
                     .isPresentingOperationInput,
                 state: $rootVM.operationInputState,
+                mode: rootVM.navigationState.operationInputMode,
                 onSave: {
                     Task {
-                        await rootVM.createOperation()
+                        if rootVM.navigationState.operationInputMode == .create {
+                            await rootVM.createOperation()
+                        } else {
+                            await rootVM.updateOperation()
+                        }
                     }
                 }
             )
@@ -143,4 +160,3 @@ struct HomeView: View {
 #Preview {
     RootView()
 }
-

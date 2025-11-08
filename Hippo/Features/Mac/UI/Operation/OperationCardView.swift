@@ -40,7 +40,7 @@ struct OperationCardView: View {
                 HStack {
                     Button {
                         //TODO: 수술 수정
-//                        onEdit()
+                        onEdit(operation.id)
                     } label: {
                         Image(systemName: "square.and.pencil")
                     }

@@ -13,6 +13,8 @@ struct OperationInputView: View {
 
     // ViewModel State 바인딩 (HomeView의 rootVM에서 전달받음)
     @Binding var state: OperationInputState
+    let mode: OperationInputMode
+    
     let onSave: () async -> Void
 
     var body: some View {
@@ -70,6 +72,12 @@ struct OperationInputView: View {
                 isPresentingOperationInput = false
             }
             Button("Save") {
+                if mode == .create {
+                    print("operation created")
+                } else {
+                    print("operation edited")
+                }
+                
                 Task {
                     await onSave()
                 }
@@ -86,6 +94,7 @@ struct OperationInputView: View {
     OperationInputView(
         isPresentingOperationInput: .constant(true),
         state: $state,
+        mode: .create,
         onSave: {}
     )
 }

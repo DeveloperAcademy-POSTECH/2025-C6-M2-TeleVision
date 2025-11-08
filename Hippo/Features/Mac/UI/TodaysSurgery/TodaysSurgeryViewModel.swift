@@ -18,8 +18,6 @@ public final class TodaysSurgeryViewModel {
     public init(rootVM: MacRootViewModel) {
         self.rootVM = rootVM
     }
-    
-    public var operationCardDisplayModel = OperationCardDisplayModel()
 
     // MARK: - Computed Properties (rootVM 재사용)
     /// 오늘의 수술 목록
@@ -38,7 +36,7 @@ public final class TodaysSurgeryViewModel {
     }
 
     // MARK: - Actions (rootVM 위임)
-
+    
     /// 수술 삭제
     public func deleteOperation(_ operationID: String) async {
         await rootVM.deleteOperation(operationID: operationID)
@@ -72,6 +70,17 @@ extension TodaysSurgeryViewModel {
         }
     }
     
+    /// 수술 카드 수정
+    public func updateOperationCard(_ operationID: String, in patientID: String) async {
+        await rootVM.operationViewModel.updateOperation()
+    }
+    
+    /// 수술 카드 수정 시트 열기
+    public func openOperationEditSheet(operation: OperationDisplayModel) async {
+        rootVM.openOperationEditSheet(operation: operation)
+    }
+    
+    /// 수술 카드 삭제
     public func deleteOperationCard(_ operationID: String, in patientID: String) async {
         await rootVM.homeViewModel.removeOperation(operationID: operationID, fromPatientID: patientID)
     }

@@ -60,7 +60,6 @@ struct OperationListView: View {
                                 onEdit: onEdit,
                                 onDelete: onDelete
                             )
-
                         }
                     } header: {
                         HStack {
