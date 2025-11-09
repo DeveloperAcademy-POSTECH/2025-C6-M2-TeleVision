@@ -61,6 +61,9 @@ public final class StereoVideoRenderer: ObservableObject {
     private var cachedRightTexture: MTLTexture?
     private var cachedSourceSize: (w: Int, h: Int)?
 
+    // Frame skip counter for performance optimization
+    private var frameCounter: UInt64 = 0
+
     // MARK: Initialization
 
     public init() {
@@ -115,6 +118,12 @@ public final class StereoVideoRenderer: ObservableObject {
 
     /// Update video texture with new SBS frame (variable size)
     public func updateFrame(_ pixelBuffer: CVPixelBuffer) {
+        // Performance optimization: Skip every other frame to reduce CPU load
+        frameCounter += 1
+        if frameCounter % 2 == 0 {
+            return  // Skip even frames (render at ~15fps instead of 30fps)
+        }
+
         logger.info("🔍 updateFrame called - isReady: \(self.isReady), leftPlane: \(self.leftPlaneEntity != nil), rightPlane: \(self.rightPlaneEntity != nil)")
 
         guard isReady else {
@@ -182,7 +191,7 @@ public final class StereoVideoRenderer: ObservableObject {
             return
         }
 
-        // Update plane materials by binding MTLTexture directly (no CPU conversion)
+        // Update plane materials
         updatePlaneMaterial(leftPlaneEntity, with: leftTexture)
         updatePlaneMaterial(rightPlaneEntity, with: rightTexture)
 
@@ -333,34 +342,18 @@ public final class StereoVideoRenderer: ObservableObject {
         return true
     }
 
-    /// Update plane material with Metal texture directly (no CPU copy)
+    /// Update plane material with Metal texture (uses CPU fallback but optimized by RealityKit)
     private func updatePlaneMaterial(_ entity: ModelEntity?, with texture: MTLTexture?) {
-        guard let entity, let texture else {
-            logger.warning("⚠️ updatePlaneMaterial: entity or texture is nil (entity=\(entity != nil), texture=\(texture != nil))")
-            return
-        }
+        guard let entity, let texture else { return }
+        guard entity.model != nil else { return }
 
-        guard entity.model != nil else {
-            logger.error("❌ updatePlaneMaterial: entity.model is nil!")
-            return
-        }
-
-        // Try fast path first
-        if let resource = try? TextureResource.generate(from: texture) {
-            var material = UnlitMaterial()
-            material.color = .init(texture: .init(resource))
-            entity.model?.materials = [material]
-            logger.info("✅ Texture updated via fast path (texture: \(texture.width)×\(texture.height))")
-            return
-        }
-
-        // Fallback: CPU readback path
+        // Create TextureResource from Metal texture (CPU fallback path)
+        // RealityKit internally optimizes this path
         do {
             let resource = try TextureResource(from: texture)
             var material = UnlitMaterial()
             material.color = .init(texture: .init(resource))
             entity.model?.materials = [material]
-            logger.info("✅ Texture updated via CPU fallback (texture: \(texture.width)×\(texture.height))")
         } catch {
             logger.error("❌ Failed to create TextureResource: \(error.localizedDescription)")
         }

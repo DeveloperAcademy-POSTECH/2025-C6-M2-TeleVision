@@ -10,8 +10,8 @@ import CoreGraphics
 
 /// SBS composition mode
 public enum SBSMode: String, Codable, CaseIterable {
-    case full1080  = "full1080"   // 3840×1080 (full resolution per eye)
-    case half1080  = "half1080"   // 1920×1080 (half resolution per eye)
+    case full1080  = "full1080"   // 3840×1080 (1920×1080 per eye)
+    case half1080  = "half1080"   // 1920×540 (960×540 per eye)
 
     /// Output resolution for composed SBS frame
     public var outputSize: CGSize {
@@ -19,7 +19,7 @@ public enum SBSMode: String, Codable, CaseIterable {
         case .full1080:
             return CGSize(width: 3840, height: 1080)
         case .half1080:
-            return CGSize(width: 1920, height: 1080)
+            return CGSize(width: 1920, height: 540)
         }
     }
 
@@ -29,7 +29,7 @@ public enum SBSMode: String, Codable, CaseIterable {
         case .full1080:
             return CGSize(width: 1920, height: 1080)
         case .half1080:
-            return CGSize(width: 960, height: 1080)
+            return CGSize(width: 960, height: 540)
         }
     }
 
@@ -38,7 +38,7 @@ public enum SBSMode: String, Codable, CaseIterable {
         case .full1080:
             return "Full SBS (3840×1080)"
         case .half1080:
-            return "Half SBS (1920×1080)"
+            return "Half SBS (1920×540)"
         }
     }
 }

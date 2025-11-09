@@ -139,12 +139,14 @@ public final class WebRTCReceiver: NSObject, ObservableObject {
         }
 
         let encoderFactory = LKRTCDefaultVideoEncoderFactory()
-        let decoderFactory = LKRTCDefaultVideoDecoderFactory()
+        // Use HEVC decoder factory for better compression
+        let decoderFactory = HEVCVideoDecoderFactory()
 
         peerConnectionFactory = LKRTCPeerConnectionFactory(
             encoderFactory: encoderFactory,
             decoderFactory: decoderFactory
         )
+        logger.info("✅ Peer connection factory created with HEVC decoder support")
 
         let rtcConfig = LKRTCConfiguration()
         rtcConfig.sdpSemantics = .unifiedPlan
@@ -227,6 +229,29 @@ public final class WebRTCReceiver: NSObject, ObservableObject {
             ) {
                 self.logger.info("🔄 Flushing stereo renderer to resume decoding")
                 self.stereoRenderer.flush()
+            }
+        }
+
+        // WORKAROUND: Listen for decoded HEVC frames directly from decoder
+        NotificationCenter.default.addObserver(
+            forName: .hevcFrameDecoded,
+            object: nil,
+            queue: .main
+        ) { [weak self] notification in
+            // Extract userInfo before Task to avoid capture issues
+            guard let userInfo = notification.userInfo,
+                  let pixelBuffer = userInfo["pixelBuffer"],
+                  let frame = userInfo["frame"] as? LKRTCVideoFrame else {
+                return
+            }
+
+            // CVPixelBuffer is a CoreFoundation type, cast directly
+            let pb = pixelBuffer as! CVPixelBuffer
+
+            Task { @MainActor [weak self] in
+                guard let self = self else { return }
+                self.logger.info("📢 Received HEVC frame via notification workaround")
+                self.processFrame(pb, from: frame)
             }
         }
 
@@ -371,6 +396,7 @@ public final class WebRTCReceiver: NSObject, ObservableObject {
             guard let self = self else { return }
 
             self.logger.info("📥 SIGNAL_RX:offer")
+            print("📄 SDP Offer received:\n\(offer)")
 
             let sessionDescription = LKRTCSessionDescription(type: .offer, sdp: offer)
 
@@ -443,6 +469,8 @@ public final class WebRTCReceiver: NSObject, ObservableObject {
             }
 
             Task { @MainActor in
+                print("📄 SDP Answer created:\n\(sdp.sdp)")
+
                 self.peerConnection?.setLocalDescription(sdp) { [weak self] error in
                     guard let self = self else { return }
 
@@ -472,11 +500,47 @@ extension WebRTCReceiver: LKRTCPeerConnectionDelegate {
     }
 
     nonisolated public func peerConnection(_ peerConnection: LKRTCPeerConnection, didAdd stream: LKRTCMediaStream) {
+        print("📦 Stream received with \(stream.videoTracks.count) video tracks")
+
         if let videoTrack = stream.videoTracks.first {
             Task { @MainActor in
                 self.logger.info("➕ Media stream added with video track")
+                print("🔗 Video track info: enabled=\(videoTrack.isEnabled), readyState=\(videoTrack.readyState.rawValue)")
+                print("🔗 Adding self as video renderer to track")
                 self.remoteVideoTrack = videoTrack
+
+                // Add renderer on main thread
                 videoTrack.add(self)
+
+                print("✅ Video renderer added - waiting for frames...")
+
+                // Monitor track state changes
+                var checkCount = 0
+                func checkTrackState() {
+                    checkCount += 1
+                    let state = videoTrack.readyState.rawValue
+                    let enabled = videoTrack.isEnabled
+                    print("🔍 Check #\(checkCount): track readyState=\(state), enabled=\(enabled)")
+
+                    if state == 1 {
+                        print("✅ Track is now LIVE!")
+                    } else if checkCount < 10 {
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                            checkTrackState()
+                        }
+                    } else {
+                        print("⚠️ Track never became live after 5 seconds")
+                    }
+                }
+
+                // Start monitoring after a short delay
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                    checkTrackState()
+                }
+            }
+        } else {
+            Task { @MainActor in
+                self.logger.warning("⚠️ Media stream added but no video track found")
             }
         }
     }
@@ -501,10 +565,17 @@ extension WebRTCReceiver: LKRTCPeerConnectionDelegate {
 
             if newState == .connected || newState == .completed {
                 self.logger.info("🎉 WebRTC connection established!")
+
+                // Check selected candidate pair
+                peerConnection.statistics { report in
+                    print("📊 WebRTC Stats: \(report.debugDescription)")
+                }
             } else if newState == .disconnected {
-                self.logger.warning("⚠️ ICE_STATE:disconnected")
+                self.logger.warning("⚠️ ICE_STATE:disconnected - Media connection lost!")
+                print("⚠️ Possible causes: Network change, firewall, or NAT issue")
             } else if newState == .failed {
-                self.logger.error("❌ ICE_STATE:failed")
+                self.logger.error("❌ ICE_STATE:failed - Cannot establish media connection")
+                print("❌ Check: Both devices on same network? Firewall blocking UDP?")
             }
         }
     }
@@ -543,6 +614,8 @@ extension WebRTCReceiver: LKRTCVideoRenderer {
     }
 
     nonisolated public func renderFrame(_ frame: LKRTCVideoFrame?) {
+        print("🎯 renderFrame called - frame is \(frame == nil ? "nil" : "not nil")")
+
         guard let frame = frame else {
             print("⚠️ renderFrame called with nil frame")
             return

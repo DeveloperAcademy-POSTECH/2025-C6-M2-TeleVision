@@ -103,6 +103,9 @@ public final class AppModule: ObservableObject {
         leftCapture?.stop()
         rightCapture?.stop()
 
+        // Reset FrameSync buffers before stopping
+        frameSync?.reset()
+
         transport?.stop()
 
         leftCapture = nil

@@ -128,6 +128,20 @@ public final class FrameSync: FrameSyncing {
         }
     }
 
+    /// Reset all buffers and state (call when stopping/restarting streaming)
+    public func reset() {
+        syncQueue.sync(flags: .barrier) {
+            leftBuffer.removeAll()
+            rightBuffer.removeAll()
+            referenceTime = nil
+            _stats = FrameSyncStats()
+            timeDeltaAccumulator = 0.0
+            timeDeltaCount = 0
+            lastStatsLog = Date()
+            logger.info("🔄 FrameSync reset complete")
+        }
+    }
+
     // MARK: - Private Methods
 
     /// Normalizes timestamps relative to first frame
