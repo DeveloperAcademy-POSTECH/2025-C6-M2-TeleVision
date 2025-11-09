@@ -25,17 +25,20 @@ struct SurgeryControlBar: View {
             ZStack {
                 HStack {
                     Spacer()
-                    if immersiveViewModel.isShowingAssetListView {
+                    if immersiveViewModel.isEntitySettingPanelOpen {
                         GlowingCircleButton(
                             imageName: "CloseIcon",
                             action: {
-                                windowController.dismissWindow(id: WindowIDs.assetListView)
+                                windowController.dismissWindow(id: WindowIDs.entitySettingPanel)
+                                immersiveViewModel.isEntitySettingPanelOpen = false
                             }
                         )
                     } else {
                         GlowingCircleButton(
                             imageName: "AddEntityIcon",
-                            action: { windowController.pushWindow(id: WindowIDs.assetListView) }
+                            action: {
+                                windowController.openWindow(id: WindowIDs.entitySettingPanel) 
+                            }
                         )
                     }
                     Spacer()

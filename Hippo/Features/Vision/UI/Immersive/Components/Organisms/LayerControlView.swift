@@ -12,6 +12,8 @@ struct LayerControlView: View {
     
     @Environment(OpacityManager.self) var opacityManager: OpacityManager
     @Environment(ImmersiveSceneRuntime.self) var runtime: ImmersiveSceneRuntime
+    @Environment(ImmersiveViewModel.self) var immersiveViewModel: ImmersiveViewModel
+    @Environment(\.dismissWindow) var dismissWindow
     
     // Grid 레이아웃 설정 (4열)
     private let columns: [GridItem] = [
@@ -50,25 +52,42 @@ struct LayerControlView: View {
             
             // 2. 레이어 버튼 그리드
             if manager.hasAnyLayers {
-                ScrollView {
-                    LazyVGrid(columns: columns, spacing: 16) {
-                        ForEach(manager.layers) { layer in
-                            LayerButton(
-                                title: layer.name,
-                                opacity: layer.opacity,
-                                isSelected: manager.selectedLayerIDs.contains(layer.id),
-                                isVisible: layer.isVisible,
-                                onSelect: { shouldSelect in
-                                    manager.selectLayer(id: layer.id, shouldSelect: shouldSelect)
-                                },
-                                onEyeToggle: { _ in
-                                    manager.toggleVisibility(for: layer.id)
-                                }
-                            )
+                VStack {
+                    ScrollView {
+                        LazyVGrid(columns: columns, spacing: 16) {
+                            ForEach(manager.layers) { layer in
+                                LayerButton(
+                                    title: layer.name,
+                                    opacity: layer.opacity,
+                                    isSelected: manager.selectedLayerIDs.contains(layer.id),
+                                    isVisible: layer.isVisible,
+                                    onSelect: { shouldSelect in
+                                        manager.selectLayer(id: layer.id, shouldSelect: shouldSelect)
+                                    },
+                                    onEyeToggle: { _ in
+                                        manager.toggleVisibility(for: layer.id)
+                                    }
+                                )
+                            }
                         }
+                        .padding()
                     }
-                    .padding()
+                    
+                    if !immersiveViewModel.isShowingAssetListView {
+                        GlowingCapsuleButton(buttonText: "생성하기", action: {
+//                            if let url = selectedURL {
+//                                immersiveViewModel.isShowingAssetListView = false
+                                Task {
+//                                    await runtime.placeEntity(url: url)
+                                    dismissWindow(id: WindowIDs.entitySettingPanel)
+                                }
+//                            }
+                        })
+//                        .disabled(selectedURL == nil)
+                        .padding(.bottom, 20)
+                    }
                 }
+                
             } else {
                 Spacer()
                 Text("선택된 모델에 하위 레이어가 없습니다.")

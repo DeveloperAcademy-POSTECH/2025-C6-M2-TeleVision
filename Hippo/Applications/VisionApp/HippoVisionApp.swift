@@ -102,12 +102,12 @@ struct HippoVisionApp: App {
                 }
         }
         .defaultSize(width: 1288, height: 638)
-//        .defaultWindowPlacement { _, context in
-//            if let surgeryBottomMenu = context.windows.first(where: { $0.id == WindowIDs.surgeryBottomMenu }) {
-//                return WindowPlacement(.trailing(surgeryBottomMenu))
-//            }
-//            return WindowPlacement()
-//        }
+        .defaultWindowPlacement { _, context in
+            if let surgeryBottomMenu = context.windows.first(where: { $0.id == WindowIDs.surgeryBottomMenu }) {
+                return WindowPlacement(.above(surgeryBottomMenu))
+            }
+            return WindowPlacement()
+        }
         
         // surgeryBottomMenu
         WindowGroup(id: WindowIDs.surgeryBottomMenu) {
