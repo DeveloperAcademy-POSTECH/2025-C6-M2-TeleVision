@@ -58,8 +58,8 @@ struct SurgeryControlBar: View {
             Button("종료", role: .destructive) {
                 Task {
                     await windowController.finishSurgeryAndDismissSpace()
-                    if immersiveViewModel.isOpacityControlPanelOpen {
-                        windowController.dismissWindow(id: WindowIDs.opacityControlPanel)
+                    if immersiveViewModel.isEntitySettingPanelOpen {
+                        windowController.dismissWindow(id: WindowIDs.entitySettingPanel)
                     }
                 }
             }

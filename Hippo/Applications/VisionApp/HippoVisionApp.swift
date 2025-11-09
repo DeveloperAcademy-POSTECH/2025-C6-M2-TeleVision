@@ -89,14 +89,14 @@ struct HippoVisionApp: App {
             }
         }
         
-        // OpacityControlPanel
-        WindowGroup(id: WindowIDs.opacityControlPanel) {
-            OpacityControlPanel()
+        // EntitySettingPanel
+        WindowGroup(id: WindowIDs.entitySettingPanel) {
+            LayerControlView()
                 .environment(opacityManager)
                 .environment(runtime)
-                .onAppear { immersiveViewModel.isOpacityControlPanelOpen = true }
+                .onAppear { immersiveViewModel.isEntitySettingPanelOpen = true }
                 .onDisappear {
-                    immersiveViewModel.isOpacityControlPanelOpen = false
+                    immersiveViewModel.isEntitySettingPanelOpen = false
                 }
             
         }

@@ -18,7 +18,7 @@ final class ImmersiveViewModel {
     
     // MARK: -- 윈도우 라이프사이클 추적 변수
     public var isSurgeryBottomMenuOpen: Bool = false
-    public var isOpacityControlPanelOpen: Bool = false
+    public var isEntitySettingPanelOpen: Bool = false
     
     // MARK: -- 이벤트 처리 : UI 이벤트 -> WindowController 에 전달
     
@@ -44,8 +44,8 @@ final class ImmersiveViewModel {
                 windowController.dismissWindow(id: WindowIDs.surgeryBottomMenu)
             }
             
-            if isOpacityControlPanelOpen {
-                windowController.dismissWindow(id: WindowIDs.opacityControlPanel)
+            if isEntitySettingPanelOpen {
+                windowController.dismissWindow(id: WindowIDs.entitySettingPanel)
             }
         }
     }

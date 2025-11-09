@@ -8,7 +8,7 @@
 import SwiftUI
 import RealityKit
 
-struct OpacityControlPanel: View {
+struct LayerControlView: View {
     
     @Environment(OpacityManager.self) var opacityManager: OpacityManager
     @Environment(ImmersiveSceneRuntime.self) var runtime: ImmersiveSceneRuntime

@@ -45,11 +45,6 @@ struct ImmersiveSurgeryView: View {
                     immersiveViewModel.toggleMenu(windowController: windowController)
                 }
             }
-            
-            // 3D 애셋 생성 (AssetListView)
-            Attachment(id: AttachmentIDs.assetListView) {
-                AssetListView()
-            }
         }
         .task {
             await dataViewModel.load(patientID: patientID, operationID: operationID)
@@ -59,13 +54,13 @@ struct ImmersiveSurgeryView: View {
         .onChange(of: runtime.selectedEntity) { _, newValue in
             if newValue != nil && immersiveViewModel.isMenuActive { // 컨트롤러 on 일 때만 열림
                 // 창이 켜져 있으면 정보만 재로드 (OpactiyControlPanel에서 처리됨)
-                if !immersiveViewModel.isOpacityControlPanelOpen {
+                if !immersiveViewModel.isEntitySettingPanelOpen {
                     // 창이 꺼져 있으면 새로운 창 띄우기
-                    windowController.openWindow(id: WindowIDs.opacityControlPanel)
+                    windowController.openWindow(id: WindowIDs.entitySettingPanel)
                 }
             } else {
                 // selectedEntity가 nil이 되거나, 메뉴가 꺼지면 창 닫기
-                windowController.dismissWindow(id: WindowIDs.opacityControlPanel)
+                windowController.dismissWindow(id: WindowIDs.entitySettingPanel)
             }
         }
         
