@@ -14,7 +14,7 @@ final class ImmersiveViewModel {
     public var isMenuActive: Bool = true
     public var isEndoscopicActive: Bool = false
     public var isShowingFinishAlert: Bool = false
-    public var isShowingAssetListView: Bool = false
+    public var isShowingAssetListView: Bool = true
     
     // MARK: -- 윈도우 라이프사이클 추적 변수
     public var isSurgeryBottomMenuOpen: Bool = false

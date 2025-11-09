@@ -91,22 +91,23 @@ struct HippoVisionApp: App {
         
         // EntitySettingPanel
         WindowGroup(id: WindowIDs.entitySettingPanel) {
-            LayerControlView()
+            EntitySettingPanel()
+                .environment(dataViewModel)
                 .environment(opacityManager)
                 .environment(runtime)
+                .environment(immersiveViewModel)
                 .onAppear { immersiveViewModel.isEntitySettingPanelOpen = true }
                 .onDisappear {
                     immersiveViewModel.isEntitySettingPanelOpen = false
                 }
-            
         }
-        .defaultSize(width: 658, height: 522)
-        .defaultWindowPlacement { _, context in
-            if let surgeryBottomMenu = context.windows.first(where: { $0.id == WindowIDs.surgeryBottomMenu }) {
-                return WindowPlacement(.trailing(surgeryBottomMenu))
-            }
-            return WindowPlacement()
-        }
+        .defaultSize(width: 1288, height: 638)
+//        .defaultWindowPlacement { _, context in
+//            if let surgeryBottomMenu = context.windows.first(where: { $0.id == WindowIDs.surgeryBottomMenu }) {
+//                return WindowPlacement(.trailing(surgeryBottomMenu))
+//            }
+//            return WindowPlacement()
+//        }
         
         // surgeryBottomMenu
         WindowGroup(id: WindowIDs.surgeryBottomMenu) {

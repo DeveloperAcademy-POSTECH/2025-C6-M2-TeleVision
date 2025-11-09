@@ -42,6 +42,7 @@ struct AssetListView: View {
             
             GlowingCapsuleButton(buttonText: "생성하기", action: {
                 if let url = selectedURL {
+                    immersiveViewModel.isShowingAssetListView = false
                     Task {
                         await runtime.placeEntity(url: url)
                         dismissWindow(id: WindowIDs.assetListView)

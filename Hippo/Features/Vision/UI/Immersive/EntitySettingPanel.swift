@@ -8,9 +8,23 @@
 import SwiftUI
 
 struct EntitySettingPanel: View {
+    @Environment(ImmersiveViewModel.self) var immersiveViewModel
+    
     var body: some View {
-        Text(/*@START_MENU_TOKEN@*/"Hello, World!"/*@END_MENU_TOKEN@*/)
+        @Bindable var immersiveViewModel = immersiveViewModel
+        
+        HStack {
+            // TODO: 객체 미리보기 추가
+            Spacer()
+            LayerControlView()
+                .frame(width: 674)
+                .background(Color.black.opacity(0.1))
+        }
+        .sheet(isPresented: $immersiveViewModel.isShowingAssetListView) {
+            AssetListView()
+        }
     }
+        
 }
 
 #Preview {
