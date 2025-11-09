@@ -38,6 +38,7 @@ public final class WebRTCManager: NSObject, IVideoTransport {
     private var videoSource: LKRTCVideoSource?
     private var videoTrack: LKRTCVideoTrack?
     private var videoSender: LKRTCRtpSender?
+    private var videoCapturer: LKRTCVideoCapturer?
 
     private var signalingClient: SignalingClient?
     private let config: TransportConfig
@@ -87,14 +88,15 @@ public final class WebRTCManager: NSObject, IVideoTransport {
         LKRTCInitializeSSL()
         LKRTCSetupInternalTracer()
 
-        let encoderFactory = LKRTCDefaultVideoEncoderFactory()
+        // Use HEVC encoder factory for better compression
+        let encoderFactory = HEVCVideoEncoderFactory()
         let decoderFactory = LKRTCDefaultVideoDecoderFactory()
 
         peerConnectionFactory = LKRTCPeerConnectionFactory(
             encoderFactory: encoderFactory,
             decoderFactory: decoderFactory
         )
-        print("✅ [WebRTCManager] Peer connection factory created")
+        print("✅ [WebRTCManager] Peer connection factory created with HEVC support")
 
         // 2. Setup signaling FIRST (before creating peer connection)
         let serverURL = URL(string: "ws://127.0.0.1:8080")!
@@ -129,6 +131,7 @@ public final class WebRTCManager: NSObject, IVideoTransport {
         disconnectionTimer?.invalidate()
         disconnectionTimer = nil
 
+        videoCapturer = nil
         videoTrack = nil
         videoSource = nil
         videoSender = nil
@@ -154,6 +157,17 @@ public final class WebRTCManager: NSObject, IVideoTransport {
 
     public func send(pixelBuffer: CVPixelBuffer, presentationTime: CMTime) {
         guard state == .connected else {
+            logger.debug("⏸️ Skipping send - not connected")
+            return
+        }
+
+        guard let capturer = videoCapturer else {
+            logger.error("❌ videoCapturer is nil")
+            return
+        }
+
+        guard let videoSource = videoSource else {
+            logger.error("❌ videoSource is nil")
             return
         }
 
@@ -166,13 +180,9 @@ public final class WebRTCManager: NSObject, IVideoTransport {
             timeStampNs: Int64(timeStampNs)
         )
 
-        guard let videoSource = videoSource else {
-            return
-        }
-
-        // Push frame directly to video source using its built-in capturer
-        let capturer = LKRTCVideoCapturer(delegate: videoSource)
+        // Push frame to video source using reusable capturer
         videoSource.capturer(capturer, didCapture: videoFrame)
+        logger.debug("📤 Frame sent: \(CVPixelBufferGetWidth(pixelBuffer))×\(CVPixelBufferGetHeight(pixelBuffer))")
     }
 
     // MARK: - Private: Peer Connection
@@ -198,8 +208,14 @@ public final class WebRTCManager: NSObject, IVideoTransport {
     private func createVideoTrack() {
         videoSource = peerConnectionFactory.videoSource()
 
+        // Create capturer once and reuse it
+        videoCapturer = LKRTCVideoCapturer(delegate: videoSource!)
+
         let videoTrack = peerConnectionFactory.videoTrack(with: videoSource!, trackId: "video0")
+        videoTrack.isEnabled = true  // Ensure track is enabled
         self.videoTrack = videoTrack
+
+        logger.info("📹 Video track created: id=\(videoTrack.trackId), enabled=\(videoTrack.isEnabled)")
 
         if let sender = peerConnection?.add(videoTrack, streamIds: ["stream0"]) {
             self.videoSender = sender
@@ -207,7 +223,7 @@ public final class WebRTCManager: NSObject, IVideoTransport {
             // P0.1: Configure encoding with downsample factor
             try? configureEncodingParameters(sender: sender)
 
-            logger.info("✅ Video track added")
+            logger.info("✅ Video track added with capturer, track enabled: \(videoTrack.isEnabled)")
         }
     }
 
@@ -227,6 +243,7 @@ public final class WebRTCManager: NSObject, IVideoTransport {
             }
 
             print("✅ [WebRTCManager] Offer created successfully")
+            print("📄 SDP Offer:\n\(sdp.sdp)")
 
             self.peerConnection?.setLocalDescription(sdp) { error in
                 if let error = error {
@@ -326,6 +343,21 @@ extension WebRTCManager: LKRTCPeerConnectionDelegate {
             state = .connected
             cancelDisconnectionTimer()
 
+            // Log stats after connection
+            DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) { [weak self] in
+                self?.peerConnection?.statistics { report in
+                    print("📊 Mac WebRTC Stats: timestamp = \(report.timestamp_us), statistics = {")
+                    for (key, value) in report.statistics {
+                        let valueStr = String(describing: value)
+                        if valueStr.contains("outbound-rtp") || valueStr.contains("inbound-rtp") ||
+                           valueStr.contains("transport") || key.hasPrefix("T") {
+                            print("    \"\(key)\" = \"\(value)\";")
+                        }
+                    }
+                    print("}")
+                }
+            }
+
         case .disconnected:
             logger.warning("⚠️ ICE_STATE:disconnected, monitoring for recovery...")
             startDisconnectionTimer()  // P0.3: Start grace period
@@ -371,6 +403,7 @@ extension WebRTCManager: SignalingDelegate {
     }
 
     func signalingClient(_ client: SignalingClient, didReceiveAnswer sdp: String) {
+        print("📄 SDP Answer received:\n\(sdp)")
         let sessionDescription = LKRTCSessionDescription(type: .answer, sdp: sdp)
 
         peerConnection?.setRemoteDescription(sessionDescription) { [weak self] error in

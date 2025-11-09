@@ -183,6 +183,10 @@
 		2581FF592EBE6AE00059678D /* DevicePreview.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2581FF582EBE6AE00059678D /* DevicePreview.swift */; };
 		2581FF5B2EBF66AC0059678D /* EndoscopeStreamWindow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2581FF5A2EBF66AC0059678D /* EndoscopeStreamWindow.swift */; };
 		2581FF5D2EBF94150059678D /* I420BufferConverter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2581FF5C2EBF94150059678D /* I420BufferConverter.swift */; };
+		2581FF602EBFB5EF0059678D /* HEVCVideoEncoderFactory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2581FF5F2EBFB5EF0059678D /* HEVCVideoEncoderFactory.swift */; };
+		2581FF612EBFB5EF0059678D /* HEVCVideoEncoder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2581FF5E2EBFB5EF0059678D /* HEVCVideoEncoder.swift */; };
+		2581FF642EBFB6040059678D /* HEVCVideoDecoder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2581FF622EBFB6040059678D /* HEVCVideoDecoder.swift */; };
+		2581FF652EBFB6040059678D /* HEVCVideoDecoderFactory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2581FF632EBFB6040059678D /* HEVCVideoDecoderFactory.swift */; };
 		25E78B602EB90D4600D8CAD2 /* OperationStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = 25E78B5D2EB90D4600D8CAD2 /* OperationStatus.swift */; };
 		25E78B612EB90D4600D8CAD2 /* Operation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 25E78B542EB90D4600D8CAD2 /* Operation.swift */; };
 		25E78B622EB90D4600D8CAD2 /* OperationAsset.swift in Sources */ = {isa = PBXBuildFile; fileRef = 25E78B552EB90D4600D8CAD2 /* OperationAsset.swift */; };
@@ -513,6 +517,10 @@
 		2581FF582EBE6AE00059678D /* DevicePreview.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DevicePreview.swift; sourceTree = "<group>"; };
 		2581FF5A2EBF66AC0059678D /* EndoscopeStreamWindow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EndoscopeStreamWindow.swift; sourceTree = "<group>"; };
 		2581FF5C2EBF94150059678D /* I420BufferConverter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = I420BufferConverter.swift; sourceTree = "<group>"; };
+		2581FF5E2EBFB5EF0059678D /* HEVCVideoEncoder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HEVCVideoEncoder.swift; sourceTree = "<group>"; };
+		2581FF5F2EBFB5EF0059678D /* HEVCVideoEncoderFactory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HEVCVideoEncoderFactory.swift; sourceTree = "<group>"; };
+		2581FF622EBFB6040059678D /* HEVCVideoDecoder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HEVCVideoDecoder.swift; sourceTree = "<group>"; };
+		2581FF632EBFB6040059678D /* HEVCVideoDecoderFactory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HEVCVideoDecoderFactory.swift; sourceTree = "<group>"; };
 		25E78B542EB90D4600D8CAD2 /* Operation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Operation.swift; sourceTree = "<group>"; };
 		25E78B552EB90D4600D8CAD2 /* OperationAsset.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OperationAsset.swift; sourceTree = "<group>"; };
 		25E78B562EB90D4600D8CAD2 /* OperationRecording.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OperationRecording.swift; sourceTree = "<group>"; };
@@ -1000,6 +1008,8 @@
 		2581FF122EBE19AE0059678D /* WebRTC */ = {
 			isa = PBXGroup;
 			children = (
+				2581FF622EBFB6040059678D /* HEVCVideoDecoder.swift */,
+				2581FF632EBFB6040059678D /* HEVCVideoDecoderFactory.swift */,
 				2581FF5C2EBF94150059678D /* I420BufferConverter.swift */,
 				2581FF0E2EBE19AE0059678D /* ConvertingModel.swift */,
 				2581FF0F2EBE19AE0059678D /* StereoMetadata.swift */,
@@ -1060,6 +1070,8 @@
 		2581FF322EBE2CB20059678D /* RTCTransport */ = {
 			isa = PBXGroup;
 			children = (
+				2581FF5E2EBFB5EF0059678D /* HEVCVideoEncoder.swift */,
+				2581FF5F2EBFB5EF0059678D /* HEVCVideoEncoderFactory.swift */,
 				2581FF312EBE2CB20059678D /* WebRTCManager.swift */,
 			);
 			path = RTCTransport;
@@ -1751,6 +1763,8 @@
 				27AD7ACD2EB496D900E84809 /* LayerButton.swift in Sources */,
 				14DE51352EB60DEC0027D9A0 /* ModelPreviewCard.swift in Sources */,
 				1494DE7C2EA73205000CD284 /* DetailHeader.swift in Sources */,
+				2581FF642EBFB6040059678D /* HEVCVideoDecoder.swift in Sources */,
+				2581FF652EBFB6040059678D /* HEVCVideoDecoderFactory.swift in Sources */,
 				C046782F2EA00B3A00D160DA /* PatientRepositoryImpl.swift in Sources */,
 				C04678302EA00B3A00D160DA /* PatientRemoteDataSource.swift in Sources */,
 				147EB27D2EB0782100D9CFB3 /* OperationStatusBadge.swift in Sources */,
@@ -2055,6 +2069,8 @@
 				C0F97B0D2EA4348D0063E159 /* CreatePatient.swift in Sources */,
 				C04678322EA00B3A00D160DA /* PatientRepositoryImpl.swift in Sources */,
 				2581FF4C2EBE576E0059678D /* CameraInputToggle.swift in Sources */,
+				2581FF602EBFB5EF0059678D /* HEVCVideoEncoderFactory.swift in Sources */,
+				2581FF612EBFB5EF0059678D /* HEVCVideoEncoder.swift in Sources */,
 				2581FF4D2EBE576E0059678D /* ModeButton.swift in Sources */,
 				1494DE9A2EA73359000CD284 /* SectionTitle.swift in Sources */,
 				C04678332EA00B3A00D160DA /* PatientRemoteDataSource.swift in Sources */,
@@ -2128,7 +2144,7 @@
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = H2WD8C55D7;
+				DEVELOPMENT_TEAM = NB42482NDH;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = "$(SRCROOT)/Hippo/Applications/VisionApp/Info.plist";
@@ -2161,7 +2177,7 @@
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = H2WD8C55D7;
+				DEVELOPMENT_TEAM = NB42482NDH;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = "$(SRCROOT)/Hippo/Applications/VisionApp/Info.plist";

@@ -47,7 +47,7 @@ public final class StreamingControlViewModel {
                 logger.info("🔄 Restarting streaming due to video mode change...")
                 Task {
                     stopStreaming()
-                    try? await Task.sleep(for: .milliseconds(100))
+                    try? await Task.sleep(for: .milliseconds(500))
                     try? await startStreaming()
                 }
             }
@@ -77,7 +77,7 @@ public final class StreamingControlViewModel {
                 logger.info("🔄 Restarting streaming due to camera input mode change...")
                 Task {
                     stopStreaming()
-                    try? await Task.sleep(for: .milliseconds(100))
+                    try? await Task.sleep(for: .milliseconds(500))
                     try? await startStreaming()
                 }
             }
@@ -206,6 +206,9 @@ public final class StreamingControlViewModel {
 
         leftCapture?.stop()
         rightCapture?.stop()
+
+        // Reset FrameSync buffers before stopping
+        frameSync?.reset()
 
         transport?.stop()
 
