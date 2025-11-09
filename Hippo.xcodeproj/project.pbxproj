@@ -669,6 +669,8 @@
 			isa = PBXGroup;
 			children = (
 				1446FBD22EAF262F000BCF61 /* EntityPlacementService.swift */,
+				27D8A2BD2EAF67CE009429F0 /* OpacityManager.swift */,
+				27D1DB4C2EBC953D00AC7F3D /* WindowController.swift */,
 			);
 			path = Service;
 			sourceTree = "<group>";
@@ -1255,11 +1257,9 @@
 			children = (
 				1446FB9B2EAE6987000BCF61 /* Components */,
 				14F6B0332EAAC73F003F28EB /* ImmersiveSurgeryView.swift */,
-				27D8A2BD2EAF67CE009429F0 /* OpacityManager.swift */,
 				278F28BC2EB3877200DF2F73 /* AssetListView.swift */,
 				27AD7AD32EB5ACD600E84809 /* OpacityControlPanel.swift */,
 				27D1DB482EBC781200AC7F3D /* ImmersiveViewModel.swift */,
-				27D1DB4C2EBC953D00AC7F3D /* WindowController.swift */,
 			);
 			path = Immersive;
 			sourceTree = "<group>";
