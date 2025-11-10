@@ -157,7 +157,7 @@ public final class WebRTCManager: NSObject, IVideoTransport {
 
     public func send(pixelBuffer: CVPixelBuffer, presentationTime: CMTime) {
         guard state == .connected else {
-            logger.debug("⏸️ Skipping send - not connected")
+            logger.debug("⏸️ Skipping send - not connected, state: \(String(describing: self.state))")
             return
         }
 
@@ -171,6 +171,16 @@ public final class WebRTCManager: NSObject, IVideoTransport {
             return
         }
 
+        guard let videoTrack = videoTrack else {
+            logger.error("❌ videoTrack is nil")
+            return
+        }
+
+        // Check track state
+        if !videoTrack.isEnabled {
+            logger.warning("⚠️ videoTrack is disabled!")
+        }
+
         let timeStampNs = CMTimeGetSeconds(presentationTime) * 1_000_000_000
         let rtcPixelBuffer = LKRTCCVPixelBuffer(pixelBuffer: pixelBuffer)
 
@@ -182,8 +192,16 @@ public final class WebRTCManager: NSObject, IVideoTransport {
 
         // Push frame to video source using reusable capturer
         videoSource.capturer(capturer, didCapture: videoFrame)
-        logger.debug("📤 Frame sent: \(CVPixelBufferGetWidth(pixelBuffer))×\(CVPixelBufferGetHeight(pixelBuffer))")
+
+        frameCount += 1
+
+        // Log periodically
+        if frameCount % 60 == 0 {
+            logger.info("📤 Sent \(self.frameCount) frames to videoSource, track enabled: \(videoTrack.isEnabled)")
+        }
     }
+
+    private var frameCount: Int = 0
 
     // MARK: - Private: Peer Connection
 
@@ -243,7 +261,6 @@ public final class WebRTCManager: NSObject, IVideoTransport {
             }
 
             print("✅ [WebRTCManager] Offer created successfully")
-            print("📄 SDP Offer:\n\(sdp.sdp)")
 
             self.peerConnection?.setLocalDescription(sdp) { error in
                 if let error = error {
@@ -346,15 +363,12 @@ extension WebRTCManager: LKRTCPeerConnectionDelegate {
             // Log stats after connection
             DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) { [weak self] in
                 self?.peerConnection?.statistics { report in
-                    print("📊 Mac WebRTC Stats: timestamp = \(report.timestamp_us), statistics = {")
                     for (key, value) in report.statistics {
                         let valueStr = String(describing: value)
-                        if valueStr.contains("outbound-rtp") || valueStr.contains("inbound-rtp") ||
-                           valueStr.contains("transport") || key.hasPrefix("T") {
-                            print("    \"\(key)\" = \"\(value)\";")
+                        if valueStr.contains("outbound-rtp") {
+                            print("📊 Mac Stats: \(key) = \(value)")
                         }
                     }
-                    print("}")
                 }
             }
 
@@ -403,7 +417,7 @@ extension WebRTCManager: SignalingDelegate {
     }
 
     func signalingClient(_ client: SignalingClient, didReceiveAnswer sdp: String) {
-        print("📄 SDP Answer received:\n\(sdp)")
+        print("📄 SDP Answer received")
         let sessionDescription = LKRTCSessionDescription(type: .answer, sdp: sdp)
 
         peerConnection?.setRemoteDescription(sessionDescription) { [weak self] error in

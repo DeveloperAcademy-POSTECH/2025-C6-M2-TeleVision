@@ -85,10 +85,15 @@ if (ipAddresses.length > 0) {
 // Bonjour auto-discovery
 const Bonjour = bonjourLib.default || bonjourLib;
 const bonjour = new Bonjour();
+
+// Get the primary non-internal IPv4 address for Bonjour
+const primaryIP = ipAddresses.length > 0 ? ipAddresses[0].address : 'localhost';
+
 const service = bonjour.publish({
   name: SERVICE_NAME,
   type: 'ws',
   port: PORT,
+  host: primaryIP,  // Explicitly set the host IP
   txt: {
     service: 'webrtc-signaling',
     version: '1.0'

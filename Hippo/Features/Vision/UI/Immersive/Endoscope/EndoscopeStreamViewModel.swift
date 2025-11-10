@@ -17,6 +17,7 @@ final class EndoscopeStreamViewModel: ObservableObject {
 
     @Published var connectionStatus: ConnectionStatus = .idle
     @Published var webRTCReceiver: WebRTCReceiver
+    @Published var settings = ConnectionSettings()
 
     // MARK: - Private Properties
 
@@ -54,12 +55,40 @@ final class EndoscopeStreamViewModel: ObservableObject {
     func connect() async {
         logger.info("🚀 Starting connection process...")
 
-        // Step 1: Discover server via Bonjour
+        // Check if manual connection is enabled
+        if settings.useManualConnection {
+            await connectManually()
+            return
+        }
+
+        // For simulator: use localhost by default
+        #if targetEnvironment(simulator)
+        logger.info("🖥️ Running on simulator - using localhost")
+        let localhostURL = URL(string: "ws://127.0.0.1:8080")!
+        await connectToServer(url: localhostURL)
+        return
+        #endif
+
+        // Step 1: Discover server via Bonjour (real device only)
         guard let serverURL = await discoverServer() else {
             return // Status already updated in discoverServer()
         }
 
         // Step 2: Connect to discovered server
+        await connectToServer(url: serverURL)
+    }
+
+    /// Connect to server using manually configured IP address
+    func connectManually() async {
+        logger.info("🔧 Using manual connection...")
+
+        guard let serverURL = settings.serverURL else {
+            logger.error("❌ Invalid server URL")
+            connectionStatus = .failed("서버 주소가 올바르지 않습니다.\nIP 주소를 확인하세요.")
+            return
+        }
+
+        logger.info("📍 Manual server URL: \(serverURL.absoluteString)")
         await connectToServer(url: serverURL)
     }
 
