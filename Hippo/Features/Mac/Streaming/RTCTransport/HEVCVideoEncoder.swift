@@ -67,7 +67,16 @@ public class HEVCVideoEncoder: NSObject, LKRTCVideoEncoder {
 
         self.width = Int32(settings.width)
         self.height = Int32(settings.height)
-        self.targetBitrate = Int(settings.startBitrate)
+
+        // IMPORTANT: Ensure minimum bitrate for HEVC encoding quality
+        // WebRTC may start with very low bitrate (10000 bps), but HEVC needs much higher
+        // for stereo 1920×540@60fps
+        let minimumBitrate = 10_000_000  // 10 Mbps minimum
+        self.targetBitrate = max(Int(settings.startBitrate), minimumBitrate)
+
+        if Int(settings.startBitrate) < minimumBitrate {
+            logger.warning("⚠️ WebRTC requested \(settings.startBitrate) bps, using minimum \(minimumBitrate) bps instead")
+        }
 
         // Create compression session
         let status = createCompressionSession(
@@ -81,7 +90,7 @@ public class HEVCVideoEncoder: NSObject, LKRTCVideoEncoder {
             return Int(status)
         }
 
-        logger.info("✅ HEVC encoder started successfully")
+        logger.info("✅ HEVC encoder started successfully with \(self.targetBitrate / 1_000_000) Mbps")
         return 0
     }
 
@@ -103,6 +112,11 @@ public class HEVCVideoEncoder: NSObject, LKRTCVideoEncoder {
     public func encode(_ frame: LKRTCVideoFrame,
                        codecSpecificInfo: LKRTCCodecSpecificInfo?,
                        frameTypes: [NSNumber]) -> Int {
+
+        // Log first few encode calls
+        if frameCount < 5 {
+            logger.info("🎬 encode() called - frame #\(self.frameCount)")
+        }
 
         guard let session = session else {
             logger.error("❌ Compression session is nil")
@@ -155,27 +169,46 @@ public class HEVCVideoEncoder: NSObject, LKRTCVideoEncoder {
     }
 
     public func setBitrate(_ bitrateKbps: UInt32, framerate: UInt32) -> Int32 {
-        logger.info("🎛️ Setting bitrate: \(bitrateKbps) kbps, framerate: \(framerate) fps")
-
         guard let session = session else {
             return -1
         }
 
-        let bitrateBps = Int(bitrateKbps) * 1000
+        // IMPORTANT: Enforce minimum bitrate even when WebRTC tries to lower it
+        let minimumBitrateKbps: UInt32 = 10_000  // 10 Mbps minimum
+        let actualBitrateKbps = max(bitrateKbps, minimumBitrateKbps)
 
-        VTSessionSetProperty(
+        // Log only when bitrate changes or when enforcing minimum
+        if bitrateKbps < minimumBitrateKbps && frameCount % 30 == 0 {
+            logger.warning("🎛️ WebRTC requested \(bitrateKbps) kbps, enforcing minimum \(minimumBitrateKbps) kbps")
+        }
+
+        let bitrateBps = Int(actualBitrateKbps) * 1000
+        self.targetBitrate = bitrateBps
+
+        // Maintain Quality setting (critical for consistent bitrate)
+        VTSessionSetProperty(session, key: kVTCompressionPropertyKey_Quality, value: 0.85 as CFNumber)
+
+        // Update bitrate
+        let bitrateStatus = VTSessionSetProperty(
             session,
             key: kVTCompressionPropertyKey_AverageBitRate,
             value: bitrateBps as CFNumber
         )
+        if bitrateStatus != noErr && frameCount % 30 == 0 {
+            logger.warning("⚠️ Failed to set AverageBitRate: \(bitrateStatus)")
+        }
 
+        // Update data rate limits
         let bytesPerSecond = bitrateBps / 8
         let dataRateLimits = [bytesPerSecond, 1] as CFArray
-        VTSessionSetProperty(
+        let limitsStatus = VTSessionSetProperty(
             session,
             key: kVTCompressionPropertyKey_DataRateLimits,
             value: dataRateLimits
         )
+        if limitsStatus != noErr && frameCount % 30 == 0 {
+            logger.warning("⚠️ Failed to set DataRateLimits: \(limitsStatus)")
+        }
 
         return 0
     }
@@ -220,13 +253,30 @@ public class HEVCVideoEncoder: NSObject, LKRTCVideoEncoder {
         // Configure HEVC properties
         VTSessionSetProperty(session, key: kVTCompressionPropertyKey_ProfileLevel, value: kVTProfileLevel_HEVC_Main_AutoLevel)
         VTSessionSetProperty(session, key: kVTCompressionPropertyKey_RealTime, value: kCFBooleanTrue)
+
+        // CRITICAL: Set Quality first (0.0-1.0, higher = better quality)
+        // This takes priority over bitrate in RealTime mode
+        VTSessionSetProperty(session, key: kVTCompressionPropertyKey_Quality, value: 0.85 as CFNumber)
+
+        // Set bitrate aggressively
         VTSessionSetProperty(session, key: kVTCompressionPropertyKey_AverageBitRate, value: bitrate as CFNumber)
 
+        // Use DataRateLimits to enforce minimum bitrate
         let bytesPerSecond = bitrate / 8
         let dataRateLimits = [bytesPerSecond, 1] as CFArray
-        VTSessionSetProperty(session, key: kVTCompressionPropertyKey_DataRateLimits, value: dataRateLimits)
-        VTSessionSetProperty(session, key: kVTCompressionPropertyKey_ExpectedFrameRate, value: 60 as CFNumber)
-        VTSessionSetProperty(session, key: kVTCompressionPropertyKey_AllowFrameReordering, value: kCFBooleanFalse) // Disable for lower latency
+        let limitsStatus = VTSessionSetProperty(session, key: kVTCompressionPropertyKey_DataRateLimits, value: dataRateLimits)
+        if limitsStatus != noErr {
+            logger.warning("⚠️ Failed to set DataRateLimits: \(limitsStatus)")
+        }
+
+        // Set expected framerate to 30fps (actual capture rate)
+        VTSessionSetProperty(session, key: kVTCompressionPropertyKey_ExpectedFrameRate, value: 30 as CFNumber)
+
+        // Set MaxKeyFrameInterval to ensure regular I-frames (every 2 seconds at 30fps)
+        VTSessionSetProperty(session, key: kVTCompressionPropertyKey_MaxKeyFrameInterval, value: 60 as CFNumber)
+
+        // Disable frame reordering for lower latency
+        VTSessionSetProperty(session, key: kVTCompressionPropertyKey_AllowFrameReordering, value: kCFBooleanFalse)
 
         VTCompressionSessionPrepareToEncodeFrames(session)
 
@@ -289,8 +339,11 @@ public class HEVCVideoEncoder: NSObject, LKRTCVideoEncoder {
 
         if !success {
             logger.error("❌ Encoder callback failed - frame type: \(isKeyframe ? "KEY" : "DELTA"), size: \(annexBData.count) bytes")
-        } else if frameCount % 60 == 0 {
-            logger.info("✅ Sent frame #\(self.frameCount): \(isKeyframe ? "KEY" : "DELTA"), \(annexBData.count) bytes")
+        } else {
+            // Log frame size more frequently to monitor bitrate
+            if frameCount <= 10 || frameCount % 30 == 0 {
+                logger.info("✅ Frame #\(self.frameCount): \(isKeyframe ? "KEY" : "DELTA"), \(annexBData.count) bytes")
+            }
         }
     }
 

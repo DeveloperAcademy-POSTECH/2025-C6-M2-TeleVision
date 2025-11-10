@@ -396,7 +396,6 @@ public final class WebRTCReceiver: NSObject, ObservableObject {
             guard let self = self else { return }
 
             self.logger.info("📥 SIGNAL_RX:offer")
-            print("📄 SDP Offer received:\n\(offer)")
 
             let sessionDescription = LKRTCSessionDescription(type: .offer, sdp: offer)
 
@@ -469,7 +468,7 @@ public final class WebRTCReceiver: NSObject, ObservableObject {
             }
 
             Task { @MainActor in
-                print("📄 SDP Answer created:\n\(sdp.sdp)")
+                self.logger.info("📄 SDP Answer created")
 
                 self.peerConnection?.setLocalDescription(sdp) { [weak self] error in
                     guard let self = self else { return }
@@ -504,39 +503,9 @@ extension WebRTCReceiver: LKRTCPeerConnectionDelegate {
 
         if let videoTrack = stream.videoTracks.first {
             Task { @MainActor in
-                self.logger.info("➕ Media stream added with video track")
-                print("🔗 Video track info: enabled=\(videoTrack.isEnabled), readyState=\(videoTrack.readyState.rawValue)")
-                print("🔗 Adding self as video renderer to track")
+                self.logger.info("➕ Media stream added: track enabled=\(videoTrack.isEnabled), state=\(videoTrack.readyState.rawValue)")
                 self.remoteVideoTrack = videoTrack
-
-                // Add renderer on main thread
                 videoTrack.add(self)
-
-                print("✅ Video renderer added - waiting for frames...")
-
-                // Monitor track state changes
-                var checkCount = 0
-                func checkTrackState() {
-                    checkCount += 1
-                    let state = videoTrack.readyState.rawValue
-                    let enabled = videoTrack.isEnabled
-                    print("🔍 Check #\(checkCount): track readyState=\(state), enabled=\(enabled)")
-
-                    if state == 1 {
-                        print("✅ Track is now LIVE!")
-                    } else if checkCount < 10 {
-                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-                            checkTrackState()
-                        }
-                    } else {
-                        print("⚠️ Track never became live after 5 seconds")
-                    }
-                }
-
-                // Start monitoring after a short delay
-                DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-                    checkTrackState()
-                }
             }
         } else {
             Task { @MainActor in
@@ -565,11 +534,6 @@ extension WebRTCReceiver: LKRTCPeerConnectionDelegate {
 
             if newState == .connected || newState == .completed {
                 self.logger.info("🎉 WebRTC connection established!")
-
-                // Check selected candidate pair
-                peerConnection.statistics { report in
-                    print("📊 WebRTC Stats: \(report.debugDescription)")
-                }
             } else if newState == .disconnected {
                 self.logger.warning("⚠️ ICE_STATE:disconnected - Media connection lost!")
                 print("⚠️ Possible causes: Network change, firewall, or NAT issue")
@@ -614,10 +578,7 @@ extension WebRTCReceiver: LKRTCVideoRenderer {
     }
 
     nonisolated public func renderFrame(_ frame: LKRTCVideoFrame?) {
-        print("🎯 renderFrame called - frame is \(frame == nil ? "nil" : "not nil")")
-
         guard let frame = frame else {
-            print("⚠️ renderFrame called with nil frame")
             return
         }
 
@@ -627,24 +588,18 @@ extension WebRTCReceiver: LKRTCVideoRenderer {
         if let cvBuffer = frame.buffer as? LKRTCCVPixelBuffer {
             // Fast path: already CVPixelBuffer
             pixelBuffer = cvBuffer.pixelBuffer
-            print("🎬 Frame received! Size: \(CVPixelBufferGetWidth(cvBuffer.pixelBuffer))×\(CVPixelBufferGetHeight(cvBuffer.pixelBuffer))")
         } else if let i420Buffer = frame.buffer as? LKRTCI420Buffer {
             // Convert I420 to CVPixelBuffer
-            print("🔄 I420 frame received, converting: \(i420Buffer.width)×\(i420Buffer.height)")
 
             Task { @MainActor [weak self] in
                 guard let self = self, let converter = self.i420Converter else { return }
 
                 if let converted = await converter.convert(i420Buffer) {
-                    print("✅ I420 converted successfully")
                     self.processFrame(converted, from: frame)
-                } else {
-                    print("❌ I420 conversion failed")
                 }
             }
             return
         } else {
-            print("⚠️ Non-CVPixelBuffer frame received, dropping: \(type(of: frame.buffer))")
             return
         }
 
@@ -656,8 +611,6 @@ extension WebRTCReceiver: LKRTCVideoRenderer {
     }
 
     private func processFrame(_ pixelBuffer: CVPixelBuffer, from frame: LKRTCVideoFrame) {
-        print("🎬 Processing frame: \(CVPixelBufferGetWidth(pixelBuffer))×\(CVPixelBufferGetHeight(pixelBuffer))")
-
         // Update current frame for debugging
         self.currentFrame = pixelBuffer
         self.framesReceived += 1
@@ -675,8 +628,6 @@ extension WebRTCReceiver: LKRTCVideoRenderer {
             duration = CMTime(value: 1, timescale: 60)
         }
         self.lastPTS = pts
-
-        print("📤 Feeding frame to StereoMetal renderer")
 
         // PATH B: Update Stereo Metal renderer with BGRA frames
         // This is the working path for RealityKit stereo display

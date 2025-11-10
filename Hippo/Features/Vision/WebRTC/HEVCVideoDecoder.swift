@@ -34,6 +34,7 @@ public class HEVCVideoDecoder: NSObject, LKRTCVideoDecoder {
     // Frame counters
     private var frameCount: Int = 0  // Frames submitted to VideoToolbox
     private var framesDelivered: Int = 0  // Frames actually decoded and delivered
+    private var decompressionErrors: Int = 0  // Count of decompression errors
 
     // Format description
     private var formatDescription: CMVideoFormatDescription?
@@ -121,6 +122,17 @@ public class HEVCVideoDecoder: NSObject, LKRTCVideoDecoder {
 
         // Convert Annex-B to AVCC format for VideoToolbox
         let avccData = convertToAVCC(annexBData: encodedData)
+
+        // Log conversion for first few frames
+        if frameCount < 10 {
+            logger.info("🔄 Frame #\(self.frameCount): AnnexB=\(encodedData.count) bytes → AVCC=\(avccData.count) bytes, keyframe=\(isKeyframe)")
+        }
+
+        // Check if conversion produced valid data
+        if avccData.isEmpty {
+            logger.error("❌ AVCC conversion produced empty data (AnnexB size: \(encodedData.count))")
+            return -1
+        }
 
         // Create CMBlockBuffer
         var blockBuffer: CMBlockBuffer?
@@ -218,29 +230,64 @@ public class HEVCVideoDecoder: NSObject, LKRTCVideoDecoder {
         var spsData: Data?
         var ppsData: Data?
 
-        // Parse Annex-B NAL units
-        let startCode: [UInt8] = [0x00, 0x00, 0x00, 0x01]
+        // Parse Annex-B NAL units (support both 3-byte and 4-byte start codes)
+        let startCode4: [UInt8] = [0x00, 0x00, 0x00, 0x01]
+        let startCode3: [UInt8] = [0x00, 0x00, 0x01]
         var offset = 0
 
         while offset < annexBData.count {
-            // Find start code
-            guard offset + 4 <= annexBData.count else { break }
+            // Find start code (either 4-byte or 3-byte)
+            var startCodeLength = 0
 
-            let potentialStartCode = annexBData.subdata(in: offset..<offset+4)
-            if potentialStartCode != Data(startCode) {
+            if offset + 4 <= annexBData.count {
+                let potential4 = annexBData.subdata(in: offset..<offset+4)
+                if potential4 == Data(startCode4) {
+                    startCodeLength = 4
+                } else if offset + 3 <= annexBData.count {
+                    let potential3 = annexBData.subdata(in: offset..<offset+3)
+                    if potential3 == Data(startCode3) {
+                        startCodeLength = 3
+                    }
+                }
+            } else if offset + 3 <= annexBData.count {
+                let potential3 = annexBData.subdata(in: offset..<offset+3)
+                if potential3 == Data(startCode3) {
+                    startCodeLength = 3
+                }
+            }
+
+            if startCodeLength == 0 {
                 offset += 1
                 continue
             }
 
             // Skip start code
-            offset += 4
+            offset += startCodeLength
             guard offset < annexBData.count else { break }
 
-            // Find next start code
+            // Find next start code (either 4-byte or 3-byte)
             var nextOffset = offset
-            while nextOffset + 4 <= annexBData.count {
-                let nextStartCode = annexBData.subdata(in: nextOffset..<nextOffset+4)
-                if nextStartCode == Data(startCode) {
+            while nextOffset < annexBData.count {
+                var foundNext = false
+
+                if nextOffset + 4 <= annexBData.count {
+                    let next4 = annexBData.subdata(in: nextOffset..<nextOffset+4)
+                    if next4 == Data(startCode4) {
+                        foundNext = true
+                    } else if nextOffset + 3 <= annexBData.count {
+                        let next3 = annexBData.subdata(in: nextOffset..<nextOffset+3)
+                        if next3 == Data(startCode3) {
+                            foundNext = true
+                        }
+                    }
+                } else if nextOffset + 3 <= annexBData.count {
+                    let next3 = annexBData.subdata(in: nextOffset..<nextOffset+3)
+                    if next3 == Data(startCode3) {
+                        foundNext = true
+                    }
+                }
+
+                if foundNext {
                     break
                 }
                 nextOffset += 1
@@ -325,28 +372,65 @@ public class HEVCVideoDecoder: NSObject, LKRTCVideoDecoder {
     // Convert Annex-B to AVCC format (strip parameter sets, convert start codes to lengths)
     private func convertToAVCC(annexBData: Data) -> Data {
         var avccData = Data()
-        let startCode: [UInt8] = [0x00, 0x00, 0x00, 0x01]
+        let startCode4: [UInt8] = [0x00, 0x00, 0x00, 0x01]
+        let startCode3: [UInt8] = [0x00, 0x00, 0x01]
         var offset = 0
+        var nalUnitCount = 0
+        var skippedParamSets = 0
 
         while offset < annexBData.count {
-            // Find start code
-            guard offset + 4 <= annexBData.count else { break }
+            // Find start code (either 4-byte or 3-byte)
+            var startCodeLength = 0
 
-            let potentialStartCode = annexBData.subdata(in: offset..<offset+4)
-            if potentialStartCode != Data(startCode) {
+            if offset + 4 <= annexBData.count {
+                let potential4 = annexBData.subdata(in: offset..<offset+4)
+                if potential4 == Data(startCode4) {
+                    startCodeLength = 4
+                } else if offset + 3 <= annexBData.count {
+                    let potential3 = annexBData.subdata(in: offset..<offset+3)
+                    if potential3 == Data(startCode3) {
+                        startCodeLength = 3
+                    }
+                }
+            } else if offset + 3 <= annexBData.count {
+                let potential3 = annexBData.subdata(in: offset..<offset+3)
+                if potential3 == Data(startCode3) {
+                    startCodeLength = 3
+                }
+            }
+
+            if startCodeLength == 0 {
                 offset += 1
                 continue
             }
 
             // Skip start code
-            offset += 4
+            offset += startCodeLength
             guard offset < annexBData.count else { break }
 
-            // Find next start code
+            // Find next start code (either 4-byte or 3-byte)
             var nextOffset = offset
-            while nextOffset + 4 <= annexBData.count {
-                let nextStartCode = annexBData.subdata(in: nextOffset..<nextOffset+4)
-                if nextStartCode == Data(startCode) {
+            while nextOffset < annexBData.count {
+                var foundNext = false
+
+                if nextOffset + 4 <= annexBData.count {
+                    let next4 = annexBData.subdata(in: nextOffset..<nextOffset+4)
+                    if next4 == Data(startCode4) {
+                        foundNext = true
+                    } else if nextOffset + 3 <= annexBData.count {
+                        let next3 = annexBData.subdata(in: nextOffset..<nextOffset+3)
+                        if next3 == Data(startCode3) {
+                            foundNext = true
+                        }
+                    }
+                } else if nextOffset + 3 <= annexBData.count {
+                    let next3 = annexBData.subdata(in: nextOffset..<nextOffset+3)
+                    if next3 == Data(startCode3) {
+                        foundNext = true
+                    }
+                }
+
+                if foundNext {
                     break
                 }
                 nextOffset += 1
@@ -365,6 +449,7 @@ public class HEVCVideoDecoder: NSObject, LKRTCVideoDecoder {
 
             // Skip parameter sets (VPS/SPS/PPS) - they're already in format description
             if nalType == 32 || nalType == 33 || nalType == 34 {
+                skippedParamSets += 1
                 offset = nextOffset
                 continue
             }
@@ -373,8 +458,14 @@ public class HEVCVideoDecoder: NSObject, LKRTCVideoDecoder {
             var nalLength = UInt32(nalUnit.count).bigEndian
             avccData.append(Data(bytes: &nalLength, count: 4))
             avccData.append(nalUnit)
+            nalUnitCount += 1
 
             offset = nextOffset
+        }
+
+        // Log conversion details for first few frames
+        if frameCount < 10 {
+            logger.debug("   → Found \(nalUnitCount) NAL units, skipped \(skippedParamSets) param sets")
         }
 
         return avccData
@@ -387,12 +478,16 @@ public class HEVCVideoDecoder: NSObject, LKRTCVideoDecoder {
 
                 // Log callback invocation
                 if status != noErr {
-                    decoder.logger.error("❌ Decompression callback error: \(status)")
+                    decoder.decompressionErrors += 1
+                    // Log first few errors with details, then periodically
+                    if decoder.decompressionErrors <= 3 || decoder.decompressionErrors % 30 == 0 {
+                        decoder.logger.error("❌ Decompression callback error: \(status), infoFlags: \(infoFlags.rawValue), total errors: \(decoder.decompressionErrors)")
+                    }
                     return
                 }
 
                 guard let imageBuffer = imageBuffer else {
-                    decoder.logger.error("❌ Decompression callback: imageBuffer is nil")
+                    decoder.logger.error("❌ Decompression callback: imageBuffer is nil, infoFlags: \(infoFlags.rawValue)")
                     return
                 }
 

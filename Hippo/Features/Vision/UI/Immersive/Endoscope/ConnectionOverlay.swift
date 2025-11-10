@@ -10,12 +10,26 @@ import SwiftUI
 
 struct ConnectionOverlay: View {
     let status: EndoscopeStreamViewModel.ConnectionStatus
+    let onSettingsPressed: () -> Void
 
     var body: some View {
         VStack(spacing: 16) {
             switch status {
             case .idle:
-                EmptyView()
+                VStack(spacing: 12) {
+                    Image(systemName: "network")
+                        .font(.system(size: 48))
+                        .foregroundStyle(.secondary)
+                    Text("서버 연결 대기 중")
+                        .font(.headline)
+
+                    Button {
+                        onSettingsPressed()
+                    } label: {
+                        Label("연결 설정", systemImage: "gear")
+                    }
+                    .buttonStyle(.bordered)
+                }
 
             case .discovering:
                 ProgressView()
@@ -27,12 +41,26 @@ struct ConnectionOverlay: View {
                     .font(.caption)
                     .foregroundStyle(.secondary)
 
+                Button {
+                    onSettingsPressed()
+                } label: {
+                    Label("수동 연결", systemImage: "gear")
+                }
+                .buttonStyle(.bordered)
+
             case .connecting:
                 ProgressView()
                     .scaleEffect(1.5)
                     .tint(.hippoPrimary)
                 Text("연결 중...")
                     .font(.headline)
+
+                Button {
+                    onSettingsPressed()
+                } label: {
+                    Label("연결 설정", systemImage: "gear")
+                }
+                .buttonStyle(.bordered)
 
             case .connected:
                 EmptyView()
@@ -48,6 +76,13 @@ struct ConnectionOverlay: View {
                     .foregroundStyle(.secondary)
                     .multilineTextAlignment(.center)
                     .padding(.horizontal)
+
+                Button {
+                    onSettingsPressed()
+                } label: {
+                    Label("연결 설정 확인", systemImage: "gear")
+                }
+                .buttonStyle(.bordered)
             }
         }
         .padding(32)
@@ -57,8 +92,8 @@ struct ConnectionOverlay: View {
 
 #Preview {
     VStack(spacing: 20) {
-        ConnectionOverlay(status: .discovering)
-        ConnectionOverlay(status: .connecting)
-        ConnectionOverlay(status: .failed("테스트 에러 메시지"))
+        ConnectionOverlay(status: .discovering, onSettingsPressed: {})
+        ConnectionOverlay(status: .connecting, onSettingsPressed: {})
+        ConnectionOverlay(status: .failed("테스트 에러 메시지"), onSettingsPressed: {})
     }
 }
