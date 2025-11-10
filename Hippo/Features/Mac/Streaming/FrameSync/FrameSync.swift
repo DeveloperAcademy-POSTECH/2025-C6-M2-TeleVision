@@ -54,8 +54,8 @@ public final class FrameSync: FrameSyncing {
     // MARK: Configuration
 
     /// Maximum time difference for frame matching
-    /// Set to 35ms to handle phase offset between cameras (typically ~31ms)
-    private let matchTolerance: CMTime = CMTime(value: 35, timescale: 1000)  // 35ms
+    /// Set to 50ms to handle phase offset between cameras and timing jitter
+    private let matchTolerance: CMTime = CMTime(value: 50, timescale: 1000)  // 50ms
 
     /// Maximum age for buffered frames before dropping
     /// Set to 1 second to handle camera start time differences
@@ -79,9 +79,10 @@ public final class FrameSync: FrameSyncing {
 
     // MARK: Timestamp Normalization
 
-    /// Reference time for normalizing timestamps from different sources
-    /// Uses CACurrentMediaTime() which provides a consistent clock across all sources
-    private var referenceTime: CFTimeInterval?
+    /// Reference times for normalizing timestamps from different sources
+    /// Each source has its own offset to handle different start times
+    private var leftOffset: CFTimeInterval?
+    private var rightOffset: CFTimeInterval?
 
     // MARK: Statistics
 
@@ -133,7 +134,8 @@ public final class FrameSync: FrameSyncing {
         syncQueue.sync(flags: .barrier) {
             leftBuffer.removeAll()
             rightBuffer.removeAll()
-            referenceTime = nil
+            leftOffset = nil
+            rightOffset = nil
             _stats = FrameSyncStats()
             timeDeltaAccumulator = 0.0
             timeDeltaCount = 0
@@ -144,28 +146,41 @@ public final class FrameSync: FrameSyncing {
 
     // MARK: - Private Methods
 
-    /// Normalizes timestamps relative to first frame
-    /// PTS is already set to arrival time by BaseCaptureSession
+    /// Normalizes timestamps relative to each source's first frame
+    /// Each source has independent offset to handle different start times
     private func normalizeTimestamp(_ pts: CMTime, source: CaptureSource) -> CMTime {
         let ptsSeconds = CMTimeGetSeconds(pts)
 
-        // Initialize reference time on VERY FIRST frame from either camera
-        if referenceTime == nil {
-            referenceTime = ptsSeconds
-            logger.info("🕐 Reference time initialized: \(String(format: "%.3f", ptsSeconds))s (from \(source.rawValue))")
+        // Initialize offset for each source independently
+        switch source {
+        case .left:
+            if leftOffset == nil {
+                leftOffset = ptsSeconds
+                logger.info("🕐 Left offset initialized: \(String(format: "%.3f", ptsSeconds))s")
+            }
+            let elapsed = ptsSeconds - (leftOffset ?? ptsSeconds)
+            let normalized = CMTime(seconds: elapsed, preferredTimescale: 1000000)
+
+            if _stats.leftFrameCount == 1 {
+                logger.info("🔄 left first frame: normalized=\(String(format: "%.3f", elapsed))s")
+            }
+
+            return normalized
+
+        case .right:
+            if rightOffset == nil {
+                rightOffset = ptsSeconds
+                logger.info("🕐 Right offset initialized: \(String(format: "%.3f", ptsSeconds))s")
+            }
+            let elapsed = ptsSeconds - (rightOffset ?? ptsSeconds)
+            let normalized = CMTime(seconds: elapsed, preferredTimescale: 1000000)
+
+            if _stats.rightFrameCount == 1 {
+                logger.info("🔄 right first frame: normalized=\(String(format: "%.3f", elapsed))s")
+            }
+
+            return normalized
         }
-
-        // Normalize relative to reference
-        let elapsedSinceStart = ptsSeconds - (referenceTime ?? ptsSeconds)
-        let normalizedPTS = CMTime(seconds: elapsedSinceStart, preferredTimescale: 1000000)
-
-        // Log first frame only
-        let frameCount = source == .left ? _stats.leftFrameCount : _stats.rightFrameCount
-        if frameCount == 1 {
-            logger.info("🔄 \(source.rawValue) first frame: normalized=\(String(format: "%.3f", elapsedSinceStart))s")
-        }
-
-        return normalizedPTS
     }
 
     private func handleFrame(_ pb: CVPixelBuffer, pts: CMTime, source: CaptureSource) {
@@ -209,17 +224,15 @@ public final class FrameSync: FrameSyncing {
     }
 
     /// Find matching pair from buffers
-    /// Optimized O(n) algorithm: match newest frames from each buffer
+    /// FIFO algorithm: match oldest frames from each buffer to handle timing skew
     private func findMatchingPair() -> SyncedPair? {
         guard !leftBuffer.isEmpty, !rightBuffer.isEmpty else {
             return nil
         }
 
-        // Get the most recent frames from each buffer
-        guard let (leftPB, leftPTS, leftSize) = leftBuffer.last,
-              let (rightPB, rightPTS, rightSize) = rightBuffer.last else {
-            return nil
-        }
+        // Get the oldest frames from each buffer (FIFO)
+        let (leftPB, leftPTS, leftSize) = leftBuffer[0]
+        let (rightPB, rightPTS, rightSize) = rightBuffer[0]
 
         // Calculate time delta
         let delta = CMTimeSubtract(leftPTS, rightPTS)
@@ -238,8 +251,8 @@ public final class FrameSync: FrameSyncing {
             let avgPTS = CMTimeMultiplyByFloat64(syncPTS, multiplier: 0.5)
 
             // Remove matched frames from buffers
-            leftBuffer.removeLast()
-            rightBuffer.removeLast()
+            leftBuffer.removeFirst()
+            rightBuffer.removeFirst()
 
             // Update statistics
             _stats.syncedPairCount += 1
@@ -261,11 +274,11 @@ public final class FrameSync: FrameSyncing {
             // Drop the older frame (the one that's further behind)
             if CMTimeCompare(leftPTS, rightPTS) < 0 {
                 // Left is older, drop it
-                leftBuffer.removeLast()
+                leftBuffer.removeFirst()
                 _stats.leftDropCount += 1
             } else {
                 // Right is older, drop it
-                rightBuffer.removeLast()
+                rightBuffer.removeFirst()
                 _stats.rightDropCount += 1
             }
         }
