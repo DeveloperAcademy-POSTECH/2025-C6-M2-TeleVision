@@ -116,7 +116,10 @@ public final class StereoVideoRenderer: ObservableObject {
         logger.info("✅ Stereo scene ready - planes added directly to RealityView content")
     }
 
-    /// Update video texture with new SBS frame (variable size)
+    /// Update video texture with new frame (SBS or Mono)
+    /// Auto-detects mode based on aspect ratio:
+    /// - ~16:9 (1.78) → Mono
+    /// - ~32:9 (3.56) → SBS (Side-by-Side)
     public func updateFrame(_ pixelBuffer: CVPixelBuffer) {
         // Performance optimization: Skip every other frame to reduce CPU load
         frameCounter += 1
@@ -142,29 +145,88 @@ public final class StereoVideoRenderer: ObservableObject {
         }
 
         // Create Metal texture from pixel buffer
-        guard let sbsTexture = createMetalTexture(from: pixelBuffer) else {
+        guard let sourceTexture = createMetalTexture(from: pixelBuffer) else {
             logger.warning("⚠️ Failed to create Metal texture from pixel buffer")
             return
         }
 
-        let srcW = sbsTexture.width
-        let srcH = sbsTexture.height
+        let srcW = sourceTexture.width
+        let srcH = sourceTexture.height
 
-        // Validate SBS: width must be divisible by 2
-        guard srcW >= 2, srcW % 2 == 0, srcH >= 1 else {
-            logger.warning("⚠️ Invalid SBS size: \(srcW)×\(srcH). Expected width divisible by 2.")
+        // Auto-detect Mono vs SBS based on aspect ratio
+        let aspectRatio = Float(srcW) / Float(srcH)
+        let isMono = aspectRatio < 2.5  // < 2.5:1 → Mono (16:9 = 1.78), >= 2.5:1 → SBS (32:9 = 3.56)
+
+        if isMono {
+            logger.info("📺 Mono mode detected: \(srcW)×\(srcH) (aspect: \(String(format: "%.2f", aspectRatio)))")
+            updateMonoFrame(sourceTexture: sourceTexture, width: srcW, height: srcH)
+        } else {
+            logger.debug("👁️👁️ SBS mode detected: \(srcW)×\(srcH) (aspect: \(String(format: "%.2f", aspectRatio)))")
+            updateSBSFrame(sourceTexture: sourceTexture, width: srcW, height: srcH)
+        }
+    }
+
+    /// Update frame in Mono mode (single image, preserve aspect ratio)
+    private func updateMonoFrame(sourceTexture: MTLTexture, width: Int, height: Int) {
+        // Allocate or reuse mono texture
+        if cachedSourceSize?.w != width || cachedSourceSize?.h != height {
+            cachedLeftTexture = makeRGBA8Texture(width: width, height: height)
+            cachedSourceSize = (width, height)
+            logger.info("📐 Mono texture allocated: \(width)×\(height)")
+        }
+
+        guard let monoTexture = cachedLeftTexture else {
+            logger.error("❌ Failed to allocate mono texture")
             return
         }
 
-        let halfWidth = srcW / 2
-        let height = srcH
+        // Copy entire frame to mono texture
+        guard copyRegion(
+            from: sourceTexture,
+            sourceOriginX: 0,
+            width: width,
+            height: height,
+            to: monoTexture
+        ) else {
+            logger.error("❌ Failed to copy mono frame")
+            return
+        }
+
+        // Adjust plane aspect ratio to match source (aspectFit)
+        // Keep height fixed, adjust width to preserve aspect ratio
+        let sourceAspect = Float(width) / Float(height)
+        let targetHeight = planeHeight  // Fixed height (0.225m)
+        let targetWidth = targetHeight * sourceAspect  // Width adjusted for aspect ratio
+
+        // Scale plane to match aspect ratio (scale based on default plane size)
+        let widthScale = targetWidth / planeWidth
+        leftPlaneEntity?.scale = SIMD3(x: widthScale, y: 1.0, z: 1.0)
+
+        logger.debug("📐 Mono plane scaled: aspect=\(String(format: "%.2f", sourceAspect)), scale=\(String(format: "%.2f", widthScale))x")
+
+        // Update left plane with mono texture (right plane is hidden/unused)
+        updatePlaneMaterial(leftPlaneEntity, with: monoTexture)
+        updatePlaneMaterial(rightPlaneEntity, with: nil)  // Clear right plane
+
+        logger.debug("🎬 Mono frame updated: \(width)×\(height)")
+    }
+
+    /// Update frame in SBS mode (split left/right)
+    private func updateSBSFrame(sourceTexture: MTLTexture, width: Int, height: Int) {
+        // Validate SBS: width must be divisible by 2
+        guard width >= 2, width % 2 == 0, height >= 1 else {
+            logger.warning("⚠️ Invalid SBS size: \(width)×\(height). Expected width divisible by 2.")
+            return
+        }
+
+        let halfWidth = width / 2
 
         // Allocate or reuse left/right destination textures
-        if cachedSourceSize?.w != srcW || cachedSourceSize?.h != srcH {
+        if cachedSourceSize?.w != width || cachedSourceSize?.h != height {
             cachedLeftTexture = makeRGBA8Texture(width: halfWidth, height: height)
             cachedRightTexture = makeRGBA8Texture(width: halfWidth, height: height)
-            cachedSourceSize = (srcW, srcH)
-            logger.info("📐 Cached textures updated: \(halfWidth)×\(height)")
+            cachedSourceSize = (width, height)
+            logger.info("📐 SBS textures updated: \(halfWidth)×\(height)")
         }
 
         guard let leftTexture = cachedLeftTexture,
@@ -173,15 +235,19 @@ public final class StereoVideoRenderer: ObservableObject {
             return
         }
 
+        // Reset plane scale to default for SBS mode
+        leftPlaneEntity?.scale = SIMD3(x: 1.0, y: 1.0, z: 1.0)
+        rightPlaneEntity?.scale = SIMD3(x: 1.0, y: 1.0, z: 1.0)
+
         // Split SBS texture into left/right via blit (GPU copy, no CPU readback)
         guard copyRegion(
-            from: sbsTexture,
+            from: sourceTexture,
             sourceOriginX: 0,
             width: halfWidth,
             height: height,
             to: leftTexture
         ), copyRegion(
-            from: sbsTexture,
+            from: sourceTexture,
             sourceOriginX: halfWidth,
             width: halfWidth,
             height: height,
@@ -195,7 +261,7 @@ public final class StereoVideoRenderer: ObservableObject {
         updatePlaneMaterial(leftPlaneEntity, with: leftTexture)
         updatePlaneMaterial(rightPlaneEntity, with: rightTexture)
 
-        logger.debug("🎬 Frame updated: \(srcW)×\(srcH) (half=\(halfWidth)×\(height))")
+        logger.debug("🎬 SBS frame updated: \(width)×\(height) (half=\(halfWidth)×\(height))")
     }
 
     // MARK: - Private Methods
@@ -343,9 +409,19 @@ public final class StereoVideoRenderer: ObservableObject {
     }
 
     /// Update plane material with Metal texture (uses CPU fallback but optimized by RealityKit)
+    /// If texture is nil, hides the entity
     private func updatePlaneMaterial(_ entity: ModelEntity?, with texture: MTLTexture?) {
-        guard let entity, let texture else { return }
+        guard let entity else { return }
         guard entity.model != nil else { return }
+
+        // If texture is nil, hide the entity
+        guard let texture = texture else {
+            entity.isEnabled = false
+            return
+        }
+
+        // Show entity if it was hidden
+        entity.isEnabled = true
 
         // Create TextureResource from Metal texture (CPU fallback path)
         // RealityKit internally optimizes this path
