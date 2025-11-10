@@ -192,6 +192,9 @@
 		2581FF692EC1A9140059678D /* BonjourServiceDiscovery.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2581FF662EC1A9140059678D /* BonjourServiceDiscovery.swift */; };
 		2581FF6C2EC1C4640059678D /* EndoscopeStreamViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2581FF6B2EC1C4640059678D /* EndoscopeStreamViewModel.swift */; };
 		2581FF6D2EC1C4640059678D /* ConnectionOverlay.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2581FF6A2EC1C4640059678D /* ConnectionOverlay.swift */; };
+		2581FF6F2EC1EEBA0059678D /* BonjourRelayService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2581FF6E2EC1EEBA0059678D /* BonjourRelayService.swift */; };
+		2581FF702EC1EEBA0059678D /* BonjourRelayService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2581FF6E2EC1EEBA0059678D /* BonjourRelayService.swift */; };
+		2581FF712EC1EEBA0059678D /* BonjourRelayService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2581FF6E2EC1EEBA0059678D /* BonjourRelayService.swift */; };
 		25E78B602EB90D4600D8CAD2 /* OperationStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = 25E78B5D2EB90D4600D8CAD2 /* OperationStatus.swift */; };
 		25E78B612EB90D4600D8CAD2 /* Operation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 25E78B542EB90D4600D8CAD2 /* Operation.swift */; };
 		25E78B622EB90D4600D8CAD2 /* OperationAsset.swift in Sources */ = {isa = PBXBuildFile; fileRef = 25E78B552EB90D4600D8CAD2 /* OperationAsset.swift */; };
@@ -529,6 +532,7 @@
 		2581FF662EC1A9140059678D /* BonjourServiceDiscovery.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BonjourServiceDiscovery.swift; sourceTree = "<group>"; };
 		2581FF6A2EC1C4640059678D /* ConnectionOverlay.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConnectionOverlay.swift; sourceTree = "<group>"; };
 		2581FF6B2EC1C4640059678D /* EndoscopeStreamViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EndoscopeStreamViewModel.swift; sourceTree = "<group>"; };
+		2581FF6E2EC1EEBA0059678D /* BonjourRelayService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BonjourRelayService.swift; sourceTree = "<group>"; };
 		25E78B542EB90D4600D8CAD2 /* Operation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Operation.swift; sourceTree = "<group>"; };
 		25E78B552EB90D4600D8CAD2 /* OperationAsset.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OperationAsset.swift; sourceTree = "<group>"; };
 		25E78B562EB90D4600D8CAD2 /* OperationRecording.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OperationRecording.swift; sourceTree = "<group>"; };
@@ -1003,6 +1007,7 @@
 		2581FEFE2EBE18A70059678D /* Core */ = {
 			isa = PBXGroup;
 			children = (
+				2581FF6E2EC1EEBA0059678D /* BonjourRelayService.swift */,
 				2581FF662EC1A9140059678D /* BonjourServiceDiscovery.swift */,
 				2581FF432EBE32200059678D /* SignalingClient.swift */,
 				2581FEF92EBE18A70059678D /* CaptureSource.swift */,
@@ -1875,6 +1880,7 @@
 				C0F97AB12EA401160063E159 /* DisplayHelpers.swift in Sources */,
 				14CC75482EA69DE400399562 /* PatientCell.swift in Sources */,
 				C0F97B082EA430880063E159 /* Gender.swift in Sources */,
+				2581FF6F2EC1EEBA0059678D /* BonjourRelayService.swift in Sources */,
 				1494DEA72EA7C851000CD284 /* Date+Extension.swift in Sources */,
 				25E78B792EB9164E00D8CAD2 /* CreateOperationCommand.swift in Sources */,
 				25E78B7A2EB9164E00D8CAD2 /* AttachAssetCommand.swift in Sources */,
@@ -1967,6 +1973,7 @@
 				C0F97AC32EA41D4B0063E159 /* PatientLocalDataSourceLegacyJSON.swift in Sources */,
 				278623332EB790CE00F97BE3 /* AssetListScrollCard.swift in Sources */,
 				C0F97AC42EA41D4B0063E159 /* SDPatient.swift in Sources */,
+				2581FF702EC1EEBA0059678D /* BonjourRelayService.swift in Sources */,
 				25E78BB22EB92A2E00D8CAD2 /* UpdateOperationCommand.swift in Sources */,
 				C0F97B2B2EA439080063E159 /* UpdatePatient.swift in Sources */,
 				C04678352EA00B3A00D160DA /* PatientRepositoryImpl.swift in Sources */,
@@ -2027,6 +2034,7 @@
 				C0F97AC52EA41D4B0063E159 /* SDOperation.swift in Sources */,
 				C0F97ADE2EA420EB0063E159 /* DomainDependencies.swift in Sources */,
 				2581FF342EBE2CB20059678D /* NormalizePolicy.swift in Sources */,
+				2581FF712EC1EEBA0059678D /* BonjourRelayService.swift in Sources */,
 				2581FF352EBE2CB20059678D /* LatencyMeter.swift in Sources */,
 				2581FF362EBE2CB20059678D /* AppModule.swift in Sources */,
 				2581FF372EBE2CB20059678D /* CI_SBSComposer.swift in Sources */,

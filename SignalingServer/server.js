@@ -109,11 +109,11 @@ wss.on('connection', (ws, req) => {
   console.log(`[${getTimestamp()}] New client connected (IP: ${clientIP}, awaiting registration...)`);
 
   let clientRole = null;
-  let isAlive = true;
+  ws.isAlive = true;  // Use ws property instead of local variable
 
   // Heartbeat mechanism (v2)
   ws.on('pong', () => {
-    isAlive = true;
+    ws.isAlive = true;  // Update ws property
   });
 
   ws.on('message', (message) => {
