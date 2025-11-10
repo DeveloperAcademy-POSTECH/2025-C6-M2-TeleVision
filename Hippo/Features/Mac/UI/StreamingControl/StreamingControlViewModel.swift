@@ -42,6 +42,12 @@ public final class StreamingControlViewModel {
                 return
             }
 
+            // Mono 모드일 때는 Single 카메라만 가능
+            if videoMode == .mono && cameraInputMode != .single {
+                cameraInputMode = .single
+                return  // cameraInputMode didSet에서 재시작하므로 여기서는 return
+            }
+
             // 스트리밍 중이면 재시작
             if isStreaming {
                 logger.info("🔄 Restarting streaming due to video mode change...")
@@ -316,16 +322,16 @@ public final class StreamingControlViewModel {
         let webrtc = WebRTCManager(config: .standard)
         self.transport = webrtc
 
-        // Mono video 시작
+        // Mono video 시작 - settings를 전달하지 않아 카메라의 네이티브 해상도 사용
         let leftSession = LeftCaptureSession(preferredDeviceUniqueID: device.uniqueID)
         leftSession.delegate = self
-        try leftSession.start(settings: .standard)
+        try leftSession.start()  // No settings = use native resolution
         self.leftCapture = leftSession
 
         // Start WebRTC transport
         try webrtc.start()
 
-        logger.info("✅ Mono capture started")
+        logger.info("✅ Mono capture started with native resolution")
     }
 
     // MARK: - Private Methods: Frame Handling

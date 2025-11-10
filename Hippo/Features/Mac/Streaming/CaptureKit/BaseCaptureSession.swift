@@ -66,7 +66,7 @@ open class BaseCaptureSession: NSObject {
 
     // MARK: - Public Methods
 
-    public func start(settings: CaptureSettings = .standard) throws {
+    public func start(settings: CaptureSettings? = nil) throws {
         guard !isRunning else {
             logger.info("📹 [\(self.source.rawValue)] Already running")
             return
@@ -79,12 +79,20 @@ open class BaseCaptureSession: NSObject {
 
         logger.info("📹 [\(self.source.rawValue)] Found device: \(device.localizedName)")
 
-        try configureDevice(device, settings: settings)
+        // If no settings provided, use device's native best format
+        let finalSettings: CaptureSettings
+        if let settings = settings {
+            finalSettings = settings
+        } else {
+            finalSettings = selectBestNativeFormat(for: device)
+        }
+
+        try configureDevice(device, settings: finalSettings)
 
         let input = try AVCaptureDeviceInput(device: device)
         self.deviceInput = input
 
-        let output = createVideoOutput(settings: settings)
+        let output = createVideoOutput(settings: finalSettings)
         self.videoOutput = output
 
         session.beginConfiguration()
@@ -171,6 +179,59 @@ open class BaseCaptureSession: NSObject {
         }
 
         return device
+    }
+
+    // MARK: - Private Methods: Native Format Selection
+
+    /// Selects the best native format from the device
+    /// Prioritizes: highest resolution, then highest frame rate, then NV12 pixel format
+    private func selectBestNativeFormat(for device: AVCaptureDevice) -> CaptureSettings {
+        logger.info("🔍 [\(self.source.rawValue)] Selecting best native format for device...")
+
+        // Find the format with highest resolution
+        let bestFormat = device.formats
+            .filter { format in
+                // Prefer NV12 format (4:2:0 YUV) for efficient encoding
+                let pixelFormat = CMFormatDescriptionGetMediaSubType(format.formatDescription)
+                return pixelFormat == kCVPixelFormatType_420YpCbCr8BiPlanarVideoRange ||
+                       pixelFormat == kCVPixelFormatType_420YpCbCr8BiPlanarFullRange
+            }
+            .max { format1, format2 in
+                let dims1 = CMVideoFormatDescriptionGetDimensions(format1.formatDescription)
+                let dims2 = CMVideoFormatDescriptionGetDimensions(format2.formatDescription)
+
+                // Compare by total pixel count
+                let pixels1 = Int(dims1.width) * Int(dims1.height)
+                let pixels2 = Int(dims2.width) * Int(dims2.height)
+
+                return pixels1 < pixels2
+            }
+
+        guard let format = bestFormat else {
+            logger.warning("⚠️ [\(self.source.rawValue)] No suitable format found, using fallback")
+            return .standard
+        }
+
+        let dimensions = CMVideoFormatDescriptionGetDimensions(format.formatDescription)
+        let pixelFormat = CMFormatDescriptionGetMediaSubType(format.formatDescription)
+
+        // Get max FPS for this format
+        let maxFPS = format.videoSupportedFrameRateRanges
+            .map { 1.0 / CMTimeGetSeconds($0.minFrameDuration) }
+            .max() ?? 30.0
+
+        // Round to standard FPS values
+        let standardFPS: [Int] = [60, 30, 24, 15]
+        let selectedFPS = standardFPS.first { Double($0) <= maxFPS } ?? 30
+
+        logger.info("✅ [\(self.source.rawValue)] Selected native format: \(dimensions.width)×\(dimensions.height)@\(selectedFPS)fps")
+
+        return CaptureSettings(
+            width: Int(dimensions.width),
+            height: Int(dimensions.height),
+            frameRate: selectedFPS,
+            pixelFormat: pixelFormat
+        )
     }
 
     // MARK: - Private Methods: Configuration
