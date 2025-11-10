@@ -29,9 +29,14 @@ public final class BonjourServiceDiscovery: ObservableObject {
                 let hostString: String
                 switch host {
                 case .ipv4(let address):
-                    hostString = address.debugDescription
+                    // Remove interface name (e.g., %en0) from IPv4 address
+                    let addressStr = address.debugDescription
+                    hostString = addressStr.components(separatedBy: "%").first ?? addressStr
                 case .ipv6(let address):
-                    hostString = address.debugDescription
+                    // Remove interface name from IPv6 address and wrap in brackets
+                    let addressStr = address.debugDescription
+                    let cleanAddress = addressStr.components(separatedBy: "%").first ?? addressStr
+                    hostString = "[\(cleanAddress)]"
                 case .name(let hostname, _):
                     hostString = hostname
                 @unknown default:
@@ -113,16 +118,54 @@ public final class BonjourServiceDiscovery: ObservableObject {
     private func handleServiceAdded(_ result: NWBrowser.Result) {
         logger.info("🎉 Service discovered: \(result.endpoint.debugDescription)")
 
-        let server = DiscoveredServer(
-            name: result.endpoint.debugDescription,
-            endpoint: result.endpoint
-        )
+        // Resolve the service endpoint to get IP and port
+        resolveService(result)
+    }
 
-        if let url = server.url {
-            logger.info("   URL: \(url.absoluteString)")
+    private func resolveService(_ result: NWBrowser.Result) {
+        logger.info("🔍 Resolving service: \(result.endpoint.debugDescription)")
+
+        // Create a temporary connection to resolve the endpoint
+        let connection = NWConnection(to: result.endpoint, using: .tcp)
+
+        connection.stateUpdateHandler = { [weak self] state in
+            Task { @MainActor [weak self] in
+                guard let self = self else { return }
+
+                switch state {
+                case .ready:
+                    // Connection is ready - endpoint is now resolved
+                    if let remoteEndpoint = connection.currentPath?.remoteEndpoint {
+                        self.logger.info("✅ Service resolved to: \(remoteEndpoint.debugDescription)")
+
+                        let server = DiscoveredServer(
+                            name: result.endpoint.debugDescription,
+                            endpoint: remoteEndpoint
+                        )
+
+                        if let url = server.url {
+                            self.logger.info("   URL: \(url.absoluteString)")
+                            self.discoveredServers.append(server)
+                        } else {
+                            self.logger.error("❌ Failed to create URL from resolved endpoint")
+                        }
+                    }
+
+                    // Cancel the connection - we only needed it for resolution
+                    connection.cancel()
+
+                case .failed(let error):
+                    self.logger.error("❌ Failed to resolve service: \(error.localizedDescription)")
+                    connection.cancel()
+
+                default:
+                    break
+                }
+            }
         }
 
-        discoveredServers.append(server)
+        // Start the connection to trigger resolution
+        connection.start(queue: .main)
     }
 
     private func handleServiceRemoved(_ result: NWBrowser.Result) {
