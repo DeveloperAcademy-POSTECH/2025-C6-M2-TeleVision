@@ -159,24 +159,38 @@ final class SignalingClient {
         // Start receiving messages
         receiveMessage()
 
-        // Register client role
-        let registerMessage: [String: String] = [
-            "type": "register",
-            "role": role
-        ]
+        // Wait for connection to be established before registering
+        // Use a ping to verify the connection is ready
+        webSocketTask?.sendPing { [weak self] error in
+            guard let self = self else { return }
 
-        if let data = try? JSONSerialization.data(withJSONObject: registerMessage),
-           let jsonString = String(data: data, encoding: .utf8) {
-            let wsMessage = URLSessionWebSocketTask.Message.string(jsonString)
-            webSocketTask?.send(wsMessage) { [weak self] error in
-                guard let self = self else { return }
-                if let error = error {
-                    self.logger.error("❌ Registration failed: \(error.localizedDescription)")
-                    self.handleConnectionFailure(error)
-                } else {
-                    self.logger.info("✅ Registered as '\(role)'")
-                    self.state = .connected
-                    self.resetReconnectionState()  // P0.3: Reset on success
+            if let error = error {
+                self.logger.error("❌ WebSocket connection failed: \(error.localizedDescription)")
+                self.handleConnectionFailure(error)
+                return
+            }
+
+            self.logger.info("✅ WebSocket connection established")
+
+            // Now register client role
+            let registerMessage: [String: String] = [
+                "type": "register",
+                "role": role
+            ]
+
+            if let data = try? JSONSerialization.data(withJSONObject: registerMessage),
+               let jsonString = String(data: data, encoding: .utf8) {
+                let wsMessage = URLSessionWebSocketTask.Message.string(jsonString)
+                self.webSocketTask?.send(wsMessage) { [weak self] error in
+                    guard let self = self else { return }
+                    if let error = error {
+                        self.logger.error("❌ Registration failed: \(error.localizedDescription)")
+                        self.handleConnectionFailure(error)
+                    } else {
+                        self.logger.info("✅ Registered as '\(role)'")
+                        self.state = .connected
+                        self.resetReconnectionState()  // P0.3: Reset on success
+                    }
                 }
             }
         }
