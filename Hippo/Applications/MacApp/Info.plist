@@ -20,5 +20,18 @@
 	<string>1</string>
 	<key>NSCameraUsageDescription</key>
 	<string>Hippo needs access to your camera for video streaming.</string>
+	<key>NSAppTransportSecurity</key>
+	<dict>
+		<key>NSAllowsLocalNetworking</key>
+		<true/>
+		<key>NSAllowsArbitraryLoadsInWebContent</key>
+		<true/>
+	</dict>
+	<key>NSLocalNetworkUsageDescription</key>
+	<string>Hippo needs local network access to discover and connect to the streaming server.</string>
+	<key>NSBonjourServices</key>
+	<array>
+		<string>_ws._tcp</string>
+	</array>
 </dict>
 </plist>
