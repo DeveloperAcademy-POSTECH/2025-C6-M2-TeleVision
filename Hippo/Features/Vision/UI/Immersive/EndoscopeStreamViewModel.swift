@@ -84,7 +84,7 @@ final class EndoscopeStreamViewModel: ObservableObject {
         bonjourDiscovery.startDiscovery()
 
         // Wait for server discovery with timeout
-        let timeout: TimeInterval = 10.0
+        let timeout: TimeInterval = 20.0
         let startTime = Date()
 
         while bonjourDiscovery.discoveredServers.isEmpty {
