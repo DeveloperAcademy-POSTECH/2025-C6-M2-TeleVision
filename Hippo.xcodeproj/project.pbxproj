@@ -187,6 +187,9 @@
 		2581FF612EBFB5EF0059678D /* HEVCVideoEncoder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2581FF5E2EBFB5EF0059678D /* HEVCVideoEncoder.swift */; };
 		2581FF642EBFB6040059678D /* HEVCVideoDecoder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2581FF622EBFB6040059678D /* HEVCVideoDecoder.swift */; };
 		2581FF652EBFB6040059678D /* HEVCVideoDecoderFactory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2581FF632EBFB6040059678D /* HEVCVideoDecoderFactory.swift */; };
+		2581FF672EC1A9140059678D /* BonjourServiceDiscovery.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2581FF662EC1A9140059678D /* BonjourServiceDiscovery.swift */; };
+		2581FF682EC1A9140059678D /* BonjourServiceDiscovery.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2581FF662EC1A9140059678D /* BonjourServiceDiscovery.swift */; };
+		2581FF692EC1A9140059678D /* BonjourServiceDiscovery.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2581FF662EC1A9140059678D /* BonjourServiceDiscovery.swift */; };
 		25E78B602EB90D4600D8CAD2 /* OperationStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = 25E78B5D2EB90D4600D8CAD2 /* OperationStatus.swift */; };
 		25E78B612EB90D4600D8CAD2 /* Operation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 25E78B542EB90D4600D8CAD2 /* Operation.swift */; };
 		25E78B622EB90D4600D8CAD2 /* OperationAsset.swift in Sources */ = {isa = PBXBuildFile; fileRef = 25E78B552EB90D4600D8CAD2 /* OperationAsset.swift */; };
@@ -521,6 +524,7 @@
 		2581FF5F2EBFB5EF0059678D /* HEVCVideoEncoderFactory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HEVCVideoEncoderFactory.swift; sourceTree = "<group>"; };
 		2581FF622EBFB6040059678D /* HEVCVideoDecoder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HEVCVideoDecoder.swift; sourceTree = "<group>"; };
 		2581FF632EBFB6040059678D /* HEVCVideoDecoderFactory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HEVCVideoDecoderFactory.swift; sourceTree = "<group>"; };
+		2581FF662EC1A9140059678D /* BonjourServiceDiscovery.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BonjourServiceDiscovery.swift; sourceTree = "<group>"; };
 		25E78B542EB90D4600D8CAD2 /* Operation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Operation.swift; sourceTree = "<group>"; };
 		25E78B552EB90D4600D8CAD2 /* OperationAsset.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OperationAsset.swift; sourceTree = "<group>"; };
 		25E78B562EB90D4600D8CAD2 /* OperationRecording.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OperationRecording.swift; sourceTree = "<group>"; };
@@ -995,6 +999,7 @@
 		2581FEFE2EBE18A70059678D /* Core */ = {
 			isa = PBXGroup;
 			children = (
+				2581FF662EC1A9140059678D /* BonjourServiceDiscovery.swift */,
 				2581FF432EBE32200059678D /* SignalingClient.swift */,
 				2581FEF92EBE18A70059678D /* CaptureSource.swift */,
 				2581FEFA2EBE18A70059678D /* ITransport.swift */,
@@ -1770,6 +1775,7 @@
 				147EB27D2EB0782100D9CFB3 /* OperationStatusBadge.swift in Sources */,
 				27AD7AD42EB5ACD600E84809 /* OpacityControlPanel.swift in Sources */,
 				14F6B0342EAAC73F003F28EB /* ImmersiveSurgeryView.swift in Sources */,
+				2581FF682EC1A9140059678D /* BonjourServiceDiscovery.swift in Sources */,
 				144254662EAAC44900583CC3 /* StartOperationButton.swift in Sources */,
 				144254342EAA232300583CC3 /* OperationViewModel.swift in Sources */,
 				C04678142EA00B1F00D160DA /* Patient.swift in Sources */,
@@ -1995,6 +2001,7 @@
 				1446FBAF2EAE6BBD000BCF61 /* EndoscopeToggle.swift in Sources */,
 				C0F97AA82EA401160063E159 /* OperationAssetDisplayModel.swift in Sources */,
 				25E78B8C2EB91ACC00D8CAD2 /* OperationRepositoryImpl.swift in Sources */,
+				2581FF692EC1A9140059678D /* BonjourServiceDiscovery.swift in Sources */,
 				C0F97B0C2EA4348D0063E159 /* CreatePatient.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -2113,6 +2120,7 @@
 				06F8CAC32EBA459B00926483 /* StreamingInspectorView.swift in Sources */,
 				25E78B732EB9164200D8CAD2 /* OperationRepository.swift in Sources */,
 				25E78B662EB90D4600D8CAD2 /* OperationStatus.swift in Sources */,
+				2581FF672EC1A9140059678D /* BonjourServiceDiscovery.swift in Sources */,
 				25E78B672EB90D4600D8CAD2 /* Operation.swift in Sources */,
 				2581FF592EBE6AE00059678D /* DevicePreview.swift in Sources */,
 				25E78B682EB90D4600D8CAD2 /* OperationAsset.swift in Sources */,

@@ -1,10 +1,33 @@
+/**
+ * WebRTC Signaling Server for Hippo
+ *
+ * Features:
+ * - Role-based client management (sender/receiver)
+ * - Heartbeat mechanism for dead connection detection
+ * - Bonjour (mDNS) auto-discovery
+ * - Environment variable configuration
+ * - Detailed logging with timestamps
+ * - Graceful shutdown
+ */
+
+require('dotenv').config();
 const WebSocket = require('ws');
 const os = require('os');
+const bonjourLib = require('bonjour-service');
 
-const wss = new WebSocket.Server({ port: 8080 });
+// Configuration
+const PORT = process.env.PORT || 8080;
+const SERVICE_NAME = process.env.SERVICE_NAME || 'Hippo-WebRTC-Signaling';
+const HEARTBEAT_INTERVAL = 30000; // 30s
 
-const clients = new Map();
-const iceCandidateCount = new Map(); // Track ICE candidates per connection
+// Role-based client storage (v2 structure)
+const clients = {
+  sender: null,    // Mac
+  receiver: null   // Vision Pro
+};
+
+// ICE candidate statistics
+const iceCandidateCount = new Map();
 
 // Get local IP addresses
 function getLocalIPAddresses() {
@@ -13,7 +36,6 @@ function getLocalIPAddresses() {
 
   for (const name of Object.keys(interfaces)) {
     for (const iface of interfaces[name]) {
-      // Skip internal and non-IPv4 addresses
       if (iface.family === 'IPv4' && !iface.internal) {
         addresses.push({ name, address: iface.address });
       }
@@ -28,76 +50,190 @@ function getTimestamp() {
   return new Date().toLocaleTimeString('ko-KR', { hour12: false });
 }
 
-// Print connected clients info (simplified)
+// Print connected clients info
 function printClientsInfo() {
-  const clientList = Array.from(clients.keys()).join(', ');
-  console.log(`   Active Clients [${clients.size}]: ${clientList || 'None'}`);
+  const activeClients = [];
+  if (clients.sender) activeClients.push('sender');
+  if (clients.receiver) activeClients.push('receiver');
+
+  console.log(`   Active Clients [${activeClients.length}]: ${activeClients.join(', ') || 'None'}`);
 }
 
-wss.on('connection', (ws) => {
-  console.log(`[${getTimestamp()}] New client connected (awaiting registration...)`);
+// Create WebSocket server
+const wss = new WebSocket.Server({
+  port: PORT,
+  perMessageDeflate: false
+});
+
+// Print server startup information
+console.log('\n╔═══════════════════════════════════════════════╗');
+console.log('║   WebRTC Signaling Server Started            ║');
+console.log('╚═══════════════════════════════════════════════╝');
+
+console.log(`\n📍 Server Information:`);
+console.log(`   Port: ${PORT}`);
+console.log(`   Local: ws://localhost:${PORT}`);
+
+const ipAddresses = getLocalIPAddresses();
+if (ipAddresses.length > 0) {
+  console.log(`\n🌐 Network Access:`);
+  ipAddresses.forEach(({ name, address }) => {
+    console.log(`   ${name}: ws://${address}:${PORT}`);
+  });
+}
+
+// Bonjour auto-discovery
+const Bonjour = bonjourLib.default || bonjourLib;
+const bonjour = new Bonjour();
+const service = bonjour.publish({
+  name: SERVICE_NAME,
+  type: 'ws',
+  port: PORT,
+  txt: {
+    service: 'webrtc-signaling',
+    version: '1.0'
+  }
+});
+
+console.log(`\n🔍 Bonjour Service Published:`);
+console.log(`   Name: ${SERVICE_NAME}`);
+console.log(`   Type: _ws._tcp`);
+console.log(`   Clients can auto-discover this server!`);
+
+console.log('\n✓ Server ready - Waiting for connections...\n');
+console.log('─'.repeat(50) + '\n');
+
+// Handle new connections
+wss.on('connection', (ws, req) => {
+  const clientIP = req.socket.remoteAddress;
+  console.log(`[${getTimestamp()}] New client connected (IP: ${clientIP}, awaiting registration...)`);
+
+  let clientRole = null;
+  let isAlive = true;
+
+  // Heartbeat mechanism (v2)
+  ws.on('pong', () => {
+    isAlive = true;
+  });
 
   ws.on('message', (message) => {
     try {
       const data = JSON.parse(message);
-      const senderId = data.senderId || ws.clientId || 'unknown';
-      const targetId = data.targetId;
 
       switch (data.type) {
         case 'register':
-          const clientId = data.clientId || data.role || 'unknown';
-          clients.set(clientId, ws);
-          ws.clientId = clientId;
-          iceCandidateCount.set(clientId, { sent: 0, received: 0 });
+          clientRole = data.role || data.clientId; // Support both 'role' and 'clientId'
 
-          console.log(`\n[${getTimestamp()}] CLIENT REGISTERED`);
-          console.log(`   Client: ${clientId}`);
-          printClientsInfo();
-          console.log('');
+          // Handle sender registration
+          if (clientRole === 'sender') {
+            if (clients.sender) {
+              console.log(`[${getTimestamp()}] ⚠️  Replacing existing sender connection`);
+              clients.sender.close();
+            }
+            clients.sender = ws;
+            ws.clientRole = 'sender';
+            iceCandidateCount.set('sender', { sent: 0, received: 0 });
+
+            console.log(`\n[${getTimestamp()}] SENDER REGISTERED (Mac)`);
+            console.log(`   IP: ${clientIP}`);
+            printClientsInfo();
+            console.log('');
+
+            // Send registration confirmation (v2)
+            ws.send(JSON.stringify({
+              type: 'registered',
+              role: 'sender'
+            }));
+          }
+          // Handle receiver registration
+          else if (clientRole === 'receiver') {
+            if (clients.receiver) {
+              console.log(`[${getTimestamp()}] ⚠️  Replacing existing receiver connection`);
+              clients.receiver.close();
+            }
+            clients.receiver = ws;
+            ws.clientRole = 'receiver';
+            iceCandidateCount.set('receiver', { sent: 0, received: 0 });
+
+            console.log(`\n[${getTimestamp()}] RECEIVER REGISTERED (Vision Pro)`);
+            console.log(`   IP: ${clientIP}`);
+            printClientsInfo();
+            console.log('');
+
+            // Send registration confirmation (v2)
+            ws.send(JSON.stringify({
+              type: 'registered',
+              role: 'receiver'
+            }));
+
+            // Check if both clients are connected
+            if (clients.sender && clients.receiver) {
+              console.log(`[${getTimestamp()}] 🎉 Both clients connected! Ready for WebRTC signaling.\n`);
+            }
+          }
           break;
 
         case 'offer':
-          const targetClientOffer = clients.get(targetId);
-          if (targetClientOffer && targetClientOffer.readyState === WebSocket.OPEN) {
-            targetClientOffer.send(JSON.stringify(data));
-            console.log(`[${getTimestamp()}] OFFER: ${senderId} → ${targetId}`);
+          if (clients.receiver && clients.receiver.readyState === WebSocket.OPEN) {
+            // Forward using v2's approach but with improved logging
+            const forwardMessage = {
+              type: 'offer',
+              sdp: data.sdp
+            };
+            clients.receiver.send(JSON.stringify(forwardMessage));
+            console.log(`[${getTimestamp()}] OFFER: sender → receiver`);
           } else {
-            console.log(`[${getTimestamp()}] ⚠️  OFFER FAILED: ${senderId} → ${targetId} (target not available)`);
+            console.log(`[${getTimestamp()}] ⚠️  OFFER FAILED: receiver not available`);
           }
           break;
 
         case 'answer':
-          const targetClientAnswer = clients.get(targetId);
-          if (targetClientAnswer && targetClientAnswer.readyState === WebSocket.OPEN) {
-            targetClientAnswer.send(JSON.stringify(data));
-            console.log(`[${getTimestamp()}] ANSWER: ${senderId} → ${targetId}`);
+          if (clients.sender && clients.sender.readyState === WebSocket.OPEN) {
+            const forwardMessage = {
+              type: 'answer',
+              sdp: data.sdp
+            };
+            clients.sender.send(JSON.stringify(forwardMessage));
+            console.log(`[${getTimestamp()}] ANSWER: receiver → sender`);
           } else {
-            console.log(`[${getTimestamp()}] ⚠️  ANSWER FAILED: ${senderId} → ${targetId} (target not available)`);
+            console.log(`[${getTimestamp()}] ⚠️  ANSWER FAILED: sender not available`);
           }
           break;
 
         case 'ice-candidate':
         case 'iceCandidate':
-          const targetClientIce = clients.get(targetId);
-          if (targetClientIce && targetClientIce.readyState === WebSocket.OPEN) {
-            targetClientIce.send(JSON.stringify(data));
+          const fromClient = (ws === clients.sender) ? 'sender' : 'receiver';
+          const toClient = (ws === clients.sender) ? clients.receiver : clients.sender;
+          const toClientName = (ws === clients.sender) ? 'receiver' : 'sender';
+
+          if (toClient && toClient.readyState === WebSocket.OPEN) {
+            // Forward with v2's clean message format
+            const forwardMessage = {
+              type: 'iceCandidate',
+              candidate: data.candidate,
+              sdpMid: data.sdpMid,
+              sdpMLineIndex: data.sdpMLineIndex
+            };
+            toClient.send(JSON.stringify(forwardMessage));
 
             // Count ICE candidates
-            const count = iceCandidateCount.get(senderId);
+            const count = iceCandidateCount.get(fromClient);
             if (count) {
               count.sent++;
-              iceCandidateCount.set(senderId, count);
+              iceCandidateCount.set(fromClient, count);
             }
-            const recvCount = iceCandidateCount.get(targetId);
+            const recvCount = iceCandidateCount.get(toClientName);
             if (recvCount) {
               recvCount.received++;
-              iceCandidateCount.set(targetId, recvCount);
+              iceCandidateCount.set(toClientName, recvCount);
             }
 
-            // Only log summary occasionally (every 5 candidates)
+            // Log every 5 candidates to reduce noise
             if (count && count.sent % 5 === 0) {
-              console.log(`[${getTimestamp()}] ICE: ${senderId} → ${targetId} (${count.sent} sent)`);
+              console.log(`[${getTimestamp()}] ICE: ${fromClient} → ${toClientName} (${count.sent} sent)`);
             }
+          } else {
+            console.log(`[${getTimestamp()}] ⚠️  ICE FAILED: ${toClientName} not available`);
           }
           break;
 
@@ -109,44 +245,73 @@ wss.on('connection', (ws) => {
     }
   });
 
+  // Handle disconnection
   ws.on('close', () => {
-    // Remove client from map using stored clientId
-    if (ws.clientId) {
-      const stats = iceCandidateCount.get(ws.clientId);
-      clients.delete(ws.clientId);
-      iceCandidateCount.delete(ws.clientId);
+    if (ws.clientRole) {
+      const roleName = ws.clientRole === 'sender' ? 'Mac (Sender)' : 'Vision Pro (Receiver)';
+      const stats = iceCandidateCount.get(ws.clientRole);
 
-      console.log(`\n[${getTimestamp()}] CLIENT DISCONNECTED`);
-      console.log(`   Client: ${ws.clientId}`);
+      console.log(`\n[${getTimestamp()}] CLIENT DISCONNECTED: ${roleName}`);
       if (stats) {
         console.log(`   ICE Stats: ${stats.sent} sent, ${stats.received} received`);
       }
+
+      // Remove client reference
+      if (ws.clientRole === 'sender') {
+        clients.sender = null;
+      } else if (ws.clientRole === 'receiver') {
+        clients.receiver = null;
+      }
+
+      iceCandidateCount.delete(ws.clientRole);
       printClientsInfo();
       console.log('');
+    } else {
+      console.log(`\n[${getTimestamp()}] Unregistered client disconnected`);
     }
   });
 
+  // Handle errors
   ws.on('error', (error) => {
-    console.error('WebSocket error:', error);
+    console.error(`[${getTimestamp()}] WebSocket error:`, error);
   });
 });
 
-// Print server startup information
-console.log('\n╔═══════════════════════════════════════════════╗');
-console.log('║   WebRTC Signaling Server Started            ║');
-console.log('╚═══════════════════════════════════════════════╝');
+// Heartbeat interval to detect dead connections (v2)
+const heartbeatInterval = setInterval(() => {
+  wss.clients.forEach((ws) => {
+    if (ws.isAlive === false) {
+      console.log(`[${getTimestamp()}] 💀 Terminating dead connection`);
+      return ws.terminate();
+    }
 
-console.log(`\n📍 Server Information:`);
-console.log(`   Port: 8080`);
-console.log(`   Local: ws://localhost:8080`);
-
-const ipAddresses = getLocalIPAddresses();
-if (ipAddresses.length > 0) {
-  console.log(`\n🌐 Network Access:`);
-  ipAddresses.forEach(({ name, address }) => {
-    console.log(`   ${name}: ws://${address}:8080`);
+    ws.isAlive = false;
+    ws.ping();
   });
-}
+}, HEARTBEAT_INTERVAL);
 
-console.log('\n✓ Server ready - Waiting for connections...\n');
-console.log('─'.repeat(50) + '\n');
+// Graceful shutdown (v2)
+process.on('SIGINT', () => {
+  console.log(`\n[${getTimestamp()}] 🛑 Shutting down server...`);
+
+  // Unpublish Bonjour service
+  service.stop(() => {
+    console.log(`[${getTimestamp()}] ✅ Bonjour service unpublished`);
+  });
+
+  // Close WebSocket server
+  clearInterval(heartbeatInterval);
+  wss.close(() => {
+    console.log(`[${getTimestamp()}] ✅ WebSocket server closed`);
+    process.exit(0);
+  });
+});
+
+// Cleanup on server shutdown
+wss.on('close', () => {
+  clearInterval(heartbeatInterval);
+  bonjour.destroy();
+  console.log(`\n[${getTimestamp()}] 🛑 Signaling Server stopped`);
+});
+
+console.log(`[${getTimestamp()}] Server is running. Press Ctrl+C to stop.\n`);

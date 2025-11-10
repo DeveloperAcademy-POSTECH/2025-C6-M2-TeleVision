@@ -4,6 +4,19 @@
 <dict>
 	<key>NSFileProviderDomainUsageDescription</key>
 	<string>3D 모델 파일 접근 권한 필요</string>
+	<key>NSAppTransportSecurity</key>
+	<dict>
+		<key>NSAllowsLocalNetworking</key>
+		<true/>
+		<key>NSAllowsArbitraryLoadsInWebContent</key>
+		<true/>
+	</dict>
+	<key>NSLocalNetworkUsageDescription</key>
+	<string>Hippo needs local network access to discover and connect to the streaming server.</string>
+	<key>NSBonjourServices</key>
+	<array>
+		<string>_ws._tcp</string>
+	</array>
 	<key>UIApplicationSceneManifest</key>
 	<dict>
 		<key>UIApplicationPreferredDefaultSceneSessionRole</key>
