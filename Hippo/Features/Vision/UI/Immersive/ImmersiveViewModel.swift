@@ -16,6 +16,9 @@ final class ImmersiveViewModel {
     public var isShowingFinishAlert: Bool = false
     public var isShowingAssetListView: Bool = true
     
+    // MARK: -- 객체 생성 관련 상태 추가
+    public var selectedAssetURL: URL? = nil // AssetListView에서 선택된 URL
+    
     // MARK: -- 윈도우 라이프사이클 추적 변수
     public var isSurgeryBottomMenuOpen: Bool = false
     public var isEntitySettingPanelOpen: Bool = false

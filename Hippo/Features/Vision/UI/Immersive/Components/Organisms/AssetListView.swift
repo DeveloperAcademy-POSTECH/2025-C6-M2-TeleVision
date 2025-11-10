@@ -40,12 +40,11 @@ struct AssetListView: View {
             )
             Spacer()
             
-            GlowingCapsuleButton(buttonText: "생성하기", action: {
+            GlowingCapsuleButton(buttonText: "선택하기", action: {
                 if let url = selectedURL {
-                    immersiveViewModel.isShowingAssetListView = false
                     Task {
-                        await runtime.placeEntity(url: url)
-                        dismissWindow(id: WindowIDs.assetListView)
+                        immersiveViewModel.selectedAssetURL = url
+                        immersiveViewModel.isShowingAssetListView = false
                     }
                 }
             })
@@ -59,8 +58,10 @@ struct AssetListView: View {
             if selectedURL == nil {
                 selectedURL = fileURLs.first
             }
+//            if let url = immersiveViewModel.selectedAssetURL {
+//                selectedURL = url
+//            }
         }
-        
     }
 }
 
