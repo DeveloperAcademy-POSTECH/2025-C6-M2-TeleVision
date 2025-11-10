@@ -190,6 +190,8 @@
 		2581FF672EC1A9140059678D /* BonjourServiceDiscovery.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2581FF662EC1A9140059678D /* BonjourServiceDiscovery.swift */; };
 		2581FF682EC1A9140059678D /* BonjourServiceDiscovery.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2581FF662EC1A9140059678D /* BonjourServiceDiscovery.swift */; };
 		2581FF692EC1A9140059678D /* BonjourServiceDiscovery.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2581FF662EC1A9140059678D /* BonjourServiceDiscovery.swift */; };
+		2581FF6C2EC1C4640059678D /* EndoscopeStreamViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2581FF6B2EC1C4640059678D /* EndoscopeStreamViewModel.swift */; };
+		2581FF6D2EC1C4640059678D /* ConnectionOverlay.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2581FF6A2EC1C4640059678D /* ConnectionOverlay.swift */; };
 		25E78B602EB90D4600D8CAD2 /* OperationStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = 25E78B5D2EB90D4600D8CAD2 /* OperationStatus.swift */; };
 		25E78B612EB90D4600D8CAD2 /* Operation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 25E78B542EB90D4600D8CAD2 /* Operation.swift */; };
 		25E78B622EB90D4600D8CAD2 /* OperationAsset.swift in Sources */ = {isa = PBXBuildFile; fileRef = 25E78B552EB90D4600D8CAD2 /* OperationAsset.swift */; };
@@ -525,6 +527,8 @@
 		2581FF622EBFB6040059678D /* HEVCVideoDecoder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HEVCVideoDecoder.swift; sourceTree = "<group>"; };
 		2581FF632EBFB6040059678D /* HEVCVideoDecoderFactory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HEVCVideoDecoderFactory.swift; sourceTree = "<group>"; };
 		2581FF662EC1A9140059678D /* BonjourServiceDiscovery.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BonjourServiceDiscovery.swift; sourceTree = "<group>"; };
+		2581FF6A2EC1C4640059678D /* ConnectionOverlay.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConnectionOverlay.swift; sourceTree = "<group>"; };
+		2581FF6B2EC1C4640059678D /* EndoscopeStreamViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EndoscopeStreamViewModel.swift; sourceTree = "<group>"; };
 		25E78B542EB90D4600D8CAD2 /* Operation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Operation.swift; sourceTree = "<group>"; };
 		25E78B552EB90D4600D8CAD2 /* OperationAsset.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OperationAsset.swift; sourceTree = "<group>"; };
 		25E78B562EB90D4600D8CAD2 /* OperationRecording.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OperationRecording.swift; sourceTree = "<group>"; };
@@ -1464,6 +1468,8 @@
 		C050AA242EA8150500352314 /* Immersive */ = {
 			isa = PBXGroup;
 			children = (
+				2581FF6A2EC1C4640059678D /* ConnectionOverlay.swift */,
+				2581FF6B2EC1C4640059678D /* EndoscopeStreamViewModel.swift */,
 				2581FF5A2EBF66AC0059678D /* EndoscopeStreamWindow.swift */,
 				2581FF172EBE19FF0059678D /* EndoscopeStreamView.swift */,
 				1446FB9B2EAE6987000BCF61 /* Components */,
@@ -1877,6 +1883,8 @@
 				C0F97AB22EA401160063E159 /* OperationAssetDisplayModel.swift in Sources */,
 				C0F97B2C2EA439080063E159 /* UpdatePatient.swift in Sources */,
 				14A17F972EB34F46009D16CF /* OperationInputHeader.swift in Sources */,
+				2581FF6C2EC1C4640059678D /* EndoscopeStreamViewModel.swift in Sources */,
+				2581FF6D2EC1C4640059678D /* ConnectionOverlay.swift in Sources */,
 				C0F97ADA2EA420E10063E159 /* DataDependencies.swift in Sources */,
 				14DE513F2EB60E610027D9A0 /* FileAttachmentSection.swift in Sources */,
 				1446FBED2EAFA477000BCF61 /* FormSection.swift in Sources */,
