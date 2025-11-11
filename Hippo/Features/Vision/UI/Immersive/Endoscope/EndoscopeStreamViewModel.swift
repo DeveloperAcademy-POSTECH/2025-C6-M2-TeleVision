@@ -19,9 +19,6 @@ final class EndoscopeStreamViewModel: ObservableObject {
     @Published var webRTCReceiver: WebRTCReceiver
     @Published var settings = ConnectionSettings()
 
-    // Compositor renderer for true stereo (protocol-based)
-    let compositorRenderer: (any StereoRendering)?
-
     // MARK: - Private Properties
 
     private let bonjourDiscovery = BonjourServiceDiscovery()
@@ -49,14 +46,7 @@ final class EndoscopeStreamViewModel: ObservableObject {
     // MARK: - Initialization
 
     init() {
-        // Create best available compositor renderer (factory handles all platform checks)
-        self.compositorRenderer = StereoRendererFactory.createCompositorRenderer()
         self.webRTCReceiver = WebRTCReceiver()
-
-        // Connect compositor renderer if available
-        if let renderer = compositorRenderer {
-            webRTCReceiver.setCompositorRenderer(renderer)
-        }
     }
 
     // MARK: - Public Methods
