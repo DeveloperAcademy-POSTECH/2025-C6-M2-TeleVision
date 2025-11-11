@@ -434,6 +434,60 @@ public final class WebRTCReceiver: NSObject, ObservableObject {
         }
     }
 
+    // MARK: - Stereo Tagged Stream (ConvertingModel path)
+
+    private func enqueueStereoTaggedStream(buffer pixelBuffer: CVPixelBuffer, pts: CMTime, duration: CMTime) {
+        Task {
+            do {
+                // Use ConvertingModel to split SBS into tagged stereo sample
+                guard let stereoSample = try await convertingModel?.process(pixelBuffer, pts: pts, duration: duration) else {
+                    logger.error("❌ Failed to convert SBS to stereo tagged sample")
+                    return
+                }
+
+                await enqueueReadyStereoSample(stereoSample)
+            } catch {
+                logger.error("❌ ConvertingModel error: \(error.localizedDescription)")
+            }
+        }
+    }
+
+    private func enqueueReadyStereoSample(_ sample: CMSampleBuffer) async {
+        // Check if renderer is ready
+        guard isRendererReady else {
+            if !hasLoggedNoTarget {
+                logger.info("⏳ Renderer not ready yet, skipping stereo frame...")
+                hasLoggedNoTarget = true
+            }
+            return
+        }
+
+        // Check renderer status
+        let rendererStatus = stereoRenderer.status
+        if rendererStatus == .failed {
+            logger.warning("⚠️ Renderer status failed, attempting recovery")
+            stereoRenderer.flush()
+            stereoRenderer.stopRequestingMediaData()
+            stereoRenderer.requestMediaDataWhenReady(on: .main) { /* keep ready */ }
+            return
+        }
+
+        // Log on first frame
+        if self.framesEnqueuedCount == 0 {
+            logger.info("📊 Renderer status: \(rendererStatus.rawValue), isReadyForMoreMediaData: \(self.stereoRenderer.isReadyForMoreMediaData)")
+            logger.info("✅ First stereo tagged frame from ConvertingModel")
+        }
+
+        stereoRenderer.enqueue(sample)
+        self.framesEnqueuedCount += 1
+
+        if self.framesEnqueuedCount == 1 {
+            logger.info("✅ First stereo tagged sample enqueued to stereoRenderer")
+        } else if self.framesEnqueuedCount % 60 == 0 {
+            logger.debug("📊 Enqueued \(self.framesEnqueuedCount) stereo frames total")
+        }
+    }
+
     // MARK: - Path B: Stereo Metal update (legacy, deprecated)
 
     private func feedStereoMetal(with pixelBuffer: CVPixelBuffer) {
@@ -716,9 +770,9 @@ extension WebRTCReceiver: LKRTCVideoRenderer {
         // Render to selected path only (no simultaneous multi-path rendering)
         switch currentRenderPath {
         case .videoPlayer:
-            // PATH A: Enqueue frames to AVSampleBufferVideoRenderer for VideoPlayerComponent
-            // This uses tagged stereo CMSampleBuffer for RealityKit VideoMaterial
-            enqueueSingleStream(buffer: pixelBuffer, pts: pts, duration: duration)
+            // PATH A: Use ConvertingModel to split SBS and create tagged stereo CMSampleBuffer
+            // This properly splits SBS video into left/right eye buffers with stereo tags
+            enqueueStereoTaggedStream(buffer: pixelBuffer, pts: pts, duration: duration)
 
         case .metal:
             // PATH B: Update Stereo Metal renderer with BGRA frames
