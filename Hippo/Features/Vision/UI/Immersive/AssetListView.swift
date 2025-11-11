@@ -47,9 +47,9 @@ struct AssetListView: View {
                 }
             })
             .disabled(selectedURL == nil)
-            .padding(.bottom, 20)
+            .padding(.vertical, 20)
         }
-        .frame(width: 560)
+        .frame(width: 600)
         .glassBackgroundEffect()
         .onAppear {
             if selectedURL == nil {

@@ -18,7 +18,7 @@ struct AssetListScrollView: View {
         ScrollView(.horizontal, showsIndicators: false) {
             HStack(spacing: cardSpacing) {
                 Spacer()
-                    .frame(width: 80)
+                    .frame(width: 120)
                 
                 ForEach(fileURLs, id: \.self) { url in
                     let isSelected = (selectedURL == url)
@@ -38,14 +38,14 @@ struct AssetListScrollView: View {
                     }
                 }
                 Spacer()
-                    .frame(width: 80)
+                    .frame(width: 120)
             }
             .scrollTargetLayout()
             .animation(.spring(response: 0.3, dampingFraction: 0.7), value: selectedURL)
         }
-        .padding(.horizontal, 100)
+        .clipShape(RoundedRectangle(cornerRadius: 40, style: .continuous))
+        .padding(.horizontal, 28)
         .scrollTargetBehavior(.viewAligned)
         .scrollPosition(id: $selectedURL)
-        
     }
 }
