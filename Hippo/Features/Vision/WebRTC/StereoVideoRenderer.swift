@@ -121,10 +121,11 @@ public final class StereoVideoRenderer: ObservableObject {
     /// - ~16:9 (1.78) → Mono
     /// - ~32:9 (3.56) → SBS (Side-by-Side)
     public func updateFrame(_ pixelBuffer: CVPixelBuffer) {
-        // Performance optimization: Skip every other frame to reduce CPU load
+        // Performance optimization: Render every 3rd frame (10fps) to reduce CPU/memory load
+        // This dramatically reduces the expensive CPU readback in TextureResource creation
         frameCounter += 1
-        if frameCounter % 2 == 0 {
-            return  // Skip even frames (render at ~15fps instead of 30fps)
+        if frameCounter % 3 != 0 {
+            return  // Skip 2 out of 3 frames (render at ~10fps instead of 30fps)
         }
 
         logger.info("🔍 updateFrame called - isReady: \(self.isReady), leftPlane: \(self.leftPlaneEntity != nil), rightPlane: \(self.rightPlaneEntity != nil)")
@@ -424,7 +425,12 @@ public final class StereoVideoRenderer: ObservableObject {
         entity.isEnabled = true
 
         // Create TextureResource from Metal texture (CPU fallback path)
-        // RealityKit internally optimizes this path
+        // NOTE: This is the main performance bottleneck - CPU readback is expensive
+        // RealityKit doesn't provide a direct GPU-to-GPU path for custom Metal textures
+        // We've optimized by:
+        // 1. Reducing frame rate to 10fps (skip 2/3 frames)
+        // 2. Reusing Metal textures via caching
+        // 3. Using efficient blit operations for texture splitting
         do {
             let resource = try TextureResource(from: texture)
             var material = UnlitMaterial()

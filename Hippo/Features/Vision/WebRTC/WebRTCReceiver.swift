@@ -30,6 +30,9 @@ public final class WebRTCReceiver: NSObject, ObservableObject {
     // Path B (stereo Metal) renderer - Legacy RealityKit approach (deprecated, use Path A instead)
     public let stereoMetalRenderer = StereoVideoRenderer()
 
+    // Path C (compositor) renderer - Protocol-based for clean abstraction
+    private var compositorRenderer: (any StereoRendering)?
+
     // Optional: legacy converting model for tagged stereo CMSampleBuffer (kept for experimentation)
     private var convertingModel: ConvertingModel?
 
@@ -74,6 +77,13 @@ public final class WebRTCReceiver: NSObject, ObservableObject {
     // Track if renderer is actually ready
     private var isRendererReady: Bool = false
 
+    // Rendering path selection
+    public enum RenderPath {
+        case metal      // Path B: StereoVideoRenderer (for stereoPlanes/mono)
+        case videoPlayer // Path A: AVSampleBufferVideoRenderer (for stereoVideo)
+    }
+    private var currentRenderPath: RenderPath = .metal
+
     // MARK: CIContext for YUV -> BGRA conversion (for Metal renderer path)
     private lazy var ciContext: CIContext = {
         let options: [CIContextOption: Any] = [
@@ -86,6 +96,19 @@ public final class WebRTCReceiver: NSObject, ObservableObject {
     public init(signalingServerURL: URL = URL(string: "ws://127.0.0.1:8080")!) {
         self.signalingServerURL = signalingServerURL
         super.init()
+    }
+
+    /// Set compositor renderer for true stereo (any conforming type)
+    public func setCompositorRenderer(_ renderer: any StereoRendering) {
+        self.compositorRenderer = renderer
+        logger.info("✅ Compositor renderer connected")
+    }
+
+    /// Set rendering path (Path A: VideoPlayerComponent or Path B: Metal)
+    public func setRenderPath(_ path: RenderPath) {
+        currentRenderPath = path
+        let pathName = path == .metal ? "Path B (StereoVideoRenderer)" : "Path A (VideoPlayerComponent)"
+        logger.info("🔄 Render path switched to: \(pathName)")
     }
 
     /// Update the signaling server URL (requires restart)
@@ -633,9 +656,12 @@ extension WebRTCReceiver: LKRTCVideoRenderer {
         // This is the working path for RealityKit stereo display
         self.feedStereoMetal(with: pixelBuffer)
 
+        // PATH C: Update Compositor renderer (if set)
+        compositorRenderer?.updateFrame(pixelBuffer)
+
         // Log frames received every 60 frames
         if self.framesReceived % 60 == 0 {
-            self.logger.info("📊 Received \(self.framesReceived) frames, feeding to StereoVideoRenderer")
+            self.logger.info("📊 Received \(self.framesReceived) frames, feeding to StereoVideoRenderer & Compositor")
         }
 
         // Optional: keep legacy converting model working behind a flag if needed

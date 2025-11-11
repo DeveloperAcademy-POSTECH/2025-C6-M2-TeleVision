@@ -65,8 +65,20 @@ public class HEVCVideoEncoder: NSObject, LKRTCVideoEncoder {
     public func startEncode(with settings: LKRTCVideoEncoderSettings, numberOfCores cores: Int32) -> Int {
         logger.info("🚀 Starting HEVC encoder: \(settings.width)×\(settings.height) @ \(settings.startBitrate) bps")
 
-        self.width = Int32(settings.width)
-        self.height = Int32(settings.height)
+        let newWidth = Int32(settings.width)
+        let newHeight = Int32(settings.height)
+
+        // IMPORTANT: If resolution changed, invalidate old session
+        if self.session != nil && (newWidth != self.width || newHeight != self.height) {
+            logger.warning("⚠️ Resolution changed (\(self.width)×\(self.height) → \(newWidth)×\(newHeight)), recreating encoder...")
+            if let oldSession = session {
+                VTCompressionSessionInvalidate(oldSession)
+                self.session = nil
+            }
+        }
+
+        self.width = newWidth
+        self.height = newHeight
 
         // IMPORTANT: Ensure minimum bitrate for HEVC encoding quality
         // WebRTC may start with very low bitrate (10000 bps), but HEVC needs much higher

@@ -298,7 +298,8 @@ final class SignalingClient {
             switch type {
             case "renegotiate":
                 delegate?.signalingClientDidReceiveRenegotiate(self)
-            case "receiver-ready":
+            case "receiver-ready", "ready":
+                // Handle both "receiver-ready" and "ready" for compatibility
                 delegate?.signalingClientDidReceiveReceiverReady(self)
             default:
                 logger.warning("⚠️ Unknown message type: \(type)")

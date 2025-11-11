@@ -6,4 +6,5 @@
 //
 enum ImmersiveIDs {
     static let surgery = "SurgeryImmersiveSpace"
+    static let endoscopeStereo = "EndoscopeStereoImmersiveSpace"
 }

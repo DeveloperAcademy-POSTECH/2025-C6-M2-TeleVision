@@ -54,12 +54,13 @@ public final class FrameSync: FrameSyncing {
     // MARK: Configuration
 
     /// Maximum time difference for frame matching
-    /// Set to 50ms to handle phase offset between cameras and timing jitter
-    private let matchTolerance: CMTime = CMTime(value: 50, timescale: 1000)  // 50ms
+    /// Set to 500ms to handle large offset between camera start times
+    /// (observed: left and right cameras can have ~400ms start time difference)
+    private let matchTolerance: CMTime = CMTime(value: 500, timescale: 1000)  // 500ms
 
     /// Maximum age for buffered frames before dropping
-    /// Set to 1 second to handle camera start time differences
-    private let maxFrameAge: CMTime = CMTime(value: 1000, timescale: 1000)  // 1000ms (1 second)
+    /// Set to 2 seconds to handle camera start time differences
+    private let maxFrameAge: CMTime = CMTime(value: 2000, timescale: 1000)  // 2000ms (2 seconds)
 
     /// Maximum buffer size per source
     private let maxBufferSize: Int = 10
@@ -230,6 +231,10 @@ public final class FrameSync: FrameSyncing {
             return nil
         }
 
+        // RELAXED: Allow matching even with single frames in one buffer
+        // This helps when cameras have large start time offsets (e.g., 400ms+)
+        // Original guard prevented matching when one camera started late
+
         // Get the oldest frames from each buffer (FIFO)
         let (leftPB, leftPTS, leftSize) = leftBuffer[0]
         let (rightPB, rightPTS, rightSize) = rightBuffer[0]
@@ -243,8 +248,16 @@ public final class FrameSync: FrameSyncing {
         let toleranceSeconds = CMTimeGetSeconds(matchTolerance)
         let toleranceMs = toleranceSeconds * 1000.0
 
+        // Debug: Log first few match attempts
+        if _stats.syncedPairCount < 3 {
+            logger.info("🔍 Match attempt: L_PTS=\(String(format: "%.3f", CMTimeGetSeconds(leftPTS)))s, R_PTS=\(String(format: "%.3f", CMTimeGetSeconds(rightPTS)))s, delta=\(String(format: "%.1f", deltaMs))ms, tolerance=\(String(format: "%.1f", toleranceMs))ms")
+        }
+
         if deltaMs <= toleranceMs {
             // Match found!
+            if _stats.syncedPairCount < 3 {
+                logger.info("✅ MATCH! Creating synced pair #\(self._stats.syncedPairCount + 1)")
+            }
 
             // Calculate synchronized PTS (average)
             let syncPTS = CMTimeAdd(leftPTS, rightPTS)

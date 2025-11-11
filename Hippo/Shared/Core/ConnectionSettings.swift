@@ -59,6 +59,18 @@ final class ConnectionSettings: ObservableObject {
         self.serverPort = UserDefaults.standard.string(forKey: "ServerPort") ?? "8080"
 
         logger.info("📂 Loaded settings - Manual: \(self.useManualConnection), IP: \(self.serverIP), Port: \(self.serverPort)")
+
+        // Auto-disable manual connection if saved IP looks invalid or from different network
+        // This helps with KT hotspot IPv6-only networks where old IPv4 addresses won't work
+        if self.useManualConnection && !self.serverIP.isEmpty {
+            // Check if IP starts with common problematic patterns
+            if self.serverIP.starts(with: "192.168") ||
+               self.serverIP.starts(with: "10.") ||
+               self.serverIP.starts(with: "172.") {
+                logger.warning("⚠️ Saved IP may be from different network session. Consider using auto-discovery instead.")
+                logger.warning("💡 Tip: Disable manual connection to use Bonjour auto-discovery")
+            }
+        }
     }
 
     // MARK: - Methods

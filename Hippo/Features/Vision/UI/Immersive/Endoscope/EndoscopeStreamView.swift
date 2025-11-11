@@ -38,23 +38,23 @@ struct EndoscopeStreamView: View {
                     displayMode: displayMode
                 )
                     .frame(width: 600, height: 338)  // 16:9 비율 (1920×1080 스케일)
-                    .clipShape(RoundedRectangle(cornerRadius: 20))
-                    .glassBackgroundEffect(in: .rect(cornerRadius: 20))
-                    .shadow(radius: 10)
-                    .overlay(
-                        RoundedRectangle(cornerRadius: 20)
-                            .stroke(Color.hippoPrimary.opacity(0.3), lineWidth: 2)
-                    )
-                    .overlay(alignment: .topTrailing) {
-                        // 연결 상태 표시
-                        ConnectionStatusBadge(isConnected: receiver.isConnected)
-                            .padding(12)
-                    }
-                    .overlay(alignment: .topLeading) {
-                        // 스테레오/모노 토글 버튼
-                        DisplayModeToggle(mode: $displayMode)
-                            .padding(12)
-                    }
+                .clipShape(RoundedRectangle(cornerRadius: 20))
+                .glassBackgroundEffect(in: .rect(cornerRadius: 20))
+                .shadow(radius: 10)
+                .overlay(
+                    RoundedRectangle(cornerRadius: 20)
+                        .stroke(Color.hippoPrimary.opacity(0.3), lineWidth: 2)
+                )
+                .overlay(alignment: .topTrailing) {
+                    // 연결 상태 표시
+                    ConnectionStatusBadge(isConnected: receiver.isConnected)
+                        .padding(12)
+                }
+                .overlay(alignment: .topLeading) {
+                    // 스테레오/모노 토글 버튼
+                    DisplayModeToggle(mode: $displayMode)
+                        .padding(12)
+                }
             }
         }
         .opacity(isVisible ? 1.0 : 0.0)
