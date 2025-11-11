@@ -23,22 +23,20 @@ struct AssetListView: View {
     }
     
     var body: some View {
-        VStack {
+        VStack(spacing: 10) {
             HStack {
                 Text("3D Asset List")
                     .font(.title)
                 Spacer()
             }
-            .padding()
-            .padding(.leading, 10)
+            .padding(.vertical, 20)
+            .padding(.horizontal, 28)
             
-            Spacer()
             
             AssetListScrollView(
                 fileURLs: fileURLs,
                 selectedURL: $selectedURL
             )
-            Spacer()
             
             GlowingCapsuleButton(buttonText: "생성하기", action: {
                 if let url = selectedURL {
@@ -51,8 +49,7 @@ struct AssetListView: View {
             .disabled(selectedURL == nil)
             .padding(.bottom, 20)
         }
-        .frame(width: 680, height: 440)
-        .padding()
+        .frame(width: 560)
         .glassBackgroundEffect()
         .onAppear {
             if selectedURL == nil {
