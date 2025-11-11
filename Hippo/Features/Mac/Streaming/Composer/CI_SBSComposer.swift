@@ -37,6 +37,10 @@ public final class CI_SBSComposer: SBSComposing {
     private let ciContext: CIContext
     private let logger = Logger(subsystem: "com.television.hippo", category: "Composer")
 
+    // Debug counters
+    private var composeCount: Int = 0
+    private var sbsLayoutCount: Int = 0
+
     // MARK: Pixel Buffer Pool
 
     /// Pixel buffer pools for each output mode
@@ -77,6 +81,12 @@ public final class CI_SBSComposer: SBSComposing {
         rightSize: CGSize,
         config: SBSComposerConfig
     ) throws -> CVPixelBuffer {
+        // Debug: Log first few compositions
+        composeCount += 1
+        if composeCount <= 3 {
+            logger.info("🎨 [SBS Compose #\(self.composeCount)] Left: \(Int(leftSize.width))×\(Int(leftSize.height)), Right: \(Int(rightSize.width))×\(Int(rightSize.height)), Mode: \(config.mode.rawValue)")
+        }
+
         // 1. Create CIImages from pixel buffers
         let leftImage = CIImage(cvPixelBuffer: left)
         let rightImage = CIImage(cvPixelBuffer: right)
@@ -244,6 +254,12 @@ public final class CI_SBSComposer: SBSComposing {
         right: CIImage,
         mode: SBSMode
     ) throws -> CIImage {
+        // Debug: Log composition details
+        sbsLayoutCount += 1
+        if sbsLayoutCount <= 3 {
+            logger.info("📐 [SBS Layout #\(self.sbsLayoutCount)] Left at (0,0), Right at (\(Int(mode.eyeSize.width)),0), Output: \(Int(mode.outputSize.width))×\(Int(mode.outputSize.height))")
+        }
+
         // Position left eye at (0, 0)
         let leftPositioned = left
 

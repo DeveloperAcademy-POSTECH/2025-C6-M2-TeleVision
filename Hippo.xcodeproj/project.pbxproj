@@ -199,6 +199,10 @@
 		2581FF742EC20A970059678D /* ConnectionSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2581FF722EC20A970059678D /* ConnectionSettings.swift */; };
 		2581FF752EC20A970059678D /* ConnectionSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2581FF722EC20A970059678D /* ConnectionSettings.swift */; };
 		2581FF782EC20B030059678D /* ConnectionSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2581FF762EC20B030059678D /* ConnectionSettingsView.swift */; };
+		2581FF7A2EC2753A0059678D /* EndoscopeImmersiveSpace.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2581FF792EC2753A0059678D /* EndoscopeImmersiveSpace.swift */; };
+		2581FF7E2EC2789A0059678D /* StereoRendererProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2581FF7D2EC2789A0059678D /* StereoRendererProtocol.swift */; };
+		2581FF7F2EC2789A0059678D /* StereoRendererFactory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2581FF7C2EC2789A0059678D /* StereoRendererFactory.swift */; };
+		2581FF802EC2789A0059678D /* CompositorStereoRenderer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2581FF7B2EC2789A0059678D /* CompositorStereoRenderer.swift */; };
 		25E78B602EB90D4600D8CAD2 /* OperationStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = 25E78B5D2EB90D4600D8CAD2 /* OperationStatus.swift */; };
 		25E78B612EB90D4600D8CAD2 /* Operation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 25E78B542EB90D4600D8CAD2 /* Operation.swift */; };
 		25E78B622EB90D4600D8CAD2 /* OperationAsset.swift in Sources */ = {isa = PBXBuildFile; fileRef = 25E78B552EB90D4600D8CAD2 /* OperationAsset.swift */; };
@@ -539,6 +543,10 @@
 		2581FF6E2EC1EEBA0059678D /* BonjourRelayService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BonjourRelayService.swift; sourceTree = "<group>"; };
 		2581FF722EC20A970059678D /* ConnectionSettings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConnectionSettings.swift; sourceTree = "<group>"; };
 		2581FF762EC20B030059678D /* ConnectionSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConnectionSettingsView.swift; sourceTree = "<group>"; };
+		2581FF792EC2753A0059678D /* EndoscopeImmersiveSpace.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EndoscopeImmersiveSpace.swift; sourceTree = "<group>"; };
+		2581FF7B2EC2789A0059678D /* CompositorStereoRenderer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CompositorStereoRenderer.swift; sourceTree = "<group>"; };
+		2581FF7C2EC2789A0059678D /* StereoRendererFactory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StereoRendererFactory.swift; sourceTree = "<group>"; };
+		2581FF7D2EC2789A0059678D /* StereoRendererProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StereoRendererProtocol.swift; sourceTree = "<group>"; };
 		25E78B542EB90D4600D8CAD2 /* Operation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Operation.swift; sourceTree = "<group>"; };
 		25E78B552EB90D4600D8CAD2 /* OperationAsset.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OperationAsset.swift; sourceTree = "<group>"; };
 		25E78B562EB90D4600D8CAD2 /* OperationRecording.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OperationRecording.swift; sourceTree = "<group>"; };
@@ -1029,6 +1037,9 @@
 		2581FF122EBE19AE0059678D /* WebRTC */ = {
 			isa = PBXGroup;
 			children = (
+				2581FF7B2EC2789A0059678D /* CompositorStereoRenderer.swift */,
+				2581FF7C2EC2789A0059678D /* StereoRendererFactory.swift */,
+				2581FF7D2EC2789A0059678D /* StereoRendererProtocol.swift */,
 				2581FF622EBFB6040059678D /* HEVCVideoDecoder.swift */,
 				2581FF632EBFB6040059678D /* HEVCVideoDecoderFactory.swift */,
 				2581FF5C2EBF94150059678D /* I420BufferConverter.swift */,
@@ -1501,17 +1512,6 @@
 			path = Immersive;
 			sourceTree = "<group>";
 		};
-		E0A1B0012EC5D00000000001 /* Endoscope */ = {
-			isa = PBXGroup;
-			children = (
-				2581FF6A2EC1C4640059678D /* ConnectionOverlay.swift */,
-				2581FF6B2EC1C4640059678D /* EndoscopeStreamViewModel.swift */,
-				2581FF5A2EBF66AC0059678D /* EndoscopeStreamWindow.swift */,
-				2581FF172EBE19FF0059678D /* EndoscopeStreamView.swift */,
-			);
-			path = Endoscope;
-			sourceTree = "<group>";
-		};
 		C050AA292EA816D100352314 /* DI */ = {
 			isa = PBXGroup;
 			children = (
@@ -1627,6 +1627,18 @@
 				C0F97B1A2EA435490063E159 /* ValidationError.swift */,
 			);
 			path = Errors;
+			sourceTree = "<group>";
+		};
+		E0A1B0012EC5D00000000001 /* Endoscope */ = {
+			isa = PBXGroup;
+			children = (
+				2581FF792EC2753A0059678D /* EndoscopeImmersiveSpace.swift */,
+				2581FF6A2EC1C4640059678D /* ConnectionOverlay.swift */,
+				2581FF6B2EC1C4640059678D /* EndoscopeStreamViewModel.swift */,
+				2581FF5A2EBF66AC0059678D /* EndoscopeStreamWindow.swift */,
+				2581FF172EBE19FF0059678D /* EndoscopeStreamView.swift */,
+			);
+			path = Endoscope;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -1778,6 +1790,9 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				2581FF7E2EC2789A0059678D /* StereoRendererProtocol.swift in Sources */,
+				2581FF7F2EC2789A0059678D /* StereoRendererFactory.swift in Sources */,
+				2581FF802EC2789A0059678D /* CompositorStereoRenderer.swift in Sources */,
 				C04678102EA00B1F00D160DA /* DeletePatient.swift in Sources */,
 				278623342EB790CE00F97BE3 /* AssetListScrollCard.swift in Sources */,
 				27D1DB492EBC781200AC7F3D /* ImmersiveViewModel.swift in Sources */,
@@ -1901,6 +1916,7 @@
 				14A17F8D2EB3146D009D16CF /* OperationCard.swift in Sources */,
 				144254382EAA9FF000583CC3 /* OperationState.swift in Sources */,
 				C0F97B2F2EA439290063E159 /* UpdatePatientCommand.swift in Sources */,
+				2581FF7A2EC2753A0059678D /* EndoscopeImmersiveSpace.swift in Sources */,
 				1494DE732EA72BCE000CD284 /* OperationDetailView.swift in Sources */,
 				14CC75722EA6AD5800399562 /* PatientSectionView.swift in Sources */,
 				C0F97AB12EA401160063E159 /* DisplayHelpers.swift in Sources */,

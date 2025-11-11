@@ -19,6 +19,9 @@ final class EndoscopeStreamViewModel: ObservableObject {
     @Published var webRTCReceiver: WebRTCReceiver
     @Published var settings = ConnectionSettings()
 
+    // Compositor renderer for true stereo (protocol-based)
+    let compositorRenderer: (any StereoRendering)?
+
     // MARK: - Private Properties
 
     private let bonjourDiscovery = BonjourServiceDiscovery()
@@ -46,7 +49,14 @@ final class EndoscopeStreamViewModel: ObservableObject {
     // MARK: - Initialization
 
     init() {
+        // Create best available compositor renderer (factory handles all platform checks)
+        self.compositorRenderer = StereoRendererFactory.createCompositorRenderer()
         self.webRTCReceiver = WebRTCReceiver()
+
+        // Connect compositor renderer if available
+        if let renderer = compositorRenderer {
+            webRTCReceiver.setCompositorRenderer(renderer)
+        }
     }
 
     // MARK: - Public Methods
@@ -84,12 +94,24 @@ final class EndoscopeStreamViewModel: ObservableObject {
 
         guard let serverURL = settings.serverURL else {
             logger.error("❌ Invalid server URL")
-            connectionStatus = .failed("서버 주소가 올바르지 않습니다.\nIP 주소를 확인하세요.")
+            logger.info("💡 Falling back to Bonjour auto-discovery...")
+
+            // Disable manual connection and retry with auto-discovery
+            settings.useManualConnection = false
+            await connect()
             return
         }
 
         logger.info("📍 Manual server URL: \(serverURL.absoluteString)")
         await connectToServer(url: serverURL)
+
+        // If connection failed and we're on a hotspot, suggest disabling manual mode
+        if case .failed = connectionStatus {
+            logger.warning("⚠️ Manual connection failed. This may be due to:")
+            logger.warning("   - KT hotspot using IPv6-only networking")
+            logger.warning("   - Old IP address from different session")
+            logger.warning("💡 Try disabling manual connection to use auto-discovery")
+        }
     }
 
     /// Disconnect from server and cleanup

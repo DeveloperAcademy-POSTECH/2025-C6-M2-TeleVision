@@ -86,14 +86,13 @@ if (ipAddresses.length > 0) {
 const Bonjour = bonjourLib.default || bonjourLib;
 const bonjour = new Bonjour();
 
-// Get the primary non-internal IPv4 address for Bonjour
-const primaryIP = ipAddresses.length > 0 ? ipAddresses[0].address : 'localhost';
-
+// Don't specify host - let Bonjour advertise on all interfaces (IPv4 and IPv6)
+// This is critical for KT hotspot which may use IPv6-only networking
 const service = bonjour.publish({
   name: SERVICE_NAME,
   type: 'ws',
   port: PORT,
-  host: primaryIP,  // Explicitly set the host IP
+  // No 'host' specified - allows IPv4 and IPv6 auto-discovery
   txt: {
     service: 'webrtc-signaling',
     version: '1.0'
@@ -149,6 +148,15 @@ wss.on('connection', (ws, req) => {
               type: 'registered',
               role: 'sender'
             }));
+
+            // If receiver is already connected, notify sender to start offer
+            if (clients.receiver && clients.receiver.readyState === WebSocket.OPEN) {
+              console.log(`[${getTimestamp()}] 📤 Notifying sender to start (receiver already connected)`);
+              ws.send(JSON.stringify({
+                type: 'ready',
+                message: 'Both clients connected, you can start offer'
+              }));
+            }
           }
           // Handle receiver registration
           else if (clientRole === 'receiver') {
@@ -171,9 +179,14 @@ wss.on('connection', (ws, req) => {
               role: 'receiver'
             }));
 
-            // Check if both clients are connected
-            if (clients.sender && clients.receiver) {
-              console.log(`[${getTimestamp()}] 🎉 Both clients connected! Ready for WebRTC signaling.\n`);
+            // If sender is already connected, notify it to start offer
+            if (clients.sender && clients.sender.readyState === WebSocket.OPEN) {
+              console.log(`[${getTimestamp()}] 🎉 Both clients connected! Ready for WebRTC signaling.`);
+              console.log(`[${getTimestamp()}] 📤 Notifying sender to start offer\n`);
+              clients.sender.send(JSON.stringify({
+                type: 'ready',
+                message: 'Both clients connected, you can start offer'
+              }));
             }
           }
           break;

@@ -104,10 +104,18 @@ public final class BonjourServiceDiscovery: ObservableObject {
                     let addressStr = address.debugDescription
                     hostString = addressStr.components(separatedBy: "%").first ?? addressStr
                 case .ipv6(let address):
-                    // Remove interface name from IPv6 address and wrap in brackets
+                    // Keep zone ID (%en0) for link-local addresses - it's REQUIRED
+                    // URL-encode the % as %25 for proper URL formatting
                     let addressStr = address.debugDescription
-                    let cleanAddress = addressStr.components(separatedBy: "%").first ?? addressStr
-                    hostString = "[\(cleanAddress)]"
+                    if addressStr.lowercased().hasPrefix("fe80:") {
+                        // Link-local: keep zone ID and URL-encode %
+                        let urlEncodedAddr = addressStr.replacingOccurrences(of: "%", with: "%25")
+                        hostString = "[\(urlEncodedAddr)]"
+                    } else {
+                        // Non-link-local: remove zone ID if present
+                        let cleanAddress = addressStr.components(separatedBy: "%").first ?? addressStr
+                        hostString = "[\(cleanAddress)]"
+                    }
                 case .name(let hostname, _):
                     hostString = hostname
                 @unknown default:
@@ -500,9 +508,11 @@ public final class BonjourServiceDiscovery: ObservableObject {
             return (false, "IPv6 loopback (::1)")
         }
 
-        // Filter link-local (fe80::/10)
+        // ALLOW link-local (fe80::/10) for hotspot environments
+        // Link-local addresses are VALID for devices on the same network segment
+        // This is critical for KT hotspot IPv6-only networks
         if lowercased.hasPrefix("fe80:") {
-            return (false, "IPv6 link-local (fe80::)")
+            return (true, "IPv6 link-local (fe80::) - valid for local network")
         }
 
         // Filter null address (::)
@@ -515,7 +525,7 @@ public final class BonjourServiceDiscovery: ObservableObject {
             return (true, "IPv6 unique local address")
         }
 
-        // Accept other IPv6 addresses
+        // Accept other IPv6 addresses (global unicast, etc.)
         return (true, "Valid IPv6: \(address)")
     }
 
