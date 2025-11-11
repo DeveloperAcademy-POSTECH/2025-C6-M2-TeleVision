@@ -10,7 +10,7 @@ import SwiftUI
 
 struct AssetListScrollCard: View {
     let url: URL
-    let size: CGFloat = 240
+    let size: CGFloat = 200
     let isSelected: Bool
     
     var body: some View {
@@ -22,7 +22,7 @@ struct AssetListScrollCard: View {
             } placeholder: {
                 ProgressView()
             }
-            .frame(width: 200, height: 120)
+            .frame(width: size, height: size)
             .padding(.horizontal, 20)
             .onAppear {
                 _ = url.startAccessingSecurityScopedResource()
@@ -32,11 +32,5 @@ struct AssetListScrollCard: View {
             }
         }
         .frame(width: size, height: size)
-        .overlay {
-            RoundedRectangle(cornerRadius: 40)
-                .fill(.quaternary)
-                .frame(width: size, height: size)
-                .opacity(isSelected ? 1.0 : 0.0)
-        }
     }
 }

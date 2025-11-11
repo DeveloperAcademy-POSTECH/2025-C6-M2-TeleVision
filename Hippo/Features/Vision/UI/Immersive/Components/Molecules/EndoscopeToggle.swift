@@ -13,22 +13,22 @@ struct EndoscopeToggle: View {
     var body: some View {
         Toggle("내시경", isOn: $isOn)
             .toggleStyle(SizedSwitchToggleStyle(width: 70, height: 40, onTint: .hippoPrimary))
-            .frame(width: 127, height: 40)
+            .frame(width: 120, height: 40)
     }
 }
 
 struct SizedSwitchToggleStyle: ToggleStyle {
     var width: CGFloat = 70
-    var height: CGFloat = 40
+    var height: CGFloat = 36
     var onTint: Color = .hippoPrimary
     var offTint: Color = .gray.opacity(0.3)
     
     func makeBody(configuration: Configuration) -> some View {
-        let knob = height - 4
+        let knob = height - 8
         
         HStack(spacing: 4) {
             configuration.label
-                .font(.headline)
+                .font(.callout)
                 .foregroundStyle(.secondary)
             Button {
                 withAnimation(.easeInOut(duration: 0.15)) {
@@ -43,12 +43,13 @@ struct SizedSwitchToggleStyle: ToggleStyle {
                             .fill(.white)
                             .frame(width: knob, height: knob)
                             .shadow(radius: 0.5, y: 0.5)
-                            .padding(2)
+                            .padding(4)
                             .frame(maxWidth: .infinity,
                                    alignment: configuration.isOn ? .trailing : .leading)
                     )
             }
             .buttonStyle(.plain)
+            .glassBackgroundEffect(in: .capsule, displayMode: .always)
         }
     }
 }
