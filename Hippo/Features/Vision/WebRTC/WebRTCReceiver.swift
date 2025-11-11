@@ -240,6 +240,16 @@ public final class WebRTCReceiver: NSObject, ObservableObject {
             if !self.isRendererReady {
                 self.isRendererReady = true
                 self.logger.info("✅ AVSampleBufferVideoRenderer is now ready for tagged stereo frames")
+
+                // Replay last buffered frame if available
+                if let bufferedPB = self.lastEnqueuePixelBuffer {
+                    self.logger.info("🔄 Replaying buffered frame now that renderer is ready")
+                    self.enqueueSingleStreamImmediate(
+                        buffer: bufferedPB,
+                        pts: self.lastEnqueuePTS,
+                        duration: self.lastEnqueueDuration
+                    )
+                }
             }
         }
 
@@ -273,7 +283,10 @@ public final class WebRTCReceiver: NSObject, ObservableObject {
 
             Task { @MainActor [weak self] in
                 guard let self = self else { return }
-                self.logger.info("📢 Received HEVC frame via notification workaround")
+                // Only log occasionally to avoid spam
+                if self.framesReceived % 120 == 0 {
+                    self.logger.info("📢 Received HEVC frame via notification workaround")
+                }
                 self.processFrame(pb, from: frame)
             }
         }
@@ -303,13 +316,19 @@ public final class WebRTCReceiver: NSObject, ObservableObject {
     }
 
     private func enqueueSingleStreamImmediate(buffer pixelBuffer: CVPixelBuffer, pts: CMTime, duration: CMTime) {
-        // If renderer failed, try recovery
-        if stereoRenderer.status == .failed {
+        // Check renderer status
+        let rendererStatus = stereoRenderer.status
+        if rendererStatus == .failed {
             logger.warning("⚠️ Renderer status failed, attempting recovery")
             stereoRenderer.flush()
             stereoRenderer.stopRequestingMediaData()
             stereoRenderer.requestMediaDataWhenReady(on: .main) { /* keep ready */ }
             return
+        }
+
+        // Log renderer readiness on first frame
+        if self.framesEnqueuedCount == 0 {
+            logger.info("📊 Renderer status: \(rendererStatus.rawValue), isReadyForMoreMediaData: \(self.stereoRenderer.isReadyForMoreMediaData)")
         }
 
         // Create format description
@@ -334,6 +353,14 @@ public final class WebRTCReceiver: NSObject, ObservableObject {
         )
 
         let finalFormatDesc = formatDesc
+
+        // Log pixel buffer format on first frame
+        if self.framesEnqueuedCount == 0 {
+            let pixelFormat = CVPixelBufferGetPixelFormatType(pixelBuffer)
+            let width = CVPixelBufferGetWidth(pixelBuffer)
+            let height = CVPixelBufferGetHeight(pixelBuffer)
+            logger.info("📊 PixelBuffer format: \(pixelFormat), size: \(width)x\(height)")
+        }
 
         var timing = CMSampleTimingInfo(
             duration: duration == .invalid ? CMTime(value: 1, timescale: 60) : duration,
@@ -363,11 +390,19 @@ public final class WebRTCReceiver: NSObject, ObservableObject {
             }
         }
 
+        // Log detailed info for first few frames
+        if self.framesEnqueuedCount < 3 {
+            logger.info("🎬 Enqueueing frame #\(self.framesEnqueuedCount + 1)")
+            logger.info("   PTS: \(pts.seconds)s, duration: \(duration.seconds)s")
+            logger.info("   SampleBuffer valid: \(CMSampleBufferIsValid(sb))")
+            logger.info("   Hero Eye attachment: Left")
+        }
+
         stereoRenderer.enqueue(sb)
         self.framesEnqueuedCount += 1
 
         if self.framesEnqueuedCount == 1 {
-            logger.info("✅ First frame enqueued to renderer")
+            logger.info("✅ First frame enqueued to stereoRenderer")
         } else if self.framesEnqueuedCount % 60 == 0 {
             logger.debug("📊 Enqueued \(self.framesEnqueuedCount) frames total")
         }
@@ -652,30 +687,26 @@ extension WebRTCReceiver: LKRTCVideoRenderer {
         }
         self.lastPTS = pts
 
+        // PATH A: Enqueue frames to AVSampleBufferVideoRenderer for VideoPlayerComponent
+        // This uses tagged stereo CMSampleBuffer for RealityKit VideoMaterial
+        if currentRenderPath == .videoPlayer {
+            enqueueSingleStream(buffer: pixelBuffer, pts: pts, duration: duration)
+        }
+
         // PATH B: Update Stereo Metal renderer with BGRA frames
         // This is the working path for RealityKit stereo display
-        self.feedStereoMetal(with: pixelBuffer)
+        if currentRenderPath == .metal {
+            self.feedStereoMetal(with: pixelBuffer)
+        }
 
         // PATH C: Update Compositor renderer (if set)
         compositorRenderer?.updateFrame(pixelBuffer)
 
         // Log frames received every 60 frames
         if self.framesReceived % 60 == 0 {
-            self.logger.info("📊 Received \(self.framesReceived) frames, feeding to StereoVideoRenderer & Compositor")
+            let pathName = currentRenderPath == .videoPlayer ? "VideoPlayerComponent" : "StereoVideoRenderer"
+            self.logger.info("📊 Received \(self.framesReceived) frames, feeding to \(pathName) & Compositor")
         }
-
-        // Optional: keep legacy converting model working behind a flag if needed
-        /*
-        do {
-            if let convertingModel = self.convertingModel,
-               let stereoSampleBuffer = try await convertingModel.process(pixelBuffer, pts: pts, duration: duration) {
-                self.stereoRenderer.enqueue(stereoSampleBuffer)
-                self.logger.debug("✅ (Legacy) Stereo tagged frame enqueued")
-            }
-        } catch {
-            self.logger.error("❌ (Legacy) Failed to process stereo frame: \(error.localizedDescription)")
-        }
-        */
     }
 }
 
