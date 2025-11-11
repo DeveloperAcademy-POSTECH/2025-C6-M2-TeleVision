@@ -192,11 +192,15 @@ struct RenderPathToggle: View {
 
     var body: some View {
         Button {
+            // Toggle path
+            let newPath: VideoRenderPath = path == .metal ? .videoPlayer : .metal
+
             withAnimation(.easeInOut(duration: 0.2)) {
-                path = path == .metal ? .videoPlayer : .metal
-                // Update receiver's render path
-                receiver.setRenderPath(path == .metal ? .metal : .videoPlayer)
+                path = newPath
             }
+
+            // Update receiver's render path (this will cleanup old renderer and prepare new one)
+            receiver.setRenderPath(newPath == .metal ? .metal : .videoPlayer)
         } label: {
             HStack(spacing: 6) {
                 Image(systemName: path.icon)

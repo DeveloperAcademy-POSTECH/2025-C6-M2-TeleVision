@@ -68,17 +68,7 @@ public final class StereoVideoRenderer: ObservableObject {
 
     public init() {
         setupMetal()
-
-        // Register this renderer as active
-        Self.rendererLock.lock()
-        defer { Self.rendererLock.unlock() }
-
-        if let existingID = Self.activeRendererID {
-            logger.warning("⚠️ Creating new renderer \(self.rendererID) while renderer \(existingID) is still active")
-        }
-
-        Self.activeRendererID = rendererID
-        logger.info("✅ Renderer created: \(self.rendererID)")
+        logger.info("🔧 Renderer created: \(self.rendererID) (not active yet)")
     }
 
     deinit {
@@ -88,9 +78,36 @@ public final class StereoVideoRenderer: ObservableObject {
 
         if Self.activeRendererID == rendererID {
             Self.activeRendererID = nil
+            logger.info("🗑️ Active renderer destroyed: \(self.rendererID)")
+        } else {
+            logger.info("🗑️ Inactive renderer destroyed: \(self.rendererID)")
+        }
+    }
+
+    // MARK: - Lifecycle Management
+
+    /// Activate this renderer (make it the active renderer for receiving frames)
+    public func activate() {
+        Self.rendererLock.lock()
+        defer { Self.rendererLock.unlock() }
+
+        if let existingID = Self.activeRendererID, existingID != rendererID {
+            logger.warning("⚠️ Activating renderer \(self.rendererID), deactivating \(existingID)")
         }
 
-        logger.info("🗑️ Renderer destroyed: \(self.rendererID)")
+        Self.activeRendererID = rendererID
+        logger.info("✅ Renderer activated: \(self.rendererID)")
+    }
+
+    /// Deactivate this renderer (stop receiving frames)
+    public func deactivate() {
+        Self.rendererLock.lock()
+        defer { Self.rendererLock.unlock() }
+
+        if Self.activeRendererID == rendererID {
+            Self.activeRendererID = nil
+            logger.info("🛑 Renderer deactivated: \(self.rendererID)")
+        }
     }
 
     // MARK: - Public Methods
@@ -113,6 +130,10 @@ public final class StereoVideoRenderer: ObservableObject {
         logger.info("👁️ Right eye plane created and added to content at position: \(rightPlane.position)")
 
         isReady = true
+
+        // Activate this renderer when scene is set up
+        activate()
+
         logger.info("✅ Stereo scene ready - planes added directly to RealityView content")
     }
 

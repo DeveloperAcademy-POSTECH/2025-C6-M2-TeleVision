@@ -30,9 +30,6 @@ public final class WebRTCReceiver: NSObject, ObservableObject {
     // Path B (stereo Metal) renderer - Legacy RealityKit approach (deprecated, use Path A instead)
     public let stereoMetalRenderer = StereoVideoRenderer()
 
-    // Path C (compositor) renderer - Protocol-based for clean abstraction
-    private var compositorRenderer: (any StereoRendering)?
-
     // Optional: legacy converting model for tagged stereo CMSampleBuffer (kept for experimentation)
     private var convertingModel: ConvertingModel?
 
@@ -82,7 +79,7 @@ public final class WebRTCReceiver: NSObject, ObservableObject {
         case metal      // Path B: StereoVideoRenderer (for stereoPlanes/mono)
         case videoPlayer // Path A: AVSampleBufferVideoRenderer (for stereoVideo)
     }
-    private var currentRenderPath: RenderPath = .metal
+    private var currentRenderPath: RenderPath = .videoPlayer  // Default to VideoPlayer path
 
     // MARK: CIContext for YUV -> BGRA conversion (for Metal renderer path)
     private lazy var ciContext: CIContext = {
@@ -98,15 +95,44 @@ public final class WebRTCReceiver: NSObject, ObservableObject {
         super.init()
     }
 
-    /// Set compositor renderer for true stereo (any conforming type)
-    public func setCompositorRenderer(_ renderer: any StereoRendering) {
-        self.compositorRenderer = renderer
-        logger.info("✅ Compositor renderer connected")
-    }
-
     /// Set rendering path (Path A: VideoPlayerComponent or Path B: Metal)
     public func setRenderPath(_ path: RenderPath) {
+        // Skip if already on this path
+        guard currentRenderPath != path else {
+            logger.info("ℹ️ Already on render path: \(path == .metal ? "Metal" : "VideoPlayer")")
+            return
+        }
+
+        let oldPath = currentRenderPath
         currentRenderPath = path
+
+        // Cleanup previous renderer
+        switch oldPath {
+        case .videoPlayer:
+            // Flush AVSampleBufferVideoRenderer
+            logger.info("🧹 Cleaning up VideoPlayerComponent renderer...")
+            stereoRenderer.flush()
+            stereoRenderer.stopRequestingMediaData()
+            isRendererReady = false
+            lastEnqueuePixelBuffer = nil
+
+        case .metal:
+            // Deactivate StereoVideoRenderer
+            logger.info("🧹 Deactivating StereoVideoRenderer...")
+            stereoMetalRenderer.deactivate()
+        }
+
+        // Prepare new renderer
+        switch path {
+        case .videoPlayer:
+            logger.info("🔧 Activating VideoPlayerComponent renderer...")
+            setupStereoRenderer()
+
+        case .metal:
+            logger.info("🔧 Activating StereoVideoRenderer...")
+            stereoMetalRenderer.activate()
+        }
+
         let pathName = path == .metal ? "Path B (StereoVideoRenderer)" : "Path A (VideoPlayerComponent)"
         logger.info("🔄 Render path switched to: \(pathName)")
     }
@@ -687,25 +713,23 @@ extension WebRTCReceiver: LKRTCVideoRenderer {
         }
         self.lastPTS = pts
 
-        // PATH A: Enqueue frames to AVSampleBufferVideoRenderer for VideoPlayerComponent
-        // This uses tagged stereo CMSampleBuffer for RealityKit VideoMaterial
-        if currentRenderPath == .videoPlayer {
+        // Render to selected path only (no simultaneous multi-path rendering)
+        switch currentRenderPath {
+        case .videoPlayer:
+            // PATH A: Enqueue frames to AVSampleBufferVideoRenderer for VideoPlayerComponent
+            // This uses tagged stereo CMSampleBuffer for RealityKit VideoMaterial
             enqueueSingleStream(buffer: pixelBuffer, pts: pts, duration: duration)
-        }
 
-        // PATH B: Update Stereo Metal renderer with BGRA frames
-        // This is the working path for RealityKit stereo display
-        if currentRenderPath == .metal {
+        case .metal:
+            // PATH B: Update Stereo Metal renderer with BGRA frames
+            // This is the working path for RealityKit stereo display
             self.feedStereoMetal(with: pixelBuffer)
         }
-
-        // PATH C: Update Compositor renderer (if set)
-        compositorRenderer?.updateFrame(pixelBuffer)
 
         // Log frames received every 60 frames
         if self.framesReceived % 60 == 0 {
             let pathName = currentRenderPath == .videoPlayer ? "VideoPlayerComponent" : "StereoVideoRenderer"
-            self.logger.info("📊 Received \(self.framesReceived) frames, feeding to \(pathName) & Compositor")
+            self.logger.info("📊 Received \(self.framesReceived) frames, feeding to \(pathName)")
         }
     }
 }
