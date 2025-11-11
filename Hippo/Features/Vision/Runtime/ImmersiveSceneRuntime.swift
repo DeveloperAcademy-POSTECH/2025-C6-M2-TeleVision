@@ -20,7 +20,7 @@ final class ImmersiveSceneRuntime {
     
     
     //MARK: - 3D model 들이 추가될 루트 엔티티
-    private var sceneRoot: Entity?
+    var sceneRoot: Entity?
     
     // MARK: - Setup
     
@@ -49,6 +49,10 @@ final class ImmersiveSceneRuntime {
         
         // 마지막 조작 Entity 정보 저장
         eventSubscription = content.subscribe(to: ManipulationEvents.WillBegin.self)  { event in
+            if let previousSelection = self.selectedEntity {
+                previousSelection.name = ""
+            }
+            event.entity.name = "selected"
             self.selectedEntity = event.entity
         }
     }
@@ -63,7 +67,7 @@ final class ImmersiveSceneRuntime {
         sceneRoot.addChild(anchor)
         
         do {
-            try await placementService.attach(url: url, to: anchor)
+            selectedEntity = try await placementService.attach(url: url, to: anchor)
             logger.debug("Entity from URL '\(url.lastPathComponent)' placed successfully.")
         } catch {
             logger.error("Failed to attach entity from URL: \(error)")
