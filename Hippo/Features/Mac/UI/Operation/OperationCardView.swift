@@ -10,7 +10,10 @@ import SwiftUI
 struct OperationCardView: View {
     @State var isCardCollapsed: Bool = false
 
-    let operation: OperationDisplayModel
+    let operation: OperationCardDisplayModel
+    
+    let onEdit: (String) -> Void
+    let onDelete: (String) -> Void
 
     var body: some View {
         VStack(alignment: .leading) {
@@ -29,7 +32,7 @@ struct OperationCardView: View {
 
                 VStack(alignment: .leading) {
                     Text(operation.title)
-                    Text(operation.dateText)
+                    Text("\(operation.operationDate)")
                 }
 
                 Spacer()
@@ -37,11 +40,13 @@ struct OperationCardView: View {
                 HStack {
                     Button {
                         //TODO: 수술 수정
+                        onEdit(operation.id)
                     } label: {
                         Image(systemName: "square.and.pencil")
                     }
                     Button {
                         //TODO: 수술 삭제
+                        onDelete(operation.id)
                     } label: {
                         Image(systemName: "trash")
                     }
@@ -57,18 +62,28 @@ struct OperationCardView: View {
                 Divider()
 
                 //환자정보/집도의/수술부위/진단(병명)
+                
                 HStack {
-
-                    VStack(alignment: .leading) {
-                        Text("환자 정보")
-                            .padding(.vertical, 4)
-                        Text("이름 성별 / 나이")
+                    
+                    if let name = operation.name,
+                        let gender = operation.gender {
+                        VStack(alignment: .leading) {
+                            Text("Patient Info")
+                                .padding(.vertical, 4)
+                            HStack {
+                                Text(name)
+                                Text("/")
+                                Text(gender)
+                                Text("/")
+                                Text(operation.age)
+                            }
+                        }
+                        
+                        Spacer()
                     }
-
-                    Spacer()
-
+                    
                     VStack(alignment: .leading) {
-                        Text("집도의")
+                        Text("Surgeon")
                             .padding(.vertical, 4)
                         Text(operation.surgeon)
                     }
@@ -76,7 +91,7 @@ struct OperationCardView: View {
                     Spacer()
 
                     VStack(alignment: .leading) {
-                        Text("수술 부위")
+                        Text("Surgical Site")
                             .padding(.vertical, 4)
                         Text(operation.surgicalSite)
                     }
@@ -84,7 +99,7 @@ struct OperationCardView: View {
                     Spacer()
 
                     VStack(alignment: .leading) {
-                        Text("진단(병명)")
+                        Text("Diagnosis")
                             .padding(.vertical, 4)
                         Text(operation.diagnosis)
                     }
@@ -96,7 +111,7 @@ struct OperationCardView: View {
 
                 //상세 내용
                 VStack(alignment: .leading) {
-                    Text("상세 내용")
+                    Text("Details")
                         .padding(.vertical, 4)
                     Text(operation.details)
                 }
@@ -104,16 +119,16 @@ struct OperationCardView: View {
                 Divider()
 
                 VStack(alignment: .leading) {
-                    Text("3D 모델 파일")
+                    Text("3D models")
                         .padding(.vertical, 4)
 
                     ScrollView(.horizontal, showsIndicators: false) {
                         HStack(spacing: 12) {
                             //TODO: 3D 모델 파일로 UI 테스트 필요
                             //TODO: 마우스 호버 시, 배경 Dim처리 + 삭제 버튼 활성화
-                            ForEach(0..<10) { index in
-                                Rectangle()
-                                    .frame(width: 50, height: 50)
+                            ForEach(operation.assets) { asset in
+                                // 썸네일을 준비하지 않았다면 파일명만 먼저
+                                Text(asset.fileName)
                             }
                         }
                         .padding(.vertical)

@@ -15,22 +15,22 @@ struct GlowingCapsuleButton: View {
         ZStack {
             Capsule()
                 .fill(.hippoPrimary.opacity(0.5))
-                .frame(width: 160, height: 60)
-                .blur(radius: 5)
+                .frame(width: 120, height: 48)
+                .blur(radius: 10)
 
             Button(action: action) {
                 ZStack {
                     Capsule()
                         .stroke(.white, lineWidth: 5)
                         .fill(.clear)
-                        .frame(width: 160, height: 60)
+                        .frame(width: 120, height: 48)
                     Text(buttonText)
-                        .font(.title2)
+                        .font(.title3)
                 }
             }
             .buttonStyle(.borderless)
             .contentShape(.capsule)
-            .frame(width: 160, height: 60)
+            .frame(width: 120, height: 48)
             .glassBackgroundEffect(displayMode: .always)
         }
     }

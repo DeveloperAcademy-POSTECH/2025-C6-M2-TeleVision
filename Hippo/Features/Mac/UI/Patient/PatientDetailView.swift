@@ -11,36 +11,43 @@ struct PatientDetailView: View {
     // ViewModel 초기화 (HomeView에서 rootVM 전달받음)
     let viewModel: PatientDetailViewModel
 
-    // Mock 데이터 (UI 개발용)
-    var mockData = HomeMockDataModel.mockList
-
     var selectedPatient: PatientDisplayModel?
-    
+
     var isTodaysSurgerySelected: Bool
-    
+
     var body: some View {
 
         OperationListView(
-            operations: viewModel.operations,
+            operations: viewModel.operationCards,
+            onEdit: { operationID in
+                viewModel.selectedOperationID = operationID
+                //수술 수정 시트 열기
+                //Patient수정과 다르게 id를 전달받아서 OperationDisplayModel을 반환하는 헬퍼함수를 추가했습니다.
+                if let op = viewModel.operation(by: operationID) {
+                    viewModel.openOperationEditSheet(operation: op)
+                }
+            },
             onDelete: { operationID in
-//                Task {
-//                    await viewModel.deleteOperation(operationID)
-//                }
-                //TODO: 원띵과 논의 필요
+                Task {
+                    await viewModel.deleteOperation(operationID)
+                }
             }
         )
-        .navigationTitle(selectedPatient.map { "\($0.name) \($0.gender) \($0.age)세" } ?? "환자 상세 정보")
-        .navigationSubtitle(selectedPatient?.patientNumber ?? "환자 번호")
+        .navigationTitle(
+            selectedPatient.map { "\($0.name) \($0.gender) Age\($0.age)" }
+                ?? "환자 상세 정보"
+        )
+        .navigationSubtitle(selectedPatient?.patientNumber ?? "Patient Number")
     }
 }
 
 #Preview {
     @Previewable @State var isTodaysSurgery: Bool = false
-    
+
     let rootVM = MacRootViewModel()
     PatientDetailView(
         viewModel: PatientDetailViewModel(rootVM: rootVM),
-//        patientId: "",
         isTodaysSurgerySelected: isTodaysSurgery
     )
 }
+

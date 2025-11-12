@@ -15,11 +15,10 @@ struct OpacityControlPanelHeaderComponent: View {
     let onToggle: (Bool) -> Void
     
     var body: some View {
-        HStack {
+        HStack(spacing: 8) {
             Text(title)
-                .font(.headline)
+                .font(.callout)
                 .foregroundStyle(.primary)
-                .padding(5)
             
             OpacityControlPanelButton(
                 isVisible: isActive,

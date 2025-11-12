@@ -10,15 +10,15 @@ import SwiftUI
 struct SurgeryControlBar: View {
     @Environment(ImmersiveViewModel.self) var immersiveViewModel
     @Environment(WindowController.self) var windowController
-
+    
     var body: some View {
         @Bindable var immersiveViewModel = immersiveViewModel
         
         HStack {
             CircleIconButton(
                 systemName: "iphone.and.arrow.forward.outward",
-                buttonSize: 80,
-                iconSize: 28,
+                buttonSize: 60,
+                iconSize: 24,
                 action: { immersiveViewModel.showFinishSurgeryAlert() }
             )
             
@@ -35,7 +35,11 @@ struct SurgeryControlBar: View {
                     } else {
                         GlowingCircleButton(
                             imageName: "AddEntityIcon",
-                            action: { windowController.pushWindow(id: WindowIDs.assetListView) }
+                            action: {
+                                windowController.pushWindow(id: WindowIDs.assetListView)
+                                immersiveViewModel.isShowingAssetListView = true
+                                
+                            }
                         )
                     }
                     Spacer()
@@ -46,8 +50,8 @@ struct SurgeryControlBar: View {
                     RecordButton(action: immersiveViewModel.recordPassThroughVideo)
                 }
             }
-            .padding(10)
-            .frame(width: 680, height: 120)
+            .padding(.horizontal, 20)
+            .padding(.vertical, 12)
             .glassBackgroundEffect(in: .capsule, displayMode: .always)
             .onChange(of: immersiveViewModel.isEndoscopicActive) { oldValue, newValue in
                 handleEndoscopeToggle()
@@ -55,7 +59,7 @@ struct SurgeryControlBar: View {
             
             Circle()
                 .fill(.clear)
-                .frame(width: 80, height: 80)
+                .frame(width: 60, height: 60)
         }
         .alert("수술을 종료하시겠습니까?", isPresented: $immersiveViewModel.isShowingFinishAlert) {
             Button("종료", role: .destructive) {
@@ -63,6 +67,7 @@ struct SurgeryControlBar: View {
                     await windowController.finishSurgeryAndDismissSpace()
                     if immersiveViewModel.isOpacityControlPanelOpen {
                         windowController.dismissWindow(id: WindowIDs.opacityControlPanel)
+                        immersiveViewModel.isOpacityControlPanelOpen = false
                     }
                 }
             }
@@ -86,5 +91,5 @@ struct SurgeryControlBar: View {
 
 #Preview {
     SurgeryControlBar()
-    .padding()
+        .padding()
 }

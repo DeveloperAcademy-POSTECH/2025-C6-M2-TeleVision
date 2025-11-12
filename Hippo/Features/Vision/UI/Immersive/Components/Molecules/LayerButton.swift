@@ -23,13 +23,16 @@ struct LayerButton: View {
         Button {
             onSelect(!isSelected)
         } label: {
-            HStack(spacing: 20) {
+            HStack {
                 VStack(alignment: .leading) {
                     Text(title)
-                        .font(.subheadline)
+                        .font(.footnote)
+                        .lineLimit(1)
+                        .truncationMode(.tail)
                     Text("\(displayedOpacity)%")
-                        .font(.headline)
+                        .font(.callout)
                 }
+                Spacer()
                 
                 OpacityControlPanelButton(
                     isVisible: isVisible,
@@ -37,12 +40,19 @@ struct LayerButton: View {
                     onToggle: onEyeToggle
                 )
             }
+            .frame(maxWidth: .infinity)
+            .padding(.horizontal, 12)
+            .padding(.leading, 4)
+            .padding(.vertical, 12)
+            .background(
+                Capsule().fill(isSelected ? AnyShapeStyle(.quaternary) : AnyShapeStyle(Color.black.opacity(0.25))))
+    //        .animation(.easeInOut, value: isSelected)
+            .glassBackgroundEffect()
         }
-        .contentShape(.capsule)
-        .background(
-            Capsule().fill(isSelected ? .secondary : .quaternary))
-        .frame(width: 150, height: 74)
-        .animation(.easeInOut, value: isSelected)
+        .buttonStyle(.plain)
+        .padding(0)
+        .frame(maxWidth: .infinity)
+//        .contentShape(.capsule)
     }
 }
 
@@ -59,3 +69,4 @@ struct LayerButton: View {
         onEyeToggle: { isVisible = $0 }
     )
 }
+
