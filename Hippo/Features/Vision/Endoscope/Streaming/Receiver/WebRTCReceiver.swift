@@ -20,6 +20,26 @@ import CoreImage
 @MainActor
 public final class WebRTCReceiver: NSObject, ObservableObject {
 
+    // MARK: - Constants
+
+    private enum LoggingInterval {
+        static let standardFrames = 60
+        static let frequentFrames = 120
+        static let initialFrames = 10
+        static let debugFrames = 5
+        static let detailedDebugFrames = 3
+    }
+
+    // MARK: - Logging State
+
+    private struct LoggingState {
+        var hasLoggedRendererReady: Bool = false
+        var hasLoggedNoTarget: Bool = false
+        var framesEnqueuedCount: Int = 0
+    }
+
+    // MARK: - Published Properties
+
     @Published public var isConnected: Bool = false
     @Published public var currentFrame: CVPixelBuffer?
     @Published public var stats: ReceiverStats = ReceiverStats()
@@ -66,9 +86,7 @@ public final class WebRTCReceiver: NSObject, ObservableObject {
     private static let initLock = NSLock()
 
     // MARK: Log throttling
-    private var hasLoggedRendererReady: Bool = false
-    private var hasLoggedNoTarget: Bool = false
-    private var framesEnqueuedCount: Int = 0
+    private var loggingState = LoggingState()
 
     // Last frame to replay once target attaches (optional)
     private var lastEnqueuePixelBuffer: CVPixelBuffer?
@@ -247,9 +265,8 @@ public final class WebRTCReceiver: NSObject, ObservableObject {
         isInitialized = false
         isRendererReady = false
         lastPTS = nil
-        hasLoggedNoTarget = false
+        loggingState = LoggingState()
         lastEnqueuePixelBuffer = nil
-        framesEnqueuedCount = 0
         videoPlayerFrameCounter = 0
     }
 
@@ -319,7 +336,7 @@ public final class WebRTCReceiver: NSObject, ObservableObject {
             Task { @MainActor [weak self] in
                 guard let self = self else { return }
                 // Only log occasionally to avoid spam
-                if self.framesReceived % 120 == 0 {
+                if self.framesReceived % LoggingInterval.frequentFrames == 0 {
                     self.logger.info("📢 Received HEVC frame via notification workaround")
                 }
                 self.processFrame(pb, from: frame)
@@ -339,9 +356,9 @@ public final class WebRTCReceiver: NSObject, ObservableObject {
             self.lastEnqueuePTS = pts
             self.lastEnqueueDuration = duration
 
-            if !hasLoggedNoTarget {
+            if !loggingState.hasLoggedNoTarget {
                 logger.info("⏳ Renderer not ready yet, buffering frame...")
-                hasLoggedNoTarget = true
+                loggingState.hasLoggedNoTarget = true
             }
             return
         }
@@ -362,7 +379,7 @@ public final class WebRTCReceiver: NSObject, ObservableObject {
         }
 
         // Log renderer readiness on first frame
-        if self.framesEnqueuedCount == 0 {
+        if self.loggingState.framesEnqueuedCount == 0 {
             logger.info("📊 Renderer status: \(rendererStatus.rawValue), isReadyForMoreMediaData: \(self.stereoRenderer.isReadyForMoreMediaData)")
         }
 
@@ -390,7 +407,7 @@ public final class WebRTCReceiver: NSObject, ObservableObject {
         let finalFormatDesc = formatDesc
 
         // Log pixel buffer format on first frame
-        if self.framesEnqueuedCount == 0 {
+        if self.loggingState.framesEnqueuedCount == 0 {
             let pixelFormat = CVPixelBufferGetPixelFormatType(pixelBuffer)
             let width = CVPixelBufferGetWidth(pixelBuffer)
             let height = CVPixelBufferGetHeight(pixelBuffer)
@@ -426,20 +443,20 @@ public final class WebRTCReceiver: NSObject, ObservableObject {
         }
 
         // Log detailed info for first few frames
-        if self.framesEnqueuedCount < 3 {
-            logger.info("🎬 Enqueueing frame #\(self.framesEnqueuedCount + 1)")
+        if self.loggingState.framesEnqueuedCount < LoggingInterval.detailedDebugFrames {
+            logger.info("🎬 Enqueueing frame #\(self.loggingState.framesEnqueuedCount + 1)")
             logger.info("   PTS: \(pts.seconds)s, duration: \(duration.seconds)s")
             logger.info("   SampleBuffer valid: \(CMSampleBufferIsValid(sb))")
             logger.info("   Hero Eye attachment: Left")
         }
 
         stereoRenderer.enqueue(sb)
-        self.framesEnqueuedCount += 1
+        self.loggingState.framesEnqueuedCount += 1
 
-        if self.framesEnqueuedCount == 1 {
+        if self.loggingState.framesEnqueuedCount == 1 {
             logger.info("✅ First frame enqueued to stereoRenderer")
-        } else if self.framesEnqueuedCount % 60 == 0 {
-            logger.debug("📊 Enqueued \(self.framesEnqueuedCount) frames total")
+        } else if self.loggingState.framesEnqueuedCount % LoggingInterval.standardFrames == 0 {
+            logger.debug("📊 Enqueued \(self.loggingState.framesEnqueuedCount) frames total")
         }
     }
 
@@ -461,7 +478,7 @@ public final class WebRTCReceiver: NSObject, ObservableObject {
         videoPlayerFrameCounter += 1
 
         // Log processing (reduced frequency for CPU optimization)
-        if videoPlayerFrameCounter <= 10 || videoPlayerFrameCounter % 120 == 0 {
+        if videoPlayerFrameCounter <= LoggingInterval.initialFrames || videoPlayerFrameCounter % LoggingInterval.frequentFrames == 0 {
             logger.info("🎬 Processing VideoPlayer frame #\(self.videoPlayerFrameCounter): \(srcWidth)×\(srcHeight)")
         }
 
@@ -471,7 +488,7 @@ public final class WebRTCReceiver: NSObject, ObservableObject {
             do {
                 // Use ConvertingModel to split SBS into tagged stereo sample
                 guard let stereoSample = try await self.convertingModel?.process(pixelBuffer, pts: pts, duration: duration) else {
-                    if self.videoPlayerFrameCounter <= 10 {
+                    if self.videoPlayerFrameCounter <= LoggingInterval.initialFrames {
                         self.logger.error("❌ Failed to convert SBS to stereo tagged sample")
                     }
                     return
@@ -479,7 +496,7 @@ public final class WebRTCReceiver: NSObject, ObservableObject {
 
                 await self.enqueueReadyStereoSample(stereoSample)
             } catch {
-                if self.videoPlayerFrameCounter <= 10 {
+                if self.videoPlayerFrameCounter <= LoggingInterval.initialFrames {
                     self.logger.error("❌ ConvertingModel error: \(error.localizedDescription)")
                 }
             }
@@ -489,7 +506,7 @@ public final class WebRTCReceiver: NSObject, ObservableObject {
     private func enqueueReadyStereoSample(_ sample: CMSampleBuffer) async {
         // Check if renderer is ready
         guard isRendererReady else {
-            if videoPlayerFrameCounter <= 5 {
+            if videoPlayerFrameCounter <= LoggingInterval.debugFrames {
                 logger.warning("⏳ [VIDEOPLAY DEBUG] Renderer not ready (frame #\(self.videoPlayerFrameCounter)), skipping...")
                 logger.warning("   Renderer status: \(self.stereoRenderer.status.rawValue)")
                 logger.warning("   Ready for data: \(self.stereoRenderer.isReadyForMoreMediaData)")
@@ -508,7 +525,7 @@ public final class WebRTCReceiver: NSObject, ObservableObject {
         }
 
         // Log on first frame
-        if self.framesEnqueuedCount == 0 {
+        if self.loggingState.framesEnqueuedCount == 0 {
             logger.info("📊 Renderer status: \(rendererStatus.rawValue), isReadyForMoreMediaData: \(self.stereoRenderer.isReadyForMoreMediaData)")
             logger.info("✅ First stereo tagged frame from ConvertingModel")
 
@@ -538,22 +555,22 @@ public final class WebRTCReceiver: NSObject, ObservableObject {
         }
 
         stereoRenderer.enqueue(sample)
-        self.framesEnqueuedCount += 1
+        self.loggingState.framesEnqueuedCount += 1
 
-        if self.framesEnqueuedCount == 1 {
+        if self.loggingState.framesEnqueuedCount == 1 {
             logger.info("✅ First stereo tagged sample enqueued to stereoRenderer")
-        } else if self.framesEnqueuedCount % 60 == 0 {
-            logger.debug("📊 Enqueued \(self.framesEnqueuedCount) stereo frames total")
+        } else if self.loggingState.framesEnqueuedCount % LoggingInterval.standardFrames == 0 {
+            logger.debug("📊 Enqueued \(self.loggingState.framesEnqueuedCount) stereo frames total")
         }
 
         // Monitor for pink screen - check if error occurs after enqueue
-        if self.framesEnqueuedCount <= 5 {
+        if self.loggingState.framesEnqueuedCount <= LoggingInterval.debugFrames {
             // Check renderer status right after enqueue
             Task { @MainActor in
                 try? await Task.sleep(for: .milliseconds(100))
                 let statusAfter = self.stereoRenderer.status
                 if statusAfter == .failed {
-                    self.logger.error("❌ [PINK DEBUG] Renderer FAILED after enqueue frame #\(self.framesEnqueuedCount)")
+                    self.logger.error("❌ [PINK DEBUG] Renderer FAILED after enqueue frame #\(self.loggingState.framesEnqueuedCount)")
                 }
             }
         }
@@ -863,8 +880,8 @@ extension WebRTCReceiver: LKRTCVideoRenderer {
             self.feedStereoMetal(with: pixelBuffer)
         }
 
-        // Log frames received every 60 frames
-        if self.framesReceived % 60 == 0 {
+        // Log frames received periodically
+        if self.framesReceived % LoggingInterval.standardFrames == 0 {
             let pathName = currentRenderPath == .videoPlayer ? "VideoPlayerComponent" : "StereoVideoRenderer"
             self.logger.info("📊 Received \(self.framesReceived) frames, feeding to \(pathName)")
         }
