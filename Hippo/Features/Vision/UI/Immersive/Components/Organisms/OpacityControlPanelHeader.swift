@@ -18,8 +18,8 @@ struct OpacityControlPanelHeader: View {
     var body: some View {
         HStack {
             CircleIconButton(systemName: "trash",
-                             buttonSize: 48,
-                             iconSize: 20,
+                             buttonSize: 40,
+                             iconSize: 16,
                              action: onDeleteTapped)
             Spacer()
             
@@ -38,8 +38,8 @@ struct OpacityControlPanelHeader: View {
                 onToggle: onShowAllToggle
             )
         }
-        .padding(.horizontal)
-        .frame(height: 60)
+        .padding(.horizontal, 8)
+        .padding(.vertical, 8)
     }
 }
 

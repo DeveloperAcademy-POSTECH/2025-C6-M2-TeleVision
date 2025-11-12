@@ -15,10 +15,9 @@ struct OpacityControlPanel: View {
     
     // Grid 레이아웃 설정 (4열)
     private let columns: [GridItem] = [
-        GridItem(.flexible()),
-        GridItem(.flexible()),
-        GridItem(.flexible()),
-        GridItem(.flexible())
+        GridItem(.flexible(), spacing: 12),
+        GridItem(.flexible(), spacing: 12),
+        GridItem(.flexible(), spacing: 12)
     ]
     
     var body: some View {
@@ -47,11 +46,12 @@ struct OpacityControlPanel: View {
                 selectedLayerIDS: manager.selectedLayerIDs,
                 isMixed: manager.isMixed
             )
+            Spacer(minLength: 16)
             
             // 2. 레이어 버튼 그리드
             if manager.hasAnyLayers {
                 ScrollView {
-                    LazyVGrid(columns: columns, spacing: 16) {
+                    LazyVGrid(columns: columns, spacing: 12) {
                         ForEach(manager.layers) { layer in
                             LayerButton(
                                 title: layer.name,
@@ -67,7 +67,6 @@ struct OpacityControlPanel: View {
                             )
                         }
                     }
-                    .padding()
                 }
             } else {
                 Spacer()
@@ -84,10 +83,11 @@ struct OpacityControlPanel: View {
             manager.reloadLayers()
             opacityManager.setOpacityForUnselctedEntity(needsToShow: true)
         }
-        .padding()
+        .padding(24)
         .onDisappear {
             runtime.selectedEntity = nil
             manager.setOpacityForUnselctedEntity(needsToShow: false)
         }
     }
 }
+
