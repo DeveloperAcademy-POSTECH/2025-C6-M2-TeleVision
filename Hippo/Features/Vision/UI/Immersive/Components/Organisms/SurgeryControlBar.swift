@@ -36,7 +36,6 @@ struct SurgeryControlBar: View {
                         GlowingCircleButton(
                             imageName: "AddEntityIcon",
                             action: {
-                                
                                 windowController.pushWindow(id: WindowIDs.assetListView)
                                 immersiveViewModel.isShowingAssetListView = true
                                 
