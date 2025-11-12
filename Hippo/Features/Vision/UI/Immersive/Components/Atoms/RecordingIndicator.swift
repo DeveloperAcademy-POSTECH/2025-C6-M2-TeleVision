@@ -17,6 +17,7 @@ struct RecordingIndicator: View {
             Circle()
                 .fill(.red)
                 .frame(width: 20, height: 20)
+                .shadow(color: .black.opacity(0.5), radius: 2, x: 0, y: 0)
         }
     }
 }
