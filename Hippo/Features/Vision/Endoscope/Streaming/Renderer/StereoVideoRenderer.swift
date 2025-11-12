@@ -39,7 +39,7 @@ public final class StereoVideoRenderer: ObservableObject {
     // Renderer lifecycle tracking (nonisolated to allow access from deinit)
     private let rendererID = UUID()
     private nonisolated(unsafe) static var activeRendererID: UUID?
-    private nonisolated(unsafe) static let rendererLock = NSLock()
+    private static let rendererLock = NSLock()
 
     // RealityKit components
     private var leftPlaneEntity: ModelEntity?
