@@ -152,7 +152,7 @@ open class BaseCaptureSession: NSObject {
     private func findCaptureDevice() throws -> AVCaptureDevice {
         #if os(macOS)
         let discoverySession = AVCaptureDevice.DiscoverySession(
-            deviceTypes: [.externalUnknown, .builtInWideAngleCamera],
+            deviceTypes: [.external, .builtInWideAngleCamera],
             mediaType: .video,
             position: .unspecified
         )

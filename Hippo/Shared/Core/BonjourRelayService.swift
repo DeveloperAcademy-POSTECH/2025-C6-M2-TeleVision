@@ -37,7 +37,7 @@ public struct EndpointInfo: Codable, Identifiable, Sendable {
 // MARK: - Relay Response Model
 
 /// Response structure for relay requests
-public struct BonjourRelayResponse: Sendable, Codable {
+public struct BonjourRelayResponse: Sendable {
     public let endpoints: [EndpointInfo]
     public let timestamp: Date
     public let version: String
@@ -47,9 +47,11 @@ public struct BonjourRelayResponse: Sendable, Codable {
         self.timestamp = timestamp
         self.version = version
     }
+}
 
-    // MARK: - Codable conformance (explicit nonisolated implementation)
+// MARK: - Codable Conformance (nonisolated extension)
 
+extension BonjourRelayResponse: Codable {
     enum CodingKeys: String, CodingKey {
         case endpoints
         case timestamp
