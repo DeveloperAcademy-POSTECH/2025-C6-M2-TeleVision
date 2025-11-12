@@ -35,7 +35,12 @@ struct SurgeryControlBar: View {
                     } else {
                         GlowingCircleButton(
                             imageName: "AddEntityIcon",
-                            action: { windowController.pushWindow(id: WindowIDs.assetListView) }
+                            action: {
+                                DispatchQueue.main.async {
+                                    windowController.pushWindow(id: WindowIDs.assetListView)
+                                    immersiveViewModel.isShowingAssetListView = true
+                                }
+                            }
                         )
                     }
                     Spacer()
@@ -60,6 +65,7 @@ struct SurgeryControlBar: View {
                     await windowController.finishSurgeryAndDismissSpace()
                     if immersiveViewModel.isOpacityControlPanelOpen {
                         windowController.dismissWindow(id: WindowIDs.opacityControlPanel)
+                        immersiveViewModel.isOpacityControlPanelOpen = false
                     }
                 }
             }
