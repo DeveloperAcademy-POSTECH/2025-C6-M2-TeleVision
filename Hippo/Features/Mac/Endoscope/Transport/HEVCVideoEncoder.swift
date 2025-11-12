@@ -17,6 +17,25 @@ import os.log
 
 /// VideoToolbox-based HEVC encoder with proper NAL unit handling
 public class HEVCVideoEncoder: NSObject, LKRTCVideoEncoder {
+
+    // MARK: - Constants
+
+    private enum EncodingConstants {
+        static let minimumBitrate = 5_000_000  // 5 Mbps minimum
+        static let minimumBitrateKbps: UInt32 = 5_000  // 5 Mbps in kbps
+        static let quality: Float = 0.7  // 0.0-1.0, higher = better quality
+        static let expectedFrameRate = 30
+        static let maxKeyFrameInterval = 60  // Every 2 seconds at 30fps
+    }
+
+    private enum LoggingInterval {
+        static let standardFrames = 300
+        static let warningFrames = 30
+        static let initialFrames = 10
+    }
+
+    // MARK: - Protocol Properties
+
     // Protocol required properties
     public var resolutionAlignment: Int = 1
     public var applyAlignmentToAllSimulcastLayers: Bool = false
@@ -83,11 +102,10 @@ public class HEVCVideoEncoder: NSObject, LKRTCVideoEncoder {
         // IMPORTANT: Ensure minimum bitrate for HEVC encoding quality
         // WebRTC may start with very low bitrate (10000 bps), but HEVC needs much higher
         // for stereo 1920×540@60fps
-        let minimumBitrate = 5_000_000  // 5 Mbps minimum (reduced for better performance)
-        self.targetBitrate = max(Int(settings.startBitrate), minimumBitrate)
+        self.targetBitrate = max(Int(settings.startBitrate), EncodingConstants.minimumBitrate)
 
-        if Int(settings.startBitrate) < minimumBitrate {
-            logger.warning("⚠️ WebRTC requested \(settings.startBitrate) bps, using minimum \(minimumBitrate) bps instead")
+        if Int(settings.startBitrate) < EncodingConstants.minimumBitrate {
+            logger.warning("⚠️ WebRTC requested \(settings.startBitrate) bps, using minimum \(EncodingConstants.minimumBitrate) bps instead")
         }
 
         // Create compression session
@@ -126,7 +144,7 @@ public class HEVCVideoEncoder: NSObject, LKRTCVideoEncoder {
                        frameTypes: [NSNumber]) -> Int {
 
         // Log first few encode calls
-        if frameCount < 5 {
+        if frameCount < LoggingInterval.initialFrames / 2 {
             logger.info("🎬 encode() called - frame #\(self.frameCount)")
         }
 
@@ -173,7 +191,7 @@ public class HEVCVideoEncoder: NSObject, LKRTCVideoEncoder {
         }
 
         frameCount += 1
-        if frameCount % 300 == 0 {
+        if frameCount % LoggingInterval.standardFrames == 0 {
             logger.info("📊 Encoded \(self.frameCount) HEVC frames")
         }
 
@@ -186,19 +204,18 @@ public class HEVCVideoEncoder: NSObject, LKRTCVideoEncoder {
         }
 
         // IMPORTANT: Enforce minimum bitrate even when WebRTC tries to lower it
-        let minimumBitrateKbps: UInt32 = 5_000  // 5 Mbps minimum (reduced for better performance)
-        let actualBitrateKbps = max(bitrateKbps, minimumBitrateKbps)
+        let actualBitrateKbps = max(bitrateKbps, EncodingConstants.minimumBitrateKbps)
 
         // Log only when bitrate changes or when enforcing minimum
-        if bitrateKbps < minimumBitrateKbps && frameCount % 30 == 0 {
-            logger.warning("🎛️ WebRTC requested \(bitrateKbps) kbps, enforcing minimum \(minimumBitrateKbps) kbps")
+        if bitrateKbps < EncodingConstants.minimumBitrateKbps && frameCount % LoggingInterval.warningFrames == 0 {
+            logger.warning("🎛️ WebRTC requested \(bitrateKbps) kbps, enforcing minimum \(EncodingConstants.minimumBitrateKbps) kbps")
         }
 
         let bitrateBps = Int(actualBitrateKbps) * 1000
         self.targetBitrate = bitrateBps
 
         // Maintain Quality setting (critical for consistent bitrate)
-        VTSessionSetProperty(session, key: kVTCompressionPropertyKey_Quality, value: 0.7 as CFNumber)  // Reduced from 0.85 for better performance
+        VTSessionSetProperty(session, key: kVTCompressionPropertyKey_Quality, value: EncodingConstants.quality as CFNumber)
 
         // Update bitrate
         let bitrateStatus = VTSessionSetProperty(
@@ -206,7 +223,7 @@ public class HEVCVideoEncoder: NSObject, LKRTCVideoEncoder {
             key: kVTCompressionPropertyKey_AverageBitRate,
             value: bitrateBps as CFNumber
         )
-        if bitrateStatus != noErr && frameCount % 30 == 0 {
+        if bitrateStatus != noErr && frameCount % LoggingInterval.warningFrames == 0 {
             logger.warning("⚠️ Failed to set AverageBitRate: \(bitrateStatus)")
         }
 
@@ -218,7 +235,7 @@ public class HEVCVideoEncoder: NSObject, LKRTCVideoEncoder {
             key: kVTCompressionPropertyKey_DataRateLimits,
             value: dataRateLimits
         )
-        if limitsStatus != noErr && frameCount % 30 == 0 {
+        if limitsStatus != noErr && frameCount % LoggingInterval.warningFrames == 0 {
             logger.warning("⚠️ Failed to set DataRateLimits: \(limitsStatus)")
         }
 
@@ -268,7 +285,7 @@ public class HEVCVideoEncoder: NSObject, LKRTCVideoEncoder {
 
         // CRITICAL: Set Quality first (0.0-1.0, higher = better quality)
         // This takes priority over bitrate in RealTime mode
-        VTSessionSetProperty(session, key: kVTCompressionPropertyKey_Quality, value: 0.7 as CFNumber)  // Reduced from 0.85 for better performance
+        VTSessionSetProperty(session, key: kVTCompressionPropertyKey_Quality, value: EncodingConstants.quality as CFNumber)
 
         // Set bitrate aggressively
         VTSessionSetProperty(session, key: kVTCompressionPropertyKey_AverageBitRate, value: bitrate as CFNumber)
@@ -281,11 +298,11 @@ public class HEVCVideoEncoder: NSObject, LKRTCVideoEncoder {
             logger.warning("⚠️ Failed to set DataRateLimits: \(limitsStatus)")
         }
 
-        // Set expected framerate to 30fps (actual capture rate)
-        VTSessionSetProperty(session, key: kVTCompressionPropertyKey_ExpectedFrameRate, value: 30 as CFNumber)
+        // Set expected framerate
+        VTSessionSetProperty(session, key: kVTCompressionPropertyKey_ExpectedFrameRate, value: EncodingConstants.expectedFrameRate as CFNumber)
 
-        // Set MaxKeyFrameInterval to ensure regular I-frames (every 2 seconds at 30fps)
-        VTSessionSetProperty(session, key: kVTCompressionPropertyKey_MaxKeyFrameInterval, value: 60 as CFNumber)
+        // Set MaxKeyFrameInterval to ensure regular I-frames
+        VTSessionSetProperty(session, key: kVTCompressionPropertyKey_MaxKeyFrameInterval, value: EncodingConstants.maxKeyFrameInterval as CFNumber)
 
         // Disable frame reordering for lower latency
         VTSessionSetProperty(session, key: kVTCompressionPropertyKey_AllowFrameReordering, value: kCFBooleanFalse)
@@ -353,7 +370,7 @@ public class HEVCVideoEncoder: NSObject, LKRTCVideoEncoder {
             logger.error("❌ Encoder callback failed - frame type: \(isKeyframe ? "KEY" : "DELTA"), size: \(annexBData.count) bytes")
         } else {
             // Log frame size more frequently to monitor bitrate
-            if frameCount <= 10 || frameCount % 30 == 0 {
+            if frameCount <= LoggingInterval.initialFrames || frameCount % LoggingInterval.warningFrames == 0 {
                 logger.info("✅ Frame #\(self.frameCount): \(isKeyframe ? "KEY" : "DELTA"), \(annexBData.count) bytes")
             }
         }

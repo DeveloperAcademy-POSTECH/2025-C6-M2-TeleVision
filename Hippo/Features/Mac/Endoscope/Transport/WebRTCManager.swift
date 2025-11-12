@@ -16,7 +16,19 @@ import LiveKitWebRTC
 
 public final class WebRTCManager: NSObject, IVideoTransport {
 
-    // MARK: Properties
+    // MARK: - Constants
+
+    private enum ConnectionConstants {
+        static let disconnectionGracePeriod: TimeInterval = 10.0
+        static let statsInterval: TimeInterval = 1.0
+        static let statsLogDelay: TimeInterval = 2.0
+    }
+
+    private enum LoggingInterval {
+        static let standardFrames = 60
+    }
+
+    // MARK: - Properties
 
     public var state: TransportState = .idle {
         didSet {
@@ -55,11 +67,9 @@ public final class WebRTCManager: NSObject, IVideoTransport {
     // MARK: Stats tracking
 
     private var statsTimer: Timer?
-    private let statsInterval: TimeInterval = 1.0
 
     // P0.3: Disconnection timer for ICE restart
     private var disconnectionTimer: Timer?
-    private let disconnectionGracePeriod: TimeInterval = 10.0
 
     // MARK: Initialization
 
@@ -196,7 +206,7 @@ public final class WebRTCManager: NSObject, IVideoTransport {
         frameCount += 1
 
         // Log periodically
-        if frameCount % 60 == 0 {
+        if frameCount % LoggingInterval.standardFrames == 0 {
             logger.info("📤 Sent \(self.frameCount) frames to videoSource, track enabled: \(videoTrack.isEnabled)")
         }
     }
@@ -336,8 +346,8 @@ public final class WebRTCManager: NSObject, IVideoTransport {
     private func startDisconnectionTimer() {
         disconnectionTimer?.invalidate()
 
-        disconnectionTimer = Timer.scheduledTimer(withTimeInterval: disconnectionGracePeriod, repeats: false) { [weak self] _ in
-            self?.logger.warning("⚠️ Connection not recovered after \(self?.disconnectionGracePeriod ?? 0)s, restarting...")
+        disconnectionTimer = Timer.scheduledTimer(withTimeInterval: ConnectionConstants.disconnectionGracePeriod, repeats: false) { [weak self] _ in
+            self?.logger.warning("⚠️ Connection not recovered after \(ConnectionConstants.disconnectionGracePeriod)s, restarting...")
             self?.attemptIceRestart()
         }
     }
@@ -361,7 +371,7 @@ extension WebRTCManager: LKRTCPeerConnectionDelegate {
             cancelDisconnectionTimer()
 
             // Log stats after connection
-            DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) { [weak self] in
+            DispatchQueue.main.asyncAfter(deadline: .now() + ConnectionConstants.statsLogDelay) { [weak self] in
                 self?.peerConnection?.statistics { report in
                     for (key, value) in report.statistics {
                         let valueStr = String(describing: value)
