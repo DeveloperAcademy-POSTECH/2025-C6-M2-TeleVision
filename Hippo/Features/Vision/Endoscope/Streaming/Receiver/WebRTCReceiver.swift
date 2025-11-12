@@ -28,6 +28,10 @@ public final class WebRTCReceiver: NSObject, ObservableObject {
         static let initialFrames = 10
         static let debugFrames = 5
         static let detailedDebugFrames = 3
+
+        // UInt64 versions for videoPlayerFrameCounter
+        static let initialFramesU64: UInt64 = 10
+        static let frequentFramesU64: UInt64 = 120
     }
 
     // MARK: - Logging State
@@ -149,7 +153,7 @@ public final class WebRTCReceiver: NSObject, ObservableObject {
         case .videoPlayer:
             logger.info("🔧 Activating VideoPlayerComponent renderer...")
             videoPlayerFrameCounter = 0  // Reset frame counter
-            framesEnqueuedCount = 0  // Reset enqueued counter
+            loggingState.framesEnqueuedCount = 0  // Reset enqueued counter
             setupStereoRenderer()
             logger.info("   Renderer status after setup: \(self.stereoRenderer.status.rawValue)")
             logger.info("   Ready for data: \(self.stereoRenderer.isReadyForMoreMediaData)")
@@ -478,7 +482,7 @@ public final class WebRTCReceiver: NSObject, ObservableObject {
         videoPlayerFrameCounter += 1
 
         // Log processing (reduced frequency for CPU optimization)
-        if videoPlayerFrameCounter <= LoggingInterval.initialFrames || videoPlayerFrameCounter % LoggingInterval.frequentFrames == 0 {
+        if videoPlayerFrameCounter <= LoggingInterval.initialFramesU64 || videoPlayerFrameCounter % LoggingInterval.frequentFramesU64 == 0 {
             logger.info("🎬 Processing VideoPlayer frame #\(self.videoPlayerFrameCounter): \(srcWidth)×\(srcHeight)")
         }
 
@@ -488,7 +492,7 @@ public final class WebRTCReceiver: NSObject, ObservableObject {
             do {
                 // Use ConvertingModel to split SBS into tagged stereo sample
                 guard let stereoSample = try await self.convertingModel?.process(pixelBuffer, pts: pts, duration: duration) else {
-                    if self.videoPlayerFrameCounter <= LoggingInterval.initialFrames {
+                    if self.videoPlayerFrameCounter <= LoggingInterval.initialFramesU64 {
                         self.logger.error("❌ Failed to convert SBS to stereo tagged sample")
                     }
                     return
@@ -496,7 +500,7 @@ public final class WebRTCReceiver: NSObject, ObservableObject {
 
                 await self.enqueueReadyStereoSample(stereoSample)
             } catch {
-                if self.videoPlayerFrameCounter <= LoggingInterval.initialFrames {
+                if self.videoPlayerFrameCounter <= LoggingInterval.initialFramesU64 {
                     self.logger.error("❌ ConvertingModel error: \(error.localizedDescription)")
                 }
             }
@@ -506,7 +510,7 @@ public final class WebRTCReceiver: NSObject, ObservableObject {
     private func enqueueReadyStereoSample(_ sample: CMSampleBuffer) async {
         // Check if renderer is ready
         guard isRendererReady else {
-            if videoPlayerFrameCounter <= LoggingInterval.debugFrames {
+            if videoPlayerFrameCounter <= UInt64(LoggingInterval.debugFrames) {
                 logger.warning("⏳ [VIDEOPLAY DEBUG] Renderer not ready (frame #\(self.videoPlayerFrameCounter)), skipping...")
                 logger.warning("   Renderer status: \(self.stereoRenderer.status.rawValue)")
                 logger.warning("   Ready for data: \(self.stereoRenderer.isReadyForMoreMediaData)")
@@ -564,7 +568,7 @@ public final class WebRTCReceiver: NSObject, ObservableObject {
         }
 
         // Monitor for pink screen - check if error occurs after enqueue
-        if self.loggingState.framesEnqueuedCount <= LoggingInterval.debugFrames {
+        if self.loggingState.framesEnqueuedCount <= UInt64(LoggingInterval.debugFrames) {
             // Check renderer status right after enqueue
             Task { @MainActor in
                 try? await Task.sleep(for: .milliseconds(100))
