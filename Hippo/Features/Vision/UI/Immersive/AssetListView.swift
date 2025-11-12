@@ -57,6 +57,9 @@ struct AssetListView: View {
                 selectedURL = fileURLs.first
             }
         }
+        .onDisappear {
+            immersiveViewModel.isShowingAssetListView = false
+        }
         
     }
 }
