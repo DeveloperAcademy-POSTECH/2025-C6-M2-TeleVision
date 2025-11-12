@@ -497,7 +497,7 @@ public class HEVCVideoDecoder: NSObject, LKRTCVideoDecoder {
         )
 
         let pixelBufferAttributes: [CFString: Any] = [
-            kCVPixelBufferPixelFormatTypeKey: kCVPixelFormatType_32BGRA,
+            kCVPixelBufferPixelFormatTypeKey: kCVPixelFormatType_420YpCbCr8BiPlanarVideoRange,  // NV12 for better performance (was BGRA)
             kCVPixelBufferMetalCompatibilityKey: true
         ]
 
