@@ -52,15 +52,7 @@ struct StereoMetadata {
     ///   - mode: The stereo input mode (singleSourceSBS or splitEyes).
     /// - Returns: The calculated aperture offset relative to the source center.
     func cleanApertureOffset(for layerID: Int, sourceSize: CGSize, mode: StereoInputMode) -> ApertureOffset {
-        let logger = Logger(subsystem: "com.television.hippo", category: "StereoMetadata")
-        let eyeName = layerID == 0 ? "Left" : "Right"
-
-        // 🔍 DIAGNOSTIC: Log input parameters
-        logger.info("🔍 [DIAGNOSTIC] cleanApertureOffset called:")
-        logger.info("   LayerID: \(layerID) (\(eyeName))")
-        logger.info("   SourceSize: \(sourceSize.width)×\(sourceSize.height)")
-        logger.info("   Mode: \(mode == .singleSourceSBS ? "singleSourceSBS" : "splitEyes")")
-        logger.info("   FramePacking: \(self.isSideBySide ? "sideBySide" : "overUnder")")
+        // Removed diagnostic logging for performance - called every frame for each eye
 
         switch mode {
         case .singleSourceSBS:
@@ -84,50 +76,23 @@ struct StereoMetadata {
             if isSideBySide {
                 let offset = sourceSize.width / 4.0
                 let multiplier = CGFloat(layerID) * 2.0 - 1.0
-                let result: ApertureOffset = (
+                return (
                     horizontal: offset * multiplier,
                     vertical: 0.0
                 )
-
-                // 🔍 DIAGNOSTIC: Log calculation details
-                logger.info("🔍 [DIAGNOSTIC] SBS calculation:")
-                logger.info("   Base offset (sourceWidth/4): \(String(format: "%.2f", offset))")
-                logger.info("   Multiplier for \(eyeName): \(String(format: "%.2f", multiplier))")
-                logger.info("   Result: H=\(String(format: "%.2f", result.horizontal)), V=\(String(format: "%.2f", result.vertical))")
-
-                // Calculate expected eye center for verification
-                let sourceCenter = sourceSize.width / 2.0
-                let eyeWidth = sourceSize.width / 2.0
-                let expectedEyeCenter = layerID == 0 ? eyeWidth / 2.0 : eyeWidth / 2.0 + eyeWidth
-                let calculatedEyeCenter = sourceCenter + result.horizontal
-
-                logger.info("🔍 [DIAGNOSTIC] Verification:")
-                logger.info("   Source center X: \(String(format: "%.1f", sourceCenter))")
-                logger.info("   Expected \(eyeName) eye center X: \(String(format: "%.1f", expectedEyeCenter))")
-                logger.info("   Calculated \(eyeName) eye center X: \(String(format: "%.1f", calculatedEyeCenter))")
-                logger.info("   Match: \(abs(expectedEyeCenter - calculatedEyeCenter) < 1.0 ? "✅" : "❌")")
-
-                return result
             } else {
                 // Over-under packing
                 let offset = sourceSize.height / 4.0
                 let multiplier = CGFloat(layerID) * 2.0 - 1.0
-                let result: ApertureOffset = (
+                return (
                     horizontal: 0.0,
                     vertical: offset * multiplier
                 )
-
-                logger.info("🔍 [DIAGNOSTIC] OverUnder calculation:")
-                logger.info("   Base offset (sourceHeight/4): \(String(format: "%.2f", offset))")
-                logger.info("   Result: H=\(String(format: "%.2f", result.horizontal)), V=\(String(format: "%.2f", result.vertical))")
-
-                return result
             }
 
         case .splitEyes:
             // For already-split buffers: each buffer represents the full eye region.
             // No offset needed because there's no cropping to do.
-            logger.info("🔍 [DIAGNOSTIC] SplitEyes mode: No offset needed")
             return (horizontal: 0.0, vertical: 0.0)
         }
     }

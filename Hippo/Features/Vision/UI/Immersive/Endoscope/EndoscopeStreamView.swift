@@ -39,59 +39,76 @@ enum VideoRenderPath: String, CaseIterable {
 struct EndoscopeStreamView: View {
     @ObservedObject var receiver: WebRTCReceiver
     let isVisible: Bool
+    @Binding var displayMode: VideoDisplayMode
+    @Binding var renderPath: VideoRenderPath
 
-    @State private var displayMode: VideoDisplayMode = .stereo
-    @State private var renderPath: VideoRenderPath = .videoPlayer
+    // Calculate dynamic view size based on frame resolution
+    private var viewSize: CGSize {
+        let frameSize = receiver.currentFrameSize
+
+        // If no frame size yet, use default 16:9
+        guard frameSize.width > 0 && frameSize.height > 0 else {
+            return CGSize(width: 600, height: 338)
+        }
+
+        // Maximum display dimensions (fits well in Vision Pro window)
+        let maxWidth: CGFloat = 1200
+        let maxHeight: CGFloat = 900
+
+        let aspectRatio = frameSize.width / frameSize.height
+
+        // Calculate size with aspect fit
+        var width = maxWidth
+        var height = width / aspectRatio
+
+        if height > maxHeight {
+            height = maxHeight
+            width = height * aspectRatio
+        }
+
+        return CGSize(width: width, height: height)
+    }
 
     var body: some View {
-        ZStack {
-            if isVisible {
-                // Select rendering path
-                Group {
-                    switch renderPath {
-                    case .metal:
-                        // Path B: Use StereoVideoRenderer (Metal-based)
-                        StereoVideoView(
-                            renderer: receiver.stereoMetalRenderer,
-                            displayMode: displayMode
-                        )
-                    case .videoPlayer:
-                        // Path A: Use VideoPlayerComponent (AVSampleBufferVideoRenderer)
-                        VideoPlayerStereoView(
-                            receiver: receiver,
-                            displayMode: displayMode
-                        )
-                    }
-                }
-                .frame(width: 600, height: 338)  // 16:9 비율 (1920×1080 스케일)
-                .clipShape(RoundedRectangle(cornerRadius: 20))
-                .glassBackgroundEffect(in: .rect(cornerRadius: 20))
-                .shadow(radius: 10)
-                .overlay(
-                    RoundedRectangle(cornerRadius: 20)
-                        .stroke(Color.hippoPrimary.opacity(0.3), lineWidth: 2)
-                )
-                .overlay(alignment: .topTrailing) {
-                    // 연결 상태 표시
-                    ConnectionStatusBadge(isConnected: receiver.isConnected)
-                        .padding(12)
-                }
-                .overlay(alignment: .topLeading) {
-                    VStack(alignment: .leading, spacing: 8) {
-                        // 스테레오/모노 토글 버튼
-                        DisplayModeToggle(mode: $displayMode)
-                        // 렌더링 경로 토글 버튼
-                        RenderPathToggle(path: $renderPath, receiver: receiver)
-                    }
-                    .padding(12)
+        // Video content only - controls moved to EndoscopeStreamWindow overlay
+        if isVisible {
+            // Select rendering path
+            Group {
+                switch renderPath {
+                case .metal:
+                    // Path B: Use StereoVideoRenderer (Metal-based)
+                    StereoVideoView(
+                        renderer: receiver.stereoMetalRenderer,
+                        displayMode: displayMode
+                    )
+                case .videoPlayer:
+                    // Path A: Use VideoPlayerComponent (AVSampleBufferVideoRenderer)
+                    VideoPlayerStereoView(
+                        receiver: receiver,
+                        displayMode: displayMode
+                    )
                 }
             }
-        }
-        .opacity(isVisible ? 1.0 : 0.0)
-        .animation(.easeInOut(duration: 0.3), value: isVisible)
-        .onAppear {
-            // Initialize receiver's render path to match UI state
-            receiver.setRenderPath(renderPath == .metal ? .metal : .videoPlayer)
+            .id("\(renderPath.rawValue)-\(displayMode.rawValue)")
+            .frame(width: viewSize.width, height: viewSize.height)
+            .onChange(of: viewSize) { oldValue, newValue in
+                if oldValue != newValue {
+                    print("📐 View size changed: \(Int(oldValue.width))×\(Int(oldValue.height)) → \(Int(newValue.width))×\(Int(newValue.height))")
+                }
+            }
+            .clipShape(RoundedRectangle(cornerRadius: 20))
+            .glassBackgroundEffect(in: .rect(cornerRadius: 20))
+            .shadow(radius: 10)
+            .overlay(
+                RoundedRectangle(cornerRadius: 20)
+                    .stroke(Color.hippoPrimary.opacity(0.3), lineWidth: 2)
+            )
+            .transition(.opacity)
+            .animation(.easeInOut(duration: 0.3), value: isVisible)
+            .onAppear {
+                // Initialize receiver's render path to match UI state
+                receiver.setRenderPath(renderPath == .metal ? .metal : .videoPlayer)
+            }
         }
     }
 }
@@ -103,22 +120,61 @@ struct VideoPlayerStereoView: View {
     let displayMode: VideoDisplayMode
 
     @State private var videoEntity: Entity?
+    @State private var isRendererReady = false
+
+    // Fixed plane dimensions for video display
+    // VideoPlayerComponent will scale the video to fit the plane
+    private var planeDimensions: (width: Float, height: Float) {
+        // Optimized size for performance and visibility
+        // 16:9 aspect ratio - reduced from 4.0m for better performance
+        return (width: 2.4, height: 1.35)  // ~2.4m wide, maintains 16:9 ratio
+    }
 
     var body: some View {
         #if os(visionOS)
         RealityView { content in
-            // Create VideoPlayerComponent using the stereoRenderer
+            print("🎬 [VIDEOPLAY DEBUG] VideoPlayerStereoView RealityView creating...")
+            print("   Renderer status: \(receiver.stereoRenderer.status.rawValue)")
+            print("   Ready for data: \(receiver.stereoRenderer.isReadyForMoreMediaData)")
+
+            // Create VideoPlayerComponent immediately
+            // Note: Renderer readiness is managed by WebRTCReceiver.setupStereoRenderer()
             let videoPlayerComponent = VideoPlayerComponent(videoRenderer: receiver.stereoRenderer)
+
+            // Create entity with VideoPlayerComponent ONLY (no mesh, no materials)
+            // VideoPlayerComponent manages its own rendering
             let entity = Entity()
             entity.components.set(videoPlayerComponent)
-            entity.scale = SIMD3<Float>(repeating: 1)
+
+            // MATCH Metal position: Same as StereoVideoRenderer for consistency
+            // In ImmersiveSpace, position at origin like Metal planes
+            entity.position = SIMD3<Float>(0, 0, 0)
+
+            // Set scale for comfortable viewing
+            let dimensions = planeDimensions
+            entity.scale = SIMD3<Float>(repeating: 1.0)  // 1:1 scale with plane dimensions
+
             content.add(entity)
 
             // Store reference for potential updates
             videoEntity = entity
-        } update: { content in
-            // Update logic if needed when receiver state changes
-            // Currently, the stereoRenderer is continuously updated via enqueue
+
+            print("✅ VideoPlayerComponent created with scale: \(entity.scale.x), plane: \(dimensions.width)m × \(dimensions.height)m)")
+
+            // Monitor for pink screen issues - check renderer status periodically
+            Task {
+                for _ in 0..<10 {
+                    try? await Task.sleep(for: .seconds(1))
+                    let status = receiver.stereoRenderer.status
+                    let readyForData = receiver.stereoRenderer.isReadyForMoreMediaData
+
+                    if status == .failed {
+                        print("❌ [PINK SCREEN DEBUG] Renderer status: FAILED")
+                    } else if !readyForData {
+                        print("⚠️ [PINK SCREEN DEBUG] Renderer not ready for data")
+                    }
+                }
+            }
         }
         .onAppear {
             print("✅ VideoPlayerStereoView appeared, stereoRenderer status: \(receiver.stereoRenderer.status.rawValue)")
@@ -166,17 +222,17 @@ struct DisplayModeToggle: View {
                 mode = mode == .stereo ? .mono : .stereo
             }
         } label: {
-            HStack(spacing: 6) {
+            HStack(spacing: 4) {
                 Image(systemName: mode.icon)
-                    .font(.caption)
+                    .font(.system(size: 11))
                     .foregroundStyle(.primary)
 
                 Text(mode.rawValue)
-                    .font(.caption2)
+                    .font(.system(size: 10))
                     .foregroundStyle(.secondary)
             }
-            .padding(.horizontal, 12)
-            .padding(.vertical, 6)
+            .padding(.horizontal, 10)
+            .padding(.vertical, 5)
             .background(.ultraThinMaterial, in: Capsule())
         }
         .buttonStyle(.plain)
@@ -202,17 +258,17 @@ struct RenderPathToggle: View {
             // Update receiver's render path (this will cleanup old renderer and prepare new one)
             receiver.setRenderPath(newPath == .metal ? .metal : .videoPlayer)
         } label: {
-            HStack(spacing: 6) {
+            HStack(spacing: 4) {
                 Image(systemName: path.icon)
-                    .font(.caption)
+                    .font(.system(size: 11))
                     .foregroundStyle(.primary)
 
                 Text(path.rawValue)
-                    .font(.caption2)
+                    .font(.system(size: 10))
                     .foregroundStyle(.secondary)
             }
-            .padding(.horizontal, 12)
-            .padding(.vertical, 6)
+            .padding(.horizontal, 10)
+            .padding(.vertical, 5)
             .background(.ultraThinMaterial, in: Capsule())
         }
         .buttonStyle(.plain)
@@ -223,28 +279,39 @@ struct RenderPathToggle: View {
 // MARK: - Connection Status Badge
 
 struct ConnectionStatusBadge: View {
-    let isConnected: Bool
+    @ObservedObject var receiver: WebRTCReceiver
 
     var body: some View {
-        HStack(spacing: 6) {
+        HStack(spacing: 4) {
             Circle()
-                .fill(isConnected ? Color.green : Color.red)
-                .frame(width: 8, height: 8)
-                .shadow(color: isConnected ? .green : .red, radius: 4)
+                .fill(receiver.isConnected ? Color.green : Color.red)
+                .frame(width: 6, height: 6)
+                .shadow(color: receiver.isConnected ? .green : .red, radius: 3)
 
-            Text(isConnected ? "연결됨" : "연결 중...")
-                .font(.caption2)
+            Text(receiver.isConnected ? "연결됨" : "연결 중...")
+                .font(.system(size: 10))
                 .foregroundStyle(.secondary)
         }
-        .padding(.horizontal, 12)
-        .padding(.vertical, 6)
+        .padding(.horizontal, 10)
+        .padding(.vertical, 5)
         .background(.ultraThinMaterial, in: Capsule())
     }
 }
 
 #Preview {
-    EndoscopeStreamView(
-        receiver: WebRTCReceiver(),
-        isVisible: true
-    )
+    struct PreviewWrapper: View {
+        @State private var displayMode: VideoDisplayMode = .stereo
+        @State private var renderPath: VideoRenderPath = .videoPlayer
+
+        var body: some View {
+            EndoscopeStreamView(
+                receiver: WebRTCReceiver(),
+                isVisible: true,
+                displayMode: $displayMode,
+                renderPath: $renderPath
+            )
+        }
+    }
+
+    return PreviewWrapper()
 }

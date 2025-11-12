@@ -23,6 +23,7 @@ public final class WebRTCReceiver: NSObject, ObservableObject {
     @Published public var isConnected: Bool = false
     @Published public var currentFrame: CVPixelBuffer?
     @Published public var stats: ReceiverStats = ReceiverStats()
+    @Published public var currentFrameSize: CGSize = .zero  // Track current per-eye frame size
 
     // Path A (single-stream) renderer for RealityKit VideoMaterial with stereo tagging
     public let stereoRenderer = AVSampleBufferVideoRenderer()
@@ -50,6 +51,9 @@ public final class WebRTCReceiver: NSObject, ObservableObject {
 
     // Track last timestamp to compute duration
     private var lastPTS: CMTime?
+
+    // Frame skip counter for VideoPlayer path (to reduce CPU usage)
+    private var videoPlayerFrameCounter: UInt64 = 0
 
     // MARK: Remote candidate queueing
 
@@ -126,7 +130,11 @@ public final class WebRTCReceiver: NSObject, ObservableObject {
         switch path {
         case .videoPlayer:
             logger.info("🔧 Activating VideoPlayerComponent renderer...")
+            videoPlayerFrameCounter = 0  // Reset frame counter
+            framesEnqueuedCount = 0  // Reset enqueued counter
             setupStereoRenderer()
+            logger.info("   Renderer status after setup: \(self.stereoRenderer.status.rawValue)")
+            logger.info("   Ready for data: \(self.stereoRenderer.isReadyForMoreMediaData)")
 
         case .metal:
             logger.info("🔧 Activating StereoVideoRenderer...")
@@ -242,6 +250,7 @@ public final class WebRTCReceiver: NSObject, ObservableObject {
         hasLoggedNoTarget = false
         lastEnqueuePixelBuffer = nil
         framesEnqueuedCount = 0
+        videoPlayerFrameCounter = 0
     }
 
     private func startSignaling() throws {
@@ -437,17 +446,42 @@ public final class WebRTCReceiver: NSObject, ObservableObject {
     // MARK: - Stereo Tagged Stream (ConvertingModel path)
 
     private func enqueueStereoTaggedStream(buffer pixelBuffer: CVPixelBuffer, pts: CMTime, duration: CMTime) {
-        Task {
+        // Update frame size immediately from source
+        let srcWidth = CVPixelBufferGetWidth(pixelBuffer)
+        let srcHeight = CVPixelBufferGetHeight(pixelBuffer)
+        let perEyeWidth = srcWidth / 2  // SBS, so per-eye is half width
+
+        if currentFrameSize.width != CGFloat(perEyeWidth) || currentFrameSize.height != CGFloat(srcHeight) {
+            let oldSize = currentFrameSize
+            currentFrameSize = CGSize(width: perEyeWidth, height: srcHeight)
+            logger.info("📐 VideoPlayer frame size: \(Int(oldSize.width))×\(Int(oldSize.height)) → \(perEyeWidth)×\(srcHeight)")
+        }
+
+        // Frame counter for logging
+        videoPlayerFrameCounter += 1
+
+        // Log processing (reduced frequency for CPU optimization)
+        if videoPlayerFrameCounter <= 10 || videoPlayerFrameCounter % 120 == 0 {
+            logger.info("🎬 Processing VideoPlayer frame #\(self.videoPlayerFrameCounter): \(srcWidth)×\(srcHeight)")
+        }
+
+        Task { [weak self] in
+            guard let self = self else { return }
+
             do {
                 // Use ConvertingModel to split SBS into tagged stereo sample
-                guard let stereoSample = try await convertingModel?.process(pixelBuffer, pts: pts, duration: duration) else {
-                    logger.error("❌ Failed to convert SBS to stereo tagged sample")
+                guard let stereoSample = try await self.convertingModel?.process(pixelBuffer, pts: pts, duration: duration) else {
+                    if self.videoPlayerFrameCounter <= 10 {
+                        self.logger.error("❌ Failed to convert SBS to stereo tagged sample")
+                    }
                     return
                 }
 
-                await enqueueReadyStereoSample(stereoSample)
+                await self.enqueueReadyStereoSample(stereoSample)
             } catch {
-                logger.error("❌ ConvertingModel error: \(error.localizedDescription)")
+                if self.videoPlayerFrameCounter <= 10 {
+                    self.logger.error("❌ ConvertingModel error: \(error.localizedDescription)")
+                }
             }
         }
     }
@@ -455,9 +489,10 @@ public final class WebRTCReceiver: NSObject, ObservableObject {
     private func enqueueReadyStereoSample(_ sample: CMSampleBuffer) async {
         // Check if renderer is ready
         guard isRendererReady else {
-            if !hasLoggedNoTarget {
-                logger.info("⏳ Renderer not ready yet, skipping stereo frame...")
-                hasLoggedNoTarget = true
+            if videoPlayerFrameCounter <= 5 {
+                logger.warning("⏳ [VIDEOPLAY DEBUG] Renderer not ready (frame #\(self.videoPlayerFrameCounter)), skipping...")
+                logger.warning("   Renderer status: \(self.stereoRenderer.status.rawValue)")
+                logger.warning("   Ready for data: \(self.stereoRenderer.isReadyForMoreMediaData)")
             }
             return
         }
@@ -476,6 +511,30 @@ public final class WebRTCReceiver: NSObject, ObservableObject {
         if self.framesEnqueuedCount == 0 {
             logger.info("📊 Renderer status: \(rendererStatus.rawValue), isReadyForMoreMediaData: \(self.stereoRenderer.isReadyForMoreMediaData)")
             logger.info("✅ First stereo tagged frame from ConvertingModel")
+
+            // Debug stereo sample buffer format (first frame only)
+            if let formatDesc = CMSampleBufferGetFormatDescription(sample) {
+                let mediaType = CMFormatDescriptionGetMediaType(formatDesc)
+                let mediaSubType = CMFormatDescriptionGetMediaSubType(formatDesc)
+                logger.info("🔍 [PINK DEBUG] Format: mediaType=\(mediaType), subType=\(mediaSubType)")
+
+                // Check dimensions
+                let dims = CMVideoFormatDescriptionGetDimensions(formatDesc)
+                logger.info("🔍 [PINK DEBUG] Format dimensions: \(dims.width)×\(dims.height)")
+            }
+
+            // Check for hero eye attachment on SAMPLE BUFFER (not format description)
+            // For tagged buffer groups, the attachment is on the sample buffer itself
+            if let heroEye = CMGetAttachment(sample as CMAttachmentBearer, key: kCMFormatDescriptionExtension_HeroEye as CFString, attachmentModeOut: nil) {
+                logger.info("✅ [PINK DEBUG] HeroEye attachment on sample buffer: \(heroEye as! NSObject)")
+            } else {
+                logger.warning("⚠️ [PINK DEBUG] No HeroEye attachment found on sample buffer!")
+            }
+
+            // Check sample buffer validity
+            let isValid = CMSampleBufferIsValid(sample)
+            let dataReady = CMSampleBufferDataIsReady(sample)
+            logger.info("🔍 [PINK DEBUG] Sample valid: \(isValid), dataReady: \(dataReady)")
         }
 
         stereoRenderer.enqueue(sample)
@@ -486,11 +545,35 @@ public final class WebRTCReceiver: NSObject, ObservableObject {
         } else if self.framesEnqueuedCount % 60 == 0 {
             logger.debug("📊 Enqueued \(self.framesEnqueuedCount) stereo frames total")
         }
+
+        // Monitor for pink screen - check if error occurs after enqueue
+        if self.framesEnqueuedCount <= 5 {
+            // Check renderer status right after enqueue
+            Task { @MainActor in
+                try? await Task.sleep(for: .milliseconds(100))
+                let statusAfter = self.stereoRenderer.status
+                if statusAfter == .failed {
+                    self.logger.error("❌ [PINK DEBUG] Renderer FAILED after enqueue frame #\(self.framesEnqueuedCount)")
+                }
+            }
+        }
     }
 
     // MARK: - Path B: Stereo Metal update (legacy, deprecated)
 
     private func feedStereoMetal(with pixelBuffer: CVPixelBuffer) {
+        // Update frame size (SBS source, so per-eye is half width)
+        let width = CVPixelBufferGetWidth(pixelBuffer)
+        let height = CVPixelBufferGetHeight(pixelBuffer)
+        // For SBS, each eye is half the width
+        let perEyeWidth = width / 2
+
+        if currentFrameSize.width != CGFloat(perEyeWidth) || currentFrameSize.height != CGFloat(height) {
+            let oldSize = currentFrameSize
+            currentFrameSize = CGSize(width: perEyeWidth, height: height)
+            logger.info("📐 Metal frame size: \(Int(oldSize.width))×\(Int(oldSize.height)) → \(perEyeWidth)×\(height)")
+        }
+
         // Ensure BGRA for StereoVideoRenderer
         let format = CVPixelBufferGetPixelFormatType(pixelBuffer)
         if format == kCVPixelFormatType_32BGRA {
