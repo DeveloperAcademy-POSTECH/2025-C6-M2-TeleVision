@@ -7,13 +7,25 @@
 //
 
 import Foundation
-import CoreVideo
-import CoreMedia
-import AVFoundation
+@preconcurrency import CoreVideo
+@preconcurrency import CoreMedia
+@preconcurrency import AVFoundation
 import os.log
-import LiveKitWebRTC
+@preconcurrency import LiveKitWebRTC
 import Combine
 import CoreImage
+
+// MARK: - Sendable Wrappers (must be defined before @MainActor classes)
+
+/// Thread-safe wrapper for CVPixelBuffer to enable Sendable conformance
+/// CVPixelBuffer is inherently thread-safe (reference-counted CF type)
+nonisolated struct SendablePixelBuffer: @unchecked Sendable {
+    nonisolated let pixelBuffer: CVPixelBuffer
+
+    nonisolated init(_ pixelBuffer: CVPixelBuffer) {
+        self.pixelBuffer = pixelBuffer
+    }
+}
 
 // MARK: - WebRTC Receiver
 
@@ -86,8 +98,8 @@ public final class WebRTCReceiver: NSObject, ObservableObject {
 
     // MARK: Prevent multiple initialization
     private var isInitialized: Bool = false
-    private static var globalInitCount: Int = 0
-    private static let initLock = NSLock()
+    private nonisolated(unsafe) static var globalInitCount: Int = 0
+    private nonisolated(unsafe) static let initLock = NSLock()
 
     // MARK: Log throttling
     private var loggingState = LoggingState()
@@ -119,6 +131,19 @@ public final class WebRTCReceiver: NSObject, ObservableObject {
     public init(signalingServerURL: URL = URL(string: "ws://127.0.0.1:8080")!) {
         self.signalingServerURL = signalingServerURL
         super.init()
+    }
+
+    /// Performs global WebRTC initialization in a thread-safe manner (nonisolated for lock usage)
+    nonisolated private func performGlobalInitIfNeeded() -> Int {
+        Self.initLock.lock()
+        defer { Self.initLock.unlock() }
+
+        if Self.globalInitCount == 0 {
+            LKRTCInitializeSSL()
+            LKRTCSetupInternalTracer()
+            Self.globalInitCount += 1
+        }
+        return Self.globalInitCount
     }
 
     /// Set rendering path (Path A: VideoPlayerComponent or Path B: Metal)
@@ -204,17 +229,11 @@ public final class WebRTCReceiver: NSObject, ObservableObject {
         setupStereoRenderer()
 
         // Thread-safe global initialization
-        Self.initLock.lock()
-        defer { Self.initLock.unlock() }
-
-        if Self.globalInitCount == 0 {
-            logger.info("🔧 Performing WebRTC global initialization...")
-            LKRTCInitializeSSL()
-            LKRTCSetupInternalTracer()
-            Self.globalInitCount += 1
-            logger.info("✅ WebRTC global initialization complete (count: \(Self.globalInitCount))")
+        let initCount = performGlobalInitIfNeeded()
+        if initCount == 1 {
+            logger.info("✅ WebRTC global initialization complete (count: \(initCount))")
         } else {
-            logger.info("ℹ️ WebRTC already globally initialized (count: \(Self.globalInitCount)), reusing...")
+            logger.info("ℹ️ WebRTC already globally initialized (count: \(initCount)), reusing...")
         }
 
         let encoderFactory = LKRTCDefaultVideoEncoderFactory()
@@ -292,19 +311,24 @@ public final class WebRTCReceiver: NSObject, ObservableObject {
         stereoRenderer.requestMediaDataWhenReady(on: .main) { [weak self] in
             guard let self = self else { return }
 
-            // This callback indicates renderer is ready for data
-            if !self.isRendererReady {
-                self.isRendererReady = true
-                self.logger.info("✅ AVSampleBufferVideoRenderer is now ready for tagged stereo frames")
+            // Ensure Main actor isolation for property access
+            Task { @MainActor [weak self] in
+                guard let self = self else { return }
 
-                // Replay last buffered frame if available
-                if let bufferedPB = self.lastEnqueuePixelBuffer {
-                    self.logger.info("🔄 Replaying buffered frame now that renderer is ready")
-                    self.enqueueSingleStreamImmediate(
-                        buffer: bufferedPB,
-                        pts: self.lastEnqueuePTS,
-                        duration: self.lastEnqueueDuration
-                    )
+                // This callback indicates renderer is ready for data
+                if !self.isRendererReady {
+                    self.isRendererReady = true
+                    self.logger.info("✅ AVSampleBufferVideoRenderer is now ready for tagged stereo frames")
+
+                    // Replay last buffered frame if available
+                    if let bufferedPB = self.lastEnqueuePixelBuffer {
+                        self.logger.info("🔄 Replaying buffered frame now that renderer is ready")
+                        self.enqueueSingleStreamImmediate(
+                            buffer: bufferedPB,
+                            pts: self.lastEnqueuePTS,
+                            duration: self.lastEnqueueDuration
+                        )
+                    }
                 }
             }
         }
@@ -336,14 +360,15 @@ public final class WebRTCReceiver: NSObject, ObservableObject {
 
             // CVPixelBuffer is a CoreFoundation type, cast directly
             let pb = pixelBuffer as! CVPixelBuffer
+            let sendableBuffer = SendablePixelBuffer(pb)
 
-            Task { @MainActor [weak self] in
+            Task { @MainActor [weak self, sendableBuffer] in
                 guard let self = self else { return }
                 // Only log occasionally to avoid spam
                 if self.framesReceived % LoggingInterval.frequentFrames == 0 {
                     self.logger.info("📢 Received HEVC frame via notification workaround")
                 }
-                self.processFrame(pb, from: frame)
+                self.processFrame(sendableBuffer.pixelBuffer, from: frame)
             }
         }
 
@@ -643,21 +668,15 @@ public final class WebRTCReceiver: NSObject, ObservableObject {
 
             let sessionDescription = LKRTCSessionDescription(type: .offer, sdp: offer)
 
-            self.peerConnection?.setRemoteDescription(sessionDescription) { [weak self] error in
-                guard let self = self else { return }
-
-                if let error = error {
-                    self.logger.error("❌ SDP:setRemoteDescription(offer) failed: \(error.localizedDescription)")
-                    return
-                }
-
+            do {
+                try await self.peerConnection?.setRemoteDescription(sessionDescription)
                 self.logger.info("✅ SDP:setRemoteDescription(offer) success")
 
-                Task { @MainActor in
-                    self.remoteDescriptionSet = true
-                    self.flushPendingRemoteCandidates()
-                    await self.createAnswer()
-                }
+                self.remoteDescriptionSet = true
+                self.flushPendingRemoteCandidates()
+                await self.createAnswer()
+            } catch {
+                self.logger.error("❌ SDP:setRemoteDescription(offer) failed: \(error.localizedDescription)")
             }
         }
     }
@@ -670,22 +689,27 @@ public final class WebRTCReceiver: NSObject, ObservableObject {
 
         logger.info("🔄 Flushing \(self.pendingRemoteCandidates.count) queued remote candidates")
 
-        for candidate in self.pendingRemoteCandidates {
-            peerConnection?.add(candidate) { [weak self] error in
-                if let error = error {
-                    Task { @MainActor in
-                        self?.logger.error("❌ Failed to add queued ICE candidate: \(error.localizedDescription)")
+        let candidates = self.pendingRemoteCandidates
+        self.pendingRemoteCandidates.removeAll()
+
+        Task { [weak self, candidates] in
+            guard let self = self else { return }
+            for candidate in candidates {
+                do {
+                    try await self.peerConnection?.addIceCandidate(candidate)
+                    await MainActor.run {
+                        self.logger.debug("✅ Queued ICE candidate added")
                     }
-                } else {
-                    Task { @MainActor in
-                        self?.logger.debug("✅ Queued ICE candidate added")
+                } catch {
+                    await MainActor.run {
+                        self.logger.error("❌ Failed to add queued ICE candidate: \(error.localizedDescription)")
                     }
                 }
             }
+            await MainActor.run {
+                self.logger.info("✅ All queued candidates processed")
+            }
         }
-
-        self.pendingRemoteCandidates.removeAll()
-        logger.info("✅ All queued candidates processed")
     }
 
     private func createAnswer() async {
@@ -698,39 +722,19 @@ public final class WebRTCReceiver: NSObject, ObservableObject {
             optionalConstraints: nil
         )
 
-        peerConnection?.answer(for: constraints) { [weak self] sdp, error in
-            guard let self = self else { return }
+        do {
+            guard let peerConnection = peerConnection else { return }
 
-            if let error = error {
-                self.logger.error("❌ SDP:createAnswer failed: \(error.localizedDescription)")
-                return
-            }
+            let sdp = try await peerConnection.answer(for: constraints)
+            logger.info("📄 SDP Answer created")
 
-            guard let sdp = sdp else {
-                self.logger.error("❌ SDP:createAnswer returned nil")
-                return
-            }
+            try await peerConnection.setLocalDescription(sdp)
+            logger.info("✅ SDP:setLocalDescription(answer) success")
 
-            Task { @MainActor in
-                self.logger.info("📄 SDP Answer created")
-
-                self.peerConnection?.setLocalDescription(sdp) { [weak self] error in
-                    guard let self = self else { return }
-
-                    if let error = error {
-                        self.logger.error("❌ SDP:setLocalDescription(answer) failed: \(error.localizedDescription)")
-                        return
-                    }
-
-                    self.logger.info("✅ SDP:setLocalDescription(answer) success")
-
-                    Task { @MainActor [weak self] in
-                        guard let self = self else { return }
-                        self.signalingClient?.send(answer: sdp.sdp)
-                        self.logger.info("📤 SIGNAL_TX:answer")
-                    }
-                }
-            }
+            signalingClient?.send(answer: sdp.sdp)
+            logger.info("📤 SIGNAL_TX:answer")
+        } catch {
+            logger.error("❌ SDP answer/setLocalDescription failed: \(error.localizedDescription)")
         }
     }
 }
@@ -848,9 +852,10 @@ extension WebRTCReceiver: LKRTCVideoRenderer {
         }
 
         guard let pb = pixelBuffer else { return }
+        let sendableBuffer = SendablePixelBuffer(pb)
 
-        Task { @MainActor in
-            self.processFrame(pb, from: frame)
+        Task { @MainActor [sendableBuffer] in
+            self.processFrame(sendableBuffer.pixelBuffer, from: frame)
         }
     }
 
@@ -919,16 +924,11 @@ extension WebRTCReceiver: SignalingDelegate {
                 return
             }
 
-            self.peerConnection?.add(iceCandidate) { [weak self] error in
-                if let error = error {
-                    Task { @MainActor in
-                        self?.logger.error("❌ Failed to add remote ICE candidate: \(error.localizedDescription)")
-                    }
-                } else {
-                    Task { @MainActor in
-                        self?.logger.debug("✅ SIGNAL_RX:remote-candidate added")
-                    }
-                }
+            do {
+                try await self.peerConnection?.addIceCandidate(iceCandidate)
+                self.logger.debug("✅ SIGNAL_RX:remote-candidate added")
+            } catch {
+                self.logger.error("❌ Failed to add remote ICE candidate: \(error.localizedDescription)")
             }
         }
     }
@@ -959,4 +959,62 @@ public struct ReceiverStats {
 
 enum ReceiverError: Error {
     case initializationFailed(String)
+}
+
+// MARK: - LKRTCPeerConnection Async/Await Extensions
+
+extension LKRTCPeerConnection {
+    /// Async wrapper for setRemoteDescription
+    func setRemoteDescription(_ sessionDescription: LKRTCSessionDescription) async throws {
+        try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Void, Error>) in
+            self.setRemoteDescription(sessionDescription) { error in
+                if let error = error {
+                    continuation.resume(throwing: error)
+                } else {
+                    continuation.resume(returning: ())
+                }
+            }
+        }
+    }
+
+    /// Async wrapper for setLocalDescription
+    func setLocalDescription(_ sessionDescription: LKRTCSessionDescription) async throws {
+        try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Void, Error>) in
+            self.setLocalDescription(sessionDescription) { error in
+                if let error = error {
+                    continuation.resume(throwing: error)
+                } else {
+                    continuation.resume(returning: ())
+                }
+            }
+        }
+    }
+
+    /// Async wrapper for answer(for:)
+    func answer(for constraints: LKRTCMediaConstraints) async throws -> LKRTCSessionDescription {
+        try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<LKRTCSessionDescription, Error>) in
+            self.answer(for: constraints) { sdp, error in
+                if let error = error {
+                    continuation.resume(throwing: error)
+                } else if let sdp = sdp {
+                    continuation.resume(returning: sdp)
+                } else {
+                    continuation.resume(throwing: NSError(domain: "WebRTCReceiver", code: -1, userInfo: [NSLocalizedDescriptionKey: "SDP answer is nil"]))
+                }
+            }
+        }
+    }
+
+    /// Async wrapper for add(_:) ICE candidate
+    func addIceCandidate(_ candidate: LKRTCIceCandidate) async throws {
+        try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Void, Error>) in
+            self.add(candidate) { error in
+                if let error = error {
+                    continuation.resume(throwing: error)
+                } else {
+                    continuation.resume(returning: ())
+                }
+            }
+        }
+    }
 }

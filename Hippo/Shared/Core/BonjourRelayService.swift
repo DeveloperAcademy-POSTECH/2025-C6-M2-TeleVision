@@ -16,7 +16,7 @@ import Combine
 // MARK: - Endpoint Info Model
 
 /// Represents a discovered endpoint that can be serialized and transmitted
-public struct EndpointInfo: Codable, Identifiable {
+public struct EndpointInfo: Codable, Identifiable, Sendable {
     public let id: String
     public let host: String
     public let port: Int
@@ -37,7 +37,7 @@ public struct EndpointInfo: Codable, Identifiable {
 // MARK: - Relay Response Model
 
 /// Response structure for relay requests
-public struct BonjourRelayResponse: Codable {
+public struct BonjourRelayResponse: Codable, Sendable {
     public let endpoints: [EndpointInfo]
     public let timestamp: Date
     public let version: String
@@ -296,6 +296,36 @@ public final class BonjourRelayService: ObservableObject {
     }
 }
 
+// MARK: - Thread-safe Box for captured variables
+
+/// Thread-safe box for mutable values captured in concurrent contexts
+private final class SendableBox<T>: @unchecked Sendable {
+    private var value: T
+    private let lock = NSLock()
+
+    nonisolated init(_ value: T) {
+        self.value = value
+    }
+
+    nonisolated func get() -> T {
+        lock.lock()
+        defer { lock.unlock() }
+        return value
+    }
+
+    nonisolated func set(_ newValue: T) {
+        lock.lock()
+        defer { lock.unlock() }
+        value = newValue
+    }
+
+    nonisolated func withLock<R>(_ body: (inout T) -> R) -> R {
+        lock.lock()
+        defer { lock.unlock() }
+        return body(&value)
+    }
+}
+
 // MARK: - Client Helper (Vision Pro Side)
 
 /// Helper class for Vision Pro to connect to Mac's BonjourRelayService
@@ -321,14 +351,14 @@ public final class BonjourRelayClient {
         let connection = NWConnection(to: endpoint, using: .tcp)
 
         return try await withCheckedThrowingContinuation { continuation in
-            var hasResumed = false
+            let hasResumed = SendableBox(false)
 
             // Set up timeout
             let timeoutTask = Task {
                 try? await Task.sleep(nanoseconds: UInt64(timeout * 1_000_000_000))
 
-                if !hasResumed {
-                    hasResumed = true
+                if !hasResumed.get() {
+                    hasResumed.set(true)
                     connection.cancel()
                     continuation.resume(throwing: RelayClientError.timeout)
                 }
@@ -346,8 +376,8 @@ public final class BonjourRelayClient {
                         timeoutTask.cancel()
 
                         if let error = error {
-                            if !hasResumed {
-                                hasResumed = true
+                            if !hasResumed.get() {
+                                hasResumed.set(true)
                                 self.logger.error("[BonjourRelayClient] ❌ Receive error: \(error.localizedDescription)")
                                 continuation.resume(throwing: RelayClientError.receiveError(error))
                             }
@@ -356,8 +386,8 @@ public final class BonjourRelayClient {
                         }
 
                         guard let data = content else {
-                            if !hasResumed {
-                                hasResumed = true
+                            if !hasResumed.get() {
+                                hasResumed.set(true)
                                 self.logger.error("[BonjourRelayClient] ❌ No data received")
                                 continuation.resume(throwing: RelayClientError.noDataReceived)
                             }
@@ -372,15 +402,15 @@ public final class BonjourRelayClient {
 
                             let response = try decoder.decode(BonjourRelayResponse.self, from: data)
 
-                            if !hasResumed {
-                                hasResumed = true
+                            if !hasResumed.get() {
+                                hasResumed.set(true)
                                 self.logger.info("[BonjourRelayClient] 📦 Received \(response.endpoints.count) endpoint(s)")
                                 continuation.resume(returning: response.endpoints)
                             }
 
                         } catch {
-                            if !hasResumed {
-                                hasResumed = true
+                            if !hasResumed.get() {
+                                hasResumed.set(true)
                                 self.logger.error("[BonjourRelayClient] ❌ Failed to decode response: \(error.localizedDescription)")
                                 continuation.resume(throwing: RelayClientError.decodingError(error))
                             }
@@ -391,8 +421,8 @@ public final class BonjourRelayClient {
 
                 case .failed(let error):
                     timeoutTask.cancel()
-                    if !hasResumed {
-                        hasResumed = true
+                    if !hasResumed.get() {
+                        hasResumed.set(true)
                         self.logger.error("[BonjourRelayClient] ❌ Connection failed: \(error.localizedDescription)")
                         continuation.resume(throwing: RelayClientError.connectionFailed(error))
                     }
@@ -400,8 +430,8 @@ public final class BonjourRelayClient {
 
                 case .cancelled:
                     timeoutTask.cancel()
-                    if !hasResumed {
-                        hasResumed = true
+                    if !hasResumed.get() {
+                        hasResumed.set(true)
                         self.logger.info("[BonjourRelayClient] 🛑 Connection cancelled")
                         continuation.resume(throwing: RelayClientError.cancelled)
                     }

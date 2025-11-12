@@ -230,6 +230,9 @@ public final class BonjourServiceDiscovery: ObservableObject {
                         self.handleServiceRemoved(result)
                     case .changed(old: let oldResult, new: let newResult, flags: let flags):
                         self.logger.info("[Bonjour] 🔄 Service changed: \(oldResult.endpoint.debugDescription) -> \(newResult.endpoint.debugDescription), flags: \(flags.rawValue)")
+                    case .identical:
+                        // Service is identical, no action needed
+                        self.logger.debug("[Bonjour] ↔️ Service identical")
                     @unknown default:
                         break
                     }
