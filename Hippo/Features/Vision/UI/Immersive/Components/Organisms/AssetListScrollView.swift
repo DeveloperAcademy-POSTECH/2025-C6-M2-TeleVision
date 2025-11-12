@@ -25,8 +25,9 @@ struct AssetListScrollView: View {
                     
                     ZStack {
                         RoundedRectangle(cornerRadius: 40)
-                            .fill(.quaternary)
+                            .fill(.black.opacity(0.25))
                             .frame(width: 240, height: 240)
+                            .glassBackgroundEffect(displayMode: .always)
                             .opacity(isSelected ? 1.0 : 0.0)
                         AssetListScrollCard(
                             url: url,
@@ -38,7 +39,7 @@ struct AssetListScrollView: View {
                     }
                 }
                 Spacer()
-                    .frame(width: 120)
+                    .frame(width: 140)
             }
             .scrollTargetLayout()
             .animation(.spring(response: 0.3, dampingFraction: 0.7), value: selectedURL)

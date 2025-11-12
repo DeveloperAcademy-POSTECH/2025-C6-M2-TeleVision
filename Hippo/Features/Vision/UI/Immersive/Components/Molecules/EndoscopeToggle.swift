@@ -21,7 +21,7 @@ struct SizedSwitchToggleStyle: ToggleStyle {
     var width: CGFloat = 70
     var height: CGFloat = 36
     var onTint: Color = .hippoPrimary
-    var offTint: Color = .gray.opacity(0.3)
+    var offTint: Color = .black.opacity(0.25)
     
     func makeBody(configuration: Configuration) -> some View {
         let knob = height - 8
@@ -39,15 +39,32 @@ struct SizedSwitchToggleStyle: ToggleStyle {
                     .fill(configuration.isOn ? onTint : offTint)
                     .frame(width: width, height: height)
                     .overlay(
-                        Circle()
-                            .fill(.white)
-                            .frame(width: knob, height: knob)
-                            .shadow(radius: 0.5, y: 0.5)
-                            .padding(4)
-                            .frame(maxWidth: .infinity,
-                                   alignment: configuration.isOn ? .trailing : .leading)
+                        ZStack{
+                            RoundedRectangle(cornerRadius: height/2, style: .continuous)
+                                .stroke(Color.black.opacity(0.5), lineWidth: 4)
+                                .frame(width: width, height: height)
+                                .blur(radius: 2)
+                                .offset(x: 1, y: 1)
+                                .mask(
+                                    Rectangle().fill(
+                                        LinearGradient(
+                                            gradient: Gradient(colors: [.black, .clear]),
+                                            startPoint: .topLeading,
+                                            endPoint: .bottomTrailing
+                                        )
+                                    )
+                                )
+                            Circle()
+                                .fill(.white)
+                                .frame(width: knob, height: knob)
+                                .shadow(radius: 2, x: 1, y: 1)
+                                .padding(4)
+                                .frame(maxWidth: .infinity,
+                                       alignment: configuration.isOn ? .trailing : .leading)
+                        }
                     )
             }
+            .padding(0)
             .buttonStyle(.plain)
             .glassBackgroundEffect(in: .capsule, displayMode: .always)
         }
