@@ -81,11 +81,12 @@ struct OpacityControlPanel: View {
         }
         .onChange(of: runtime.selectedEntity) {
             manager.reloadLayers()
-            opacityManager.setOpacityForUnselctedEntity()
+            opacityManager.setOpacityForUnselctedEntity(needsToShow: true)
         }
         .padding(24)
         .onDisappear {
             runtime.selectedEntity = nil
+            manager.setOpacityForUnselctedEntity(needsToShow: false)
         }
     }
 }

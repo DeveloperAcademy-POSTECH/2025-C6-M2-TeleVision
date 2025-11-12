@@ -86,6 +86,9 @@ struct HippoVisionApp: App {
                 .environment(runtime)
                 .environment(immersiveViewModel)
                 .environment(dataViewModel)
+                .task {
+                    immersiveViewModel.resetSetting()
+                }
             }
         }
         
@@ -103,7 +106,7 @@ struct HippoVisionApp: App {
         .windowResizability(.contentSize)
         .defaultWindowPlacement { _, context in
             if let surgeryBottomMenu = context.windows.first(where: { $0.id == WindowIDs.surgeryBottomMenu }) {
-                return WindowPlacement(.above(surgeryBottomMenu))
+                return WindowPlacement(.trailing(surgeryBottomMenu))
             }
             return WindowPlacement()
         }
@@ -114,11 +117,6 @@ struct HippoVisionApp: App {
                 .environment(immersiveViewModel)
                 .environment(dataViewModel)
                 .environment(runtime)
-                .onAppear { immersiveViewModel.isSurgeryBottomMenuOpen = true }
-                .onDisappear {
-                    immersiveViewModel.isSurgeryBottomMenuOpen = false
-                    immersiveViewModel.isMenuActive = false
-                }
         }
         .windowStyle(.plain)
         .windowResizability(.contentSize)

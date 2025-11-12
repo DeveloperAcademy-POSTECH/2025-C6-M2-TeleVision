@@ -18,6 +18,8 @@ struct SurgeryBottomMenu: View {
     @Environment(ImmersiveViewModel.self) var immersiveViewModel
     @Environment(ImmersiveSceneRuntime.self) var runtime
     
+//    @Environment(\.scenePhase) private var scenePhase
+    
     private var patient: PatientDisplayModel {
         dataViewModel.state.patient ?? PatientDisplayModel.MockData
     }
@@ -35,8 +37,22 @@ struct SurgeryBottomMenu: View {
             Spacer().frame(height: 8)
             SurgeryControlBar()
         }
-        .opacity(immersiveViewModel.isMenuActive ? 1.0 : 0.0)
         .environment(windowController)
+        .onAppear {
+            immersiveViewModel.openMenuSetting(windowController: windowController)
+        }
+        .onDisappear {
+            immersiveViewModel.isMenuActive = false
+            immersiveViewModel.closeMenuSetting(windowController: windowController)
+        }
+//        .onChange(of: scenePhase) { oldPhase, newPhase in
+//            // Immersive Space 씬 자체가 닫히거나 백그라운드로 갈 때
+//            if newPhase == .background  {
+//                print("ImmersiveSurgeryView Scene: 씬 비활성화/백그라운드 감지됨")
+//                immersiveViewModel.isMenuActive = false
+//                immersiveViewModel.closeMenuSetting(windowController: windowController)
+//            }
+//        }
     }
     
 }
