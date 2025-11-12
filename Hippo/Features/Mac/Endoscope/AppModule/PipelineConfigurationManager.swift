@@ -19,6 +19,11 @@ public actor PipelineConfigurationManager {
     private var _normalizePolicy: NormalizePolicy = .cropToMatchAspect
     private var _targetBitrate: Int = 30_000_000
 
+    // MARK: - Initialization
+
+    /// Nonisolated initializer allows synchronous creation from any context
+    public init() {}
+
     // MARK: - Getters
 
     public func getSBSMode() -> SBSMode {

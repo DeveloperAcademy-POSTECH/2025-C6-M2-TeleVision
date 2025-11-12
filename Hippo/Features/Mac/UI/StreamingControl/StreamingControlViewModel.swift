@@ -12,6 +12,19 @@ import CoreVideo
 import CoreMedia
 import os.log
 
+// MARK: - Sendable Wrapper
+
+/// Thread-safe wrapper for CVPixelBuffer
+fileprivate struct SendablePixelBuffer: @unchecked Sendable {
+    let pixelBuffer: CVPixelBuffer
+
+    init(_ pixelBuffer: CVPixelBuffer) {
+        self.pixelBuffer = pixelBuffer
+    }
+}
+
+// MARK: - StreamingControlViewModel
+
 /// Streaming control view model
 @MainActor
 @Observable
@@ -142,7 +155,7 @@ public final class StreamingControlViewModel {
         Task { @MainActor in
             #if os(macOS)
             let discoverySession = AVCaptureDevice.DiscoverySession(
-                deviceTypes: [.externalUnknown, .builtInWideAngleCamera],
+                deviceTypes: [.external, .builtInWideAngleCamera],
                 mediaType: .video,
                 position: .unspecified
             )
@@ -457,18 +470,21 @@ public final class StreamingControlViewModel {
 
 extension StreamingControlViewModel: CaptureOutputDelegate {
     nonisolated public func didOutput(pixelBuffer: CVPixelBuffer, pts: CMTime, source: CaptureSource) {
-        Task { @MainActor in
+        // Wrap CVPixelBuffer to safely cross actor boundary
+        let sendableBuffer = SendablePixelBuffer(pixelBuffer)
+        Task { @MainActor [weak self] in
+            guard let self = self else { return }
             if self.videoMode == .mono {
                 // Mono mode: send frame directly
                 if source == .left {  // Only process left camera in mono mode
-                    await self.handleMonoFrame(pixelBuffer, pts: pts)
+                    await self.handleMonoFrame(sendableBuffer.pixelBuffer, pts: pts)
                 }
             } else {
                 // Stereo mode: push to frame sync
                 if self.frameSync == nil {
                     self.logger.error("❌ FrameSync is nil in stereo mode! Mode: \(self.videoMode.rawValue), Source: \(source.rawValue)")
                 } else {
-                    self.frameSync?.push(pixelBuffer, pts: pts, source: source)
+                    self.frameSync?.push(sendableBuffer.pixelBuffer, pts: pts, source: source)
                 }
             }
         }

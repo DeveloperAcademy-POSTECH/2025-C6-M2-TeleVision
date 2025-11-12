@@ -15,11 +15,10 @@ import os.log
 import Combine
 import CoreImage
 
-// MARK: - Sendable Wrappers (must be defined before @MainActor classes)
+// MARK: - Sendable Wrapper
 
-/// Thread-safe wrapper for CVPixelBuffer to enable Sendable conformance
-/// CVPixelBuffer is inherently thread-safe (reference-counted CF type)
-struct SendablePixelBuffer: @unchecked Sendable {
+/// Thread-safe wrapper for CVPixelBuffer
+fileprivate struct SendablePixelBuffer: @unchecked Sendable {
     let pixelBuffer: CVPixelBuffer
 
     init(_ pixelBuffer: CVPixelBuffer) {

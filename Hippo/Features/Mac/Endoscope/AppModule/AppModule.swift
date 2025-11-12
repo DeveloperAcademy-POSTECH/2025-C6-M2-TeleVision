@@ -14,6 +14,19 @@ import os.log
 import AVFoundation
 import Combine
 
+// MARK: - Sendable Wrapper
+
+/// Thread-safe wrapper for CVPixelBuffer
+fileprivate struct SendablePixelBuffer: @unchecked Sendable {
+    let pixelBuffer: CVPixelBuffer
+
+    init(_ pixelBuffer: CVPixelBuffer) {
+        self.pixelBuffer = pixelBuffer
+    }
+}
+
+// MARK: - AppModule
+
 @MainActor
 public final class AppModule: ObservableObject {
 
@@ -121,35 +134,42 @@ public final class AppModule: ObservableObject {
     // MARK: - Private Methods
 
     private func handleSyncedPair(_ pair: SyncedPair) {
-        processingQueue.async { [weak self] in
+        Task { [weak self] in
             guard let self = self else { return }
 
-            Task {
-                // P0.2: Get configuration atomically
-                let config = await self.configManager.makeComposerConfig()
+            // P0.2: Get configuration atomically
+            let config = await self.configManager.makeComposerConfig()
 
-                do {
-                    // Compose SBS frame
-                    let composed = try self.composer?.compose(
-                        left: pair.left,
-                        right: pair.right,
-                        leftSize: pair.leftSize,
-                        rightSize: pair.rightSize,
-                        config: config
-                    )
+            // Get MainActor properties once
+            let (composer, transport) = await MainActor.run {
+                (self.composer, self.transport)
+            }
 
-                    guard let composed = composed else {
-                        return
-                    }
+            do {
+                // Compose SBS frame (CPU-intensive, off MainActor)
+                let composed = try composer?.compose(
+                    left: pair.left,
+                    right: pair.right,
+                    leftSize: pair.leftSize,
+                    rightSize: pair.rightSize,
+                    config: config
+                )
 
-                    // Send via WebRTC
-                    self.transport?.send(pixelBuffer: composed, presentationTime: pair.pts)
+                guard let composed = composed else {
+                    return
+                }
 
-                    // Update preview (MainActor)
-                    await self.updatePreview(composed)
+                // Send via WebRTC
+                transport?.send(pixelBuffer: composed, presentationTime: pair.pts)
 
-                } catch {
-                    self.logger.error("❌ Composition failed: \(error.localizedDescription)")
+                // Update preview (MainActor)
+                Task { @MainActor [weak self] in
+                    self?.updatePreview(composed)
+                }
+
+            } catch {
+                Task { @MainActor [weak self] in
+                    self?.logger.error("❌ Composition failed: \(error.localizedDescription)")
                 }
             }
         }
@@ -166,8 +186,10 @@ public final class AppModule: ObservableObject {
 extension AppModule: CaptureOutputDelegate {
 
     nonisolated public func didOutput(pixelBuffer: CVPixelBuffer, pts: CMTime, source: CaptureSource) {
-        Task { @MainActor in
-            frameSync?.push(pixelBuffer, pts: pts, source: source)
+        // Wrap CVPixelBuffer to safely cross actor boundary
+        let sendableBuffer = SendablePixelBuffer(pixelBuffer)
+        Task { @MainActor [weak self] in
+            self?.frameSync?.push(sendableBuffer.pixelBuffer, pts: pts, source: source)
         }
     }
 
