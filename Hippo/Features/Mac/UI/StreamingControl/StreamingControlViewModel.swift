@@ -16,9 +16,9 @@ import os.log
 
 /// Thread-safe wrapper for CVPixelBuffer
 fileprivate struct SendablePixelBuffer: @unchecked Sendable {
-    let pixelBuffer: CVPixelBuffer
+    nonisolated(unsafe) let pixelBuffer: CVPixelBuffer
 
-    init(_ pixelBuffer: CVPixelBuffer) {
+    nonisolated init(_ pixelBuffer: CVPixelBuffer) {
         self.pixelBuffer = pixelBuffer
     }
 }
@@ -239,7 +239,11 @@ public final class StreamingControlViewModel {
 
         // Clear preview
         if let layer = previewLayer {
-            layer.flush()
+            if #available(macOS 15.0, *) {
+                layer.sampleBufferRenderer.flush()
+            } else {
+                layer.flush()
+            }
         }
 
         isStreaming = false
@@ -435,12 +439,22 @@ public final class StreamingControlViewModel {
         }
 
         // Enqueue to display layer
-        layer.enqueue(sample)
+        if #available(macOS 15.0, *) {
+            layer.sampleBufferRenderer.enqueue(sample)
 
-        // Flush if layer is not ready
-        if layer.status == .failed {
-            logger.warning("⚠️ Display layer failed, flushing...")
-            layer.flush()
+            // Flush if layer is not ready
+            if layer.sampleBufferRenderer.status == .failed {
+                logger.warning("⚠️ Display layer failed, flushing...")
+                layer.sampleBufferRenderer.flush()
+            }
+        } else {
+            layer.enqueue(sample)
+
+            // Flush if layer is not ready
+            if layer.status == .failed {
+                logger.warning("⚠️ Display layer failed, flushing...")
+                layer.flush()
+            }
         }
     }
 

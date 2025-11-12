@@ -58,14 +58,14 @@ extension BonjourRelayResponse: Codable {
         case version
     }
 
-    public init(from decoder: Decoder) throws {
+    public nonisolated init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         endpoints = try container.decode([EndpointInfo].self, forKey: .endpoints)
         timestamp = try container.decode(Date.self, forKey: .timestamp)
         version = try container.decode(String.self, forKey: .version)
     }
 
-    public func encode(to encoder: Encoder) throws {
+    public nonisolated func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         try container.encode(endpoints, forKey: .endpoints)
         try container.encode(timestamp, forKey: .timestamp)

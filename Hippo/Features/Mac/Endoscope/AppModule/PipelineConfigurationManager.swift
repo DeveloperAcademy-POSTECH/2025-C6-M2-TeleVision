@@ -83,7 +83,7 @@ public struct ConfigSnapshot {
     public let normalizePolicy: NormalizePolicy
     public let targetBitrate: Int
 
-    public init(sbsMode: SBSMode, normalizePolicy: NormalizePolicy, targetBitrate: Int) {
+    public nonisolated init(sbsMode: SBSMode, normalizePolicy: NormalizePolicy, targetBitrate: Int) {
         self.sbsMode = sbsMode
         self.normalizePolicy = normalizePolicy
         self.targetBitrate = targetBitrate

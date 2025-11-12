@@ -292,12 +292,12 @@ public final class WebRTCManager: NSObject, IVideoTransport {
     // MARK: - P0.1: Encoding Configuration
 
     private func configureEncodingParameters(sender: LKRTCRtpSender) throws {
-        var parameters = sender.parameters
+        let parameters = sender.parameters
         guard !parameters.encodings.isEmpty else {
             throw VideoError.invalidConfiguration(reason: "No encoding parameters")
         }
 
-        var encoding = parameters.encodings[0]
+        let encoding = parameters.encodings[0]
 
         encoding.maxBitrateBps = NSNumber(value: config.maxBitrate)
         encoding.minBitrateBps = NSNumber(value: config.minBitrate)
@@ -443,7 +443,11 @@ extension WebRTCManager: SignalingDelegate {
 
             // Process pending ICE candidates
             for candidate in self.pendingRemoteCandidates {
-                self.peerConnection?.add(candidate)
+                self.peerConnection?.add(candidate) { error in
+                    if let error = error {
+                        self.logger.error("❌ Failed to add ICE candidate: \(error.localizedDescription)")
+                    }
+                }
             }
             self.pendingRemoteCandidates.removeAll()
         }
@@ -453,7 +457,11 @@ extension WebRTCManager: SignalingDelegate {
         let iceCandidate = LKRTCIceCandidate(sdp: candidate, sdpMLineIndex: sdpMLineIndex, sdpMid: sdpMid)
 
         if remoteDescriptionSet {
-            peerConnection?.add(iceCandidate)
+            peerConnection?.add(iceCandidate) { [weak self] error in
+                if let error = error {
+                    self?.logger.error("❌ Failed to add ICE candidate: \(error.localizedDescription)")
+                }
+            }
         } else {
             pendingRemoteCandidates.append(iceCandidate)
         }
