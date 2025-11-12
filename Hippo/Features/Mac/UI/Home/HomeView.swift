@@ -28,26 +28,43 @@ struct HomeView: View {
 
                     //환자 리스트에 데이터가 있는 경우
                     ForEach(rootVM.loadedPatients, id: \.id) { data in
-                        //TODO: 컴포넌트로 분리하기. 뷰가 해석을 못 함
                         HStack {
-                            Button { rootVM.selectPatient(data.id)} label: {
+                            Button {
+                                rootVM.selectPatient(data.id)
+                            } label: {
                                 HStack {
                                     Text(data.patientNumber)
                                     Text(data.name)
                                     Text(data.genderText)
-                                    Text("\(data.age)세")
+                                    Text("Age \(data.age)")
                                 }
                             }
                             .onHover { hovering in
-                                hoveredPatientID = hovering ? data.id : (hoveredPatientID == data.id ? nil : hoveredPatientID)
+                                hoveredPatientID =
+                                    hovering
+                                    ? data.id
+                                    : (hoveredPatientID == data.id
+                                        ? nil : hoveredPatientID)
                             }
 
                             Button {
-                                // TODO: 환자 수정&삭제
+                                // 환자 수정 버튼
+                                rootVM.openPatientEditSheet(patient: data)
+                                //                                Task {
+                                //                                    await rootVM.deletePatient(data.id)
+                                //                                }
+
                             } label: {
                                 Image(systemName: "ellipsis.circle")
                             }
                             .opacity(hoveredPatientID == data.id ? 1 : 0)
+                            .onHover { hovering in
+                                hoveredPatientID =
+                                    hovering
+                                    ? data.id
+                                    : (hoveredPatientID == data.id
+                                        ? nil : hoveredPatientID)
+                            }
                         }
                     }
                 } header: {
@@ -68,8 +85,10 @@ struct HomeView: View {
         } detail: {
 
             if rootVM.isTodaysSurgerySelected {
-                TodaysSurgeryView(viewModel: TodaysSurgeryViewModel(rootVM: rootVM))
-                    .navigationTitle("Today's Surgery")
+                TodaysSurgeryView(
+                    viewModel: TodaysSurgeryViewModel(rootVM: rootVM)
+                )
+                .navigationTitle("Today's Surgery")
             } else {
                 PatientDetailView(
                     viewModel: PatientDetailViewModel(rootVM: rootVM),
@@ -80,8 +99,8 @@ struct HomeView: View {
         }
         .toolbar {
             if !rootVM.isTodaysSurgerySelected {
+                //수술 생성 버튼
                 Button {
-                    //TODO: 수술 생성 기능 구현
                     rootVM.openOperationCreateSheet()
                 } label: {
                     Label("Create", systemImage: "plus")
@@ -111,9 +130,14 @@ struct HomeView: View {
                 isPresentingOperationInput: $rootVM.navigationState
                     .isPresentingOperationInput,
                 state: $rootVM.operationInputState,
+                mode: rootVM.navigationState.operationInputMode,
                 onSave: {
                     Task {
-                        await rootVM.createOperation()
+                        if rootVM.navigationState.operationInputMode == .create {
+                            await rootVM.createOperation()
+                        } else {
+                            await rootVM.updateOperation()
+                        }
                     }
                 }
             )
@@ -122,7 +146,7 @@ struct HomeView: View {
             // 데이터 로드 (비어 있으면 목업 주입 후 실제 로드)
             await rootVM.load()
 
-            // 목업 데이터 주입
+            // 비어 있으면 목업 데이터 주입
             if rootVM.homeViewModel.state.items.isEmpty {
                 rootVM.homeViewModel.state.items = [
                     PatientDisplayModel.MockData
@@ -136,4 +160,3 @@ struct HomeView: View {
 #Preview {
     RootView()
 }
-

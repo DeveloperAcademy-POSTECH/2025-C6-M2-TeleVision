@@ -228,6 +228,46 @@ public final class OperationViewModel {
             _state.alert = "Failed to update operation: \(error.localizedDescription)"
         }
     }
+    
+    public func updateOperation(
+        patientID: String,
+        operationID: String,
+        title: String,
+        diagnosis: String,
+        surgeon: String,
+        surgicalSite: String,
+        date: Date,
+        details: String) async {
+        do {
+            logger.debug("Attempting to update operation with ID \(operationID) for patient ID \(patientID)")
+            
+            let command = try UpdateOperationCommand(
+                operationID: operationID,
+                title: title,
+                diagnosis: diagnosis,
+                surgeon: surgeon,
+                surgicalSite: surgicalSite,
+                date: date,
+                details: details,
+            )
+
+            try await upsertOperation.run(
+                UpsertOperation.Input(patientID: patientID, command: command)
+            )
+            
+            // Reload operation from DB to update state
+            let updatedOperation = try await getOperation.run(
+                GetOperation.Input(patientID: patientID, operationID: operationID)
+            )
+            _state.operation = updatedOperation.toDisplayModel()
+
+            logger.debug("Operation updated and state refreshed successfully.")
+        } catch let validationError as ValidationError {
+            _state.alert = validationError.localizedDescription
+        } catch {
+            _state.alert = "Failed to update operation: \(error.localizedDescription)"
+        }
+    }
 
     public func deleteOperation() async {
         do {

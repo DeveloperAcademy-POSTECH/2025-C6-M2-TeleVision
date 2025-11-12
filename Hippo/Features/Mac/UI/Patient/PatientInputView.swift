@@ -16,23 +16,23 @@ struct PatientInputView: View {
     let onSave: () async -> Void
 
     var body: some View {
-        Section(header: Text("환자 추가하기")) {
+        Section(header: Text("Add Patient")) {
             Form {
-                TextField("환자등록번호", text: $state.patientNumber)
-                TextField("이름", text: $state.name)
-                Picker("성별", selection: $state.selectedGender) {
-                    Text("남성").tag(Gender.male)
-                    Text("여성").tag(Gender.female)
+                TextField("Patient Number", text: $state.patientNumber)
+                TextField("Name", text: $state.name)
+                Picker("Gender", selection: $state.selectedGender) {
+                    Text("Male").tag(Gender.male)
+                    Text("Female").tag(Gender.female)
                 }
                 .pickerStyle(.segmented)
                 HStack {
                     DatePicker(
-                        "출생날짜",
+                        "Birth Date",
                         selection: $state.birthDate,
                         displayedComponents: [.date]
                     )
                     .environment(\.locale, Locale(identifier: "ko_KR"))
-                    Text("\(state.age)세")
+                    Text("Age \(state.age)")
                 }
             }
         }
@@ -42,10 +42,10 @@ struct PatientInputView: View {
             .padding(.horizontal)
         
         HStack {
-            Button("취소") {
+            Button("Cancel") {
                 isPresentingPatientInput = false
             }
-            Button("저장") {
+            Button("Save") {
                 if state.isValid {
                     Task {
                         await onSave()

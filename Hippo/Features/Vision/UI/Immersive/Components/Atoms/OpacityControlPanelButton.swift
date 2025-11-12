@@ -14,7 +14,7 @@ enum OpacityControlPanelButtonType {
 struct OpacityControlPanelButton: View {
     
     let isVisible: Bool
-    let size: CGFloat = 40
+    let size: CGFloat = 44
     let iconSize: CGFloat = 20
     let buttonType: OpacityControlPanelButtonType
     
@@ -33,6 +33,19 @@ struct OpacityControlPanelButton: View {
             } label: {
                 ZStack {
                     backgroundView
+                        .overlay(RoundedRectangle(cornerRadius: 20, style: .continuous)
+                            .stroke(Color.black.opacity(0.25), lineWidth: 4)
+                            .blur(radius: 2)
+                            .offset(x: 1, y: 1)
+                            .mask(
+                                Rectangle().fill(
+                                    LinearGradient(
+                                        gradient: Gradient(colors: [.black, .clear]),
+                                        startPoint: .topLeading,
+                                        endPoint: .bottomTrailing
+                                    )
+                                )
+                            ))
                     iconView
                     if isVisible {
                         Circle()
@@ -63,17 +76,18 @@ private extension OpacityControlPanelButton {
         Image(systemName: imageName)
             .font(.system(size: iconSize, weight: .semibold))
             .foregroundStyle(isVisible ? .primary : .quaternary)
+            .shadow(radius: 2, x: 1, y: 1)
     }
     
     @ViewBuilder
     var backgroundView: some View {
         if !isVisible {
             Circle()
-                .fill(
-                    LinearGradient(
-                        colors: [Color(.systemGray2), Color(.systemGray3)],
-                        startPoint: .topLeading, endPoint: .bottomTrailing
-                    )
+                .fill(.black.opacity(0.25)
+//                    LinearGradient(
+//                        colors: [Color(.systemGray2), Color(.systemGray3)],
+//                        startPoint: .topLeading, endPoint: .bottomTrailing
+//                    )
                 )
                 .frame(width: size, height: size)
         }
