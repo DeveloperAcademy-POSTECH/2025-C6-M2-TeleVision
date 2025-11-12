@@ -34,6 +34,7 @@ struct GlowingCircleButton: View {
             .buttonStyle(.borderless)
             .contentShape(.circle)
             .frame(width: size, height: size)
+            .shadow(color: .black.opacity(0.25), radius: 4, x: 2, y: 2)
             .glassBackgroundEffect(displayMode: .always)
         }
     }
