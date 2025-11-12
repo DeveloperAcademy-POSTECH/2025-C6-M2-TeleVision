@@ -19,10 +19,10 @@ import CoreImage
 
 /// Thread-safe wrapper for CVPixelBuffer to enable Sendable conformance
 /// CVPixelBuffer is inherently thread-safe (reference-counted CF type)
-nonisolated struct SendablePixelBuffer: @unchecked Sendable {
-    nonisolated let pixelBuffer: CVPixelBuffer
+struct SendablePixelBuffer: @unchecked Sendable {
+    let pixelBuffer: CVPixelBuffer
 
-    nonisolated init(_ pixelBuffer: CVPixelBuffer) {
+    init(_ pixelBuffer: CVPixelBuffer) {
         self.pixelBuffer = pixelBuffer
     }
 }
@@ -99,7 +99,7 @@ public final class WebRTCReceiver: NSObject, ObservableObject {
     // MARK: Prevent multiple initialization
     private var isInitialized: Bool = false
     private nonisolated(unsafe) static var globalInitCount: Int = 0
-    private nonisolated(unsafe) static let initLock = NSLock()
+    private static let initLock = NSLock()
 
     // MARK: Log throttling
     private var loggingState = LoggingState()

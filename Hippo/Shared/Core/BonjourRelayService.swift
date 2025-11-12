@@ -37,7 +37,7 @@ public struct EndpointInfo: Codable, Identifiable, Sendable {
 // MARK: - Relay Response Model
 
 /// Response structure for relay requests
-public struct BonjourRelayResponse: Codable, Sendable {
+public struct BonjourRelayResponse: Sendable, Codable {
     public let endpoints: [EndpointInfo]
     public let timestamp: Date
     public let version: String
@@ -46,6 +46,28 @@ public struct BonjourRelayResponse: Codable, Sendable {
         self.endpoints = endpoints
         self.timestamp = timestamp
         self.version = version
+    }
+
+    // MARK: - Codable conformance (explicit nonisolated implementation)
+
+    enum CodingKeys: String, CodingKey {
+        case endpoints
+        case timestamp
+        case version
+    }
+
+    public init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        endpoints = try container.decode([EndpointInfo].self, forKey: .endpoints)
+        timestamp = try container.decode(Date.self, forKey: .timestamp)
+        version = try container.decode(String.self, forKey: .version)
+    }
+
+    public func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        try container.encode(endpoints, forKey: .endpoints)
+        try container.encode(timestamp, forKey: .timestamp)
+        try container.encode(version, forKey: .version)
     }
 }
 
@@ -300,7 +322,7 @@ public final class BonjourRelayService: ObservableObject {
 
 /// Thread-safe box for mutable values captured in concurrent contexts
 private final class SendableBox<T>: @unchecked Sendable {
-    private var value: T
+    private nonisolated(unsafe) var value: T
     private let lock = NSLock()
 
     nonisolated init(_ value: T) {
