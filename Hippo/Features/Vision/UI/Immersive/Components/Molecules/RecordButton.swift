@@ -28,9 +28,9 @@ struct RecordButton: View {
         .background(.clear)
         .overlay {
             Capsule()
-                .stroke(.white.opacity(0.5), lineWidth: 1)
+                .stroke(.white.opacity(0.25), lineWidth: 1)
         }
-        .shadow(color: .black.opacity(0.5), radius: 10, x: 2, y: 2)
+        .shadow(color: .black.opacity(0.7), radius: 4, x: 2, y: 2)
     }
 }
 

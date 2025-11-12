@@ -25,12 +25,12 @@ struct OpacityControlSlider: View {
     }
     
     var body: some View {
-        VStack(alignment: .leading, spacing: 10) {
-            HStack(alignment: .center, spacing: 10) {
+        VStack(alignment: .leading, spacing: 8) {
+            HStack(alignment: .center, spacing: 4) {
                 Text("불투명도")
-                    .font(.headline)
+                    .font(.callout)
                 Text(isMixed ? "Mixed" : "\(Int(currentOpacity * 100))%")
-                    .font(.title)
+                    .font(.title3)
                     .animation(.none, value: isMixed)
             }
             .foregroundStyle(.secondary)
@@ -38,15 +38,38 @@ struct OpacityControlSlider: View {
             Slider(value: sliderBinding, in: 0.0...1.0) {
                 Text("Opacity")
             }
+            .controlSize(.small)
+            .shadow(color: .black.opacity(0.1), radius: 4, x: 2, y: 2)
         }
-        .padding(.horizontal, 40)
-        .padding(.vertical, 18)
+        .padding(.horizontal, 28)
+        .padding(.vertical, 12)
         .background(
             RoundedRectangle(cornerRadius: 200)
-                .fill(.quaternary)
+                .fill(selectedLayerIDS.isEmpty ? AnyShapeStyle(Color.black.opacity(0.25)) : AnyShapeStyle(.quaternary))
         )
+        .overlay(
+            selectedLayerIDS.isEmpty
+            ? AnyView(
+                RoundedRectangle(cornerRadius: 200, style: .continuous)
+                    .stroke(Color.black.opacity(0.25), lineWidth: 4)
+                    .blur(radius: 2)
+                    .offset(x: 1, y: 1)
+                    .mask(
+                        RoundedRectangle(cornerRadius: 200).fill(
+                            LinearGradient(
+                                gradient: Gradient(colors: [.black, .clear]),
+                                startPoint: .topLeading,
+                                endPoint: .bottomTrailing
+                            )
+                        )
+                    )
+            )
+            : AnyView(EmptyView())
+        )
+        //        .animation(.easeInOut, value: selectedLayerIDS.isEmpty)
         .frame(maxWidth: .infinity)
         .disabled(selectedLayerIDS.isEmpty)
+        .glassBackgroundEffect(in: .capsule, displayMode: .always)
     }
 }
 
@@ -59,5 +82,3 @@ struct OpacityControlSlider: View {
         isMixed: false
     )
 }
-
-
