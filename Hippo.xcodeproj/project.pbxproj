@@ -223,6 +223,7 @@
 		27D1DB492EBC781200AC7F3D /* ImmersiveViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 27D1DB482EBC781200AC7F3D /* ImmersiveViewModel.swift */; };
 		27D1DB4D2EBC953D00AC7F3D /* WindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 27D1DB4C2EBC953D00AC7F3D /* WindowController.swift */; };
 		27D8A2BE2EAF682B009429F0 /* OpacityManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 27D8A2BD2EAF67CE009429F0 /* OpacityManager.swift */; };
+		37CB9E6B2EC4AA5800AF8CDA /* Lottie in Frameworks */ = {isa = PBXBuildFile; productRef = 37CB9E6A2EC4AA5800AF8CDA /* Lottie */; };
 		C02FFA752E9FFF6F00F16742 /* HippoVisionApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = C02FFA4F2E9FFF6F00F16742 /* HippoVisionApp.swift */; };
 		C02FFA762E9FFF6F00F16742 /* HippoMacApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = C02FFA4C2E9FFF6F00F16742 /* HippoMacApp.swift */; };
 		C02FFA792E9FFF6F00F16742 /* AppModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = C02FFA6A2E9FFF6F00F16742 /* AppModel.swift */; };
@@ -525,6 +526,7 @@
 				146F102D2EA3AD1500DDDC35 /* HippoAssets in Frameworks */,
 				C04677B92EA006FB00D160DA /* Dependencies in Frameworks */,
 				C050AA442EA81D6300352314 /* DependenciesMacros in Frameworks */,
+				37CB9E6B2EC4AA5800AF8CDA /* Lottie in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1401,6 +1403,7 @@
 				C04677B82EA006FB00D160DA /* Dependencies */,
 				146F102C2EA3AD1500DDDC35 /* HippoAssets */,
 				C050AA432EA81D6300352314 /* DependenciesMacros */,
+				37CB9E6A2EC4AA5800AF8CDA /* Lottie */,
 			);
 			productName = Hippo;
 			productReference = 145E0F4D2E9C0F3900CE6C97 /* HippoVision.app */;
@@ -1480,6 +1483,7 @@
 			minimizedProjectReferenceProxies = 1;
 			packageReferences = (
 				C04677B72EA006FB00D160DA /* XCRemoteSwiftPackageReference "swift-dependencies" */,
+				37CB9E692EC4AA0300AF8CDA /* XCRemoteSwiftPackageReference "lottie-spm" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 145E0F4E2E9C0F3900CE6C97 /* Products */;
@@ -2225,6 +2229,14 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
+		37CB9E692EC4AA0300AF8CDA /* XCRemoteSwiftPackageReference "lottie-spm" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/airbnb/lottie-spm.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 4.5.2;
+			};
+		};
 		C04677B72EA006FB00D160DA /* XCRemoteSwiftPackageReference "swift-dependencies" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/pointfreeco/swift-dependencies";
@@ -2239,6 +2251,11 @@
 		146F102C2EA3AD1500DDDC35 /* HippoAssets */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = HippoAssets;
+		};
+		37CB9E6A2EC4AA5800AF8CDA /* Lottie */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 37CB9E692EC4AA0300AF8CDA /* XCRemoteSwiftPackageReference "lottie-spm" */;
+			productName = Lottie;
 		};
 		C04677B82EA006FB00D160DA /* Dependencies */ = {
 			isa = XCSwiftPackageProductDependency;
