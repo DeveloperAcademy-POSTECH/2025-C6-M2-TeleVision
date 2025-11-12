@@ -153,23 +153,32 @@ final class OpacityManager {
         }
     }
     
-    func setOpacityForUnselctedEntity() {
-        guard let root = runtime.sceneRoot else { return }
-        
-        let selectedRootChild = findRootChild(for: runtime.selectedEntity, under: root)
-        
-        let opacityComponent = OpacityComponent(opacity: 0.3)
-        let opacityComponentForSelecting = OpacityComponent(opacity: 1.0)
-        
-        for child in root.children {
-            if child == selectedRootChild {
-                child.components.set(opacityComponentForSelecting)
-            } else {
-                child.components.set(opacityComponent)
+    func setOpacityForUnselctedEntity(needsToShow: Bool) {
+        // opacityPanel 이 있음
+        if needsToShow {
+            guard let root = runtime.sceneRoot else { return }
+            
+            let selectedRootChild = findRootChild(for: runtime.selectedEntity, under: root)
+            
+            let opacityComponent = OpacityComponent(opacity: 0.3)
+            let opacityComponentForSelecting = OpacityComponent(opacity: 1.0)
+            
+            for child in root.children {
+                if child == selectedRootChild {
+                    child.components.set(opacityComponentForSelecting)
+                } else {
+                    child.components.set(opacityComponent)
+                }
+            }
+        } else {
+            guard let root = runtime.sceneRoot else { return }
+            for child in root.children {
+                child.components.remove(OpacityComponent.self)
             }
         }
     }
     
+
     private func findRootChild(for entity: Entity?, under sceneRoot: Entity) -> Entity? {
         var current: Entity? = entity
         while let parent = current?.parent, parent != sceneRoot {
