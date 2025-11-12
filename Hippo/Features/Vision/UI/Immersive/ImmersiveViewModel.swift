@@ -46,10 +46,10 @@ final class ImmersiveViewModel {
     func openMenuSetting(windowController: WindowController) {
         ARSessionController.shared.runARSession()
         if !isSurgeryBottomMenuOpen {
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-                windowController.openWindow(id: WindowIDs.surgeryBottomMenu)
-                self.isSurgeryBottomMenuOpen = true
-            }
+            
+            windowController.openWindow(id: WindowIDs.surgeryBottomMenu)
+            self.isSurgeryBottomMenuOpen = true
+            
         }
     }
     
@@ -72,7 +72,7 @@ final class ImmersiveViewModel {
     
     func toggleMenu(windowController: WindowController) {
         isMenuActive.toggle()
-
+        
         if isMenuActive {
             openMenuSetting(windowController: windowController)
         } else {

@@ -10,7 +10,7 @@ import SwiftUI
 struct SurgeryControlBar: View {
     @Environment(ImmersiveViewModel.self) var immersiveViewModel
     @Environment(WindowController.self) var windowController
-
+    
     var body: some View {
         @Bindable var immersiveViewModel = immersiveViewModel
         
@@ -36,10 +36,10 @@ struct SurgeryControlBar: View {
                         GlowingCircleButton(
                             imageName: "AddEntityIcon",
                             action: {
-                                DispatchQueue.main.async {
-                                    windowController.pushWindow(id: WindowIDs.assetListView)
-                                    immersiveViewModel.isShowingAssetListView = true
-                                }
+                                
+                                windowController.pushWindow(id: WindowIDs.assetListView)
+                                immersiveViewModel.isShowingAssetListView = true
+                                
                             }
                         )
                     }
@@ -82,5 +82,5 @@ struct SurgeryControlBar: View {
 
 #Preview {
     SurgeryControlBar()
-    .padding()
+        .padding()
 }
