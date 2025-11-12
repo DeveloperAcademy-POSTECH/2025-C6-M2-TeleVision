@@ -17,8 +17,8 @@ struct SurgeryControlBar: View {
         HStack {
             CircleIconButton(
                 systemName: "iphone.and.arrow.forward.outward",
-                buttonSize: 60,
-                iconSize: 24,
+                buttonSize: 80,
+                iconSize: 28,
                 action: { immersiveViewModel.showFinishSurgeryAlert() }
             )
             
@@ -46,14 +46,13 @@ struct SurgeryControlBar: View {
                     RecordButton(action: immersiveViewModel.recordPassThroughVideo)
                 }
             }
-            .padding(.horizontal, 20)
-            .padding(.vertical, 12)
+            .padding(10)
+            .frame(width: 680, height: 120)
             .glassBackgroundEffect(in: .capsule, displayMode: .always)
-            .frame(width: 420)
             
             Circle()
                 .fill(.clear)
-                .frame(width: 60, height: 60)
+                .frame(width: 80, height: 80)
         }
         .alert("수술을 종료하시겠습니까?", isPresented: $immersiveViewModel.isShowingFinishAlert) {
             Button("종료", role: .destructive) {

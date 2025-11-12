@@ -18,34 +18,27 @@ struct AssetListScrollView: View {
         ScrollView(.horizontal, showsIndicators: false) {
             HStack(spacing: cardSpacing) {
                 Spacer()
-                    .frame(width: 120)
+                    .frame(width: 80)
                 
                 ForEach(fileURLs, id: \.self) { url in
                     let isSelected = (selectedURL == url)
-                    
-                    ZStack {
-                        RoundedRectangle(cornerRadius: 40)
-                            .fill(.quaternary)
-                            .frame(width: 240, height: 240)
-                            .opacity(isSelected ? 1.0 : 0.0)
-                        AssetListScrollCard(
-                            url: url,
-                            isSelected: selectedURL == url
-                        )
-                        .id(url) // 스크롤 위치 추적을 위한 ID
-                        .scaleEffect(isSelected ? 1.0 : 0.9)
-                        .opacity(isSelected ? 1.0 : 0.7)
-                    }
+                    AssetListScrollCard(
+                        url: url,
+                        isSelected: selectedURL == url
+                    )
+                    .id(url) // 스크롤 위치 추적을 위한 ID
+                    .scaleEffect(isSelected ? 1.0 : 0.9)
+                    .opacity(isSelected ? 1.0 : 0.7)
                 }
                 Spacer()
-                    .frame(width: 120)
+                    .frame(width: 80)
             }
             .scrollTargetLayout()
             .animation(.spring(response: 0.3, dampingFraction: 0.7), value: selectedURL)
         }
-        .clipShape(RoundedRectangle(cornerRadius: 40, style: .continuous))
-        .padding(.horizontal, 28)
+        .padding(.horizontal, 100)
         .scrollTargetBehavior(.viewAligned)
         .scrollPosition(id: $selectedURL)
+        
     }
 }

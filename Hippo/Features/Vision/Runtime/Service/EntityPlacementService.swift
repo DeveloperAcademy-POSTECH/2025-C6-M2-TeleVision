@@ -10,7 +10,7 @@ import RealityKit
 import Foundation
 
 public protocol AnchorServicing {
-    func attach(url: URL, to anchor: AnchorEntity) async throws -> Entity
+    func attach(url: URL, to anchor: AnchorEntity) async throws
     func detach(entity: Entity) async throws
 }
 
@@ -30,7 +30,7 @@ struct EntityPlacementService: AnchorServicing {
     }
     
     @MainActor
-    func attach(url: URL, to anchor: AnchorEntity) async throws -> Entity {
+    func attach(url: URL, to anchor: AnchorEntity) async throws {
         let didStartAccessing = url.startAccessingSecurityScopedResource()
         defer {
             if didStartAccessing {
@@ -61,7 +61,9 @@ struct EntityPlacementService: AnchorServicing {
             [manipulationComponent, InputTargetComponent()]
         )
         
-        return entity
+        
+        
+        
     }
     
     func detach(entity: Entity) async {

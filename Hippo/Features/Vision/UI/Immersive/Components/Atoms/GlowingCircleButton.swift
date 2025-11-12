@@ -10,14 +10,14 @@ import SwiftUI
 struct GlowingCircleButton: View {
     let imageName: String
     let action: () -> Void
-    let size: CGFloat = 60
+    let size: CGFloat = 80
 
     var body: some View {
         ZStack {
             Circle()
                 .fill(.hippoPrimary.opacity(0.5))
                 .frame(width: size, height: size)
-                .blur(radius: 16)
+                .blur(radius: 10)
 
             Button(action: action) {
                 ZStack {
@@ -27,8 +27,7 @@ struct GlowingCircleButton: View {
                     Image(imageName)
                         .resizable()
                         .scaledToFit()
-                        .frame(width: 32, height: 32)
-                        .shadow(color: .black.opacity(0.25), radius: 4, x: 2, y: 2)
+                        .frame(width: 48, height: 48)
                 }
             }
             .buttonStyle(.borderless)

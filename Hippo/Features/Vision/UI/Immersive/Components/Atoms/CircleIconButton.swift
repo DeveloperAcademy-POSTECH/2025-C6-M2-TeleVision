@@ -15,12 +15,9 @@ struct CircleIconButton: View {
     
     var body: some View {
         Button(action: action) {
-            VStack{
-                Image(systemName: systemName)
-                    .font(.system(size: iconSize))
-                    .foregroundStyle(.secondary)
-            }
-            .frame(maxHeight: .infinity)
+            Image(systemName: systemName)
+                .font(.system(size: iconSize))
+                .foregroundStyle(.secondary)
         }
         .buttonStyle(.borderless)
         .contentShape(.circle)

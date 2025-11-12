@@ -98,11 +98,12 @@ struct HippoVisionApp: App {
                 .onDisappear {
                     immersiveViewModel.isOpacityControlPanelOpen = false
                 }
+            
         }
         .defaultSize(width: 658, height: 522)
         .defaultWindowPlacement { _, context in
             if let surgeryBottomMenu = context.windows.first(where: { $0.id == WindowIDs.surgeryBottomMenu }) {
-                return WindowPlacement(.above(surgeryBottomMenu))
+                return WindowPlacement(.trailing(surgeryBottomMenu))
             }
             return WindowPlacement()
         }
