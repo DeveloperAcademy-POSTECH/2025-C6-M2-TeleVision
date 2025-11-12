@@ -314,6 +314,8 @@ public class HEVCVideoEncoder: NSObject, LKRTCVideoEncoder {
         return noErr
     }
 
+    // MARK: - Encoded Frame Handling
+
     private func handleEncodedFrame(_ sampleBuffer: CMSampleBuffer) {
         guard let encoderCallback = self.encoderCallback else {
             logger.error("❌ Encoder callback not set")
@@ -375,9 +377,14 @@ public class HEVCVideoEncoder: NSObject, LKRTCVideoEncoder {
             }
         }
     }
+}
+
+// MARK: - HEVC NAL Unit Processing
+
+extension HEVCVideoEncoder {
 
     // Extract VPS/SPS/PPS from format description
-    private func extractParameterSets(from sampleBuffer: CMSampleBuffer) {
+    fileprivate func extractParameterSets(from sampleBuffer: CMSampleBuffer) {
         guard let formatDesc = CMSampleBufferGetFormatDescription(sampleBuffer) else {
             logger.error("❌ Failed to get format description")
             return
@@ -430,7 +437,7 @@ public class HEVCVideoEncoder: NSObject, LKRTCVideoEncoder {
     // Convert AVCC format to Annex-B format
     // AVCC: [4-byte length][NAL unit][4-byte length][NAL unit]...
     // Annex-B: [0x00 0x00 0x00 0x01][NAL unit][0x00 0x00 0x00 0x01][NAL unit]...
-    private func convertToAnnexB(avccData: Data, isKeyframe: Bool) -> Data {
+    fileprivate func convertToAnnexB(avccData: Data, isKeyframe: Bool) -> Data {
         var annexBData = Data()
         let startCode: [UInt8] = [0x00, 0x00, 0x00, 0x01]
 

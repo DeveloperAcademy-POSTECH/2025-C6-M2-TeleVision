@@ -23,6 +23,14 @@ extension Notification.Name {
 /// VideoToolbox-based HEVC decoder with proper NAL unit parsing
 public class HEVCVideoDecoder: NSObject, LKRTCVideoDecoder {
 
+    // MARK: - Constants
+
+    private enum LoggingInterval {
+        static let standardFrames = 60
+        static let warningFrames = 30
+        static let initialFrames = 5
+    }
+
     private let logger = Logger(subsystem: "com.television.hippo", category: "HEVCDecoder")
 
     // Decompression session
@@ -211,7 +219,7 @@ public class HEVCVideoDecoder: NSObject, LKRTCVideoDecoder {
         }
 
         frameCount += 1
-        if frameCount % 60 == 0 {
+        if frameCount % LoggingInterval.standardFrames == 0 {
             logger.info("📊 Decoded \(self.frameCount) HEVC frames")
         }
 
@@ -480,7 +488,7 @@ public class HEVCVideoDecoder: NSObject, LKRTCVideoDecoder {
                 if status != noErr {
                     decoder.decompressionErrors += 1
                     // Log first few errors with details, then periodically
-                    if decoder.decompressionErrors <= 3 || decoder.decompressionErrors % 30 == 0 {
+                    if decoder.decompressionErrors <= 3 || decoder.decompressionErrors % LoggingInterval.warningFrames == 0 {
                         decoder.logger.error("❌ Decompression callback error: \(status), infoFlags: \(infoFlags.rawValue), total errors: \(decoder.decompressionErrors)")
                     }
                     return
@@ -558,7 +566,7 @@ public class HEVCVideoDecoder: NSObject, LKRTCVideoDecoder {
         if framesDelivered == 1 {
             logger.info("✅ First frame delivered to LiveKit: \(width)×\(height)")
             logger.info("📢 Posted notification workaround")
-        } else if framesDelivered % 60 == 0 {
+        } else if framesDelivered % LoggingInterval.standardFrames == 0 {
             logger.info("✅ Delivered \(self.framesDelivered) frames to LiveKit (submitted: \(self.frameCount))")
         }
     }
