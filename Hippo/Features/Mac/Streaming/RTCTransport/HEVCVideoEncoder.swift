@@ -83,7 +83,7 @@ public class HEVCVideoEncoder: NSObject, LKRTCVideoEncoder {
         // IMPORTANT: Ensure minimum bitrate for HEVC encoding quality
         // WebRTC may start with very low bitrate (10000 bps), but HEVC needs much higher
         // for stereo 1920×540@60fps
-        let minimumBitrate = 10_000_000  // 10 Mbps minimum
+        let minimumBitrate = 5_000_000  // 5 Mbps minimum (reduced for better performance)
         self.targetBitrate = max(Int(settings.startBitrate), minimumBitrate)
 
         if Int(settings.startBitrate) < minimumBitrate {
@@ -186,7 +186,7 @@ public class HEVCVideoEncoder: NSObject, LKRTCVideoEncoder {
         }
 
         // IMPORTANT: Enforce minimum bitrate even when WebRTC tries to lower it
-        let minimumBitrateKbps: UInt32 = 10_000  // 10 Mbps minimum
+        let minimumBitrateKbps: UInt32 = 5_000  // 5 Mbps minimum (reduced for better performance)
         let actualBitrateKbps = max(bitrateKbps, minimumBitrateKbps)
 
         // Log only when bitrate changes or when enforcing minimum
@@ -198,7 +198,7 @@ public class HEVCVideoEncoder: NSObject, LKRTCVideoEncoder {
         self.targetBitrate = bitrateBps
 
         // Maintain Quality setting (critical for consistent bitrate)
-        VTSessionSetProperty(session, key: kVTCompressionPropertyKey_Quality, value: 0.85 as CFNumber)
+        VTSessionSetProperty(session, key: kVTCompressionPropertyKey_Quality, value: 0.7 as CFNumber)  // Reduced from 0.85 for better performance
 
         // Update bitrate
         let bitrateStatus = VTSessionSetProperty(
@@ -268,7 +268,7 @@ public class HEVCVideoEncoder: NSObject, LKRTCVideoEncoder {
 
         // CRITICAL: Set Quality first (0.0-1.0, higher = better quality)
         // This takes priority over bitrate in RealTime mode
-        VTSessionSetProperty(session, key: kVTCompressionPropertyKey_Quality, value: 0.85 as CFNumber)
+        VTSessionSetProperty(session, key: kVTCompressionPropertyKey_Quality, value: 0.7 as CFNumber)  // Reduced from 0.85 for better performance
 
         // Set bitrate aggressively
         VTSessionSetProperty(session, key: kVTCompressionPropertyKey_AverageBitRate, value: bitrate as CFNumber)
