@@ -127,6 +127,32 @@
 		14DE51542EB771420027D9A0 /* HIPPO.icon in Resources */ = {isa = PBXBuildFile; fileRef = 14DE51512EB771420027D9A0 /* HIPPO.icon */; };
 		14DE51562EB779960027D9A0 /* EmptyPatientView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 14DE51552EB7798B0027D9A0 /* EmptyPatientView.swift */; };
 		14F6B0342EAAC73F003F28EB /* ImmersiveSurgeryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 14F6B0332EAAC73F003F28EB /* ImmersiveSurgeryView.swift */; };
+		2523A65A2EC4C3AA00842508 /* CI_SBSComposer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2523A64C2EC4C3A900842508 /* CI_SBSComposer.swift */; };
+		2523A65B2EC4C3AA00842508 /* LatencyMeter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2523A6512EC4C3A900842508 /* LatencyMeter.swift */; };
+		2523A65C2EC4C3AA00842508 /* WebRTCManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2523A6572EC4C3A900842508 /* WebRTCManager.swift */; };
+		2523A65D2EC4C3AA00842508 /* AppModule.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2523A6432EC4C3A900842508 /* AppModule.swift */; };
+		2523A65E2EC4C3AA00842508 /* PipelineConfigurationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2523A6442EC4C3A900842508 /* PipelineConfigurationManager.swift */; };
+		2523A65F2EC4C3AA00842508 /* HEVCVideoEncoder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2523A6552EC4C3A900842508 /* HEVCVideoEncoder.swift */; };
+		2523A6602EC4C3AA00842508 /* NormalizePolicy.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2523A64D2EC4C3A900842508 /* NormalizePolicy.swift */; };
+		2523A6612EC4C3AA00842508 /* SBSMode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2523A64F2EC4C3A900842508 /* SBSMode.swift */; };
+		2523A6622EC4C3AA00842508 /* RightCaptureSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2523A64A2EC4C3A900842508 /* RightCaptureSession.swift */; };
+		2523A6632EC4C3AA00842508 /* CaptureOutputDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2523A6472EC4C3A900842508 /* CaptureOutputDelegate.swift */; };
+		2523A6642EC4C3AA00842508 /* CaptureSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2523A6482EC4C3A900842508 /* CaptureSettings.swift */; };
+		2523A6652EC4C3AA00842508 /* FrameSync.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2523A6532EC4C3A900842508 /* FrameSync.swift */; };
+		2523A6662EC4C3AA00842508 /* LeftCaptureSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2523A6492EC4C3A900842508 /* LeftCaptureSession.swift */; };
+		2523A6672EC4C3AA00842508 /* HEVCVideoEncoderFactory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2523A6562EC4C3A900842508 /* HEVCVideoEncoderFactory.swift */; };
+		2523A6682EC4C3AA00842508 /* BaseCaptureSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2523A6462EC4C3A900842508 /* BaseCaptureSession.swift */; };
+		2523A6692EC4C3AA00842508 /* SBSComposerConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2523A64E2EC4C3A900842508 /* SBSComposerConfig.swift */; };
+		2523A6792EC4C3C000842508 /* CompositorStereoRenderer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2523A6722EC4C3C000842508 /* CompositorStereoRenderer.swift */; };
+		2523A67A2EC4C3C000842508 /* ConvertingModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2523A66A2EC4C3C000842508 /* ConvertingModel.swift */; };
+		2523A67B2EC4C3C000842508 /* StereoMetadata.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2523A66F2EC4C3C000842508 /* StereoMetadata.swift */; };
+		2523A67C2EC4C3C000842508 /* HEVCVideoDecoder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2523A66B2EC4C3C000842508 /* HEVCVideoDecoder.swift */; };
+		2523A67D2EC4C3C000842508 /* I420BufferConverter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2523A66D2EC4C3C000842508 /* I420BufferConverter.swift */; };
+		2523A67E2EC4C3C000842508 /* StereoRendererProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2523A6742EC4C3C000842508 /* StereoRendererProtocol.swift */; };
+		2523A67F2EC4C3C000842508 /* WebRTCReceiver.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2523A6702EC4C3C000842508 /* WebRTCReceiver.swift */; };
+		2523A6802EC4C3C000842508 /* StereoRendererFactory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2523A6732EC4C3C000842508 /* StereoRendererFactory.swift */; };
+		2523A6812EC4C3C000842508 /* StereoVideoRenderer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2523A6752EC4C3C000842508 /* StereoVideoRenderer.swift */; };
+		2523A6822EC4C3C000842508 /* HEVCVideoDecoderFactory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2523A66C2EC4C3C000842508 /* HEVCVideoDecoderFactory.swift */; };
 		2581FCE52EBBC6870059678D /* OperationInputState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2581FCE42EBBC6870059678D /* OperationInputState.swift */; };
 		2581FCE92EBBC6FA0059678D /* MacNavigationState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2581FCE62EBBC6FA0059678D /* MacNavigationState.swift */; };
 		2581FCEA2EBBC6FA0059678D /* MacRootViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2581FCE72EBBC6FA0059678D /* MacRootViewModel.swift */; };
@@ -148,27 +174,9 @@
 		2581FF0B2EBE18A70059678D /* SyncedPair.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2581FEFC2EBE18A70059678D /* SyncedPair.swift */; };
 		2581FF0C2EBE18A70059678D /* ReconnectionPolicy.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2581FEFB2EBE18A70059678D /* ReconnectionPolicy.swift */; };
 		2581FF0D2EBE18A70059678D /* VideoError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2581FEFD2EBE18A70059678D /* VideoError.swift */; };
-		2581FF132EBE19AE0059678D /* ConvertingModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2581FF0E2EBE19AE0059678D /* ConvertingModel.swift */; };
-		2581FF142EBE19AE0059678D /* StereoVideoRenderer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2581FF102EBE19AE0059678D /* StereoVideoRenderer.swift */; };
-		2581FF152EBE19AE0059678D /* WebRTCReceiver.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2581FF112EBE19AE0059678D /* WebRTCReceiver.swift */; };
-		2581FF162EBE19AE0059678D /* StereoMetadata.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2581FF0F2EBE19AE0059678D /* StereoMetadata.swift */; };
 		2581FF182EBE19FF0059678D /* EndoscopeStreamView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2581FF172EBE19FF0059678D /* EndoscopeStreamView.swift */; };
 		2581FF1B2EBE21680059678D /* LiveKit in Frameworks */ = {isa = PBXBuildFile; productRef = 2581FF1A2EBE21680059678D /* LiveKit */; };
 		2581FF1D2EBE24520059678D /* LiveKit in Frameworks */ = {isa = PBXBuildFile; productRef = 2581FF1C2EBE24520059678D /* LiveKit */; };
-		2581FF342EBE2CB20059678D /* NormalizePolicy.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2581FF282EBE2CB20059678D /* NormalizePolicy.swift */; };
-		2581FF352EBE2CB20059678D /* LatencyMeter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2581FF2C2EBE2CB20059678D /* LatencyMeter.swift */; };
-		2581FF362EBE2CB20059678D /* AppModule.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2581FF1E2EBE2CB20059678D /* AppModule.swift */; };
-		2581FF372EBE2CB20059678D /* CI_SBSComposer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2581FF272EBE2CB20059678D /* CI_SBSComposer.swift */; };
-		2581FF382EBE2CB20059678D /* PipelineConfigurationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2581FF1F2EBE2CB20059678D /* PipelineConfigurationManager.swift */; };
-		2581FF392EBE2CB20059678D /* FrameSync.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2581FF2E2EBE2CB20059678D /* FrameSync.swift */; };
-		2581FF3A2EBE2CB20059678D /* CaptureSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2581FF232EBE2CB20059678D /* CaptureSettings.swift */; };
-		2581FF3B2EBE2CB20059678D /* SBSMode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2581FF2A2EBE2CB20059678D /* SBSMode.swift */; };
-		2581FF3C2EBE2CB20059678D /* BaseCaptureSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2581FF212EBE2CB20059678D /* BaseCaptureSession.swift */; };
-		2581FF3D2EBE2CB20059678D /* LeftCaptureSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2581FF242EBE2CB20059678D /* LeftCaptureSession.swift */; };
-		2581FF3E2EBE2CB20059678D /* CaptureOutputDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2581FF222EBE2CB20059678D /* CaptureOutputDelegate.swift */; };
-		2581FF3F2EBE2CB20059678D /* WebRTCManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2581FF312EBE2CB20059678D /* WebRTCManager.swift */; };
-		2581FF402EBE2CB20059678D /* RightCaptureSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2581FF252EBE2CB20059678D /* RightCaptureSession.swift */; };
-		2581FF422EBE2CB20059678D /* SBSComposerConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2581FF292EBE2CB20059678D /* SBSComposerConfig.swift */; };
 		2581FF442EBE32200059678D /* SignalingClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2581FF432EBE32200059678D /* SignalingClient.swift */; };
 		2581FF452EBE32200059678D /* SignalingClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2581FF432EBE32200059678D /* SignalingClient.swift */; };
 		2581FF462EBE32200059678D /* SignalingClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2581FF432EBE32200059678D /* SignalingClient.swift */; };
@@ -182,11 +190,6 @@
 		2581FF572EBE63A20059678D /* PreviewSectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2581FF562EBE63A20059678D /* PreviewSectionView.swift */; };
 		2581FF592EBE6AE00059678D /* DevicePreview.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2581FF582EBE6AE00059678D /* DevicePreview.swift */; };
 		2581FF5B2EBF66AC0059678D /* EndoscopeStreamWindow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2581FF5A2EBF66AC0059678D /* EndoscopeStreamWindow.swift */; };
-		2581FF5D2EBF94150059678D /* I420BufferConverter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2581FF5C2EBF94150059678D /* I420BufferConverter.swift */; };
-		2581FF602EBFB5EF0059678D /* HEVCVideoEncoderFactory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2581FF5F2EBFB5EF0059678D /* HEVCVideoEncoderFactory.swift */; };
-		2581FF612EBFB5EF0059678D /* HEVCVideoEncoder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2581FF5E2EBFB5EF0059678D /* HEVCVideoEncoder.swift */; };
-		2581FF642EBFB6040059678D /* HEVCVideoDecoder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2581FF622EBFB6040059678D /* HEVCVideoDecoder.swift */; };
-		2581FF652EBFB6040059678D /* HEVCVideoDecoderFactory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2581FF632EBFB6040059678D /* HEVCVideoDecoderFactory.swift */; };
 		2581FF672EC1A9140059678D /* BonjourServiceDiscovery.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2581FF662EC1A9140059678D /* BonjourServiceDiscovery.swift */; };
 		2581FF682EC1A9140059678D /* BonjourServiceDiscovery.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2581FF662EC1A9140059678D /* BonjourServiceDiscovery.swift */; };
 		2581FF692EC1A9140059678D /* BonjourServiceDiscovery.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2581FF662EC1A9140059678D /* BonjourServiceDiscovery.swift */; };
@@ -200,9 +203,6 @@
 		2581FF752EC20A970059678D /* ConnectionSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2581FF722EC20A970059678D /* ConnectionSettings.swift */; };
 		2581FF782EC20B030059678D /* ConnectionSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2581FF762EC20B030059678D /* ConnectionSettingsView.swift */; };
 		2581FF7A2EC2753A0059678D /* EndoscopeImmersiveSpace.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2581FF792EC2753A0059678D /* EndoscopeImmersiveSpace.swift */; };
-		2581FF7E2EC2789A0059678D /* StereoRendererProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2581FF7D2EC2789A0059678D /* StereoRendererProtocol.swift */; };
-		2581FF7F2EC2789A0059678D /* StereoRendererFactory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2581FF7C2EC2789A0059678D /* StereoRendererFactory.swift */; };
-		2581FF802EC2789A0059678D /* CompositorStereoRenderer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2581FF7B2EC2789A0059678D /* CompositorStereoRenderer.swift */; };
 		25E78B602EB90D4600D8CAD2 /* OperationStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = 25E78B5D2EB90D4600D8CAD2 /* OperationStatus.swift */; };
 		25E78B612EB90D4600D8CAD2 /* Operation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 25E78B542EB90D4600D8CAD2 /* Operation.swift */; };
 		25E78B622EB90D4600D8CAD2 /* OperationAsset.swift in Sources */ = {isa = PBXBuildFile; fileRef = 25E78B552EB90D4600D8CAD2 /* OperationAsset.swift */; };
@@ -491,6 +491,32 @@
 		14DE51512EB771420027D9A0 /* HIPPO.icon */ = {isa = PBXFileReference; lastKnownFileType = folder.iconcomposer.icon; path = HIPPO.icon; sourceTree = "<group>"; };
 		14DE51552EB7798B0027D9A0 /* EmptyPatientView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmptyPatientView.swift; sourceTree = "<group>"; };
 		14F6B0332EAAC73F003F28EB /* ImmersiveSurgeryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImmersiveSurgeryView.swift; sourceTree = "<group>"; };
+		2523A6432EC4C3A900842508 /* AppModule.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppModule.swift; sourceTree = "<group>"; };
+		2523A6442EC4C3A900842508 /* PipelineConfigurationManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PipelineConfigurationManager.swift; sourceTree = "<group>"; };
+		2523A6462EC4C3A900842508 /* BaseCaptureSession.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BaseCaptureSession.swift; sourceTree = "<group>"; };
+		2523A6472EC4C3A900842508 /* CaptureOutputDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CaptureOutputDelegate.swift; sourceTree = "<group>"; };
+		2523A6482EC4C3A900842508 /* CaptureSettings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CaptureSettings.swift; sourceTree = "<group>"; };
+		2523A6492EC4C3A900842508 /* LeftCaptureSession.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LeftCaptureSession.swift; sourceTree = "<group>"; };
+		2523A64A2EC4C3A900842508 /* RightCaptureSession.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RightCaptureSession.swift; sourceTree = "<group>"; };
+		2523A64C2EC4C3A900842508 /* CI_SBSComposer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CI_SBSComposer.swift; sourceTree = "<group>"; };
+		2523A64D2EC4C3A900842508 /* NormalizePolicy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NormalizePolicy.swift; sourceTree = "<group>"; };
+		2523A64E2EC4C3A900842508 /* SBSComposerConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SBSComposerConfig.swift; sourceTree = "<group>"; };
+		2523A64F2EC4C3A900842508 /* SBSMode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SBSMode.swift; sourceTree = "<group>"; };
+		2523A6512EC4C3A900842508 /* LatencyMeter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LatencyMeter.swift; sourceTree = "<group>"; };
+		2523A6532EC4C3A900842508 /* FrameSync.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FrameSync.swift; sourceTree = "<group>"; };
+		2523A6552EC4C3A900842508 /* HEVCVideoEncoder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HEVCVideoEncoder.swift; sourceTree = "<group>"; };
+		2523A6562EC4C3A900842508 /* HEVCVideoEncoderFactory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HEVCVideoEncoderFactory.swift; sourceTree = "<group>"; };
+		2523A6572EC4C3A900842508 /* WebRTCManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebRTCManager.swift; sourceTree = "<group>"; };
+		2523A66A2EC4C3C000842508 /* ConvertingModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConvertingModel.swift; sourceTree = "<group>"; };
+		2523A66B2EC4C3C000842508 /* HEVCVideoDecoder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HEVCVideoDecoder.swift; sourceTree = "<group>"; };
+		2523A66C2EC4C3C000842508 /* HEVCVideoDecoderFactory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HEVCVideoDecoderFactory.swift; sourceTree = "<group>"; };
+		2523A66D2EC4C3C000842508 /* I420BufferConverter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = I420BufferConverter.swift; sourceTree = "<group>"; };
+		2523A66F2EC4C3C000842508 /* StereoMetadata.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StereoMetadata.swift; sourceTree = "<group>"; };
+		2523A6702EC4C3C000842508 /* WebRTCReceiver.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebRTCReceiver.swift; sourceTree = "<group>"; };
+		2523A6722EC4C3C000842508 /* CompositorStereoRenderer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CompositorStereoRenderer.swift; sourceTree = "<group>"; };
+		2523A6732EC4C3C000842508 /* StereoRendererFactory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StereoRendererFactory.swift; sourceTree = "<group>"; };
+		2523A6742EC4C3C000842508 /* StereoRendererProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StereoRendererProtocol.swift; sourceTree = "<group>"; };
+		2523A6752EC4C3C000842508 /* StereoVideoRenderer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StereoVideoRenderer.swift; sourceTree = "<group>"; };
 		2581FCE42EBBC6870059678D /* OperationInputState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OperationInputState.swift; sourceTree = "<group>"; };
 		2581FCE62EBBC6FA0059678D /* MacNavigationState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MacNavigationState.swift; sourceTree = "<group>"; };
 		2581FCE72EBBC6FA0059678D /* MacRootViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MacRootViewModel.swift; sourceTree = "<group>"; };
@@ -502,25 +528,7 @@
 		2581FEFB2EBE18A70059678D /* ReconnectionPolicy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReconnectionPolicy.swift; sourceTree = "<group>"; };
 		2581FEFC2EBE18A70059678D /* SyncedPair.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SyncedPair.swift; sourceTree = "<group>"; };
 		2581FEFD2EBE18A70059678D /* VideoError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoError.swift; sourceTree = "<group>"; };
-		2581FF0E2EBE19AE0059678D /* ConvertingModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConvertingModel.swift; sourceTree = "<group>"; };
-		2581FF0F2EBE19AE0059678D /* StereoMetadata.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StereoMetadata.swift; sourceTree = "<group>"; };
-		2581FF102EBE19AE0059678D /* StereoVideoRenderer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StereoVideoRenderer.swift; sourceTree = "<group>"; };
-		2581FF112EBE19AE0059678D /* WebRTCReceiver.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebRTCReceiver.swift; sourceTree = "<group>"; };
 		2581FF172EBE19FF0059678D /* EndoscopeStreamView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EndoscopeStreamView.swift; sourceTree = "<group>"; };
-		2581FF1E2EBE2CB20059678D /* AppModule.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppModule.swift; sourceTree = "<group>"; };
-		2581FF1F2EBE2CB20059678D /* PipelineConfigurationManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PipelineConfigurationManager.swift; sourceTree = "<group>"; };
-		2581FF212EBE2CB20059678D /* BaseCaptureSession.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BaseCaptureSession.swift; sourceTree = "<group>"; };
-		2581FF222EBE2CB20059678D /* CaptureOutputDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CaptureOutputDelegate.swift; sourceTree = "<group>"; };
-		2581FF232EBE2CB20059678D /* CaptureSettings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CaptureSettings.swift; sourceTree = "<group>"; };
-		2581FF242EBE2CB20059678D /* LeftCaptureSession.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LeftCaptureSession.swift; sourceTree = "<group>"; };
-		2581FF252EBE2CB20059678D /* RightCaptureSession.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RightCaptureSession.swift; sourceTree = "<group>"; };
-		2581FF272EBE2CB20059678D /* CI_SBSComposer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CI_SBSComposer.swift; sourceTree = "<group>"; };
-		2581FF282EBE2CB20059678D /* NormalizePolicy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NormalizePolicy.swift; sourceTree = "<group>"; };
-		2581FF292EBE2CB20059678D /* SBSComposerConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SBSComposerConfig.swift; sourceTree = "<group>"; };
-		2581FF2A2EBE2CB20059678D /* SBSMode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SBSMode.swift; sourceTree = "<group>"; };
-		2581FF2C2EBE2CB20059678D /* LatencyMeter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LatencyMeter.swift; sourceTree = "<group>"; };
-		2581FF2E2EBE2CB20059678D /* FrameSync.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FrameSync.swift; sourceTree = "<group>"; };
-		2581FF312EBE2CB20059678D /* WebRTCManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebRTCManager.swift; sourceTree = "<group>"; };
 		2581FF432EBE32200059678D /* SignalingClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignalingClient.swift; sourceTree = "<group>"; };
 		2581FF472EBE4AC70059678D /* StreamingControlViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StreamingControlViewModel.swift; sourceTree = "<group>"; };
 		2581FF492EBE576E0059678D /* CameraInputToggle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CameraInputToggle.swift; sourceTree = "<group>"; };
@@ -532,11 +540,6 @@
 		2581FF562EBE63A20059678D /* PreviewSectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreviewSectionView.swift; sourceTree = "<group>"; };
 		2581FF582EBE6AE00059678D /* DevicePreview.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DevicePreview.swift; sourceTree = "<group>"; };
 		2581FF5A2EBF66AC0059678D /* EndoscopeStreamWindow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EndoscopeStreamWindow.swift; sourceTree = "<group>"; };
-		2581FF5C2EBF94150059678D /* I420BufferConverter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = I420BufferConverter.swift; sourceTree = "<group>"; };
-		2581FF5E2EBFB5EF0059678D /* HEVCVideoEncoder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HEVCVideoEncoder.swift; sourceTree = "<group>"; };
-		2581FF5F2EBFB5EF0059678D /* HEVCVideoEncoderFactory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HEVCVideoEncoderFactory.swift; sourceTree = "<group>"; };
-		2581FF622EBFB6040059678D /* HEVCVideoDecoder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HEVCVideoDecoder.swift; sourceTree = "<group>"; };
-		2581FF632EBFB6040059678D /* HEVCVideoDecoderFactory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HEVCVideoDecoderFactory.swift; sourceTree = "<group>"; };
 		2581FF662EC1A9140059678D /* BonjourServiceDiscovery.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BonjourServiceDiscovery.swift; sourceTree = "<group>"; };
 		2581FF6A2EC1C4640059678D /* ConnectionOverlay.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConnectionOverlay.swift; sourceTree = "<group>"; };
 		2581FF6B2EC1C4640059678D /* EndoscopeStreamViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EndoscopeStreamViewModel.swift; sourceTree = "<group>"; };
@@ -544,9 +547,6 @@
 		2581FF722EC20A970059678D /* ConnectionSettings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConnectionSettings.swift; sourceTree = "<group>"; };
 		2581FF762EC20B030059678D /* ConnectionSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConnectionSettingsView.swift; sourceTree = "<group>"; };
 		2581FF792EC2753A0059678D /* EndoscopeImmersiveSpace.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EndoscopeImmersiveSpace.swift; sourceTree = "<group>"; };
-		2581FF7B2EC2789A0059678D /* CompositorStereoRenderer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CompositorStereoRenderer.swift; sourceTree = "<group>"; };
-		2581FF7C2EC2789A0059678D /* StereoRendererFactory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StereoRendererFactory.swift; sourceTree = "<group>"; };
-		2581FF7D2EC2789A0059678D /* StereoRendererProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StereoRendererProtocol.swift; sourceTree = "<group>"; };
 		25E78B542EB90D4600D8CAD2 /* Operation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Operation.swift; sourceTree = "<group>"; };
 		25E78B552EB90D4600D8CAD2 /* OperationAsset.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OperationAsset.swift; sourceTree = "<group>"; };
 		25E78B562EB90D4600D8CAD2 /* OperationRecording.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OperationRecording.swift; sourceTree = "<group>"; };
@@ -1008,6 +1008,126 @@
 			path = Components;
 			sourceTree = "<group>";
 		};
+		2523A6452EC4C3A900842508 /* AppModule */ = {
+			isa = PBXGroup;
+			children = (
+				2523A6432EC4C3A900842508 /* AppModule.swift */,
+				2523A6442EC4C3A900842508 /* PipelineConfigurationManager.swift */,
+			);
+			path = AppModule;
+			sourceTree = "<group>";
+		};
+		2523A64B2EC4C3A900842508 /* Capture */ = {
+			isa = PBXGroup;
+			children = (
+				2523A6462EC4C3A900842508 /* BaseCaptureSession.swift */,
+				2523A6472EC4C3A900842508 /* CaptureOutputDelegate.swift */,
+				2523A6482EC4C3A900842508 /* CaptureSettings.swift */,
+				2523A6492EC4C3A900842508 /* LeftCaptureSession.swift */,
+				2523A64A2EC4C3A900842508 /* RightCaptureSession.swift */,
+			);
+			path = Capture;
+			sourceTree = "<group>";
+		};
+		2523A6502EC4C3A900842508 /* Composer */ = {
+			isa = PBXGroup;
+			children = (
+				2523A64C2EC4C3A900842508 /* CI_SBSComposer.swift */,
+				2523A64D2EC4C3A900842508 /* NormalizePolicy.swift */,
+				2523A64E2EC4C3A900842508 /* SBSComposerConfig.swift */,
+				2523A64F2EC4C3A900842508 /* SBSMode.swift */,
+			);
+			path = Composer;
+			sourceTree = "<group>";
+		};
+		2523A6522EC4C3A900842508 /* Diagnostics */ = {
+			isa = PBXGroup;
+			children = (
+				2523A6512EC4C3A900842508 /* LatencyMeter.swift */,
+			);
+			path = Diagnostics;
+			sourceTree = "<group>";
+		};
+		2523A6542EC4C3A900842508 /* Sync */ = {
+			isa = PBXGroup;
+			children = (
+				2523A6532EC4C3A900842508 /* FrameSync.swift */,
+			);
+			path = Sync;
+			sourceTree = "<group>";
+		};
+		2523A6582EC4C3A900842508 /* Transport */ = {
+			isa = PBXGroup;
+			children = (
+				2523A6552EC4C3A900842508 /* HEVCVideoEncoder.swift */,
+				2523A6562EC4C3A900842508 /* HEVCVideoEncoderFactory.swift */,
+				2523A6572EC4C3A900842508 /* WebRTCManager.swift */,
+			);
+			path = Transport;
+			sourceTree = "<group>";
+		};
+		2523A6592EC4C3A900842508 /* Endoscope */ = {
+			isa = PBXGroup;
+			children = (
+				2523A6452EC4C3A900842508 /* AppModule */,
+				2523A64B2EC4C3A900842508 /* Capture */,
+				2523A6502EC4C3A900842508 /* Composer */,
+				2523A6522EC4C3A900842508 /* Diagnostics */,
+				2523A6542EC4C3A900842508 /* Sync */,
+				2523A6582EC4C3A900842508 /* Transport */,
+			);
+			path = Endoscope;
+			sourceTree = "<group>";
+		};
+		2523A66E2EC4C3C000842508 /* Decoder */ = {
+			isa = PBXGroup;
+			children = (
+				2523A66A2EC4C3C000842508 /* ConvertingModel.swift */,
+				2523A66B2EC4C3C000842508 /* HEVCVideoDecoder.swift */,
+				2523A66C2EC4C3C000842508 /* HEVCVideoDecoderFactory.swift */,
+				2523A66D2EC4C3C000842508 /* I420BufferConverter.swift */,
+			);
+			path = Decoder;
+			sourceTree = "<group>";
+		};
+		2523A6712EC4C3C000842508 /* Receiver */ = {
+			isa = PBXGroup;
+			children = (
+				2523A66F2EC4C3C000842508 /* StereoMetadata.swift */,
+				2523A6702EC4C3C000842508 /* WebRTCReceiver.swift */,
+			);
+			path = Receiver;
+			sourceTree = "<group>";
+		};
+		2523A6762EC4C3C000842508 /* Renderer */ = {
+			isa = PBXGroup;
+			children = (
+				2523A6722EC4C3C000842508 /* CompositorStereoRenderer.swift */,
+				2523A6732EC4C3C000842508 /* StereoRendererFactory.swift */,
+				2523A6742EC4C3C000842508 /* StereoRendererProtocol.swift */,
+				2523A6752EC4C3C000842508 /* StereoVideoRenderer.swift */,
+			);
+			path = Renderer;
+			sourceTree = "<group>";
+		};
+		2523A6772EC4C3C000842508 /* Streaming */ = {
+			isa = PBXGroup;
+			children = (
+				2523A66E2EC4C3C000842508 /* Decoder */,
+				2523A6712EC4C3C000842508 /* Receiver */,
+				2523A6762EC4C3C000842508 /* Renderer */,
+			);
+			path = Streaming;
+			sourceTree = "<group>";
+		};
+		2523A6782EC4C3C000842508 /* Endoscope */ = {
+			isa = PBXGroup;
+			children = (
+				2523A6772EC4C3C000842508 /* Streaming */,
+			);
+			path = Endoscope;
+			sourceTree = "<group>";
+		};
 		2581FCE82EBBC6FA0059678D /* Root */ = {
 			isa = PBXGroup;
 			children = (
@@ -1032,94 +1152,6 @@
 				2581FEFD2EBE18A70059678D /* VideoError.swift */,
 			);
 			path = Core;
-			sourceTree = "<group>";
-		};
-		2581FF122EBE19AE0059678D /* WebRTC */ = {
-			isa = PBXGroup;
-			children = (
-				2581FF7B2EC2789A0059678D /* CompositorStereoRenderer.swift */,
-				2581FF7C2EC2789A0059678D /* StereoRendererFactory.swift */,
-				2581FF7D2EC2789A0059678D /* StereoRendererProtocol.swift */,
-				2581FF622EBFB6040059678D /* HEVCVideoDecoder.swift */,
-				2581FF632EBFB6040059678D /* HEVCVideoDecoderFactory.swift */,
-				2581FF5C2EBF94150059678D /* I420BufferConverter.swift */,
-				2581FF0E2EBE19AE0059678D /* ConvertingModel.swift */,
-				2581FF0F2EBE19AE0059678D /* StereoMetadata.swift */,
-				2581FF102EBE19AE0059678D /* StereoVideoRenderer.swift */,
-				2581FF112EBE19AE0059678D /* WebRTCReceiver.swift */,
-			);
-			path = WebRTC;
-			sourceTree = "<group>";
-		};
-		2581FF202EBE2CB20059678D /* AppModule */ = {
-			isa = PBXGroup;
-			children = (
-				2581FF1E2EBE2CB20059678D /* AppModule.swift */,
-				2581FF1F2EBE2CB20059678D /* PipelineConfigurationManager.swift */,
-			);
-			path = AppModule;
-			sourceTree = "<group>";
-		};
-		2581FF262EBE2CB20059678D /* CaptureKit */ = {
-			isa = PBXGroup;
-			children = (
-				2581FF212EBE2CB20059678D /* BaseCaptureSession.swift */,
-				2581FF222EBE2CB20059678D /* CaptureOutputDelegate.swift */,
-				2581FF232EBE2CB20059678D /* CaptureSettings.swift */,
-				2581FF242EBE2CB20059678D /* LeftCaptureSession.swift */,
-				2581FF252EBE2CB20059678D /* RightCaptureSession.swift */,
-			);
-			path = CaptureKit;
-			sourceTree = "<group>";
-		};
-		2581FF2B2EBE2CB20059678D /* Composer */ = {
-			isa = PBXGroup;
-			children = (
-				2581FF272EBE2CB20059678D /* CI_SBSComposer.swift */,
-				2581FF282EBE2CB20059678D /* NormalizePolicy.swift */,
-				2581FF292EBE2CB20059678D /* SBSComposerConfig.swift */,
-				2581FF2A2EBE2CB20059678D /* SBSMode.swift */,
-			);
-			path = Composer;
-			sourceTree = "<group>";
-		};
-		2581FF2D2EBE2CB20059678D /* Diagnostics */ = {
-			isa = PBXGroup;
-			children = (
-				2581FF2C2EBE2CB20059678D /* LatencyMeter.swift */,
-			);
-			path = Diagnostics;
-			sourceTree = "<group>";
-		};
-		2581FF2F2EBE2CB20059678D /* FrameSync */ = {
-			isa = PBXGroup;
-			children = (
-				2581FF2E2EBE2CB20059678D /* FrameSync.swift */,
-			);
-			path = FrameSync;
-			sourceTree = "<group>";
-		};
-		2581FF322EBE2CB20059678D /* RTCTransport */ = {
-			isa = PBXGroup;
-			children = (
-				2581FF5E2EBFB5EF0059678D /* HEVCVideoEncoder.swift */,
-				2581FF5F2EBFB5EF0059678D /* HEVCVideoEncoderFactory.swift */,
-				2581FF312EBE2CB20059678D /* WebRTCManager.swift */,
-			);
-			path = RTCTransport;
-			sourceTree = "<group>";
-		};
-		2581FF332EBE2CB20059678D /* Streaming */ = {
-			isa = PBXGroup;
-			children = (
-				2581FF202EBE2CB20059678D /* AppModule */,
-				2581FF262EBE2CB20059678D /* CaptureKit */,
-				2581FF2B2EBE2CB20059678D /* Composer */,
-				2581FF2D2EBE2CB20059678D /* Diagnostics */,
-				2581FF2F2EBE2CB20059678D /* FrameSync */,
-				2581FF322EBE2CB20059678D /* RTCTransport */,
-			);
-			path = Streaming;
 			sourceTree = "<group>";
 		};
 		2581FF4B2EBE576E0059678D /* Components */ = {
@@ -1265,7 +1297,7 @@
 		C02FFA542E9FFF6F00F16742 /* Mac */ = {
 			isa = PBXGroup;
 			children = (
-				2581FF332EBE2CB20059678D /* Streaming */,
+				2523A6592EC4C3A900842508 /* Endoscope */,
 				C050AA182EA80E6200352314 /* UI */,
 			);
 			path = Mac;
@@ -1274,7 +1306,7 @@
 		C02FFA582E9FFF6F00F16742 /* Vision */ = {
 			isa = PBXGroup;
 			children = (
-				2581FF122EBE19AE0059678D /* WebRTC */,
+				2523A6782EC4C3C000842508 /* Endoscope */,
 				1442542F2EA9FF3900583CC3 /* Context */,
 				C050AA192EA80E9E00352314 /* Runtime */,
 				C050AA172EA80E5700352314 /* UI */,
@@ -1790,9 +1822,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				2581FF7E2EC2789A0059678D /* StereoRendererProtocol.swift in Sources */,
-				2581FF7F2EC2789A0059678D /* StereoRendererFactory.swift in Sources */,
-				2581FF802EC2789A0059678D /* CompositorStereoRenderer.swift in Sources */,
 				C04678102EA00B1F00D160DA /* DeletePatient.swift in Sources */,
 				278623342EB790CE00F97BE3 /* AssetListScrollCard.swift in Sources */,
 				27D1DB492EBC781200AC7F3D /* ImmersiveViewModel.swift in Sources */,
@@ -1818,8 +1847,6 @@
 				27AD7ACD2EB496D900E84809 /* LayerButton.swift in Sources */,
 				14DE51352EB60DEC0027D9A0 /* ModelPreviewCard.swift in Sources */,
 				1494DE7C2EA73205000CD284 /* DetailHeader.swift in Sources */,
-				2581FF642EBFB6040059678D /* HEVCVideoDecoder.swift in Sources */,
-				2581FF652EBFB6040059678D /* HEVCVideoDecoderFactory.swift in Sources */,
 				C046782F2EA00B3A00D160DA /* PatientRepositoryImpl.swift in Sources */,
 				C04678302EA00B3A00D160DA /* PatientRemoteDataSource.swift in Sources */,
 				147EB27D2EB0782100D9CFB3 /* OperationStatusBadge.swift in Sources */,
@@ -1830,10 +1857,16 @@
 				144254342EAA232300583CC3 /* OperationViewModel.swift in Sources */,
 				C04678142EA00B1F00D160DA /* Patient.swift in Sources */,
 				27AD7AE52EB5BEA400E84809 /* OpacityControlPanelHeader.swift in Sources */,
-				2581FF132EBE19AE0059678D /* ConvertingModel.swift in Sources */,
-				2581FF142EBE19AE0059678D /* StereoVideoRenderer.swift in Sources */,
-				2581FF152EBE19AE0059678D /* WebRTCReceiver.swift in Sources */,
-				2581FF162EBE19AE0059678D /* StereoMetadata.swift in Sources */,
+				2523A6792EC4C3C000842508 /* CompositorStereoRenderer.swift in Sources */,
+				2523A67A2EC4C3C000842508 /* ConvertingModel.swift in Sources */,
+				2523A67B2EC4C3C000842508 /* StereoMetadata.swift in Sources */,
+				2523A67C2EC4C3C000842508 /* HEVCVideoDecoder.swift in Sources */,
+				2523A67D2EC4C3C000842508 /* I420BufferConverter.swift in Sources */,
+				2523A67E2EC4C3C000842508 /* StereoRendererProtocol.swift in Sources */,
+				2523A67F2EC4C3C000842508 /* WebRTCReceiver.swift in Sources */,
+				2523A6802EC4C3C000842508 /* StereoRendererFactory.swift in Sources */,
+				2523A6812EC4C3C000842508 /* StereoVideoRenderer.swift in Sources */,
+				2523A6822EC4C3C000842508 /* HEVCVideoDecoderFactory.swift in Sources */,
 				278F28B92EB3874800DF2F73 /* GlowingCapsuleButton.swift in Sources */,
 				14C8FF6D2EABA4250089101B /* AttachmentIDs.swift in Sources */,
 				14A17F872EB31397009D16CF /* PatientDetailHeader.swift in Sources */,
@@ -1880,7 +1913,6 @@
 				C0F97ACE2EA41D4B0063E159 /* SwiftDataMappers.swift in Sources */,
 				27D8A2BE2EAF682B009429F0 /* OpacityManager.swift in Sources */,
 				C0F97ACF2EA41D4B0063E159 /* PatientLocalDataSourceSwiftData.swift in Sources */,
-				2581FF5D2EBF94150059678D /* I420BufferConverter.swift in Sources */,
 				C050AA3C2EA8197E00352314 /* ImmersiveIDs.swift in Sources */,
 				27D1DB4D2EBC953D00AC7F3D /* WindowController.swift in Sources */,
 				C0F97AD02EA41D4B0063E159 /* SDOperationAsset.swift in Sources */,
@@ -2077,25 +2109,11 @@
 				C0F97AC52EA41D4B0063E159 /* SDOperation.swift in Sources */,
 				2581FF732EC20A970059678D /* ConnectionSettings.swift in Sources */,
 				C0F97ADE2EA420EB0063E159 /* DomainDependencies.swift in Sources */,
-				2581FF342EBE2CB20059678D /* NormalizePolicy.swift in Sources */,
 				2581FF712EC1EEBA0059678D /* BonjourRelayService.swift in Sources */,
-				2581FF352EBE2CB20059678D /* LatencyMeter.swift in Sources */,
-				2581FF362EBE2CB20059678D /* AppModule.swift in Sources */,
-				2581FF372EBE2CB20059678D /* CI_SBSComposer.swift in Sources */,
-				2581FF382EBE2CB20059678D /* PipelineConfigurationManager.swift in Sources */,
 				2581FF522EBE5E8F0059678D /* ModeSectionView.swift in Sources */,
 				2581FF532EBE5E8F0059678D /* CameraPickerRow.swift in Sources */,
 				2581FF542EBE5E8F0059678D /* CameraSectionView.swift in Sources */,
 				2581FF552EBE5E8F0059678D /* StreamingButton.swift in Sources */,
-				2581FF392EBE2CB20059678D /* FrameSync.swift in Sources */,
-				2581FF3A2EBE2CB20059678D /* CaptureSettings.swift in Sources */,
-				2581FF3B2EBE2CB20059678D /* SBSMode.swift in Sources */,
-				2581FF3C2EBE2CB20059678D /* BaseCaptureSession.swift in Sources */,
-				2581FF3D2EBE2CB20059678D /* LeftCaptureSession.swift in Sources */,
-				2581FF3E2EBE2CB20059678D /* CaptureOutputDelegate.swift in Sources */,
-				2581FF3F2EBE2CB20059678D /* WebRTCManager.swift in Sources */,
-				2581FF402EBE2CB20059678D /* RightCaptureSession.swift in Sources */,
-				2581FF422EBE2CB20059678D /* SBSComposerConfig.swift in Sources */,
 				C0F97AD42EA41FB50063E159 /* PatientLocalDataSource.swift in Sources */,
 				C0F97AC62EA41D4B0063E159 /* SDOperationRecording.swift in Sources */,
 				C0F97AC72EA41D4B0063E159 /* SwiftDataMappers.swift in Sources */,
@@ -2136,8 +2154,6 @@
 				C0F97B0D2EA4348D0063E159 /* CreatePatient.swift in Sources */,
 				C04678322EA00B3A00D160DA /* PatientRepositoryImpl.swift in Sources */,
 				2581FF4C2EBE576E0059678D /* CameraInputToggle.swift in Sources */,
-				2581FF602EBFB5EF0059678D /* HEVCVideoEncoderFactory.swift in Sources */,
-				2581FF612EBFB5EF0059678D /* HEVCVideoEncoder.swift in Sources */,
 				2581FF4D2EBE576E0059678D /* ModeButton.swift in Sources */,
 				1494DE9A2EA73359000CD284 /* SectionTitle.swift in Sources */,
 				C04678332EA00B3A00D160DA /* PatientRemoteDataSource.swift in Sources */,
@@ -2181,6 +2197,22 @@
 				25E78B732EB9164200D8CAD2 /* OperationRepository.swift in Sources */,
 				25E78B662EB90D4600D8CAD2 /* OperationStatus.swift in Sources */,
 				2581FF672EC1A9140059678D /* BonjourServiceDiscovery.swift in Sources */,
+				2523A65A2EC4C3AA00842508 /* CI_SBSComposer.swift in Sources */,
+				2523A65B2EC4C3AA00842508 /* LatencyMeter.swift in Sources */,
+				2523A65C2EC4C3AA00842508 /* WebRTCManager.swift in Sources */,
+				2523A65D2EC4C3AA00842508 /* AppModule.swift in Sources */,
+				2523A65E2EC4C3AA00842508 /* PipelineConfigurationManager.swift in Sources */,
+				2523A65F2EC4C3AA00842508 /* HEVCVideoEncoder.swift in Sources */,
+				2523A6602EC4C3AA00842508 /* NormalizePolicy.swift in Sources */,
+				2523A6612EC4C3AA00842508 /* SBSMode.swift in Sources */,
+				2523A6622EC4C3AA00842508 /* RightCaptureSession.swift in Sources */,
+				2523A6632EC4C3AA00842508 /* CaptureOutputDelegate.swift in Sources */,
+				2523A6642EC4C3AA00842508 /* CaptureSettings.swift in Sources */,
+				2523A6652EC4C3AA00842508 /* FrameSync.swift in Sources */,
+				2523A6662EC4C3AA00842508 /* LeftCaptureSession.swift in Sources */,
+				2523A6672EC4C3AA00842508 /* HEVCVideoEncoderFactory.swift in Sources */,
+				2523A6682EC4C3AA00842508 /* BaseCaptureSession.swift in Sources */,
+				2523A6692EC4C3AA00842508 /* SBSComposerConfig.swift in Sources */,
 				25E78B672EB90D4600D8CAD2 /* Operation.swift in Sources */,
 				2581FF592EBE6AE00059678D /* DevicePreview.swift in Sources */,
 				25E78B682EB90D4600D8CAD2 /* OperationAsset.swift in Sources */,
