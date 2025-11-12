@@ -33,7 +33,7 @@ public struct SBSComposerConfig {
         colorSpace: CGColorSpace(name: CGColorSpace.itur_709)
     )
 
-    public init(
+    public nonisolated init(
         mode: SBSMode,
         policy: NormalizePolicy,
         colorSpace: CGColorSpace?

@@ -18,9 +18,9 @@ import Combine
 
 /// Thread-safe wrapper for CVPixelBuffer
 fileprivate struct SendablePixelBuffer: @unchecked Sendable {
-    let pixelBuffer: CVPixelBuffer
+    nonisolated(unsafe) let pixelBuffer: CVPixelBuffer
 
-    init(_ pixelBuffer: CVPixelBuffer) {
+    nonisolated init(_ pixelBuffer: CVPixelBuffer) {
         self.pixelBuffer = pixelBuffer
     }
 }
