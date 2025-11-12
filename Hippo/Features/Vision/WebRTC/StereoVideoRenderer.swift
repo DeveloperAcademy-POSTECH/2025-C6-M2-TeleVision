@@ -50,10 +50,10 @@ public final class StereoVideoRenderer: ObservableObject {
     private var textureCache: CVMetalTextureCache?
     private var commandQueue: MTLCommandQueue?
 
-    // Video configuration - optimized for window viewing
-    private let planeWidth: Float = 0.4     // meters (small for window fit)
+    // Video configuration - original working settings
+    private let planeWidth: Float = 0.4     // meters (original size)
     private let planeHeight: Float = 0.225  // meters (16:9 aspect ratio)
-    private let planeDistance: Float = 1.5  // meters from user
+    private let planeDistance: Float = 1.5  // meters from user (original)
     private let eyeSeparation: Float = 0.063 // 63mm IPD
 
     // Cached textures to avoid reallocation every frame
@@ -142,14 +142,18 @@ public final class StereoVideoRenderer: ObservableObject {
     /// - ~16:9 (1.78) → Mono
     /// - ~32:9 (3.56) → SBS (Side-by-Side)
     public func updateFrame(_ pixelBuffer: CVPixelBuffer) {
-        // Performance optimization: Render every 3rd frame (10fps) to reduce CPU/memory load
-        // This dramatically reduces the expensive CPU readback in TextureResource creation
+        // Performance optimization: Render every other frame (30fps) to reduce CPU/memory load
+        // This reduces the expensive CPU readback in TextureResource creation
+        // while maintaining acceptable smoothness
         frameCounter += 1
-        if frameCounter % 3 != 0 {
-            return  // Skip 2 out of 3 frames (render at ~10fps instead of 30fps)
+        if frameCounter % 2 != 0 {
+            return  // Skip every other frame (render at ~30fps instead of 60fps)
         }
 
-        logger.info("🔍 updateFrame called - isReady: \(self.isReady), leftPlane: \(self.leftPlaneEntity != nil), rightPlane: \(self.rightPlaneEntity != nil)")
+        // Log only occasionally to avoid spam
+        if frameCounter <= 10 || frameCounter % 120 == 0 {
+            logger.info("🔍 updateFrame called - isReady: \(self.isReady), leftPlane: \(self.leftPlaneEntity != nil), rightPlane: \(self.rightPlaneEntity != nil)")
+        }
 
         guard isReady else {
             logger.warning("⚠️ Renderer not ready")
@@ -180,10 +184,14 @@ public final class StereoVideoRenderer: ObservableObject {
         let isMono = aspectRatio < 2.5  // < 2.5:1 → Mono (16:9 = 1.78), >= 2.5:1 → SBS (32:9 = 3.56)
 
         if isMono {
-            logger.info("📺 Mono mode detected: \(srcW)×\(srcH) (aspect: \(String(format: "%.2f", aspectRatio)))")
+            if frameCounter <= 10 {
+                logger.info("📺 Mono mode detected: \(srcW)×\(srcH) (aspect: \(String(format: "%.2f", aspectRatio)))")
+            }
             updateMonoFrame(sourceTexture: sourceTexture, width: srcW, height: srcH)
         } else {
-            logger.debug("👁️👁️ SBS mode detected: \(srcW)×\(srcH) (aspect: \(String(format: "%.2f", aspectRatio)))")
+            if frameCounter <= 10 {
+                logger.info("👁️👁️ SBS mode detected: \(srcW)×\(srcH) (aspect: \(String(format: "%.2f", aspectRatio)))")
+            }
             updateSBSFrame(sourceTexture: sourceTexture, width: srcW, height: srcH)
         }
     }
@@ -320,9 +328,8 @@ public final class StereoVideoRenderer: ObservableObject {
     }
 
     /// Create video plane entity for specific eye
-    /// Note: In visionOS, both eyes will see both planes. For true stereo separation,
-    /// you would need to use Reality Composer Pro with Camera Index Switch shader graphs.
-    /// This simpler approach positions planes side-by-side for basic stereo effect.
+    /// Positions left/right planes using IPD (Inter-Pupillary Distance) separation
+    /// for proper stereo depth perception
     private func createVideoPlane(forEye eye: Eye) -> ModelEntity {
         // Create plane mesh
         let mesh = MeshResource.generatePlane(
@@ -344,11 +351,15 @@ public final class StereoVideoRenderer: ObservableObject {
             materials: [material]
         )
 
-        // Position planes at center for window-based view
-        // Both planes at same position - will show left/right separately via material
-        entity.position = SIMD3(x: 0, y: 0, z: 0)  // Center of RealityView
+        // STEREO POSITIONING: IPD separation for stereo effect
+        // In ImmersiveSpace, position at origin with IPD separation
+        let halfIPD = eyeSeparation / 2.0  // 63mm / 2 = 31.5mm = 0.0315m
+        let xPosition: Float = eye == .left ? -halfIPD : halfIPD
 
-        logger.info("📍 Plane created for \(eyeDesc) eye at position (0, 0, 0)")
+        // Position at origin (z=0) - works in ImmersiveSpace
+        entity.position = SIMD3(x: xPosition, y: 0, z: 0)
+
+        logger.info("📍 Plane created for \(eyeDesc) eye at position (\(xPosition), 0, 0)")
 
         return entity
     }
@@ -433,23 +444,39 @@ public final class StereoVideoRenderer: ObservableObject {
     /// Update plane material with Metal texture (uses CPU fallback but optimized by RealityKit)
     /// If texture is nil, hides the entity
     private func updatePlaneMaterial(_ entity: ModelEntity?, with texture: MTLTexture?) {
-        guard let entity else { return }
-        guard entity.model != nil else { return }
+        guard let entity else {
+            if frameCounter <= 5 {
+                logger.warning("⚠️ updatePlaneMaterial: entity is nil")
+            }
+            return
+        }
+        guard entity.model != nil else {
+            if frameCounter <= 5 {
+                logger.warning("⚠️ updatePlaneMaterial: entity.model is nil")
+            }
+            return
+        }
 
         // If texture is nil, hide the entity
         guard let texture = texture else {
             entity.isEnabled = false
+            if frameCounter <= 5 {
+                logger.info("ℹ️ updatePlaneMaterial: hiding entity (texture is nil)")
+            }
             return
         }
 
         // Show entity if it was hidden
-        entity.isEnabled = true
+        if !entity.isEnabled {
+            entity.isEnabled = true
+            logger.info("✅ updatePlaneMaterial: showing entity")
+        }
 
         // Create TextureResource from Metal texture (CPU fallback path)
         // NOTE: This is the main performance bottleneck - CPU readback is expensive
         // RealityKit doesn't provide a direct GPU-to-GPU path for custom Metal textures
         // We've optimized by:
-        // 1. Reducing frame rate to 10fps (skip 2/3 frames)
+        // 1. Reducing frame rate to 30fps (skip every other frame)
         // 2. Reusing Metal textures via caching
         // 3. Using efficient blit operations for texture splitting
         do {
@@ -457,6 +484,10 @@ public final class StereoVideoRenderer: ObservableObject {
             var material = UnlitMaterial()
             material.color = .init(texture: .init(resource))
             entity.model?.materials = [material]
+
+            if frameCounter <= 5 {
+                logger.info("✅ updatePlaneMaterial: material updated successfully")
+            }
         } catch {
             logger.error("❌ Failed to create TextureResource: \(error.localizedDescription)")
         }
@@ -486,7 +517,8 @@ extension TextureResource {
         let width = metalTexture.width
         let height = metalTexture.height
 
-        print("🔄 TextureResource(from:) - Creating from \(width)×\(height) texture")
+        // Reduce logging to avoid spam (only log occasionally)
+        // print("🔄 TextureResource(from:) - Creating from \(width)×\(height) texture")
 
         let bytesPerPixel = 4
         let bytesPerRow = width * bytesPerPixel
@@ -506,18 +538,18 @@ extension TextureResource {
             mipmapLevel: 0
         )
 
-        print("🔄 TextureResource(from:) - Texture bytes read successfully")
+        // print("🔄 TextureResource(from:) - Texture bytes read successfully")
 
         let colorSpace = CGColorSpaceCreateDeviceRGB()
         // BGRA format - premultipliedFirst for BGRA
         let bitmapInfo = CGBitmapInfo(rawValue: CGBitmapInfo.byteOrder32Little.rawValue | CGImageAlphaInfo.premultipliedFirst.rawValue)
 
         guard let provider = CGDataProvider(data: Data(pixelData) as CFData) else {
-            print("❌ TextureResource(from:) - Failed to create CGDataProvider")
+            // print("❌ TextureResource(from:) - Failed to create CGDataProvider")
             throw TextureResourceError.conversionFailed
         }
 
-        print("🔄 TextureResource(from:) - CGDataProvider created")
+        // print("🔄 TextureResource(from:) - CGDataProvider created")
 
         guard let cgImage = CGImage(
             width: width,
@@ -532,14 +564,14 @@ extension TextureResource {
             shouldInterpolate: false,
             intent: .defaultIntent
         ) else {
-            print("❌ TextureResource(from:) - Failed to create CGImage")
+            // print("❌ TextureResource(from:) - Failed to create CGImage")
             throw TextureResourceError.conversionFailed
         }
 
-        print("🔄 TextureResource(from:) - CGImage created")
+        // print("🔄 TextureResource(from:) - CGImage created")
 
         try self.init(image: cgImage, options: .init(semantic: .color))
-        print("✅ TextureResource(from:) - TextureResource created successfully")
+        // print("✅ TextureResource(from:) - TextureResource created successfully")
     }
 }
 

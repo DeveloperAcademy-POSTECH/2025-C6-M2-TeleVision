@@ -17,6 +17,9 @@ actor ConvertingModel {
     private var pixelBufferPool: CVMutablePixelBuffer.Pool?
     private let log = Logger(subsystem: Bundle.main.bundleIdentifier ?? "App", category: "Converting")
 
+    // Frame counter for diagnostic logging
+    private var processedFrameCount: Int = 0
+
     // Frame signature tracking for resource rebuild
     private struct FrameSignature: Equatable {
         let width: Int
@@ -117,10 +120,16 @@ actor ConvertingModel {
             CVBufferRemoveAttachment(sourceImageBuffer, kCVImageBufferCleanApertureKey)
         }
 
+        // Create format description
+        // Note: CMTaggedBufferGroupFormatDescription returns 0×0 dimensions by design
+        // The actual dimensions are in each tagged pixel buffer
+        // This is acceptable for VideoPlayerComponent as it reads from the pixel buffers
+        let formatDesc = CMTaggedBufferGroupFormatDescription(taggedBuffers: taggedBuffers)
+
         // Build ready sample buffer
         let buffer = CMReadySampleBuffer(
             taggedBuffers: taggedBuffers,
-            formatDescription: CMTaggedBufferGroupFormatDescription(taggedBuffers: taggedBuffers),
+            formatDescription: formatDesc,
             presentationTimeStamp: CMSampleBufferGetPresentationTimeStamp(sample),
             duration: CMSampleBufferGetDuration(sample)
         )
@@ -149,14 +158,20 @@ actor ConvertingModel {
             return nil
         }
 
+        // Increment frame counter
+        processedFrameCount += 1
+        let enableDiagnostics = processedFrameCount == 1  // Only first frame for performance
+
         // Get source frame dimensions for resolution-independent calculation
         let srcWidth = CVPixelBufferGetWidth(pixelBuffer)
         let srcHeight = CVPixelBufferGetHeight(pixelBuffer)
         let srcFormat = CVPixelBufferGetPixelFormatType(pixelBuffer)
         let sourceSize = CGSize(width: srcWidth, height: srcHeight)
 
-        // 🔍 DIAGNOSTIC: Log source frame info
-        log.info("🔍 [DIAGNOSTIC] Source frame: \(srcWidth)×\(srcHeight) fmt=\(self.formatString(srcFormat))")
+        // 🔍 DIAGNOSTIC: Log source frame info (first 3 frames only)
+        if enableDiagnostics {
+            log.info("🔍 [DIAGNOSTIC] Source frame: \(srcWidth)×\(srcHeight) fmt=\(self.formatString(srcFormat))")
+        }
 
         // Determine stereo input mode (currently always SBS, but can be extended)
         let mode: StereoMetadata.StereoInputMode = .singleSourceSBS
@@ -190,31 +205,6 @@ actor ConvertingModel {
             let eyeW = pool.pixelBufferAttributes.size.width
             let eyeH = pool.pixelBufferAttributes.size.height
 
-            let eyeName = eye == .leftEye ? "Left" : "Right"
-
-            // 🔍 DIAGNOSTIC: Log aperture offset calculation
-            log.info("🔍 [DIAGNOSTIC] \(eyeName) eye aperture offset: H=\(String(format: "%.2f", apertureOffset.horizontal)), V=\(String(format: "%.2f", apertureOffset.vertical))")
-
-            // Calculate actual crop region in pixels
-            // offset is relative to center, convert to absolute pixel coordinates
-            let centerX = Double(srcWidth) / 2.0
-            let centerY = Double(srcHeight) / 2.0
-            let cropStartX = centerX + apertureOffset.horizontal - Double(eyeW) / 2.0
-            let cropStartY = centerY + apertureOffset.vertical - Double(eyeH) / 2.0
-
-            log.info("🔍 [DIAGNOSTIC] \(eyeName) eye crop region in pixels:")
-            log.info("   Source center: (\(String(format: "%.1f", centerX)), \(String(format: "%.1f", centerY)))")
-            log.info("   Crop rect: x=\(String(format: "%.1f", cropStartX)), y=\(String(format: "%.1f", cropStartY)), w=\(eyeW), h=\(eyeH)")
-            log.info("   Expected for SBS: Left=(0,0,\(srcWidth/2),\(srcHeight)), Right=(\(srcWidth/2),0,\(srcWidth/2),\(srcHeight))")
-
-            // Verify crop rectangle matches expected split
-            if stereoMetadata.framePacking == .sideBySide && layerID == 0 {
-                // First frame: log the split coordinates
-                log.debug("   Left eye:  source rect ≈ (0, 0, \(eyeW), \(eyeH)) via clean aperture offset H=\(String(format: "%.1f", apertureOffset.horizontal))")
-            } else if stereoMetadata.framePacking == .sideBySide && layerID == 1 {
-                log.debug("   Right eye: source rect ≈ (\(eyeW), 0, \(eyeW), \(eyeH)) via clean aperture offset H=\(String(format: "%.1f", apertureOffset.horizontal))")
-            }
-
             // Source clean aperture: crop from SBS
             let cropRectDict: [CFString: Any] = [
                 kCVImageBufferCleanApertureHorizontalOffsetKey: apertureOffset.horizontal,
@@ -222,9 +212,6 @@ actor ConvertingModel {
                 kCVImageBufferCleanApertureWidthKey: eyeW,
                 kCVImageBufferCleanApertureHeightKey: eyeH
             ]
-
-            // 🔍 DIAGNOSTIC: Log clean aperture dictionary values
-            log.info("🔍 [DIAGNOSTIC] \(eyeName) eye clean aperture dict: H_offset=\(apertureOffset.horizontal), V_offset=\(apertureOffset.vertical), W=\(eyeW), H=\(eyeH)")
             CVBufferSetAttachment(pixelBuffer, kCVImageBufferCleanApertureKey, cropRectDict as CFDictionary, .shouldNotPropagate)
 
             // Validate no double cropping before transfer
@@ -233,50 +220,14 @@ actor ConvertingModel {
             }
 
             out.withUnsafeBuffer { dst in
-                // 🔍 DIAGNOSTIC: Log before transfer
-                let dstWidthBefore = CVPixelBufferGetWidth(dst)
-                let dstHeightBefore = CVPixelBufferGetHeight(dst)
-                log.info("🔍 [DIAGNOSTIC] Before transfer - \(eyeName) eye dst buffer: \(dstWidthBefore)×\(dstHeightBefore)")
-
                 let status = VTPixelTransferSessionTransferImage(session, from: pixelBuffer, to: dst)
                 if status != kCVReturnSuccess {
                     log.error("❌ VTPixelTransferSessionTransferImage failed: \(status)")
-                } else {
-                    log.info("✅ VTPixelTransferSessionTransferImage succeeded for \(eyeName) eye")
                 }
 
                 // CRITICAL: Remove clean apertures from output buffer
                 // VideoPlayerComponent should see the full square buffer (640×640) without any cropping
                 CVBufferRemoveAttachment(dst, kCVImageBufferCleanApertureKey)
-            }
-
-            // Verify output buffer
-            out.withUnsafeBuffer { dst in
-                let dstWidth = CVPixelBufferGetWidth(dst)
-                let dstHeight = CVPixelBufferGetHeight(dst)
-
-                // Check if clean aperture was actually removed
-                let hasCleanAperture = CVBufferGetAttachment(dst, kCVImageBufferCleanApertureKey, nil) != nil
-
-                log.debug("📤 \(eyeName) eye output: \(dstWidth)×\(dstHeight), hasCleanAperture=\(hasCleanAperture)")
-
-                // 🔍 DIAGNOSTIC: Detailed output buffer info
-                log.info("🔍 [DIAGNOSTIC] After transfer - \(eyeName) eye output buffer:")
-                log.info("   Size: \(dstWidth)×\(dstHeight)")
-                log.info("   Has clean aperture: \(hasCleanAperture)")
-                log.info("   Expected: Clean aperture should be removed (false)")
-
-                // Lock buffer to inspect actual pixel data (first few pixels)
-                CVPixelBufferLockBaseAddress(dst, .readOnly)
-                defer { CVPixelBufferUnlockBaseAddress(dst, .readOnly) }
-
-                if let baseAddress = CVPixelBufferGetBaseAddress(dst) {
-                    let bytesPerRow = CVPixelBufferGetBytesPerRow(dst)
-                    log.info("   Bytes per row: \(bytesPerRow)")
-                    log.info("   Base address is valid: ✅")
-                } else {
-                    log.error("   Base address is nil: ❌")
-                }
             }
 
             let tags: [CMTag] = [.videoLayerID(Int64(layerID)), .stereoView(eye), .mediaType(.video)]
@@ -290,7 +241,44 @@ actor ConvertingModel {
             CVBufferRemoveAttachment(pixelBuffer, kCVImageBufferCleanApertureKey)
         }
 
+        // Create format description for tagged buffer group
+        let eyeW = pool.pixelBufferAttributes.size.width
+        let eyeH = pool.pixelBufferAttributes.size.height
+
+        // Note: CMTaggedBufferGroupFormatDescription returns 0×0 dimensions by design
+        // The actual dimensions are in each tagged pixel buffer
         let formatDesc = CMTaggedBufferGroupFormatDescription(taggedBuffers: taggedBuffers)
+
+        // Debug logging for first few frames
+        if enableDiagnostics {
+            let dims = CMVideoFormatDescriptionGetDimensions(formatDesc)
+            log.info("🔍 [FORMAT DEBUG] Format description dimensions: \(dims.width)×\(dims.height)")
+            log.info("🔍 [FORMAT DEBUG] Expected dimensions: \(eyeW)×\(eyeH) per eye")
+
+            if dims.width == 0 || dims.height == 0 {
+                log.info("💡 [FORMAT DEBUG] Format description has 0×0 dimensions (expected for tagged buffer groups)")
+                log.info("💡 [FORMAT DEBUG] Each tagged pixel buffer has its own dimensions: \(eyeW)×\(eyeH)")
+
+                // Verify that the tagged buffers themselves have proper dimensions
+                for (idx, taggedBuffer) in taggedBuffers.enumerated() {
+                    if case .pixelBuffer(let pb) = taggedBuffer.content {
+                        pb.withUnsafeBuffer { cvBuffer in
+                            let w = CVPixelBufferGetWidth(cvBuffer)
+                            let h = CVPixelBufferGetHeight(cvBuffer)
+                            log.info("   Tagged buffer[\(idx)] dimensions: \(w)×\(h)")
+                        }
+                    }
+                }
+            } else {
+                log.info("✅ [FORMAT DEBUG] Format description has non-zero dimensions: \(dims.width)×\(dims.height)")
+            }
+
+            // Check if format description has proper media type
+            let mediaType = CMFormatDescriptionGetMediaType(formatDesc)
+            let mediaSubType = CMFormatDescriptionGetMediaSubType(formatDesc)
+            log.info("🔍 [FORMAT DEBUG] Media type: \(mediaType), subtype: \(mediaSubType)")
+        }
+
         let buffer = CMReadySampleBuffer(
             taggedBuffers: taggedBuffers,
             formatDescription: formatDesc,
@@ -308,9 +296,29 @@ actor ConvertingModel {
             if let dict = arr.firstObject as? NSMutableDictionary {
                 dict[kCMSampleAttachmentKey_DisplayImmediately] = true
                 dict[kCMSampleAttachmentKey_DoNotDisplay] = false
+
+                // Add explicit dimensions as attachment for VideoPlayerComponent
+                // This helps VideoPlayerComponent understand the per-eye dimensions
+                dict["VideoDimensions" as CFString] = [
+                    "Width": eyeW,
+                    "Height": eyeH
+                ] as CFDictionary
             }
-            log.debug("✅ Stereo sample buffer created with \(taggedBuffers.count) tagged buffers")
-        } else {
+
+            // CRITICAL: Add HeroEye attachment to the SAMPLE BUFFER (not format description)
+            // For tagged buffer groups, the attachment must be on the sample buffer itself
+            CMSetAttachment(
+                outSB as CMAttachmentBearer,
+                key: kCMFormatDescriptionExtension_HeroEye as CFString,
+                value: kCMFormatDescriptionHeroEye_Left as CFTypeRef,
+                attachmentMode: kCMAttachmentMode_ShouldPropagate
+            )
+
+            // Only log on first frame to reduce CPU usage
+            if processedFrameCount == 1 {
+                log.debug("✅ Stereo sample buffer created with \(taggedBuffers.count) tagged buffers + HeroEye attachment")
+            }
+        } else if processedFrameCount == 1 {
             log.error("❌ Failed to create stereo sample buffer or attachments")
         }
 

@@ -155,7 +155,9 @@ struct ConnectionSettingsView: View {
             .toolbar {
                 ToolbarItem(placement: .confirmationAction) {
                     Button("완료") {
+                        print("🔧 [SETTINGS] 완료 버튼 클릭 - dismiss 호출")
                         dismiss()
+                        print("🔧 [SETTINGS] dismiss 호출 완료")
                     }
                 }
             }
