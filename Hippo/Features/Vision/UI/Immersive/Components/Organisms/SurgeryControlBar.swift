@@ -10,7 +10,7 @@ import SwiftUI
 struct SurgeryControlBar: View {
     @Environment(ImmersiveViewModel.self) var immersiveViewModel
     @Environment(WindowController.self) var windowController
-
+    
     var body: some View {
         @Bindable var immersiveViewModel = immersiveViewModel
         
@@ -35,7 +35,12 @@ struct SurgeryControlBar: View {
                     } else {
                         GlowingCircleButton(
                             imageName: "AddEntityIcon",
-                            action: { windowController.pushWindow(id: WindowIDs.assetListView) }
+                            action: {
+                                
+                                windowController.pushWindow(id: WindowIDs.assetListView)
+                                immersiveViewModel.isShowingAssetListView = true
+                                
+                            }
                         )
                     }
                     Spacer()
@@ -61,6 +66,7 @@ struct SurgeryControlBar: View {
                     await windowController.finishSurgeryAndDismissSpace()
                     if immersiveViewModel.isOpacityControlPanelOpen {
                         windowController.dismissWindow(id: WindowIDs.opacityControlPanel)
+                        immersiveViewModel.isOpacityControlPanelOpen = false
                     }
                 }
             }
@@ -76,5 +82,5 @@ struct SurgeryControlBar: View {
 
 #Preview {
     SurgeryControlBar()
-    .padding()
+        .padding()
 }
