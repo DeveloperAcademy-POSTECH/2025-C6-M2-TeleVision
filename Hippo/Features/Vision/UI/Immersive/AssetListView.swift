@@ -42,6 +42,7 @@ struct AssetListView: View {
                 if let url = selectedURL {
                     Task {
                         await runtime.placeEntity(url: url)
+                        immersiveViewModel.isShowingAssetListView = false
                         dismissWindow(id: WindowIDs.assetListView)
                     }
                 }
@@ -55,6 +56,9 @@ struct AssetListView: View {
             if selectedURL == nil {
                 selectedURL = fileURLs.first
             }
+        }
+        .onDisappear {
+            immersiveViewModel.isShowingAssetListView = false
         }
         
     }
