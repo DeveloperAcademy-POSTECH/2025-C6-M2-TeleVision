@@ -350,6 +350,22 @@ public final class WebRTCReceiver: NSObject, ObservableObject {
         logger.info("⏳ AVSampleBufferVideoRenderer configured for stereo playback...")
     }
 
+    // MARK: - Helper Methods
+
+    /// Check renderer status and attempt recovery if failed
+    /// Returns true if renderer is ready, false otherwise
+    private func checkAndRecoverRenderer() -> Bool {
+        let rendererStatus = stereoRenderer.status
+        if rendererStatus == .failed {
+            logger.warning("⚠️ Renderer status failed, attempting recovery")
+            stereoRenderer.flush()
+            stereoRenderer.stopRequestingMediaData()
+            stereoRenderer.requestMediaDataWhenReady(on: .main) { /* keep ready */ }
+            return false
+        }
+        return true
+    }
+
     // MARK: - Path A: Single-stream CMSampleBuffer wrapping
 
     private func enqueueSingleStream(buffer pixelBuffer: CVPixelBuffer, pts: CMTime, duration: CMTime) {
@@ -372,19 +388,12 @@ public final class WebRTCReceiver: NSObject, ObservableObject {
     }
 
     private func enqueueSingleStreamImmediate(buffer pixelBuffer: CVPixelBuffer, pts: CMTime, duration: CMTime) {
-        // Check renderer status
-        let rendererStatus = stereoRenderer.status
-        if rendererStatus == .failed {
-            logger.warning("⚠️ Renderer status failed, attempting recovery")
-            stereoRenderer.flush()
-            stereoRenderer.stopRequestingMediaData()
-            stereoRenderer.requestMediaDataWhenReady(on: .main) { /* keep ready */ }
-            return
-        }
+        // Check renderer status and attempt recovery if needed
+        guard checkAndRecoverRenderer() else { return }
 
         // Log renderer readiness on first frame
         if self.loggingState.framesEnqueuedCount == 0 {
-            logger.info("📊 Renderer status: \(rendererStatus.rawValue), isReadyForMoreMediaData: \(self.stereoRenderer.isReadyForMoreMediaData)")
+            logger.info("📊 Renderer status: \(self.stereoRenderer.status.rawValue), isReadyForMoreMediaData: \(self.stereoRenderer.isReadyForMoreMediaData)")
         }
 
         // Create format description
@@ -518,19 +527,12 @@ public final class WebRTCReceiver: NSObject, ObservableObject {
             return
         }
 
-        // Check renderer status
-        let rendererStatus = stereoRenderer.status
-        if rendererStatus == .failed {
-            logger.warning("⚠️ Renderer status failed, attempting recovery")
-            stereoRenderer.flush()
-            stereoRenderer.stopRequestingMediaData()
-            stereoRenderer.requestMediaDataWhenReady(on: .main) { /* keep ready */ }
-            return
-        }
+        // Check renderer status and attempt recovery if needed
+        guard checkAndRecoverRenderer() else { return }
 
         // Log on first frame
         if self.loggingState.framesEnqueuedCount == 0 {
-            logger.info("📊 Renderer status: \(rendererStatus.rawValue), isReadyForMoreMediaData: \(self.stereoRenderer.isReadyForMoreMediaData)")
+            logger.info("📊 Renderer status: \(self.stereoRenderer.status.rawValue), isReadyForMoreMediaData: \(self.stereoRenderer.isReadyForMoreMediaData)")
             logger.info("✅ First stereo tagged frame from ConvertingModel")
 
             // Debug stereo sample buffer format (first frame only)
