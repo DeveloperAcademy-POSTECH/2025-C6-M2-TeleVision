@@ -10,18 +10,28 @@ import Foundation
 import os.log
 
 /// A model that describes typical stereo metadata.
-struct StereoMetadata {
+struct StereoMetadata: Sendable {
     /// Describes potential frame-packing approaches.
-    enum FramePacking {
+    enum FramePacking: Sendable, Equatable {
         /// Indicates that frames are packed side-by-side.
         case sideBySide
 
         /// Indicates that frames are packed, one over another.
         case overUnder
+
+        // Explicit nonisolated Equatable conformance
+        nonisolated static func == (lhs: FramePacking, rhs: FramePacking) -> Bool {
+            switch (lhs, rhs) {
+            case (.sideBySide, .sideBySide), (.overUnder, .overUnder):
+                return true
+            default:
+                return false
+            }
+        }
     }
 
     /// Describes the stereo input mode for proper offset calculation.
-    enum StereoInputMode {
+    enum StereoInputMode: Sendable, Equatable {
         /// Single SBS (side-by-side) source where left/right eyes are packed in one buffer.
         /// Example: 3840×1080 containing two 1920×1080 eyes side-by-side.
         case singleSourceSBS
@@ -29,6 +39,16 @@ struct StereoMetadata {
         /// Already split into separate per-eye buffers.
         /// Example: Two separate 1920×1080 buffers, one for each eye.
         case splitEyes
+
+        // Explicit nonisolated Equatable conformance
+        nonisolated static func == (lhs: StereoInputMode, rhs: StereoInputMode) -> Bool {
+            switch (lhs, rhs) {
+            case (.singleSourceSBS, .singleSourceSBS), (.splitEyes, .splitEyes):
+                return true
+            default:
+                return false
+            }
+        }
     }
 
     /// The current frame packing.

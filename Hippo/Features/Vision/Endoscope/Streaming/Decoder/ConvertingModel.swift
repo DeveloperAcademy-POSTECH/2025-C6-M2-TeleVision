@@ -58,7 +58,7 @@ actor ConvertingModel {
         let mode: StereoMetadata.StereoInputMode = .singleSourceSBS
 
         // Save original clean aperture to restore later.
-        let originalAttachment = CVBufferGetAttachment(sourceImageBuffer, kCVImageBufferCleanApertureKey, nil)?.takeUnretainedValue()
+        let originalAttachment = CVBufferCopyAttachment(sourceImageBuffer, kCVImageBufferCleanApertureKey, nil)
 
         let layerIDs = [0, 1]
         let eyeComponents: [CMStereoViewComponents] = [.leftEye, .rightEye]
@@ -72,8 +72,6 @@ actor ConvertingModel {
             let pixelBuffer = try pool.makeMutablePixelBuffer()
 
             // Apply per-eye clean aperture to SOURCE just for the transfer.
-            let bufferSize = pool.pixelBufferAttributes.size
-
             // Use new resolution-independent cleanApertureOffset
             let apertureOffset = stereoMetadata.cleanApertureOffset(
                 for: layerID,
@@ -181,7 +179,7 @@ actor ConvertingModel {
         precondition(srcWidth >= 2 && srcWidth % 2 == 0, "SBS source width must be even and >= 2, got \(srcWidth)")
 
         // Save & restore clean aperture on the provided pixelBuffer as well.
-        let originalAttachment = CVBufferGetAttachment(pixelBuffer, kCVImageBufferCleanApertureKey, nil)?.takeUnretainedValue()
+        let originalAttachment = CVBufferCopyAttachment(pixelBuffer, kCVImageBufferCleanApertureKey, nil)
 
         let layerIDs = [0, 1]
         let eyeComponents: [CMStereoViewComponents] = [.leftEye, .rightEye]
@@ -189,7 +187,6 @@ actor ConvertingModel {
 
         for (layerID, eye) in zip(layerIDs, eyeComponents) {
             let out = try pool.makeMutablePixelBuffer()
-            let bufferSize = pool.pixelBufferAttributes.size
 
             // Use new resolution-independent cleanApertureOffset
             let apertureOffset = stereoMetadata.cleanApertureOffset(
@@ -465,13 +462,13 @@ actor ConvertingModel {
         destination: CVImageBuffer,
         usingCleanAperture: Bool
     ) {
-        let srcHasCleanAperture = CVBufferGetAttachment(
+        let srcHasCleanAperture = CVBufferCopyAttachment(
             source,
             kCVImageBufferCleanApertureKey,
             nil
         ) != nil
 
-        let destHasCleanAperture = CVBufferGetAttachment(
+        let destHasCleanAperture = CVBufferCopyAttachment(
             destination,
             kCVImageBufferCleanApertureKey,
             nil

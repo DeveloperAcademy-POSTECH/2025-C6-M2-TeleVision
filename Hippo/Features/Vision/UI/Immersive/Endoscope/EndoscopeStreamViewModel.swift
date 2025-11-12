@@ -66,9 +66,7 @@ final class EndoscopeStreamViewModel: ObservableObject {
         logger.info("🖥️ Running on simulator - using localhost")
         let localhostURL = URL(string: "ws://127.0.0.1:8080")!
         await connectToServer(url: localhostURL)
-        return
-        #endif
-
+        #else
         // Step 1: Discover server via Bonjour (real device only)
         guard let serverURL = await discoverServer() else {
             return // Status already updated in discoverServer()
@@ -76,6 +74,7 @@ final class EndoscopeStreamViewModel: ObservableObject {
 
         // Step 2: Connect to discovered server
         await connectToServer(url: serverURL)
+        #endif
     }
 
     /// Connect to server using manually configured IP address
