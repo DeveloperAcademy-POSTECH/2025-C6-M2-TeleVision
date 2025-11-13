@@ -60,11 +60,16 @@ public final class WebRTCReceiver: NSObject, ObservableObject {
     @Published public var stats: ReceiverStats = ReceiverStats()
     @Published public var currentFrameSize: CGSize = .zero  // Track current per-eye frame size
 
-    // Path A (single-stream) renderer for RealityKit VideoMaterial with stereo tagging
-    public let stereoRenderer = AVSampleBufferVideoRenderer()
+    // Path A: StereoVideoPlayer (recommended) - Manages AVSampleBufferVideoRenderer with proper synchronization
+    public let videoPlayer = StereoVideoPlayer()
 
     // Path B (stereo Metal) renderer - Legacy RealityKit approach (deprecated, use Path A instead)
     public let stereoMetalRenderer = StereoVideoRenderer()
+
+    // Backward compatibility: Expose videoRenderer for components that need direct access
+    public var stereoRenderer: AVSampleBufferVideoRenderer {
+        videoPlayer.videoRenderer
+    }
 
     // Optional: legacy converting model for tagged stereo CMSampleBuffer (kept for experimentation)
     private var convertingModel: ConvertingModel?
@@ -97,19 +102,12 @@ public final class WebRTCReceiver: NSObject, ObservableObject {
 
     // MARK: Prevent multiple initialization
     private var isInitialized: Bool = false
+    private var isRendererSetup: Bool = false  // Prevent duplicate setupStereoRenderer() calls
     private nonisolated(unsafe) static var globalInitCount: Int = 0
     private static let initLock = NSLock()
 
     // MARK: Log throttling
     private var loggingState = LoggingState()
-
-    // Last frame to replay once target attaches (optional)
-    private var lastEnqueuePixelBuffer: CVPixelBuffer?
-    private var lastEnqueuePTS: CMTime = .zero
-    private var lastEnqueueDuration: CMTime = CMTime(value: 1, timescale: 60)
-
-    // Track if renderer is actually ready
-    private var isRendererReady: Bool = false
 
     // Rendering path selection
     public enum RenderPath {
@@ -159,12 +157,9 @@ public final class WebRTCReceiver: NSObject, ObservableObject {
         // Cleanup previous renderer
         switch oldPath {
         case .videoPlayer:
-            // Flush AVSampleBufferVideoRenderer
-            logger.info("Cleaning up VideoPlayerComponent renderer...")
-            stereoRenderer.flush()
-            stereoRenderer.stopRequestingMediaData()
-            isRendererReady = false
-            lastEnqueuePixelBuffer = nil
+            // Stop StereoVideoPlayer
+            logger.info("Stopping StereoVideoPlayer...")
+            videoPlayer.stop()
 
         case .metal:
             // Deactivate StereoVideoRenderer
@@ -175,11 +170,12 @@ public final class WebRTCReceiver: NSObject, ObservableObject {
         // Prepare new renderer
         switch path {
         case .videoPlayer:
-            logger.info("Activating VideoPlayerComponent renderer...")
+            logger.info("Activating StereoVideoPlayer...")
             videoPlayerFrameCounter = 0  // Reset frame counter
             loggingState.framesEnqueuedCount = 0  // Reset enqueued counter
-            setupStereoRenderer()
-            logger.info("   Renderer status after setup: \(self.stereoRenderer.status.rawValue)")
+            // Note: Do NOT call play() here - it's already playing from start()
+            // Do NOT call setupStereoRenderer() - already set up in start()
+            logger.info("   Renderer status: \(self.stereoRenderer.status.rawValue)")
             logger.info("   Ready for data: \(self.stereoRenderer.isReadyForMoreMediaData)")
 
         case .metal:
@@ -226,6 +222,10 @@ public final class WebRTCReceiver: NSObject, ObservableObject {
 
         // Configure AVSampleBufferVideoRenderer (Path A)
         setupStereoRenderer()
+
+        // Start video player immediately
+        videoPlayer.play()
+        logger.info("StereoVideoPlayer started")
 
         // Thread-safe global initialization
         let initCount = performGlobalInitIfNeeded()
@@ -279,16 +279,17 @@ public final class WebRTCReceiver: NSObject, ObservableObject {
         peerConnection?.close()
         signalingClient?.disconnect()
 
-        // Flush the AVSampleBufferVideoRenderer (Path A)
-        stereoRenderer.flush()
-        stereoRenderer.stopRequestingMediaData()
+        // Stop StereoVideoPlayer (Path A)
+        videoPlayer.stop()
+
+        // Remove notification observers to prevent memory leaks
+        NotificationCenter.default.removeObserver(self, name: .hevcFrameDecoded, object: nil)
 
         isConnected = false
         isInitialized = false
-        isRendererReady = false
+        isRendererSetup = false
         lastPTS = nil
         loggingState = LoggingState()
-        lastEnqueuePixelBuffer = nil
         videoPlayerFrameCounter = 0
     }
 
@@ -303,46 +304,16 @@ public final class WebRTCReceiver: NSObject, ObservableObject {
     }
 
     private func setupStereoRenderer() {
-        // Configure the renderer for stereo playback
-        // The renderer is consumed by VideoPlayerComponent in RealityKit
-
-        // Request media data to activate the renderer
-        stereoRenderer.requestMediaDataWhenReady(on: .main) { [weak self] in
-            guard let self = self else { return }
-
-            // Ensure Main actor isolation for property access
-            Task { @MainActor [weak self] in
-                guard let self = self else { return }
-
-                // This callback indicates renderer is ready for data
-                if !self.isRendererReady {
-                    self.isRendererReady = true
-                    self.logger.info("AVSampleBufferVideoRenderer is now ready for tagged stereo frames")
-
-                    // Replay last buffered frame if available
-                    if let bufferedPB = self.lastEnqueuePixelBuffer {
-                        self.logger.info("Replaying buffered frame now that renderer is ready")
-                        self.enqueueSingleStreamImmediate(
-                            buffer: bufferedPB,
-                            pts: self.lastEnqueuePTS,
-                            duration: self.lastEnqueueDuration
-                        )
-                    }
-                }
-            }
+        // Prevent duplicate setup to avoid memory leaks from multiple observers
+        guard !isRendererSetup else {
+            logger.info("StereoRenderer already set up, skipping...")
+            return
         }
 
-        // Observe flush notifications to resume decoding when needed
-        Task { @MainActor [weak self] in
-            guard let self = self else { return }
-            for await _ in NotificationCenter.default.notifications(
-                named: AVSampleBufferVideoRenderer.requiresFlushToResumeDecodingDidChangeNotification,
-                object: self.stereoRenderer
-            ) {
-                self.logger.info("Flushing stereo renderer to resume decoding")
-                self.stereoRenderer.flush()
-            }
-        }
+        isRendererSetup = true
+
+        // Note: Renderer initialization is now handled by StereoVideoPlayer
+        // This method only sets up WebRTC-specific notifications
 
         // WORKAROUND: Listen for decoded HEVC frames directly from decoder
         NotificationCenter.default.addObserver(
@@ -371,129 +342,21 @@ public final class WebRTCReceiver: NSObject, ObservableObject {
             }
         }
 
-        logger.info("AVSampleBufferVideoRenderer configured for stereo playback...")
-    }
-
-    // MARK: - Helper Methods
-
-    /// Check renderer status and attempt recovery if failed
-    /// Returns true if renderer is ready, false otherwise
-    private func checkAndRecoverRenderer() -> Bool {
-        let rendererStatus = stereoRenderer.status
-        if rendererStatus == .failed {
-            logger.warning("Renderer status failed, attempting recovery")
-            stereoRenderer.flush()
-            stereoRenderer.stopRequestingMediaData()
-            stereoRenderer.requestMediaDataWhenReady(on: .main) { /* keep ready */ }
-            return false
-        }
-        return true
+        logger.info("StereoVideoPlayer configured, listening for HEVC frames...")
     }
 
     // MARK: - Path A: Single-stream CMSampleBuffer wrapping
 
     private func enqueueSingleStream(buffer pixelBuffer: CVPixelBuffer, pts: CMTime, duration: CMTime) {
-        // Check if renderer is ready
-        guard isRendererReady else {
-            // Buffer the frame until renderer is ready
-            self.lastEnqueuePixelBuffer = pixelBuffer
-            self.lastEnqueuePTS = pts
-            self.lastEnqueueDuration = duration
+        // Delegate to StereoVideoPlayer (handles buffering, timing, and rendering)
+        videoPlayer.enqueuePixelBuffer(pixelBuffer, pts: pts, duration: duration)
 
-            if !loggingState.hasLoggedNoTarget {
-                logger.info("Renderer not ready yet, buffering frame...")
-                loggingState.hasLoggedNoTarget = true
-            }
-            return
-        }
-
-        // Renderer is ready, enqueue immediately
-        enqueueSingleStreamImmediate(buffer: pixelBuffer, pts: pts, duration: duration)
-    }
-
-    private func enqueueSingleStreamImmediate(buffer pixelBuffer: CVPixelBuffer, pts: CMTime, duration: CMTime) {
-        // Check renderer status and attempt recovery if needed
-        guard checkAndRecoverRenderer() else { return }
-
-        // Log renderer readiness on first frame
-        if self.loggingState.framesEnqueuedCount == 0 {
-            logger.info("Renderer status: \(self.stereoRenderer.status.rawValue), isReadyForMoreMediaData: \(self.stereoRenderer.isReadyForMoreMediaData)")
-        }
-
-        // Create format description
-        var formatDesc: CMVideoFormatDescription?
-        let statusFD = CMVideoFormatDescriptionCreateForImageBuffer(
-            allocator: kCFAllocatorDefault,
-            imageBuffer: pixelBuffer,
-            formatDescriptionOut: &formatDesc
-        )
-        guard statusFD == noErr, let formatDesc else {
-            logger.error("CMVideoFormatDescriptionCreateForImageBuffer failed: \(statusFD)")
-            return
-        }
-
-        // Add stereo hint to format description (Hero Eye = Left)
-        // This hints to RealityKit VideoMaterial that this is stereo content
-        CMSetAttachment(
-            formatDesc,
-            key: kCMFormatDescriptionExtension_HeroEye as CFString,
-            value: kCMFormatDescriptionHeroEye_Left as CFTypeRef,
-            attachmentMode: kCMAttachmentMode_ShouldPropagate
-        )
-
-        let finalFormatDesc = formatDesc
-
-        // Log pixel buffer format on first frame
-        if self.loggingState.framesEnqueuedCount == 0 {
-            let pixelFormat = CVPixelBufferGetPixelFormatType(pixelBuffer)
-            let width = CVPixelBufferGetWidth(pixelBuffer)
-            let height = CVPixelBufferGetHeight(pixelBuffer)
-            logger.info("PixelBuffer format: \(pixelFormat), size: \(width)x\(height)")
-        }
-
-        var timing = CMSampleTimingInfo(
-            duration: duration == .invalid ? CMTime(value: 1, timescale: 60) : duration,
-            presentationTimeStamp: pts,
-            decodeTimeStamp: .invalid
-        )
-
-        var sampleBuffer: CMSampleBuffer?
-        let statusSB = CMSampleBufferCreateReadyWithImageBuffer(
-            allocator: kCFAllocatorDefault,
-            imageBuffer: pixelBuffer,
-            formatDescription: finalFormatDesc,
-            sampleTiming: &timing,
-            sampleBufferOut: &sampleBuffer
-        )
-        guard statusSB == noErr, let sb = sampleBuffer else {
-            logger.error("CMSampleBufferCreateReadyWithImageBuffer failed: \(statusSB)")
-            return
-        }
-
-        // Display immediately to avoid timebase ambiguity
-        if let attachments = CMSampleBufferGetSampleAttachmentsArray(sb, createIfNecessary: true) {
-            let arr = attachments as NSArray
-            if let dict = arr.firstObject as? NSMutableDictionary {
-                dict[kCMSampleAttachmentKey_DisplayImmediately] = true
-                dict[kCMSampleAttachmentKey_DoNotDisplay] = false
-            }
-        }
-
-        // Log detailed info for first few frames
-        if self.loggingState.framesEnqueuedCount < LoggingInterval.detailedDebugFrames {
-            logger.info("Enqueueing frame #\(self.loggingState.framesEnqueuedCount + 1)")
-            logger.info("   PTS: \(pts.seconds)s, duration: \(duration.seconds)s")
-            logger.info("   SampleBuffer valid: \(CMSampleBufferIsValid(sb))")
-            logger.info("   Hero Eye attachment: Left")
-        }
-
-        stereoRenderer.enqueue(sb)
+        // Track frames for logging
         self.loggingState.framesEnqueuedCount += 1
-
         if self.loggingState.framesEnqueuedCount == 1 {
-            logger.info("First frame enqueued to stereoRenderer")
+            logger.info("First frame sent to StereoVideoPlayer")
         } else if self.loggingState.framesEnqueuedCount % LoggingInterval.standardFrames == 0 {
-            logger.debug("Enqueued \(self.loggingState.framesEnqueuedCount) frames total")
+            logger.debug("Sent \(self.loggingState.framesEnqueuedCount) frames to player")
         }
     }
 
@@ -541,68 +404,42 @@ public final class WebRTCReceiver: NSObject, ObservableObject {
     }
 
     private func enqueueReadyStereoSample(_ sample: CMSampleBuffer) async {
-        // Check if renderer is ready
-        guard isRendererReady else {
-            if videoPlayerFrameCounter <= UInt64(LoggingInterval.debugFrames) {
-                logger.warning("[VIDEOPLAY DEBUG] Renderer not ready (frame #\(self.videoPlayerFrameCounter)), skipping...")
-                logger.warning("   Renderer status: \(self.stereoRenderer.status.rawValue)")
-                logger.warning("   Ready for data: \(self.stereoRenderer.isReadyForMoreMediaData)")
-            }
-            return
-        }
-
-        // Check renderer status and attempt recovery if needed
-        guard checkAndRecoverRenderer() else { return }
-
         // Log on first frame
         if self.loggingState.framesEnqueuedCount == 0 {
-            logger.info("Renderer status: \(self.stereoRenderer.status.rawValue), isReadyForMoreMediaData: \(self.stereoRenderer.isReadyForMoreMediaData)")
             logger.info("First stereo tagged frame from ConvertingModel")
 
             // Debug stereo sample buffer format (first frame only)
             if let formatDesc = CMSampleBufferGetFormatDescription(sample) {
                 let mediaType = CMFormatDescriptionGetMediaType(formatDesc)
                 let mediaSubType = CMFormatDescriptionGetMediaSubType(formatDesc)
-                logger.info("[PINK DEBUG] Format: mediaType=\(mediaType), subType=\(mediaSubType)")
+                logger.info("Format: mediaType=\(mediaType), subType=\(mediaSubType)")
 
                 // Check dimensions
                 let dims = CMVideoFormatDescriptionGetDimensions(formatDesc)
-                logger.info("[PINK DEBUG] Format dimensions: \(dims.width)×\(dims.height)")
+                logger.info("Format dimensions: \(dims.width)×\(dims.height)")
             }
 
-            // Check for hero eye attachment on SAMPLE BUFFER (not format description)
-            // For tagged buffer groups, the attachment is on the sample buffer itself
+            // Check for hero eye attachment on SAMPLE BUFFER
             if let heroEye = CMGetAttachment(sample as CMAttachmentBearer, key: kCMFormatDescriptionExtension_HeroEye as CFString, attachmentModeOut: nil) {
-                logger.info("[PINK DEBUG] HeroEye attachment on sample buffer: \(heroEye as! NSObject)")
+                logger.info("HeroEye attachment: \(heroEye as! NSObject)")
             } else {
-                logger.warning("[PINK DEBUG] No HeroEye attachment found on sample buffer!")
+                logger.warning("No HeroEye attachment found on sample buffer!")
             }
 
             // Check sample buffer validity
             let isValid = CMSampleBufferIsValid(sample)
             let dataReady = CMSampleBufferDataIsReady(sample)
-            logger.info("[PINK DEBUG] Sample valid: \(isValid), dataReady: \(dataReady)")
+            logger.info("Sample valid: \(isValid), dataReady: \(dataReady)")
         }
 
-        stereoRenderer.enqueue(sample)
+        // Delegate to StereoVideoPlayer
+        videoPlayer.enqueueSample(sample)
+
         self.loggingState.framesEnqueuedCount += 1
-
         if self.loggingState.framesEnqueuedCount == 1 {
-            logger.info("First stereo tagged sample enqueued to stereoRenderer")
+            logger.info("First stereo tagged sample sent to StereoVideoPlayer")
         } else if self.loggingState.framesEnqueuedCount % LoggingInterval.standardFrames == 0 {
-            logger.debug("Enqueued \(self.loggingState.framesEnqueuedCount) stereo frames total")
-        }
-
-        // Monitor for pink screen - check if error occurs after enqueue
-        if self.loggingState.framesEnqueuedCount <= UInt64(LoggingInterval.debugFrames) {
-            // Check renderer status right after enqueue
-            Task { @MainActor in
-                try? await Task.sleep(for: .milliseconds(100))
-                let statusAfter = self.stereoRenderer.status
-                if statusAfter == .failed {
-                    self.logger.error("[PINK DEBUG] Renderer FAILED after enqueue frame #\(self.loggingState.framesEnqueuedCount)")
-                }
-            }
+            logger.debug("Sent \(self.loggingState.framesEnqueuedCount) stereo samples to player")
         }
     }
 

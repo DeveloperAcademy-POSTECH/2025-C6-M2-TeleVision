@@ -232,13 +232,19 @@ public final class StereoVideoRenderer: ObservableObject {
         let widthScale = targetWidth / planeWidth
         leftPlaneEntity?.scale = SIMD3(x: widthScale, y: 1.0, z: 1.0)
 
-        logger.debug("📐 Mono plane scaled: aspect=\(String(format: "%.2f", sourceAspect)), scale=\(String(format: "%.2f", widthScale))x")
+        // Log only occasionally
+        if frameCounter % 120 == 0 {
+            logger.debug("📐 Mono plane scaled: aspect=\(String(format: "%.2f", sourceAspect)), scale=\(String(format: "%.2f", widthScale))x")
+        }
 
         // Update left plane with mono texture (right plane is hidden/unused)
         updatePlaneMaterial(leftPlaneEntity, with: monoTexture)
         updatePlaneMaterial(rightPlaneEntity, with: nil)  // Clear right plane
 
-        logger.debug("🎬 Mono frame updated: \(width)×\(height)")
+        // Log only occasionally (every 120 frames = ~2 seconds)
+        if frameCounter % 120 == 0 {
+            logger.debug("🎬 Mono frame updated: \(width)×\(height)")
+        }
     }
 
     /// Update frame in SBS mode (split left/right)
@@ -291,7 +297,10 @@ public final class StereoVideoRenderer: ObservableObject {
         updatePlaneMaterial(leftPlaneEntity, with: leftTexture)
         updatePlaneMaterial(rightPlaneEntity, with: rightTexture)
 
-        logger.debug("🎬 SBS frame updated: \(width)×\(height) (half=\(halfWidth)×\(height))")
+        // Log only occasionally (every 120 frames = ~2 seconds)
+        if frameCounter % 120 == 0 {
+            logger.debug("🎬 SBS frame updated: \(width)×\(height) (half=\(halfWidth)×\(height))")
+        }
     }
 
     // MARK: - Private Methods
