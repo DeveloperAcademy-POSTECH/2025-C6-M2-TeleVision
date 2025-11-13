@@ -64,32 +64,32 @@ public class HEVCVideoEncoder: NSObject, LKRTCVideoEncoder {
 
     public override init() {
         super.init()
-        logger.info("🎬 HEVC Video Encoder initialized")
+        logger.info("HEVC Video Encoder initialized")
     }
 
     deinit {
         if let session = session {
             VTCompressionSessionInvalidate(session)
         }
-        logger.info("🗑️ HEVC Video Encoder deinitialized")
+        logger.info("HEVC Video Encoder deinitialized")
     }
 
     // MARK: - LKRTCVideoEncoder Protocol
 
     public func setCallback(_ callback: ((LKRTCEncodedImage, LKRTCCodecSpecificInfo) -> Bool)?) {
         self.encoderCallback = callback
-        logger.info("✅ Encoder callback set")
+        logger.info("Encoder callback set")
     }
 
     public func startEncode(with settings: LKRTCVideoEncoderSettings, numberOfCores cores: Int32) -> Int {
-        logger.info("🚀 Starting HEVC encoder: \(settings.width)×\(settings.height) @ \(settings.startBitrate) bps")
+        logger.info("Starting HEVC encoder: \(settings.width)×\(settings.height) @ \(settings.startBitrate) bps")
 
         let newWidth = Int32(settings.width)
         let newHeight = Int32(settings.height)
 
         // IMPORTANT: If resolution changed, invalidate old session
         if self.session != nil && (newWidth != self.width || newHeight != self.height) {
-            logger.warning("⚠️ Resolution changed (\(self.width)×\(self.height) → \(newWidth)×\(newHeight)), recreating encoder...")
+            logger.warning("Resolution changed (\(self.width)×\(self.height) → \(newWidth)×\(newHeight)), recreating encoder...")
             if let oldSession = session {
                 VTCompressionSessionInvalidate(oldSession)
                 self.session = nil
@@ -105,7 +105,7 @@ public class HEVCVideoEncoder: NSObject, LKRTCVideoEncoder {
         self.targetBitrate = max(Int(settings.startBitrate), EncodingConstants.minimumBitrate)
 
         if Int(settings.startBitrate) < EncodingConstants.minimumBitrate {
-            logger.warning("⚠️ WebRTC requested \(settings.startBitrate) bps, using minimum \(EncodingConstants.minimumBitrate) bps instead")
+            logger.warning("WebRTC requested \(settings.startBitrate) bps, using minimum \(EncodingConstants.minimumBitrate) bps instead")
         }
 
         // Create compression session
@@ -116,16 +116,16 @@ public class HEVCVideoEncoder: NSObject, LKRTCVideoEncoder {
         )
 
         if status != noErr {
-            logger.error("❌ Failed to create compression session: \(status)")
+            logger.error("Failed to create compression session: \(status)")
             return Int(status)
         }
 
-        logger.info("✅ HEVC encoder started successfully with \(self.targetBitrate / 1_000_000) Mbps")
+        logger.info("HEVC encoder started successfully with \(self.targetBitrate / 1_000_000) Mbps")
         return 0
     }
 
     public func release() -> Int {
-        logger.info("🛑 Releasing HEVC encoder")
+        logger.info("Releasing HEVC encoder")
 
         if let session = session {
             VTCompressionSessionInvalidate(session)
@@ -145,17 +145,17 @@ public class HEVCVideoEncoder: NSObject, LKRTCVideoEncoder {
 
         // Log first few encode calls
         if frameCount < LoggingInterval.initialFrames / 2 {
-            logger.info("🎬 encode() called - frame #\(self.frameCount)")
+            logger.info("encode() called - frame #\(self.frameCount)")
         }
 
         guard let session = session else {
-            logger.error("❌ Compression session is nil")
+            logger.error("Compression session is nil")
             return -1
         }
 
         // Extract pixel buffer from frame
         guard let cvPixelBuffer = frame.buffer as? LKRTCCVPixelBuffer else {
-            logger.error("❌ Frame buffer is not CVPixelBuffer")
+            logger.error("Frame buffer is not CVPixelBuffer")
             return -1
         }
 
@@ -186,13 +186,13 @@ public class HEVCVideoEncoder: NSObject, LKRTCVideoEncoder {
         )
 
         if encodeStatus != noErr {
-            logger.error("❌ Encode frame failed: \(encodeStatus)")
+            logger.error("Encode frame failed: \(encodeStatus)")
             return Int(encodeStatus)
         }
 
         frameCount += 1
         if frameCount % LoggingInterval.standardFrames == 0 {
-            logger.info("📊 Encoded \(self.frameCount) HEVC frames")
+            logger.info("Encoded \(self.frameCount) HEVC frames")
         }
 
         return 0
@@ -208,7 +208,7 @@ public class HEVCVideoEncoder: NSObject, LKRTCVideoEncoder {
 
         // Log only when bitrate changes or when enforcing minimum
         if bitrateKbps < EncodingConstants.minimumBitrateKbps && frameCount % LoggingInterval.warningFrames == 0 {
-            logger.warning("🎛️ WebRTC requested \(bitrateKbps) kbps, enforcing minimum \(EncodingConstants.minimumBitrateKbps) kbps")
+            logger.warning("WebRTC requested \(bitrateKbps) kbps, enforcing minimum \(EncodingConstants.minimumBitrateKbps) kbps")
         }
 
         let bitrateBps = Int(actualBitrateKbps) * 1000
@@ -224,7 +224,7 @@ public class HEVCVideoEncoder: NSObject, LKRTCVideoEncoder {
             value: bitrateBps as CFNumber
         )
         if bitrateStatus != noErr && frameCount % LoggingInterval.warningFrames == 0 {
-            logger.warning("⚠️ Failed to set AverageBitRate: \(bitrateStatus)")
+            logger.warning("Failed to set AverageBitRate: \(bitrateStatus)")
         }
 
         // Update data rate limits
@@ -236,7 +236,7 @@ public class HEVCVideoEncoder: NSObject, LKRTCVideoEncoder {
             value: dataRateLimits
         )
         if limitsStatus != noErr && frameCount % LoggingInterval.warningFrames == 0 {
-            logger.warning("⚠️ Failed to set DataRateLimits: \(limitsStatus)")
+            logger.warning("Failed to set DataRateLimits: \(limitsStatus)")
         }
 
         return 0
@@ -295,7 +295,7 @@ public class HEVCVideoEncoder: NSObject, LKRTCVideoEncoder {
         let dataRateLimits = [bytesPerSecond, 1] as CFArray
         let limitsStatus = VTSessionSetProperty(session, key: kVTCompressionPropertyKey_DataRateLimits, value: dataRateLimits)
         if limitsStatus != noErr {
-            logger.warning("⚠️ Failed to set DataRateLimits: \(limitsStatus)")
+            logger.warning("Failed to set DataRateLimits: \(limitsStatus)")
         }
 
         // Set expected framerate
@@ -309,7 +309,7 @@ public class HEVCVideoEncoder: NSObject, LKRTCVideoEncoder {
 
         VTCompressionSessionPrepareToEncodeFrames(session)
 
-        logger.info("✅ HEVC compression session created: \(width)×\(height) @ \(bitrate) bps")
+        logger.info("HEVC compression session created: \(width)×\(height) @ \(bitrate) bps")
 
         return noErr
     }
@@ -318,7 +318,7 @@ public class HEVCVideoEncoder: NSObject, LKRTCVideoEncoder {
 
     private func handleEncodedFrame(_ sampleBuffer: CMSampleBuffer) {
         guard let encoderCallback = self.encoderCallback else {
-            logger.error("❌ Encoder callback not set")
+            logger.error("Encoder callback not set")
             return
         }
 
@@ -333,7 +333,7 @@ public class HEVCVideoEncoder: NSObject, LKRTCVideoEncoder {
 
         // Extract encoded data
         guard let dataBuffer = CMSampleBufferGetDataBuffer(sampleBuffer) else {
-            logger.error("❌ Failed to get data buffer")
+            logger.error("Failed to get data buffer")
             return
         }
 
@@ -342,7 +342,7 @@ public class HEVCVideoEncoder: NSObject, LKRTCVideoEncoder {
         let status = CMBlockBufferGetDataPointer(dataBuffer, atOffset: 0, lengthAtOffsetOut: nil, totalLengthOut: &length, dataPointerOut: &dataPointer)
 
         guard status == noErr, let data = dataPointer else {
-            logger.error("❌ Failed to get data pointer: \(status)")
+            logger.error("Failed to get data pointer: \(status)")
             return
         }
 
@@ -369,11 +369,11 @@ public class HEVCVideoEncoder: NSObject, LKRTCVideoEncoder {
         let success = encoderCallback(encodedImage, codecInfo)
 
         if !success {
-            logger.error("❌ Encoder callback failed - frame type: \(isKeyframe ? "KEY" : "DELTA"), size: \(annexBData.count) bytes")
+            logger.error("Encoder callback failed - frame type: \(isKeyframe ? "KEY" : "DELTA"), size: \(annexBData.count) bytes")
         } else {
             // Log frame size more frequently to monitor bitrate
             if frameCount <= LoggingInterval.initialFrames || frameCount % LoggingInterval.warningFrames == 0 {
-                logger.info("✅ Frame #\(self.frameCount): \(isKeyframe ? "KEY" : "DELTA"), \(annexBData.count) bytes")
+                logger.info("Frame #\(self.frameCount): \(isKeyframe ? "KEY" : "DELTA"), \(annexBData.count) bytes")
             }
         }
     }
@@ -386,7 +386,7 @@ extension HEVCVideoEncoder {
     // Extract VPS/SPS/PPS from format description
     fileprivate func extractParameterSets(from sampleBuffer: CMSampleBuffer) {
         guard let formatDesc = CMSampleBufferGetFormatDescription(sampleBuffer) else {
-            logger.error("❌ Failed to get format description")
+            logger.error("Failed to get format description")
             return
         }
 
@@ -402,7 +402,7 @@ extension HEVCVideoEncoder {
         )
 
         guard status == noErr, parameterSetCount >= 3 else {
-            logger.error("❌ Failed to get parameter set count: \(status), count: \(parameterSetCount)")
+            logger.error("Failed to get parameter set count: \(status), count: \(parameterSetCount)")
             return
         }
 
@@ -412,7 +412,7 @@ extension HEVCVideoEncoder {
         CMVideoFormatDescriptionGetHEVCParameterSetAtIndex(formatDesc, parameterSetIndex: 0, parameterSetPointerOut: &vpsPointer, parameterSetSizeOut: &vpsSize, parameterSetCountOut: nil, nalUnitHeaderLengthOut: nil)
         if let vps = vpsPointer {
             vpsData = Data(bytes: vps, count: vpsSize)
-            logger.info("📦 Extracted VPS: \(vpsSize) bytes")
+            logger.info("Extracted VPS: \(vpsSize) bytes")
         }
 
         // Extract SPS (index 1)
@@ -421,7 +421,7 @@ extension HEVCVideoEncoder {
         CMVideoFormatDescriptionGetHEVCParameterSetAtIndex(formatDesc, parameterSetIndex: 1, parameterSetPointerOut: &spsPointer, parameterSetSizeOut: &spsSize, parameterSetCountOut: nil, nalUnitHeaderLengthOut: nil)
         if let sps = spsPointer {
             spsData = Data(bytes: sps, count: spsSize)
-            logger.info("📦 Extracted SPS: \(spsSize) bytes")
+            logger.info("Extracted SPS: \(spsSize) bytes")
         }
 
         // Extract PPS (index 2)
@@ -430,7 +430,7 @@ extension HEVCVideoEncoder {
         CMVideoFormatDescriptionGetHEVCParameterSetAtIndex(formatDesc, parameterSetIndex: 2, parameterSetPointerOut: &ppsPointer, parameterSetSizeOut: &ppsSize, parameterSetCountOut: nil, nalUnitHeaderLengthOut: nil)
         if let pps = ppsPointer {
             ppsData = Data(bytes: pps, count: ppsSize)
-            logger.info("📦 Extracted PPS: \(ppsSize) bytes")
+            logger.info("Extracted PPS: \(ppsSize) bytes")
         }
     }
 

@@ -49,35 +49,35 @@ public class HEVCVideoDecoder: NSObject, LKRTCVideoDecoder {
 
     public override init() {
         super.init()
-        logger.info("🎬 HEVC Video Decoder initialized")
+        logger.info("HEVC Video Decoder initialized")
     }
 
     deinit {
         if let session = session {
             VTDecompressionSessionInvalidate(session)
         }
-        logger.info("🗑️ HEVC Video Decoder deinitialized")
+        logger.info("HEVC Video Decoder deinitialized")
     }
 
     // MARK: - LKRTCVideoDecoder Protocol
 
     public func setCallback(_ callback: @escaping RTCVideoDecoderCallback) {
         self.decoderCallback = callback
-        logger.info("✅ Decoder callback set")
+        logger.info("Decoder callback set")
     }
 
     public func startDecode(withNumberOfCores numberOfCores: Int32) -> Int {
-        logger.info("🚀 Starting HEVC decoder with \(numberOfCores) cores")
+        logger.info("Starting HEVC decoder with \(numberOfCores) cores")
         return 0
     }
 
     public func startDecode(with settings: Any?, numberOfCores cores: Int32) -> Int {
-        logger.info("🚀 Starting HEVC decoder")
+        logger.info("Starting HEVC decoder")
         return 0
     }
 
     public func release() -> Int {
-        logger.info("🛑 Releasing HEVC decoder")
+        logger.info("Releasing HEVC decoder")
 
         if let session = session {
             VTDecompressionSessionInvalidate(session)
@@ -94,7 +94,7 @@ public class HEVCVideoDecoder: NSObject, LKRTCVideoDecoder {
                        renderTimeMs: Int64) -> Int {
 
         guard let encodedData = encodedImage.buffer as Data? else {
-            logger.error("❌ Encoded data is nil")
+            logger.error("Encoded data is nil")
             return -1
         }
 
@@ -104,7 +104,7 @@ public class HEVCVideoDecoder: NSObject, LKRTCVideoDecoder {
         // Extract parameter sets from keyframe if needed
         if isKeyframe, formatDescription == nil {
             guard extractParameterSets(from: encodedData) == noErr else {
-                logger.error("❌ Failed to extract parameter sets")
+                logger.error("Failed to extract parameter sets")
                 return -1
             }
         }
@@ -112,19 +112,19 @@ public class HEVCVideoDecoder: NSObject, LKRTCVideoDecoder {
         // Create decompression session if needed
         if session == nil {
             guard let formatDesc = formatDescription else {
-                logger.error("❌ Format description not available yet")
+                logger.error("Format description not available yet")
                 return -1
             }
 
             let createStatus = createDecompressionSession(formatDesc: formatDesc)
             if createStatus != noErr {
-                logger.error("❌ Failed to create decompression session: \(createStatus)")
+                logger.error("Failed to create decompression session: \(createStatus)")
                 return Int(createStatus)
             }
         }
 
         guard let session = session else {
-            logger.error("❌ Session is nil")
+            logger.error("Session is nil")
             return -1
         }
 
@@ -133,12 +133,12 @@ public class HEVCVideoDecoder: NSObject, LKRTCVideoDecoder {
 
         // Log conversion for first few frames
         if frameCount < 10 {
-            logger.info("🔄 Frame #\(self.frameCount): AnnexB=\(encodedData.count) bytes → AVCC=\(avccData.count) bytes, keyframe=\(isKeyframe)")
+            logger.info("Frame #\(self.frameCount): AnnexB=\(encodedData.count) bytes → AVCC=\(avccData.count) bytes, keyframe=\(isKeyframe)")
         }
 
         // Check if conversion produced valid data
         if avccData.isEmpty {
-            logger.error("❌ AVCC conversion produced empty data (AnnexB size: \(encodedData.count))")
+            logger.error("AVCC conversion produced empty data (AnnexB size: \(encodedData.count))")
             return -1
         }
 
@@ -157,7 +157,7 @@ public class HEVCVideoDecoder: NSObject, LKRTCVideoDecoder {
         )
 
         guard blockStatus == noErr, let blockBuffer = blockBuffer else {
-            logger.error("❌ Failed to create block buffer: \(blockStatus)")
+            logger.error("Failed to create block buffer: \(blockStatus)")
             return Int(blockStatus)
         }
 
@@ -170,7 +170,7 @@ public class HEVCVideoDecoder: NSObject, LKRTCVideoDecoder {
         )
 
         guard appendStatus == noErr else {
-            logger.error("❌ Failed to append data: \(appendStatus)")
+            logger.error("Failed to append data: \(appendStatus)")
             return Int(appendStatus)
         }
 
@@ -199,7 +199,7 @@ public class HEVCVideoDecoder: NSObject, LKRTCVideoDecoder {
         )
 
         guard sampleStatus == noErr, let sampleBuffer = sampleBuffer else {
-            logger.error("❌ Failed to create sample buffer: \(sampleStatus)")
+            logger.error("Failed to create sample buffer: \(sampleStatus)")
             return Int(sampleStatus)
         }
 
@@ -214,13 +214,13 @@ public class HEVCVideoDecoder: NSObject, LKRTCVideoDecoder {
         )
 
         if decodeStatus != noErr {
-            logger.error("❌ Decode frame failed: \(decodeStatus)")
+            logger.error("Decode frame failed: \(decodeStatus)")
             return Int(decodeStatus)
         }
 
         frameCount += 1
         if frameCount % LoggingInterval.standardFrames == 0 {
-            logger.info("📊 Decoded \(self.frameCount) HEVC frames")
+            logger.info("Decoded \(self.frameCount) HEVC frames")
         }
 
         return 0
@@ -316,13 +316,13 @@ public class HEVCVideoDecoder: NSObject, LKRTCVideoDecoder {
             case 32: // VPS
                 // Keep full NAL unit (including 2-byte header) - CMVideoFormatDescription needs it
                 vpsData = nalUnit
-                logger.info("📦 Extracted VPS: \(nalUnit.count) bytes")
+                logger.info("Extracted VPS: \(nalUnit.count) bytes")
             case 33: // SPS
                 spsData = nalUnit
-                logger.info("📦 Extracted SPS: \(nalUnit.count) bytes")
+                logger.info("Extracted SPS: \(nalUnit.count) bytes")
             case 34: // PPS
                 ppsData = nalUnit
-                logger.info("📦 Extracted PPS: \(nalUnit.count) bytes")
+                logger.info("Extracted PPS: \(nalUnit.count) bytes")
             default:
                 break
             }
@@ -332,7 +332,7 @@ public class HEVCVideoDecoder: NSObject, LKRTCVideoDecoder {
 
         // Verify we got all parameter sets
         guard let vps = vpsData, let sps = spsData, let pps = ppsData else {
-            logger.error("❌ Missing parameter sets - VPS: \(vpsData != nil), SPS: \(spsData != nil), PPS: \(ppsData != nil)")
+            logger.error("Missing parameter sets - VPS: \(vpsData != nil), SPS: \(spsData != nil), PPS: \(ppsData != nil)")
             return -1
         }
 
@@ -369,9 +369,9 @@ public class HEVCVideoDecoder: NSObject, LKRTCVideoDecoder {
         if status == noErr, let desc = formatDesc {
             formatDescription = desc
             let dimensions = CMVideoFormatDescriptionGetDimensions(desc)
-            logger.info("✅ Format description created: \(dimensions.width)×\(dimensions.height)")
+            logger.info("Format description created: \(dimensions.width)×\(dimensions.height)")
         } else {
-            logger.error("❌ Failed to create format description from parameter sets: \(status)")
+            logger.error("Failed to create format description from parameter sets: \(status)")
         }
 
         return status
@@ -489,13 +489,13 @@ public class HEVCVideoDecoder: NSObject, LKRTCVideoDecoder {
                     decoder.decompressionErrors += 1
                     // Log first few errors with details, then periodically
                     if decoder.decompressionErrors <= 3 || decoder.decompressionErrors % LoggingInterval.warningFrames == 0 {
-                        decoder.logger.error("❌ Decompression callback error: \(status), infoFlags: \(infoFlags.rawValue), total errors: \(decoder.decompressionErrors)")
+                        decoder.logger.error("Decompression callback error: \(status), infoFlags: \(infoFlags.rawValue), total errors: \(decoder.decompressionErrors)")
                     }
                     return
                 }
 
                 guard let imageBuffer = imageBuffer else {
-                    decoder.logger.error("❌ Decompression callback: imageBuffer is nil, infoFlags: \(infoFlags.rawValue)")
+                    decoder.logger.error("Decompression callback: imageBuffer is nil, infoFlags: \(infoFlags.rawValue)")
                     return
                 }
 
@@ -519,9 +519,9 @@ public class HEVCVideoDecoder: NSObject, LKRTCVideoDecoder {
         )
 
         if status == noErr {
-            logger.info("✅ HEVC decompression session created")
+            logger.info("HEVC decompression session created")
         } else {
-            logger.error("❌ Failed to create decompression session: \(status)")
+            logger.error("Failed to create decompression session: \(status)")
         }
 
         return status
@@ -529,7 +529,7 @@ public class HEVCVideoDecoder: NSObject, LKRTCVideoDecoder {
 
     private func handleDecodedFrame(_ pixelBuffer: CVPixelBuffer, pts: CMTime) {
         guard let decoderCallback = self.decoderCallback else {
-            logger.error("❌ Decoder callback not set")
+            logger.error("Decoder callback not set")
             return
         }
 
@@ -543,7 +543,7 @@ public class HEVCVideoDecoder: NSObject, LKRTCVideoDecoder {
         let format = CVPixelBufferGetPixelFormatType(pixelBuffer)
 
         if framesDelivered == 0 {
-            logger.info("📦 Creating VideoFrame: \(width)×\(height), format=\(format), pts=\(Int64(timeStampNs))")
+            logger.info("Creating VideoFrame: \(width)×\(height), format=\(format), pts=\(Int64(timeStampNs))")
         }
 
         let videoFrame = LKRTCVideoFrame(
@@ -564,10 +564,10 @@ public class HEVCVideoDecoder: NSObject, LKRTCVideoDecoder {
 
         framesDelivered += 1
         if framesDelivered == 1 {
-            logger.info("✅ First frame delivered to LiveKit: \(width)×\(height)")
-            logger.info("📢 Posted notification workaround")
+            logger.info("First frame delivered to LiveKit: \(width)×\(height)")
+            logger.info("Posted notification workaround")
         } else if framesDelivered % LoggingInterval.standardFrames == 0 {
-            logger.info("✅ Delivered \(self.framesDelivered) frames to LiveKit (submitted: \(self.frameCount))")
+            logger.info("Delivered \(self.framesDelivered) frames to LiveKit (submitted: \(self.frameCount))")
         }
     }
 }

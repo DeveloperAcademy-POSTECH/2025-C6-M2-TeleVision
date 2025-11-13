@@ -74,7 +74,7 @@ public final class AppModule: ObservableObject {
     // MARK: - Public Methods
 
     public func start() async throws {
-        logger.info("🚀 Starting streaming pipeline...")
+        logger.info("Starting streaming pipeline...")
 
         // 1. Request camera permission
         let granted = await AVCaptureDevice.requestAccess(for: .video)
@@ -107,11 +107,11 @@ public final class AppModule: ObservableObject {
         try rightCapture?.start()
 
         isStreaming = true
-        logger.info("✅ Streaming pipeline started")
+        logger.info("Streaming pipeline started")
     }
 
     public func stop() {
-        logger.info("🛑 Stopping streaming pipeline...")
+        logger.info("Stopping streaming pipeline...")
 
         leftCapture?.stop()
         rightCapture?.stop()
@@ -128,7 +128,7 @@ public final class AppModule: ObservableObject {
         transport = nil
 
         isStreaming = false
-        logger.info("✅ Streaming pipeline stopped")
+        logger.info("Streaming pipeline stopped")
     }
 
     // MARK: - Private Methods
@@ -169,7 +169,7 @@ public final class AppModule: ObservableObject {
 
             } catch {
                 Task { @MainActor [weak self] in
-                    self?.logger.error("❌ Composition failed: \(error.localizedDescription)")
+                    self?.logger.error("Composition failed: \(error.localizedDescription)")
                 }
             }
         }
@@ -195,7 +195,7 @@ extension AppModule: CaptureOutputDelegate {
 
     nonisolated public func didEncounterError(_ error: Error, source: CaptureSource) {
         Task { @MainActor in
-            logger.error("❌ Capture error [\(source.rawValue)]: \(error.localizedDescription)")
+            logger.error("Capture error [\(source.rawValue)]: \(error.localizedDescription)")
         }
     }
 }
