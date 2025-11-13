@@ -89,12 +89,12 @@ public final class WebRTCManager: NSObject, IVideoTransport {
     // MARK: - ITransport
 
     public func start() throws {
-        logger.info("🚀 WebRTC starting...")
-        print("🚀 [WebRTCManager] Starting WebRTC transport...")
+        logger.info("WebRTC starting...")
+        print("[WebRTCManager] Starting WebRTC transport...")
         state = .connecting
 
         // 1. Initialize WebRTC factory
-        print("🔧 [WebRTCManager] Initializing WebRTC SSL and tracer...")
+        print("[WebRTCManager] Initializing WebRTC SSL and tracer...")
         LKRTCInitializeSSL()
         LKRTCSetupInternalTracer()
 
@@ -106,34 +106,34 @@ public final class WebRTCManager: NSObject, IVideoTransport {
             encoderFactory: encoderFactory,
             decoderFactory: decoderFactory
         )
-        print("✅ [WebRTCManager] Peer connection factory created with HEVC support")
+        print("[WebRTCManager] Peer connection factory created with HEVC support")
 
         // 2. Setup signaling FIRST (before creating peer connection)
         let serverURL = URL(string: "ws://127.0.0.1:8080")!
-        print("📡 [WebRTCManager] Creating SignalingClient for: \(serverURL.absoluteString)")
+        print("[WebRTCManager] Creating SignalingClient for: \(serverURL.absoluteString)")
         signalingClient = SignalingClient(serverURL: serverURL)
         signalingClient?.delegate = self
 
-        print("📡 [WebRTCManager] Connecting to signaling server as 'sender'...")
+        print("[WebRTCManager] Connecting to signaling server as 'sender'...")
         try signalingClient?.connect(as: "sender")
 
         // 3. Create peer connection (but DON'T create offer yet)
-        print("🔗 [WebRTCManager] Creating peer connection...")
+        print("[WebRTCManager] Creating peer connection...")
         try createPeerConnection()
 
         // 4. Create video track
-        print("🎥 [WebRTCManager] Creating video track...")
+        print("[WebRTCManager] Creating video track...")
         createVideoTrack()
 
         // 5. Offer will be created in signalingClient(_:didChangeState:) when connected
-        print("⏳ [WebRTCManager] Waiting for signaling connection before creating offer...")
+        print("[WebRTCManager] Waiting for signaling connection before creating offer...")
 
-        logger.info("✅ WebRTC initialized (waiting for signaling)")
-        print("✅ [WebRTCManager] WebRTC initialization complete (waiting for signaling)")
+        logger.info("WebRTC initialized (waiting for signaling)")
+        print("[WebRTCManager] WebRTC initialization complete (waiting for signaling)")
     }
 
     public func stop() {
-        logger.info("🛑 WebRTC stopping...")
+        logger.info("WebRTC stopping...")
 
         statsTimer?.invalidate()
         statsTimer = nil
@@ -156,39 +156,39 @@ public final class WebRTCManager: NSObject, IVideoTransport {
         LKRTCCleanupSSL()
 
         state = .closed
-        logger.info("✅ WebRTC stopped")
+        logger.info("WebRTC stopped")
     }
 
     public func sendControl(_ data: Data) {
-        logger.debug("📤 Control data: \(data.count) bytes")
+        logger.debug("Control data: \(data.count) bytes")
     }
 
     // MARK: - IVideoTransport
 
     public func send(pixelBuffer: CVPixelBuffer, presentationTime: CMTime) {
         guard state == .connected else {
-            logger.debug("⏸️ Skipping send - not connected, state: \(String(describing: self.state))")
+            logger.debug("Skipping send - not connected, state: \(String(describing: self.state))")
             return
         }
 
         guard let capturer = videoCapturer else {
-            logger.error("❌ videoCapturer is nil")
+            logger.error("videoCapturer is nil")
             return
         }
 
         guard let videoSource = videoSource else {
-            logger.error("❌ videoSource is nil")
+            logger.error("videoSource is nil")
             return
         }
 
         guard let videoTrack = videoTrack else {
-            logger.error("❌ videoTrack is nil")
+            logger.error("videoTrack is nil")
             return
         }
 
         // Check track state
         if !videoTrack.isEnabled {
-            logger.warning("⚠️ videoTrack is disabled!")
+            logger.warning("videoTrack is disabled!")
         }
 
         let timeStampNs = CMTimeGetSeconds(presentationTime) * 1_000_000_000
@@ -207,7 +207,7 @@ public final class WebRTCManager: NSObject, IVideoTransport {
 
         // Log periodically
         if frameCount % LoggingInterval.standardFrames == 0 {
-            logger.info("📤 Sent \(self.frameCount) frames to videoSource, track enabled: \(videoTrack.isEnabled)")
+            logger.info("Sent \(self.frameCount) frames to videoSource, track enabled: \(videoTrack.isEnabled)")
         }
     }
 
@@ -230,7 +230,7 @@ public final class WebRTCManager: NSObject, IVideoTransport {
         }
 
         self.peerConnection = pc
-        logger.info("✅ Peer connection created")
+        logger.info("Peer connection created")
     }
 
     private func createVideoTrack() {
@@ -243,7 +243,7 @@ public final class WebRTCManager: NSObject, IVideoTransport {
         videoTrack.isEnabled = true  // Ensure track is enabled
         self.videoTrack = videoTrack
 
-        logger.info("📹 Video track created: id=\(videoTrack.trackId), enabled=\(videoTrack.isEnabled)")
+        logger.info("Video track created: id=\(videoTrack.trackId), enabled=\(videoTrack.isEnabled)")
 
         if let sender = peerConnection?.add(videoTrack, streamIds: ["stream0"]) {
             self.videoSender = sender
@@ -251,12 +251,12 @@ public final class WebRTCManager: NSObject, IVideoTransport {
             // P0.1: Configure encoding with downsample factor
             try? configureEncodingParameters(sender: sender)
 
-            logger.info("✅ Video track added with capturer, track enabled: \(videoTrack.isEnabled)")
+            logger.info("Video track added with capturer, track enabled: \(videoTrack.isEnabled)")
         }
     }
 
     private func createOffer() {
-        print("📝 [WebRTCManager] Creating offer (signaling state: \(signalingClient?.state.self ?? .disconnected))")
+        print("[WebRTCManager] Creating offer (signaling state: \(signalingClient?.state.self ?? .disconnected))")
 
         let constraints = LKRTCMediaConstraints(
             mandatoryConstraints: nil,
@@ -265,26 +265,26 @@ public final class WebRTCManager: NSObject, IVideoTransport {
 
         peerConnection?.offer(for: constraints) { [weak self] sdp, error in
             guard let self = self, let sdp = sdp, error == nil else {
-                self?.logger.error("❌ Failed to create offer: \(error?.localizedDescription ?? "unknown")")
-                print("❌ [WebRTCManager] Failed to create offer: \(error?.localizedDescription ?? "unknown")")
+                self?.logger.error("Failed to create offer: \(error?.localizedDescription ?? "unknown")")
+                print("[WebRTCManager] Failed to create offer: \(error?.localizedDescription ?? "unknown")")
                 return
             }
 
-            print("✅ [WebRTCManager] Offer created successfully")
+            print("[WebRTCManager] Offer created successfully")
 
             self.peerConnection?.setLocalDescription(sdp) { error in
                 if let error = error {
-                    self.logger.error("❌ Failed to set local description: \(error.localizedDescription)")
-                    print("❌ [WebRTCManager] Failed to set local description: \(error.localizedDescription)")
+                    self.logger.error("Failed to set local description: \(error.localizedDescription)")
+                    print("[WebRTCManager] Failed to set local description: \(error.localizedDescription)")
                     return
                 }
 
-                self.logger.info("✅ Local description set (offer)")
-                print("✅ [WebRTCManager] Local description set (offer)")
+                self.logger.info("Local description set (offer)")
+                print("[WebRTCManager] Local description set (offer)")
 
-                print("📤 [WebRTCManager] Sending offer to receiver...")
+                print("[WebRTCManager] Sending offer to receiver...")
                 self.signalingClient?.send(offer: sdp.sdp)
-                print("✅ [WebRTCManager] Offer sent successfully")
+                print("[WebRTCManager] Offer sent successfully")
             }
         }
     }
@@ -313,7 +313,7 @@ public final class WebRTCManager: NSObject, IVideoTransport {
         sender.parameters = parameters
 
         logger.info("""
-        🎛️ Encoding configured:
+        Encoding configured:
            Target: \(self.config.targetBitrate / 1_000_000) Mbps
            Max: \(self.config.maxBitrate / 1_000_000) Mbps
            Downsample: \(factor)x
@@ -323,7 +323,7 @@ public final class WebRTCManager: NSObject, IVideoTransport {
     // MARK: - P0.3: ICE Restart
 
     private func attemptIceRestart() {
-        logger.info("🔄 Performing ICE restart...")
+        logger.info("Performing ICE restart...")
 
         let constraints = LKRTCMediaConstraints(
             mandatoryConstraints: ["IceRestart": "true"],
@@ -332,13 +332,13 @@ public final class WebRTCManager: NSObject, IVideoTransport {
 
         peerConnection?.offer(for: constraints) { [weak self] sdp, error in
             guard let self = self, let sdp = sdp else {
-                self?.logger.error("❌ ICE restart offer failed: \(error?.localizedDescription ?? "unknown")")
+                self?.logger.error("ICE restart offer failed: \(error?.localizedDescription ?? "unknown")")
                 return
             }
 
             self.peerConnection?.setLocalDescription(sdp) { _ in
                 self.signalingClient?.send(offer: sdp.sdp)
-                self.logger.info("📤 ICE restart offer sent")
+                self.logger.info("ICE restart offer sent")
             }
         }
     }
@@ -347,7 +347,7 @@ public final class WebRTCManager: NSObject, IVideoTransport {
         disconnectionTimer?.invalidate()
 
         disconnectionTimer = Timer.scheduledTimer(withTimeInterval: ConnectionConstants.disconnectionGracePeriod, repeats: false) { [weak self] _ in
-            self?.logger.warning("⚠️ Connection not recovered after \(ConnectionConstants.disconnectionGracePeriod)s, restarting...")
+            self?.logger.warning("Connection not recovered after \(ConnectionConstants.disconnectionGracePeriod)s, restarting...")
             self?.attemptIceRestart()
         }
     }
@@ -363,7 +363,7 @@ public final class WebRTCManager: NSObject, IVideoTransport {
 extension WebRTCManager: LKRTCPeerConnectionDelegate {
 
     public func peerConnection(_ peerConnection: LKRTCPeerConnection, didChange newState: LKRTCIceConnectionState) {
-        logger.info("🧊 ICE_STATE: \(newState.rawValue)")
+        logger.info("ICE_STATE: \(newState.rawValue)")
 
         switch newState {
         case .connected, .completed:
@@ -376,18 +376,18 @@ extension WebRTCManager: LKRTCPeerConnectionDelegate {
                     for (key, value) in report.statistics {
                         let valueStr = String(describing: value)
                         if valueStr.contains("outbound-rtp") {
-                            print("📊 Mac Stats: \(key) = \(value)")
+                            print("Mac Stats: \(key) = \(value)")
                         }
                     }
                 }
             }
 
         case .disconnected:
-            logger.warning("⚠️ ICE_STATE:disconnected, monitoring for recovery...")
+            logger.warning("ICE_STATE:disconnected, monitoring for recovery...")
             startDisconnectionTimer()  // P0.3: Start grace period
 
         case .failed:
-            logger.error("❌ ICE_STATE:failed, attempting ICE restart...")
+            logger.error("ICE_STATE:failed, attempting ICE restart...")
             attemptIceRestart()  // P0.3: Auto restart
 
         case .closed:
@@ -403,7 +403,7 @@ extension WebRTCManager: LKRTCPeerConnectionDelegate {
     }
 
     public func peerConnection(_ peerConnection: LKRTCPeerConnection, didChange newState: LKRTCSignalingState) {
-        logger.info("📶 Signaling state: \(newState.rawValue)")
+        logger.info("Signaling state: \(newState.rawValue)")
     }
 
     public func peerConnection(_ peerConnection: LKRTCPeerConnection, didAdd stream: LKRTCMediaStream) {}
@@ -434,18 +434,18 @@ extension WebRTCManager: SignalingDelegate {
             guard let self = self else { return }
 
             if let error = error {
-                self.logger.error("❌ Failed to set remote description: \(error.localizedDescription)")
+                self.logger.error("Failed to set remote description: \(error.localizedDescription)")
                 return
             }
 
-            self.logger.info("✅ Remote description set (answer)")
+            self.logger.info("Remote description set (answer)")
             self.remoteDescriptionSet = true
 
             // Process pending ICE candidates
             for candidate in self.pendingRemoteCandidates {
                 self.peerConnection?.add(candidate) { error in
                     if let error = error {
-                        self.logger.error("❌ Failed to add ICE candidate: \(error.localizedDescription)")
+                        self.logger.error("Failed to add ICE candidate: \(error.localizedDescription)")
                     }
                 }
             }
@@ -459,7 +459,7 @@ extension WebRTCManager: SignalingDelegate {
         if remoteDescriptionSet {
             peerConnection?.add(iceCandidate) { [weak self] error in
                 if let error = error {
-                    self?.logger.error("❌ Failed to add ICE candidate: \(error.localizedDescription)")
+                    self?.logger.error("Failed to add ICE candidate: \(error.localizedDescription)")
                 }
             }
         } else {
@@ -470,8 +470,8 @@ extension WebRTCManager: SignalingDelegate {
     func signalingClient(_ client: SignalingClient, didChangeState state: SignalingState) {
         switch state {
         case .connected:
-            logger.info("✅ Signaling connected")
-            print("✅ [WebRTCManager] Signaling connected, now creating offer...")
+            logger.info("Signaling connected")
+            print("[WebRTCManager] Signaling connected, now creating offer...")
 
             // Now that signaling is connected, create the offer
             createOffer()

@@ -47,7 +47,7 @@ public final class StreamingControlViewModel {
 
     var videoMode: VideoMode = .fullSBS {
         didSet {
-            logger.info("🔄 Video mode changed: \(oldValue.rawValue) → \(self.videoMode.rawValue)")
+            logger.info("Video mode changed: \(oldValue.rawValue) → \(self.videoMode.rawValue)")
 
             // Single 카메라일 때는 Mono로만 가능
             if cameraInputMode == .single && videoMode != .mono {
@@ -63,7 +63,7 @@ public final class StreamingControlViewModel {
 
             // 스트리밍 중이면 재시작
             if isStreaming {
-                logger.info("🔄 Restarting streaming due to video mode change...")
+                logger.info("Restarting streaming due to video mode change...")
                 Task {
                     stopStreaming()
                     try? await Task.sleep(for: .milliseconds(500))
@@ -75,7 +75,7 @@ public final class StreamingControlViewModel {
 
     var cameraInputMode: CameraInputMode = .dual {
         didSet {
-            logger.info("🔄 Camera input mode changed: \(oldValue.rawValue) → \(self.cameraInputMode.rawValue)")
+            logger.info("Camera input mode changed: \(oldValue.rawValue) → \(self.cameraInputMode.rawValue)")
 
             // Single로 변경되면 자동으로 Mono로 설정
             if cameraInputMode == .single {
@@ -93,7 +93,7 @@ public final class StreamingControlViewModel {
 
             // 스트리밍 중이면 재시작 (videoMode가 변경되지 않은 경우만)
             if isStreaming {
-                logger.info("🔄 Restarting streaming due to camera input mode change...")
+                logger.info("Restarting streaming due to camera input mode change...")
                 Task {
                     stopStreaming()
                     try? await Task.sleep(for: .milliseconds(500))
@@ -251,7 +251,7 @@ public final class StreamingControlViewModel {
         // 통계 초기화
         resetStatistics()
 
-        logger.info("🛑 Streaming stopped")
+        logger.info("Streaming stopped")
     }
 
     // MARK: - Private Methods: Streaming Setup
@@ -271,14 +271,14 @@ public final class StreamingControlViewModel {
             throw StreamingError.noDeviceSelected
         }
 
-        logger.info("🚀 Starting dual camera capture...")
+        logger.info("Starting dual camera capture...")
 
         // Find common capture settings for both cameras
         let captureSettings = CaptureSettings.findCommonSettings(
             for: [leftDevice, rightDevice]
         ) ?? .standard
 
-        logger.info("📹 Using capture settings: \(captureSettings.width)×\(captureSettings.height)@\(captureSettings.frameRate)fps")
+        logger.info("Using capture settings: \(captureSettings.width)×\(captureSettings.height)@\(captureSettings.frameRate)fps")
 
         // Initialize components
         let sync = FrameSync()
@@ -311,7 +311,7 @@ public final class StreamingControlViewModel {
         // Start WebRTC transport
         try webrtc.start()
 
-        logger.info("✅ Dual camera capture started")
+        logger.info("Dual camera capture started")
     }
 
     private func startSingleInputCapture() async throws {
@@ -333,7 +333,7 @@ public final class StreamingControlViewModel {
             throw StreamingError.noDeviceSelected
         }
 
-        logger.info("🚀 Starting mono capture...")
+        logger.info("Starting mono capture...")
 
         // Initialize WebRTC transport
         let webrtc = WebRTCManager(config: .standard)
@@ -348,14 +348,14 @@ public final class StreamingControlViewModel {
         // Start WebRTC transport
         try webrtc.start()
 
-        logger.info("✅ Mono capture started with native resolution")
+        logger.info("Mono capture started with native resolution")
     }
 
     // MARK: - Private Methods: Frame Handling
 
     private func handleSyncedPair(_ pair: SyncedPair) async {
         guard let composer = self.composer else {
-            logger.error("❌ Composer is nil in handleSyncedPair")
+            logger.error("Composer is nil in handleSyncedPair")
             return
         }
 
@@ -389,7 +389,7 @@ public final class StreamingControlViewModel {
             await updatePreview(composed, pts: pair.pts)
 
         } catch {
-            logger.error("❌ Composition failed: \(error.localizedDescription)")
+            logger.error("Composition failed: \(error.localizedDescription)")
         }
     }
 
@@ -421,7 +421,7 @@ public final class StreamingControlViewModel {
         )
 
         guard status == noErr, let formatDesc = formatDescription else {
-            logger.error("❌ Failed to create format description")
+            logger.error("Failed to create format description")
             return
         }
 
@@ -434,7 +434,7 @@ public final class StreamingControlViewModel {
         )
 
         guard sampleStatus == noErr, let sample = sampleBuffer else {
-            logger.error("❌ Failed to create sample buffer")
+            logger.error("Failed to create sample buffer")
             return
         }
 
@@ -444,7 +444,7 @@ public final class StreamingControlViewModel {
 
             // Flush if layer is not ready
             if layer.sampleBufferRenderer.status == .failed {
-                logger.warning("⚠️ Display layer failed, flushing...")
+                logger.warning("Display layer failed, flushing...")
                 layer.sampleBufferRenderer.flush()
             }
         } else {
@@ -452,7 +452,7 @@ public final class StreamingControlViewModel {
 
             // Flush if layer is not ready
             if layer.status == .failed {
-                logger.warning("⚠️ Display layer failed, flushing...")
+                logger.warning("Display layer failed, flushing...")
                 layer.flush()
             }
         }
@@ -496,7 +496,7 @@ extension StreamingControlViewModel: CaptureOutputDelegate {
             } else {
                 // Stereo mode: push to frame sync
                 if self.frameSync == nil {
-                    self.logger.error("❌ FrameSync is nil in stereo mode! Mode: \(self.videoMode.rawValue), Source: \(source.rawValue)")
+                    self.logger.error("FrameSync is nil in stereo mode! Mode: \(self.videoMode.rawValue), Source: \(source.rawValue)")
                 } else {
                     self.frameSync?.push(sendableBuffer.pixelBuffer, pts: pts, source: source)
                 }
@@ -506,7 +506,7 @@ extension StreamingControlViewModel: CaptureOutputDelegate {
 
     nonisolated public func didEncounterError(_ error: Error, source: CaptureSource) {
         Task { @MainActor in
-            self.logger.error("❌ Capture error [\(source.rawValue)]: \(error.localizedDescription)")
+            self.logger.error("Capture error [\(source.rawValue)]: \(error.localizedDescription)")
             self.errorMessage = error.localizedDescription
         }
     }

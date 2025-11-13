@@ -149,7 +149,7 @@ public final class WebRTCReceiver: NSObject, ObservableObject {
     public func setRenderPath(_ path: RenderPath) {
         // Skip if already on this path
         guard currentRenderPath != path else {
-            logger.info("ℹ️ Already on render path: \(path == .metal ? "Metal" : "VideoPlayer")")
+            logger.info("Already on render path: \(path == .metal ? "Metal" : "VideoPlayer")")
             return
         }
 
@@ -160,7 +160,7 @@ public final class WebRTCReceiver: NSObject, ObservableObject {
         switch oldPath {
         case .videoPlayer:
             // Flush AVSampleBufferVideoRenderer
-            logger.info("🧹 Cleaning up VideoPlayerComponent renderer...")
+            logger.info("Cleaning up VideoPlayerComponent renderer...")
             stereoRenderer.flush()
             stereoRenderer.stopRequestingMediaData()
             isRendererReady = false
@@ -168,14 +168,14 @@ public final class WebRTCReceiver: NSObject, ObservableObject {
 
         case .metal:
             // Deactivate StereoVideoRenderer
-            logger.info("🧹 Deactivating StereoVideoRenderer...")
+            logger.info("Deactivating StereoVideoRenderer...")
             stereoMetalRenderer.deactivate()
         }
 
         // Prepare new renderer
         switch path {
         case .videoPlayer:
-            logger.info("🔧 Activating VideoPlayerComponent renderer...")
+            logger.info("Activating VideoPlayerComponent renderer...")
             videoPlayerFrameCounter = 0  // Reset frame counter
             loggingState.framesEnqueuedCount = 0  // Reset enqueued counter
             setupStereoRenderer()
@@ -183,17 +183,17 @@ public final class WebRTCReceiver: NSObject, ObservableObject {
             logger.info("   Ready for data: \(self.stereoRenderer.isReadyForMoreMediaData)")
 
         case .metal:
-            logger.info("🔧 Activating StereoVideoRenderer...")
+            logger.info("Activating StereoVideoRenderer...")
             stereoMetalRenderer.activate()
         }
 
         let pathName = path == .metal ? "Path B (StereoVideoRenderer)" : "Path A (VideoPlayerComponent)"
-        logger.info("🔄 Render path switched to: \(pathName)")
+        logger.info("Render path switched to: \(pathName)")
     }
 
     /// Update the signaling server URL (requires restart)
     public func updateSignalingServer(url: URL) async throws {
-        logger.info("🔄 WebRTCReceiver: Updating signaling server URL to: \(url.absoluteString)")
+        logger.info("WebRTCReceiver: Updating signaling server URL to: \(url.absoluteString)")
 
         // Stop current connection
         logger.info("   Stopping existing connection...")
@@ -205,24 +205,24 @@ public final class WebRTCReceiver: NSObject, ObservableObject {
 
         // Restart with new URL
         try await start()
-        logger.info("   ✅ WebRTC started successfully")
+        logger.info("   WebRTC started successfully")
     }
 
     public func start() async throws {
         guard !isInitialized else {
-            logger.warning("⚠️ WebRTC Receiver already started, skipping...")
+            logger.warning("WebRTC Receiver already started, skipping...")
             return
         }
 
-        logger.info("🚀 WebRTC Receiver starting...")
+        logger.info("WebRTC Receiver starting...")
 
         // Keep legacy converting model available (optional)
         convertingModel = ConvertingModel(stereoMetadata: .default)
-        logger.info("✅ ConvertingModel initialized (optional)")
+        logger.info("ConvertingModel initialized (optional)")
 
         // Initialize I420 buffer converter
         i420Converter = I420BufferConverter()
-        logger.info("✅ I420BufferConverter initialized")
+        logger.info("I420BufferConverter initialized")
 
         // Configure AVSampleBufferVideoRenderer (Path A)
         setupStereoRenderer()
@@ -230,9 +230,9 @@ public final class WebRTCReceiver: NSObject, ObservableObject {
         // Thread-safe global initialization
         let initCount = performGlobalInitIfNeeded()
         if initCount == 1 {
-            logger.info("✅ WebRTC global initialization complete (count: \(initCount))")
+            logger.info("WebRTC global initialization complete (count: \(initCount))")
         } else {
-            logger.info("ℹ️ WebRTC already globally initialized (count: \(initCount)), reusing...")
+            logger.info("WebRTC already globally initialized (count: \(initCount)), reusing...")
         }
 
         let encoderFactory = LKRTCDefaultVideoEncoderFactory()
@@ -243,7 +243,7 @@ public final class WebRTCReceiver: NSObject, ObservableObject {
             encoderFactory: encoderFactory,
             decoderFactory: decoderFactory
         )
-        logger.info("✅ Peer connection factory created with HEVC decoder support")
+        logger.info("Peer connection factory created with HEVC decoder support")
 
         let rtcConfig = LKRTCConfiguration()
         rtcConfig.sdpSemantics = .unifiedPlan
@@ -265,16 +265,16 @@ public final class WebRTCReceiver: NSObject, ObservableObject {
         try startSignaling()
 
         isInitialized = true
-        logger.info("✅ WebRTC Receiver initialized")
+        logger.info("WebRTC Receiver initialized")
     }
 
     public func stop() async {
         guard isInitialized else {
-            logger.warning("⚠️ WebRTC Receiver not initialized, skipping stop...")
+            logger.warning("WebRTC Receiver not initialized, skipping stop...")
             return
         }
 
-        logger.info("🛑 WebRTC Receiver stopping...")
+        logger.info("WebRTC Receiver stopping...")
         statsTimer?.invalidate()
         peerConnection?.close()
         signalingClient?.disconnect()
@@ -293,13 +293,13 @@ public final class WebRTCReceiver: NSObject, ObservableObject {
     }
 
     private func startSignaling() throws {
-        logger.info("📡 Creating SignalingClient for: \(self.signalingServerURL.absoluteString)")
+        logger.info("Creating SignalingClient for: \(self.signalingServerURL.absoluteString)")
         signalingClient = SignalingClient(serverURL: self.signalingServerURL)
         signalingClient?.delegate = self
 
-        logger.info("📡 Connecting to signaling server as 'receiver'...")
+        logger.info("Connecting to signaling server as 'receiver'...")
         try signalingClient?.connect(as: "receiver")
-        logger.info("📡 SignalingClient connection initiated")
+        logger.info("SignalingClient connection initiated")
     }
 
     private func setupStereoRenderer() {
@@ -317,11 +317,11 @@ public final class WebRTCReceiver: NSObject, ObservableObject {
                 // This callback indicates renderer is ready for data
                 if !self.isRendererReady {
                     self.isRendererReady = true
-                    self.logger.info("✅ AVSampleBufferVideoRenderer is now ready for tagged stereo frames")
+                    self.logger.info("AVSampleBufferVideoRenderer is now ready for tagged stereo frames")
 
                     // Replay last buffered frame if available
                     if let bufferedPB = self.lastEnqueuePixelBuffer {
-                        self.logger.info("🔄 Replaying buffered frame now that renderer is ready")
+                        self.logger.info("Replaying buffered frame now that renderer is ready")
                         self.enqueueSingleStreamImmediate(
                             buffer: bufferedPB,
                             pts: self.lastEnqueuePTS,
@@ -339,7 +339,7 @@ public final class WebRTCReceiver: NSObject, ObservableObject {
                 named: AVSampleBufferVideoRenderer.requiresFlushToResumeDecodingDidChangeNotification,
                 object: self.stereoRenderer
             ) {
-                self.logger.info("🔄 Flushing stereo renderer to resume decoding")
+                self.logger.info("Flushing stereo renderer to resume decoding")
                 self.stereoRenderer.flush()
             }
         }
@@ -365,13 +365,13 @@ public final class WebRTCReceiver: NSObject, ObservableObject {
                 guard let self = self else { return }
                 // Only log occasionally to avoid spam
                 if self.framesReceived % LoggingInterval.frequentFrames == 0 {
-                    self.logger.info("📢 Received HEVC frame via notification workaround")
+                    self.logger.info("Received HEVC frame via notification workaround")
                 }
                 self.processFrame(sendableBuffer.pixelBuffer, from: frame)
             }
         }
 
-        logger.info("⏳ AVSampleBufferVideoRenderer configured for stereo playback...")
+        logger.info("AVSampleBufferVideoRenderer configured for stereo playback...")
     }
 
     // MARK: - Helper Methods
@@ -381,7 +381,7 @@ public final class WebRTCReceiver: NSObject, ObservableObject {
     private func checkAndRecoverRenderer() -> Bool {
         let rendererStatus = stereoRenderer.status
         if rendererStatus == .failed {
-            logger.warning("⚠️ Renderer status failed, attempting recovery")
+            logger.warning("Renderer status failed, attempting recovery")
             stereoRenderer.flush()
             stereoRenderer.stopRequestingMediaData()
             stereoRenderer.requestMediaDataWhenReady(on: .main) { /* keep ready */ }
@@ -401,7 +401,7 @@ public final class WebRTCReceiver: NSObject, ObservableObject {
             self.lastEnqueueDuration = duration
 
             if !loggingState.hasLoggedNoTarget {
-                logger.info("⏳ Renderer not ready yet, buffering frame...")
+                logger.info("Renderer not ready yet, buffering frame...")
                 loggingState.hasLoggedNoTarget = true
             }
             return
@@ -417,7 +417,7 @@ public final class WebRTCReceiver: NSObject, ObservableObject {
 
         // Log renderer readiness on first frame
         if self.loggingState.framesEnqueuedCount == 0 {
-            logger.info("📊 Renderer status: \(self.stereoRenderer.status.rawValue), isReadyForMoreMediaData: \(self.stereoRenderer.isReadyForMoreMediaData)")
+            logger.info("Renderer status: \(self.stereoRenderer.status.rawValue), isReadyForMoreMediaData: \(self.stereoRenderer.isReadyForMoreMediaData)")
         }
 
         // Create format description
@@ -428,7 +428,7 @@ public final class WebRTCReceiver: NSObject, ObservableObject {
             formatDescriptionOut: &formatDesc
         )
         guard statusFD == noErr, let formatDesc else {
-            logger.error("❌ CMVideoFormatDescriptionCreateForImageBuffer failed: \(statusFD)")
+            logger.error("CMVideoFormatDescriptionCreateForImageBuffer failed: \(statusFD)")
             return
         }
 
@@ -448,7 +448,7 @@ public final class WebRTCReceiver: NSObject, ObservableObject {
             let pixelFormat = CVPixelBufferGetPixelFormatType(pixelBuffer)
             let width = CVPixelBufferGetWidth(pixelBuffer)
             let height = CVPixelBufferGetHeight(pixelBuffer)
-            logger.info("📊 PixelBuffer format: \(pixelFormat), size: \(width)x\(height)")
+            logger.info("PixelBuffer format: \(pixelFormat), size: \(width)x\(height)")
         }
 
         var timing = CMSampleTimingInfo(
@@ -466,7 +466,7 @@ public final class WebRTCReceiver: NSObject, ObservableObject {
             sampleBufferOut: &sampleBuffer
         )
         guard statusSB == noErr, let sb = sampleBuffer else {
-            logger.error("❌ CMSampleBufferCreateReadyWithImageBuffer failed: \(statusSB)")
+            logger.error("CMSampleBufferCreateReadyWithImageBuffer failed: \(statusSB)")
             return
         }
 
@@ -481,7 +481,7 @@ public final class WebRTCReceiver: NSObject, ObservableObject {
 
         // Log detailed info for first few frames
         if self.loggingState.framesEnqueuedCount < LoggingInterval.detailedDebugFrames {
-            logger.info("🎬 Enqueueing frame #\(self.loggingState.framesEnqueuedCount + 1)")
+            logger.info("Enqueueing frame #\(self.loggingState.framesEnqueuedCount + 1)")
             logger.info("   PTS: \(pts.seconds)s, duration: \(duration.seconds)s")
             logger.info("   SampleBuffer valid: \(CMSampleBufferIsValid(sb))")
             logger.info("   Hero Eye attachment: Left")
@@ -491,9 +491,9 @@ public final class WebRTCReceiver: NSObject, ObservableObject {
         self.loggingState.framesEnqueuedCount += 1
 
         if self.loggingState.framesEnqueuedCount == 1 {
-            logger.info("✅ First frame enqueued to stereoRenderer")
+            logger.info("First frame enqueued to stereoRenderer")
         } else if self.loggingState.framesEnqueuedCount % LoggingInterval.standardFrames == 0 {
-            logger.debug("📊 Enqueued \(self.loggingState.framesEnqueuedCount) frames total")
+            logger.debug("Enqueued \(self.loggingState.framesEnqueuedCount) frames total")
         }
     }
 
@@ -508,7 +508,7 @@ public final class WebRTCReceiver: NSObject, ObservableObject {
         if currentFrameSize.width != CGFloat(perEyeWidth) || currentFrameSize.height != CGFloat(srcHeight) {
             let oldSize = currentFrameSize
             currentFrameSize = CGSize(width: perEyeWidth, height: srcHeight)
-            logger.info("📐 VideoPlayer frame size: \(Int(oldSize.width))×\(Int(oldSize.height)) → \(perEyeWidth)×\(srcHeight)")
+            logger.info("VideoPlayer frame size: \(Int(oldSize.width))×\(Int(oldSize.height)) → \(perEyeWidth)×\(srcHeight)")
         }
 
         // Frame counter for logging
@@ -516,7 +516,7 @@ public final class WebRTCReceiver: NSObject, ObservableObject {
 
         // Log processing (reduced frequency for CPU optimization)
         if videoPlayerFrameCounter <= LoggingInterval.initialFramesU64 || videoPlayerFrameCounter % LoggingInterval.frequentFramesU64 == 0 {
-            logger.info("🎬 Processing VideoPlayer frame #\(self.videoPlayerFrameCounter): \(srcWidth)×\(srcHeight)")
+            logger.info("Processing VideoPlayer frame #\(self.videoPlayerFrameCounter): \(srcWidth)×\(srcHeight)")
         }
 
         Task { [weak self] in
@@ -526,7 +526,7 @@ public final class WebRTCReceiver: NSObject, ObservableObject {
                 // Use ConvertingModel to split SBS into tagged stereo sample
                 guard let stereoSample = try await self.convertingModel?.process(pixelBuffer, pts: pts, duration: duration) else {
                     if self.videoPlayerFrameCounter <= LoggingInterval.initialFramesU64 {
-                        self.logger.error("❌ Failed to convert SBS to stereo tagged sample")
+                        self.logger.error("Failed to convert SBS to stereo tagged sample")
                     }
                     return
                 }
@@ -534,7 +534,7 @@ public final class WebRTCReceiver: NSObject, ObservableObject {
                 await self.enqueueReadyStereoSample(stereoSample)
             } catch {
                 if self.videoPlayerFrameCounter <= LoggingInterval.initialFramesU64 {
-                    self.logger.error("❌ ConvertingModel error: \(error.localizedDescription)")
+                    self.logger.error("ConvertingModel error: \(error.localizedDescription)")
                 }
             }
         }
@@ -544,7 +544,7 @@ public final class WebRTCReceiver: NSObject, ObservableObject {
         // Check if renderer is ready
         guard isRendererReady else {
             if videoPlayerFrameCounter <= UInt64(LoggingInterval.debugFrames) {
-                logger.warning("⏳ [VIDEOPLAY DEBUG] Renderer not ready (frame #\(self.videoPlayerFrameCounter)), skipping...")
+                logger.warning("[VIDEOPLAY DEBUG] Renderer not ready (frame #\(self.videoPlayerFrameCounter)), skipping...")
                 logger.warning("   Renderer status: \(self.stereoRenderer.status.rawValue)")
                 logger.warning("   Ready for data: \(self.stereoRenderer.isReadyForMoreMediaData)")
             }
@@ -556,41 +556,41 @@ public final class WebRTCReceiver: NSObject, ObservableObject {
 
         // Log on first frame
         if self.loggingState.framesEnqueuedCount == 0 {
-            logger.info("📊 Renderer status: \(self.stereoRenderer.status.rawValue), isReadyForMoreMediaData: \(self.stereoRenderer.isReadyForMoreMediaData)")
-            logger.info("✅ First stereo tagged frame from ConvertingModel")
+            logger.info("Renderer status: \(self.stereoRenderer.status.rawValue), isReadyForMoreMediaData: \(self.stereoRenderer.isReadyForMoreMediaData)")
+            logger.info("First stereo tagged frame from ConvertingModel")
 
             // Debug stereo sample buffer format (first frame only)
             if let formatDesc = CMSampleBufferGetFormatDescription(sample) {
                 let mediaType = CMFormatDescriptionGetMediaType(formatDesc)
                 let mediaSubType = CMFormatDescriptionGetMediaSubType(formatDesc)
-                logger.info("🔍 [PINK DEBUG] Format: mediaType=\(mediaType), subType=\(mediaSubType)")
+                logger.info("[PINK DEBUG] Format: mediaType=\(mediaType), subType=\(mediaSubType)")
 
                 // Check dimensions
                 let dims = CMVideoFormatDescriptionGetDimensions(formatDesc)
-                logger.info("🔍 [PINK DEBUG] Format dimensions: \(dims.width)×\(dims.height)")
+                logger.info("[PINK DEBUG] Format dimensions: \(dims.width)×\(dims.height)")
             }
 
             // Check for hero eye attachment on SAMPLE BUFFER (not format description)
             // For tagged buffer groups, the attachment is on the sample buffer itself
             if let heroEye = CMGetAttachment(sample as CMAttachmentBearer, key: kCMFormatDescriptionExtension_HeroEye as CFString, attachmentModeOut: nil) {
-                logger.info("✅ [PINK DEBUG] HeroEye attachment on sample buffer: \(heroEye as! NSObject)")
+                logger.info("[PINK DEBUG] HeroEye attachment on sample buffer: \(heroEye as! NSObject)")
             } else {
-                logger.warning("⚠️ [PINK DEBUG] No HeroEye attachment found on sample buffer!")
+                logger.warning("[PINK DEBUG] No HeroEye attachment found on sample buffer!")
             }
 
             // Check sample buffer validity
             let isValid = CMSampleBufferIsValid(sample)
             let dataReady = CMSampleBufferDataIsReady(sample)
-            logger.info("🔍 [PINK DEBUG] Sample valid: \(isValid), dataReady: \(dataReady)")
+            logger.info("[PINK DEBUG] Sample valid: \(isValid), dataReady: \(dataReady)")
         }
 
         stereoRenderer.enqueue(sample)
         self.loggingState.framesEnqueuedCount += 1
 
         if self.loggingState.framesEnqueuedCount == 1 {
-            logger.info("✅ First stereo tagged sample enqueued to stereoRenderer")
+            logger.info("First stereo tagged sample enqueued to stereoRenderer")
         } else if self.loggingState.framesEnqueuedCount % LoggingInterval.standardFrames == 0 {
-            logger.debug("📊 Enqueued \(self.loggingState.framesEnqueuedCount) stereo frames total")
+            logger.debug("Enqueued \(self.loggingState.framesEnqueuedCount) stereo frames total")
         }
 
         // Monitor for pink screen - check if error occurs after enqueue
@@ -600,7 +600,7 @@ public final class WebRTCReceiver: NSObject, ObservableObject {
                 try? await Task.sleep(for: .milliseconds(100))
                 let statusAfter = self.stereoRenderer.status
                 if statusAfter == .failed {
-                    self.logger.error("❌ [PINK DEBUG] Renderer FAILED after enqueue frame #\(self.loggingState.framesEnqueuedCount)")
+                    self.logger.error("[PINK DEBUG] Renderer FAILED after enqueue frame #\(self.loggingState.framesEnqueuedCount)")
                 }
             }
         }
@@ -618,7 +618,7 @@ public final class WebRTCReceiver: NSObject, ObservableObject {
         if currentFrameSize.width != CGFloat(perEyeWidth) || currentFrameSize.height != CGFloat(height) {
             let oldSize = currentFrameSize
             currentFrameSize = CGSize(width: perEyeWidth, height: height)
-            logger.info("📐 Metal frame size: \(Int(oldSize.width))×\(Int(oldSize.height)) → \(perEyeWidth)×\(height)")
+            logger.info("Metal frame size: \(Int(oldSize.width))×\(Int(oldSize.height)) → \(perEyeWidth)×\(height)")
         }
 
         // Ensure BGRA for StereoVideoRenderer
@@ -630,7 +630,7 @@ public final class WebRTCReceiver: NSObject, ObservableObject {
 
         // Convert YUV (e.g., 420f/NV12) to BGRA via CIContext
         guard let bgraBuffer = makeBGRA(from: pixelBuffer) else {
-            logger.error("❌ Failed to convert to BGRA")
+            logger.error("Failed to convert to BGRA")
             return
         }
 
@@ -663,30 +663,30 @@ public final class WebRTCReceiver: NSObject, ObservableObject {
         Task { @MainActor [weak self] in
             guard let self = self else { return }
 
-            self.logger.info("📥 SIGNAL_RX:offer")
+            self.logger.info("SIGNAL_RX:offer")
 
             let sessionDescription = LKRTCSessionDescription(type: .offer, sdp: offer)
 
             do {
                 try await self.peerConnection?.setRemoteDescription(sessionDescription)
-                self.logger.info("✅ SDP:setRemoteDescription(offer) success")
+                self.logger.info("SDP:setRemoteDescription(offer) success")
 
                 self.remoteDescriptionSet = true
                 self.flushPendingRemoteCandidates()
                 await self.createAnswer()
             } catch {
-                self.logger.error("❌ SDP:setRemoteDescription(offer) failed: \(error.localizedDescription)")
+                self.logger.error("SDP:setRemoteDescription(offer) failed: \(error.localizedDescription)")
             }
         }
     }
 
     private func flushPendingRemoteCandidates() {
         guard remoteDescriptionSet else {
-            logger.warning("⚠️ Cannot flush candidates: remote description not set")
+            logger.warning("Cannot flush candidates: remote description not set")
             return
         }
 
-        logger.info("🔄 Flushing \(self.pendingRemoteCandidates.count) queued remote candidates")
+        logger.info("Flushing \(self.pendingRemoteCandidates.count) queued remote candidates")
 
         let candidates = self.pendingRemoteCandidates
         self.pendingRemoteCandidates.removeAll()
@@ -697,22 +697,22 @@ public final class WebRTCReceiver: NSObject, ObservableObject {
                 do {
                     try await self.peerConnection?.addIceCandidate(candidate)
                     await MainActor.run {
-                        self.logger.debug("✅ Queued ICE candidate added")
+                        self.logger.debug("Queued ICE candidate added")
                     }
                 } catch {
                     await MainActor.run {
-                        self.logger.error("❌ Failed to add queued ICE candidate: \(error.localizedDescription)")
+                        self.logger.error("Failed to add queued ICE candidate: \(error.localizedDescription)")
                     }
                 }
             }
             await MainActor.run {
-                self.logger.info("✅ All queued candidates processed")
+                self.logger.info("All queued candidates processed")
             }
         }
     }
 
     private func createAnswer() async {
-        logger.info("📝 SDP:createAnswer")
+        logger.info("SDP:createAnswer")
 
         let constraints = LKRTCMediaConstraints(
             mandatoryConstraints: [
@@ -725,15 +725,15 @@ public final class WebRTCReceiver: NSObject, ObservableObject {
             guard let peerConnection = peerConnection else { return }
 
             let sdp = try await peerConnection.answer(for: constraints)
-            logger.info("📄 SDP Answer created")
+            logger.info("SDP Answer created")
 
             try await peerConnection.setLocalDescription(sdp)
-            logger.info("✅ SDP:setLocalDescription(answer) success")
+            logger.info("SDP:setLocalDescription(answer) success")
 
             signalingClient?.send(answer: sdp.sdp)
-            logger.info("📤 SIGNAL_TX:answer")
+            logger.info("SIGNAL_TX:answer")
         } catch {
-            logger.error("❌ SDP answer/setLocalDescription failed: \(error.localizedDescription)")
+            logger.error("SDP answer/setLocalDescription failed: \(error.localizedDescription)")
         }
     }
 }
@@ -741,87 +741,87 @@ public final class WebRTCReceiver: NSObject, ObservableObject {
 extension WebRTCReceiver: LKRTCPeerConnectionDelegate {
     nonisolated public func peerConnection(_ peerConnection: LKRTCPeerConnection, didChange stateChanged: LKRTCSignalingState) {
         Task { @MainActor in
-            self.logger.info("🔄 SIGNALING_STATE:\(stateChanged.rawValue)")
+            self.logger.info("SIGNALING_STATE:\(stateChanged.rawValue)")
         }
     }
 
     nonisolated public func peerConnection(_ peerConnection: LKRTCPeerConnection, didAdd stream: LKRTCMediaStream) {
-        print("📦 Stream received with \(stream.videoTracks.count) video tracks")
+        print("Stream received with \(stream.videoTracks.count) video tracks")
 
         if let videoTrack = stream.videoTracks.first {
             Task { @MainActor in
-                self.logger.info("➕ Media stream added: track enabled=\(videoTrack.isEnabled), state=\(videoTrack.readyState.rawValue)")
+                self.logger.info("Media stream added: track enabled=\(videoTrack.isEnabled), state=\(videoTrack.readyState.rawValue)")
                 self.remoteVideoTrack = videoTrack
                 videoTrack.add(self)
             }
         } else {
             Task { @MainActor in
-                self.logger.warning("⚠️ Media stream added but no video track found")
+                self.logger.warning("Media stream added but no video track found")
             }
         }
     }
 
     nonisolated public func peerConnection(_ peerConnection: LKRTCPeerConnection, didRemove stream: LKRTCMediaStream) {
         Task { @MainActor in
-            self.logger.info("➖ Media stream removed")
+            self.logger.info("Media stream removed")
         }
     }
 
     nonisolated public func peerConnectionShouldNegotiate(_ peerConnection: LKRTCPeerConnection) {
         Task { @MainActor in
-            self.logger.info("🔄 Should negotiate")
+            self.logger.info("Should negotiate")
         }
     }
 
     nonisolated public func peerConnection(_ peerConnection: LKRTCPeerConnection, didChange newState: LKRTCIceConnectionState) {
         Task { @MainActor in
-            self.logger.info("🧊 ICE_STATE:\(newState.rawValue)")
+            self.logger.info("ICE_STATE:\(newState.rawValue)")
 
             self.isConnected = (newState == .connected || newState == .completed)
 
             if newState == .connected || newState == .completed {
-                self.logger.info("🎉 WebRTC connection established!")
+                self.logger.info("WebRTC connection established!")
             } else if newState == .disconnected {
-                self.logger.warning("⚠️ ICE_STATE:disconnected - Media connection lost!")
-                print("⚠️ Possible causes: Network change, firewall, or NAT issue")
+                self.logger.warning("ICE_STATE:disconnected - Media connection lost!")
+                print("Possible causes: Network change, firewall, or NAT issue")
             } else if newState == .failed {
-                self.logger.error("❌ ICE_STATE:failed - Cannot establish media connection")
-                print("❌ Check: Both devices on same network? Firewall blocking UDP?")
+                self.logger.error("ICE_STATE:failed - Cannot establish media connection")
+                print("Check: Both devices on same network? Firewall blocking UDP?")
             }
         }
     }
 
     nonisolated public func peerConnection(_ peerConnection: LKRTCPeerConnection, didChange newState: LKRTCIceGatheringState) {
         Task { @MainActor in
-            self.logger.info("🧊 GATHERING_STATE:\(newState.rawValue)")
+            self.logger.info("GATHERING_STATE:\(newState.rawValue)")
         }
     }
 
     nonisolated public func peerConnection(_ peerConnection: LKRTCPeerConnection, didGenerate candidate: LKRTCIceCandidate) {
         Task { @MainActor [weak self] in
             guard let self = self else { return }
-            self.logger.info("🧊 ICE:local-candidate generated")
+            self.logger.info("ICE:local-candidate generated")
             self.signalingClient?.send(iceCandidate: candidate)
-            self.logger.info("📤 SIGNAL_TX:local-candidate")
+            self.logger.info("SIGNAL_TX:local-candidate")
         }
     }
 
     nonisolated public func peerConnection(_ peerConnection: LKRTCPeerConnection, didRemove candidates: [LKRTCIceCandidate]) {
         Task { @MainActor in
-            self.logger.info("🧊 Removed ICE candidates: \(candidates.count)")
+            self.logger.info("Removed ICE candidates: \(candidates.count)")
         }
     }
 
     nonisolated public func peerConnection(_ peerConnection: LKRTCPeerConnection, didOpen dataChannel: LKRTCDataChannel) {
         Task { @MainActor in
-            self.logger.info("📡 Data channel opened")
+            self.logger.info("Data channel opened")
         }
     }
 }
 
 extension WebRTCReceiver: LKRTCVideoRenderer {
     nonisolated public func setSize(_ size: CGSize) {
-        print("📐 Video size set: \(size)")
+        print("Video size set: \(size)")
     }
 
     nonisolated public func renderFrame(_ frame: LKRTCVideoFrame?) {
@@ -893,7 +893,7 @@ extension WebRTCReceiver: LKRTCVideoRenderer {
         // Log frames received periodically
         if self.framesReceived % LoggingInterval.standardFrames == 0 {
             let pathName = currentRenderPath == .videoPlayer ? "VideoPlayerComponent" : "StereoVideoRenderer"
-            self.logger.info("📊 Received \(self.framesReceived) frames, feeding to \(pathName)")
+            self.logger.info("Received \(self.framesReceived) frames, feeding to \(pathName)")
         }
     }
 }
@@ -905,7 +905,7 @@ extension WebRTCReceiver: SignalingDelegate {
 
     nonisolated func signalingClient(_ client: SignalingClient, didReceiveAnswer sdp: String) {
         Task { @MainActor in
-            self.logger.warning("⚠️ Received unexpected answer (Vision Pro is receiver)")
+            self.logger.warning("Received unexpected answer (Vision Pro is receiver)")
         }
     }
 
@@ -913,28 +913,28 @@ extension WebRTCReceiver: SignalingDelegate {
         Task { @MainActor [weak self] in
             guard let self = self else { return }
 
-            self.logger.debug("📥 SIGNAL_RX:remote-candidate")
+            self.logger.debug("SIGNAL_RX:remote-candidate")
 
             let iceCandidate = LKRTCIceCandidate(sdp: candidate, sdpMLineIndex: sdpMLineIndex, sdpMid: sdpMid)
 
             if !self.remoteDescriptionSet {
                 self.pendingRemoteCandidates.append(iceCandidate)
-                self.logger.info("📥 SIGNAL_RX:remote-candidate queued (count: \(self.pendingRemoteCandidates.count))")
+                self.logger.info("SIGNAL_RX:remote-candidate queued (count: \(self.pendingRemoteCandidates.count))")
                 return
             }
 
             do {
                 try await self.peerConnection?.addIceCandidate(iceCandidate)
-                self.logger.debug("✅ SIGNAL_RX:remote-candidate added")
+                self.logger.debug("SIGNAL_RX:remote-candidate added")
             } catch {
-                self.logger.error("❌ Failed to add remote ICE candidate: \(error.localizedDescription)")
+                self.logger.error("Failed to add remote ICE candidate: \(error.localizedDescription)")
             }
         }
     }
 
     nonisolated func signalingClient(_ client: SignalingClient, didChangeState state: SignalingState) {
         Task { @MainActor in
-            self.logger.info("🔄 Signaling state: \(String(describing: state))")
+            self.logger.info("Signaling state: \(String(describing: state))")
         }
     }
 }
