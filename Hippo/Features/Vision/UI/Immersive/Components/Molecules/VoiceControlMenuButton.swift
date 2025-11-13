@@ -48,15 +48,13 @@ struct VoiceControlMenuButton: View {
 
     // MARK: - Initialization
 
-    /// Initialize with VoiceControlManager for command execution
+    /// Initialize with VoiceControlViewModel
     ///
     /// - Parameters:
-    ///   - manager: VoiceControlManager instance (acts as VoiceCommandExecutor)
+    ///   - viewModel: VoiceControlViewModel instance (shared with overlay)
     ///   - action: Action to perform when button is tapped (menu toggle)
-    init(manager: VoiceControlManager, action: @escaping () -> Void) {
-        _voiceControlVM = State(initialValue: VoiceControlViewModel(
-            commandExecutor: manager
-        ))
+    init(viewModel: VoiceControlViewModel, action: @escaping () -> Void) {
+        _voiceControlVM = State(initialValue: viewModel)
         self.action = action
     }
 
@@ -150,9 +148,12 @@ struct VoiceControlMenuButton: View {
 
 private struct PreviewContainer: View {
     @State private var immersiveVM = ImmersiveViewModel()
+    @State private var voiceControlVM = VoiceControlViewModel(
+        commandExecutor: MockVoiceControlManager()
+    )
 
     var body: some View {
-        VoiceControlMenuButton(manager: MockVoiceControlManager()) {
+        VoiceControlMenuButton(viewModel: voiceControlVM) {
             print("Menu toggled")
         }
         .environment(immersiveVM)

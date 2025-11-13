@@ -202,6 +202,8 @@
 		2523A6F12EC649A600842508 /* VoiceControlDependencies.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2523A6E02EC649A600842508 /* VoiceControlDependencies.swift */; };
 		2523A6F22EC649A600842508 /* LLMCommandParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2523A6DD2EC649A600842508 /* LLMCommandParser.swift */; };
 		2523A6F32EC649A600842508 /* FallbackVoiceCommandParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2523A6DC2EC649A600842508 /* FallbackVoiceCommandParser.swift */; };
+		2523A6F52EC663DB00842508 /* ImmersiveSceneRuntime+VoiceControl.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2523A6F42EC663DB00842508 /* ImmersiveSceneRuntime+VoiceControl.swift */; };
+		2523A6F62EC663DB00842508 /* ImmersiveSceneRuntime+VoiceControl.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2523A6F42EC663DB00842508 /* ImmersiveSceneRuntime+VoiceControl.swift */; };
 		2581FCE52EBBC6870059678D /* OperationInputState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2581FCE42EBBC6870059678D /* OperationInputState.swift */; };
 		2581FCE92EBBC6FA0059678D /* MacNavigationState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2581FCE62EBBC6FA0059678D /* MacNavigationState.swift */; };
 		2581FCEA2EBBC6FA0059678D /* MacRootViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2581FCE72EBBC6FA0059678D /* MacRootViewModel.swift */; };
@@ -589,6 +591,7 @@
 		2523A6DE2EC649A600842508 /* RuleBasedCommandParser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RuleBasedCommandParser.swift; sourceTree = "<group>"; };
 		2523A6E02EC649A600842508 /* VoiceControlDependencies.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VoiceControlDependencies.swift; sourceTree = "<group>"; };
 		2523A6E22EC649A600842508 /* AppleSpeechRecognitionService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppleSpeechRecognitionService.swift; sourceTree = "<group>"; };
+		2523A6F42EC663DB00842508 /* ImmersiveSceneRuntime+VoiceControl.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ImmersiveSceneRuntime+VoiceControl.swift"; sourceTree = "<group>"; };
 		2581FCE42EBBC6870059678D /* OperationInputState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OperationInputState.swift; sourceTree = "<group>"; };
 		2581FCE62EBBC6FA0059678D /* MacNavigationState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MacNavigationState.swift; sourceTree = "<group>"; };
 		2581FCE72EBBC6FA0059678D /* MacRootViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MacRootViewModel.swift; sourceTree = "<group>"; };
@@ -1726,6 +1729,7 @@
 		C050AA192EA80E9E00352314 /* Runtime */ = {
 			isa = PBXGroup;
 			children = (
+				2523A6F42EC663DB00842508 /* ImmersiveSceneRuntime+VoiceControl.swift */,
 				2523A6CB2EC6493900842508 /* VoiceControlManager+Executor.swift */,
 				2720B7D52EC6269500903C7D /* VoiceControlManager.swift */,
 				272BD1B42EADE1DE00C83F81 /* HeadPose.swift */,
@@ -2051,6 +2055,7 @@
 				14A17F952EB341D9009D16CF /* OperationInputView.swift in Sources */,
 				14DE514A2EB7407B0027D9A0 /* EmptyTodaySurgeryView.swift in Sources */,
 				14DE513B2EB60E1F0027D9A0 /* ModeFilelListView.swift in Sources */,
+				2523A6F52EC663DB00842508 /* ImmersiveSceneRuntime+VoiceControl.swift in Sources */,
 				27AD7ACD2EB496D900E84809 /* LayerButton.swift in Sources */,
 				14DE51352EB60DEC0027D9A0 /* ModelPreviewCard.swift in Sources */,
 				2523A6D02EC6496400842508 /* VoiceControlMenuButton.swift in Sources */,
@@ -2314,6 +2319,7 @@
 				2523A6C92EC61D8200842508 /* VoiceCommandIntent.swift in Sources */,
 				2523A6CA2EC61D8200842508 /* VoiceCommandParser.swift in Sources */,
 				C050AA3B2EA8197E00352314 /* ImmersiveIDs.swift in Sources */,
+				2523A6F62EC663DB00842508 /* ImmersiveSceneRuntime+VoiceControl.swift in Sources */,
 				144254392EAA9FF000583CC3 /* OperationState.swift in Sources */,
 				14DE51322EB60DB00027D9A0 /* FileAttachmentPlaceholder.swift in Sources */,
 				272BD1B22EADE1BF00C83F81 /* ARSessionController.swift in Sources */,

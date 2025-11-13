@@ -63,9 +63,6 @@ public final class VoiceControlViewModel {
         self.commandExecutor = commandExecutor
     }
 
-    deinit {
-        cancelRetry()
-    }
 
     // MARK: - Public API - State Transitions
 
@@ -226,7 +223,7 @@ public final class VoiceControlViewModel {
         cancelRetry()
 
         // Schedule auto-retry
-        retryTask = Task { [weak self] @MainActor in
+        retryTask = Task { @MainActor [weak self] in
             guard let self else { return }
 
             // Show error message for 1 second
