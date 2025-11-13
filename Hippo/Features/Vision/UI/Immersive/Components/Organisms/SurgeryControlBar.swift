@@ -53,6 +53,7 @@ struct SurgeryControlBar: View {
             .padding(.horizontal, 20)
             .padding(.vertical, 12)
             .glassBackgroundEffect(in: .capsule, displayMode: .always)
+            .frame(width: 420)
             .onChange(of: immersiveViewModel.isEndoscopicActive) { oldValue, newValue in
                 handleEndoscopeToggle()
             }
