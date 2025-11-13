@@ -132,6 +132,9 @@ extension VoiceControlUIState {
 
         case .unsupportedCommand:
             return "지원하지 않는 명령입니다."
+
+        case .noSelectedEntity:
+            return "조작할 3D 모델을 먼저 선택해 주세요."
         }
     }
 }
@@ -148,6 +151,10 @@ extension VoiceControlUIState {
         switch error {
         case .permissionDenied:
             // Permission errors are not retryable
+            return false
+
+        case .noSelectedEntity:
+            // No entity selected - cannot retry
             return false
 
         case .speechRecognitionFailed, .noIntent, .parsingFailed, .invalidParameters, .unsupportedCommand:
