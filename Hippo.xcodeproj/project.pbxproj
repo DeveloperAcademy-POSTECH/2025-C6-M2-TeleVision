@@ -46,8 +46,6 @@
 		1446FBAF2EAE6BBD000BCF61 /* EndoscopeToggle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1446FBAC2EAE6BB8000BCF61 /* EndoscopeToggle.swift */; };
 		1446FBB22EAE6C23000BCF61 /* RecordButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1446FBB02EAE6C20000BCF61 /* RecordButton.swift */; };
 		1446FBB32EAE6C23000BCF61 /* RecordButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1446FBB02EAE6C20000BCF61 /* RecordButton.swift */; };
-		1446FBB52EAE6C66000BCF61 /* MenuToggleButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1446FBB42EAE6C61000BCF61 /* MenuToggleButton.swift */; };
-		1446FBB62EAE6C66000BCF61 /* MenuToggleButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1446FBB42EAE6C61000BCF61 /* MenuToggleButton.swift */; };
 		1446FBBA2EAE770A000BCF61 /* SurgeryControlBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1446FBB82EAE7705000BCF61 /* SurgeryControlBar.swift */; };
 		1446FBBB2EAE770A000BCF61 /* SurgeryControlBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1446FBB82EAE7705000BCF61 /* SurgeryControlBar.swift */; };
 		1446FBBD2EAE77B5000BCF61 /* SurgeryBottomMenu.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1446FBBC2EAE77B0000BCF61 /* SurgeryBottomMenu.swift */; };
@@ -181,6 +179,29 @@
 		2523A6C82EC61D8200842508 /* ExecuteVoiceCommand.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2523A6AA2EC61D8200842508 /* ExecuteVoiceCommand.swift */; };
 		2523A6C92EC61D8200842508 /* VoiceCommandIntent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2523A6A12EC61D8200842508 /* VoiceCommandIntent.swift */; };
 		2523A6CA2EC61D8200842508 /* VoiceCommandParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2523A6A82EC61D8200842508 /* VoiceCommandParser.swift */; };
+		2523A6CC2EC6493900842508 /* VoiceControlManager+Executor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2523A6CB2EC6493900842508 /* VoiceControlManager+Executor.swift */; };
+		2523A6CD2EC6493900842508 /* VoiceControlManager+Executor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2523A6CB2EC6493900842508 /* VoiceControlManager+Executor.swift */; };
+		2523A6CF2EC6496400842508 /* VoiceControlMenuButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2523A6CE2EC6496400842508 /* VoiceControlMenuButton.swift */; };
+		2523A6D02EC6496400842508 /* VoiceControlMenuButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2523A6CE2EC6496400842508 /* VoiceControlMenuButton.swift */; };
+		2523A6D82EC6497B00842508 /* VoiceControlViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2523A6D22EC6497B00842508 /* VoiceControlViewModel.swift */; };
+		2523A6D92EC6497B00842508 /* VoiceControlOverlay.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2523A6D52EC6497B00842508 /* VoiceControlOverlay.swift */; };
+		2523A6DA2EC6497B00842508 /* VoiceControlButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2523A6D42EC6497B00842508 /* VoiceControlButton.swift */; };
+		2523A6DB2EC6497B00842508 /* VoiceControlUIState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2523A6D12EC6497B00842508 /* VoiceControlUIState.swift */; };
+		2523A6E52EC649A600842508 /* RuleBasedCommandParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2523A6DE2EC649A600842508 /* RuleBasedCommandParser.swift */; };
+		2523A6E62EC649A600842508 /* AppleSpeechRecognitionService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2523A6E22EC649A600842508 /* AppleSpeechRecognitionService.swift */; };
+		2523A6E72EC649A600842508 /* VoiceControlDependencies.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2523A6E02EC649A600842508 /* VoiceControlDependencies.swift */; };
+		2523A6E82EC649A600842508 /* LLMCommandParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2523A6DD2EC649A600842508 /* LLMCommandParser.swift */; };
+		2523A6E92EC649A600842508 /* FallbackVoiceCommandParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2523A6DC2EC649A600842508 /* FallbackVoiceCommandParser.swift */; };
+		2523A6EA2EC649A600842508 /* RuleBasedCommandParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2523A6DE2EC649A600842508 /* RuleBasedCommandParser.swift */; };
+		2523A6EB2EC649A600842508 /* AppleSpeechRecognitionService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2523A6E22EC649A600842508 /* AppleSpeechRecognitionService.swift */; };
+		2523A6EC2EC649A600842508 /* VoiceControlDependencies.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2523A6E02EC649A600842508 /* VoiceControlDependencies.swift */; };
+		2523A6ED2EC649A600842508 /* LLMCommandParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2523A6DD2EC649A600842508 /* LLMCommandParser.swift */; };
+		2523A6EE2EC649A600842508 /* FallbackVoiceCommandParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2523A6DC2EC649A600842508 /* FallbackVoiceCommandParser.swift */; };
+		2523A6EF2EC649A600842508 /* RuleBasedCommandParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2523A6DE2EC649A600842508 /* RuleBasedCommandParser.swift */; };
+		2523A6F02EC649A600842508 /* AppleSpeechRecognitionService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2523A6E22EC649A600842508 /* AppleSpeechRecognitionService.swift */; };
+		2523A6F12EC649A600842508 /* VoiceControlDependencies.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2523A6E02EC649A600842508 /* VoiceControlDependencies.swift */; };
+		2523A6F22EC649A600842508 /* LLMCommandParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2523A6DD2EC649A600842508 /* LLMCommandParser.swift */; };
+		2523A6F32EC649A600842508 /* FallbackVoiceCommandParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2523A6DC2EC649A600842508 /* FallbackVoiceCommandParser.swift */; };
 		2581FCE52EBBC6870059678D /* OperationInputState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2581FCE42EBBC6870059678D /* OperationInputState.swift */; };
 		2581FCE92EBBC6FA0059678D /* MacNavigationState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2581FCE62EBBC6FA0059678D /* MacNavigationState.swift */; };
 		2581FCEA2EBBC6FA0059678D /* MacRootViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2581FCE72EBBC6FA0059678D /* MacRootViewModel.swift */; };
@@ -471,7 +492,6 @@
 		1446FBA82EAE6B51000BCF61 /* PatientInfoHeader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PatientInfoHeader.swift; sourceTree = "<group>"; };
 		1446FBAC2EAE6BB8000BCF61 /* EndoscopeToggle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EndoscopeToggle.swift; sourceTree = "<group>"; };
 		1446FBB02EAE6C20000BCF61 /* RecordButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecordButton.swift; sourceTree = "<group>"; };
-		1446FBB42EAE6C61000BCF61 /* MenuToggleButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuToggleButton.swift; sourceTree = "<group>"; };
 		1446FBB82EAE7705000BCF61 /* SurgeryControlBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SurgeryControlBar.swift; sourceTree = "<group>"; };
 		1446FBBC2EAE77B0000BCF61 /* SurgeryBottomMenu.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SurgeryBottomMenu.swift; sourceTree = "<group>"; };
 		1446FBD22EAF262F000BCF61 /* EntityPlacementService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EntityPlacementService.swift; sourceTree = "<group>"; };
@@ -558,6 +578,17 @@
 		2523A6AA2EC61D8200842508 /* ExecuteVoiceCommand.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExecuteVoiceCommand.swift; sourceTree = "<group>"; };
 		2523A6AB2EC61D8200842508 /* ParseVoiceCommand.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ParseVoiceCommand.swift; sourceTree = "<group>"; };
 		2523A6AC2EC61D8200842508 /* StartVoiceListening.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StartVoiceListening.swift; sourceTree = "<group>"; };
+		2523A6CB2EC6493900842508 /* VoiceControlManager+Executor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "VoiceControlManager+Executor.swift"; sourceTree = "<group>"; };
+		2523A6CE2EC6496400842508 /* VoiceControlMenuButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VoiceControlMenuButton.swift; sourceTree = "<group>"; };
+		2523A6D12EC6497B00842508 /* VoiceControlUIState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VoiceControlUIState.swift; sourceTree = "<group>"; };
+		2523A6D22EC6497B00842508 /* VoiceControlViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VoiceControlViewModel.swift; sourceTree = "<group>"; };
+		2523A6D42EC6497B00842508 /* VoiceControlButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VoiceControlButton.swift; sourceTree = "<group>"; };
+		2523A6D52EC6497B00842508 /* VoiceControlOverlay.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VoiceControlOverlay.swift; sourceTree = "<group>"; };
+		2523A6DC2EC649A600842508 /* FallbackVoiceCommandParser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FallbackVoiceCommandParser.swift; sourceTree = "<group>"; };
+		2523A6DD2EC649A600842508 /* LLMCommandParser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LLMCommandParser.swift; sourceTree = "<group>"; };
+		2523A6DE2EC649A600842508 /* RuleBasedCommandParser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RuleBasedCommandParser.swift; sourceTree = "<group>"; };
+		2523A6E02EC649A600842508 /* VoiceControlDependencies.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VoiceControlDependencies.swift; sourceTree = "<group>"; };
+		2523A6E22EC649A600842508 /* AppleSpeechRecognitionService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppleSpeechRecognitionService.swift; sourceTree = "<group>"; };
 		2581FCE42EBBC6870059678D /* OperationInputState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OperationInputState.swift; sourceTree = "<group>"; };
 		2581FCE62EBBC6FA0059678D /* MacNavigationState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MacNavigationState.swift; sourceTree = "<group>"; };
 		2581FCE72EBBC6FA0059678D /* MacRootViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MacRootViewModel.swift; sourceTree = "<group>"; };
@@ -801,7 +832,7 @@
 		1446FBA62EAE6B25000BCF61 /* Molecules */ = {
 			isa = PBXGroup;
 			children = (
-				1446FBB42EAE6C61000BCF61 /* MenuToggleButton.swift */,
+				2523A6CE2EC6496400842508 /* VoiceControlMenuButton.swift */,
 				1446FBB02EAE6C20000BCF61 /* RecordButton.swift */,
 				1446FBAC2EAE6BB8000BCF61 /* EndoscopeToggle.swift */,
 				1446FBA82EAE6B51000BCF61 /* PatientInfoHeader.swift */,
@@ -1236,6 +1267,69 @@
 			path = VoiceControl;
 			sourceTree = "<group>";
 		};
+		2523A6D32EC6497B00842508 /* ViewModels */ = {
+			isa = PBXGroup;
+			children = (
+				2523A6D12EC6497B00842508 /* VoiceControlUIState.swift */,
+				2523A6D22EC6497B00842508 /* VoiceControlViewModel.swift */,
+			);
+			path = ViewModels;
+			sourceTree = "<group>";
+		};
+		2523A6D62EC6497B00842508 /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				2523A6D42EC6497B00842508 /* VoiceControlButton.swift */,
+				2523A6D52EC6497B00842508 /* VoiceControlOverlay.swift */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+		2523A6D72EC6497B00842508 /* VoiceControl */ = {
+			isa = PBXGroup;
+			children = (
+				2523A6D32EC6497B00842508 /* ViewModels */,
+				2523A6D62EC6497B00842508 /* Views */,
+			);
+			path = VoiceControl;
+			sourceTree = "<group>";
+		};
+		2523A6DF2EC649A600842508 /* CommandParsing */ = {
+			isa = PBXGroup;
+			children = (
+				2523A6DC2EC649A600842508 /* FallbackVoiceCommandParser.swift */,
+				2523A6DD2EC649A600842508 /* LLMCommandParser.swift */,
+				2523A6DE2EC649A600842508 /* RuleBasedCommandParser.swift */,
+			);
+			path = CommandParsing;
+			sourceTree = "<group>";
+		};
+		2523A6E12EC649A600842508 /* DI */ = {
+			isa = PBXGroup;
+			children = (
+				2523A6E02EC649A600842508 /* VoiceControlDependencies.swift */,
+			);
+			path = DI;
+			sourceTree = "<group>";
+		};
+		2523A6E32EC649A600842508 /* SpeechRecognition */ = {
+			isa = PBXGroup;
+			children = (
+				2523A6E22EC649A600842508 /* AppleSpeechRecognitionService.swift */,
+			);
+			path = SpeechRecognition;
+			sourceTree = "<group>";
+		};
+		2523A6E42EC649A600842508 /* VoiceControl */ = {
+			isa = PBXGroup;
+			children = (
+				2523A6DF2EC649A600842508 /* CommandParsing */,
+				2523A6E12EC649A600842508 /* DI */,
+				2523A6E32EC649A600842508 /* SpeechRecognition */,
+			);
+			path = VoiceControl;
+			sourceTree = "<group>";
+		};
 		2581FCE82EBBC6FA0059678D /* Root */ = {
 			isa = PBXGroup;
 			children = (
@@ -1445,6 +1539,7 @@
 		C02FFA652E9FFF6F00F16742 /* Data */ = {
 			isa = PBXGroup;
 			children = (
+				2523A6E42EC649A600842508 /* VoiceControl */,
 				25E78B892EB91ACB00D8CAD2 /* Operations */,
 				C0F97AD82EA420E10063E159 /* DI */,
 				C046782E2EA00B3A00D160DA /* Patients */,
@@ -1601,6 +1696,7 @@
 		C050AA172EA80E5700352314 /* UI */ = {
 			isa = PBXGroup;
 			children = (
+				2523A6D72EC6497B00842508 /* VoiceControl */,
 				2581FF772EC20B030059678D /* Settings */,
 				C050AA352EA8175C00352314 /* RootView.swift */,
 				C050AA242EA8150500352314 /* Immersive */,
@@ -1630,6 +1726,7 @@
 		C050AA192EA80E9E00352314 /* Runtime */ = {
 			isa = PBXGroup;
 			children = (
+				2523A6CB2EC6493900842508 /* VoiceControlManager+Executor.swift */,
 				2720B7D52EC6269500903C7D /* VoiceControlManager.swift */,
 				272BD1B42EADE1DE00C83F81 /* HeadPose.swift */,
 				272BD1B12EADE1BA00C83F81 /* ARSessionController.swift */,
@@ -1956,6 +2053,7 @@
 				14DE513B2EB60E1F0027D9A0 /* ModeFilelListView.swift in Sources */,
 				27AD7ACD2EB496D900E84809 /* LayerButton.swift in Sources */,
 				14DE51352EB60DEC0027D9A0 /* ModelPreviewCard.swift in Sources */,
+				2523A6D02EC6496400842508 /* VoiceControlMenuButton.swift in Sources */,
 				2523A69F2EC5A40800842508 /* StereoVideoPlayer.swift in Sources */,
 				1494DE7C2EA73205000CD284 /* DetailHeader.swift in Sources */,
 				C046782F2EA00B3A00D160DA /* PatientRepositoryImpl.swift in Sources */,
@@ -1977,6 +2075,10 @@
 				2523A67F2EC4C3C000842508 /* WebRTCReceiver.swift in Sources */,
 				2523A6802EC4C3C000842508 /* StereoRendererFactory.swift in Sources */,
 				2523A6812EC4C3C000842508 /* StereoVideoRenderer.swift in Sources */,
+				2523A6D82EC6497B00842508 /* VoiceControlViewModel.swift in Sources */,
+				2523A6D92EC6497B00842508 /* VoiceControlOverlay.swift in Sources */,
+				2523A6DA2EC6497B00842508 /* VoiceControlButton.swift in Sources */,
+				2523A6DB2EC6497B00842508 /* VoiceControlUIState.swift in Sources */,
 				2523A6822EC4C3C000842508 /* HEVCVideoDecoderFactory.swift in Sources */,
 				278F28B92EB3874800DF2F73 /* GlowingCapsuleButton.swift in Sources */,
 				14C8FF6D2EABA4250089101B /* AttachmentIDs.swift in Sources */,
@@ -1992,11 +2094,17 @@
 				1494DE802EA7321A000CD284 /* AssetSection.swift in Sources */,
 				C04678182EA00B1F00D160DA /* ListPatients.swift in Sources */,
 				C04678192EA00B1F00D160DA /* PatientRepository.swift in Sources */,
+				2523A6CC2EC6493900842508 /* VoiceControlManager+Executor.swift in Sources */,
 				146F10302EA3AF1000DDDC35 /* HomeView.swift in Sources */,
 				1446FBDE2EAF2962000BCF61 /* HippoAlertView.swift in Sources */,
 				C02FFA992E9FFF6F00F16742 /* HippoVisionApp.swift in Sources */,
 				1446FBBD2EAE77B5000BCF61 /* SurgeryBottomMenu.swift in Sources */,
 				1446FBB22EAE6C23000BCF61 /* RecordButton.swift in Sources */,
+				2523A6EF2EC649A600842508 /* RuleBasedCommandParser.swift in Sources */,
+				2523A6F02EC649A600842508 /* AppleSpeechRecognitionService.swift in Sources */,
+				2523A6F12EC649A600842508 /* VoiceControlDependencies.swift in Sources */,
+				2523A6F22EC649A600842508 /* LLMCommandParser.swift in Sources */,
+				2523A6F32EC649A600842508 /* FallbackVoiceCommandParser.swift in Sources */,
 				2581FF752EC20A970059678D /* ConnectionSettings.swift in Sources */,
 				1446FBE42EAF5801000BCF61 /* PatientInputView.swift in Sources */,
 				1446FB9E2EAE69AF000BCF61 /* RecordingIndicator.swift in Sources */,
@@ -2045,7 +2153,6 @@
 				14DE51312EB60DB00027D9A0 /* FileAttachmentPlaceholder.swift in Sources */,
 				C0F97AD22EA41D4B0063E159 /* SDPatient.swift in Sources */,
 				C0F97B232EA435490063E159 /* ValidationError.swift in Sources */,
-				1446FBB62EAE6C66000BCF61 /* MenuToggleButton.swift in Sources */,
 				25E78B742EB9164200D8CAD2 /* OperationRepository.swift in Sources */,
 				14A17F912EB314B3009D16CF /* EmptyOperationView.swift in Sources */,
 				14A17F8F2EB31482009D16CF /* OperationList.swift in Sources */,
@@ -2108,7 +2215,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				1446FBAA2EAE6B55000BCF61 /* PatientInfoHeader.swift in Sources */,
-				1446FBB52EAE6C66000BCF61 /* MenuToggleButton.swift in Sources */,
 				25E78B962EB9225600D8CAD2 /* GetOperation.swift in Sources */,
 				25E78B972EB9225600D8CAD2 /* GetTodayOperations.swift in Sources */,
 				25E78B982EB9225600D8CAD2 /* CreateOperation.swift in Sources */,
@@ -2118,6 +2224,7 @@
 				25E78B9D2EB9225600D8CAD2 /* UpdateOperationStatus.swift in Sources */,
 				25E78B9E2EB9225600D8CAD2 /* DeleteOperation.swift in Sources */,
 				C04678042EA00B1F00D160DA /* DeletePatient.swift in Sources */,
+				2523A6CD2EC6493900842508 /* VoiceControlManager+Executor.swift in Sources */,
 				1446FBBE2EAE77B5000BCF61 /* SurgeryBottomMenu.swift in Sources */,
 				C0F97AE02EA420EB0063E159 /* DomainDependencies.swift in Sources */,
 				C0F97B202EA435490063E159 /* ValidationError.swift in Sources */,
@@ -2151,6 +2258,11 @@
 				25E78B842EB9166900D8CAD2 /* OperationWithPatient.swift in Sources */,
 				25E78B802EB9164E00D8CAD2 /* AttachAssetCommand.swift in Sources */,
 				2581FF442EBE32200059678D /* SignalingClient.swift in Sources */,
+				2523A6EA2EC649A600842508 /* RuleBasedCommandParser.swift in Sources */,
+				2523A6EB2EC649A600842508 /* AppleSpeechRecognitionService.swift in Sources */,
+				2523A6EC2EC649A600842508 /* VoiceControlDependencies.swift in Sources */,
+				2523A6ED2EC649A600842508 /* LLMCommandParser.swift in Sources */,
+				2523A6EE2EC649A600842508 /* FallbackVoiceCommandParser.swift in Sources */,
 				1446FBBB2EAE770A000BCF61 /* SurgeryControlBar.swift in Sources */,
 				14A17F982EB34F46009D16CF /* OperationInputHeader.swift in Sources */,
 				27AD7AC42EB4948A00E84809 /* LayerEyeButton.swift in Sources */,
@@ -2160,6 +2272,7 @@
 				C0F97AD92EA420E10063E159 /* DataDependencies.swift in Sources */,
 				27AD7AE42EB5BEA400E84809 /* OpacityControlPanelHeader.swift in Sources */,
 				C0F97AC02EA41D4B0063E159 /* SwiftDataMappers.swift in Sources */,
+				2523A6CF2EC6496400842508 /* VoiceControlMenuButton.swift in Sources */,
 				1494DE7E2EA73205000CD284 /* DetailHeader.swift in Sources */,
 				1446FBB32EAE6C23000BCF61 /* RecordButton.swift in Sources */,
 				C0F97AC12EA41D4B0063E159 /* PatientLocalDataSourceSwiftData.swift in Sources */,
@@ -2241,6 +2354,11 @@
 				2581FF732EC20A970059678D /* ConnectionSettings.swift in Sources */,
 				C0F97ADE2EA420EB0063E159 /* DomainDependencies.swift in Sources */,
 				2581FF712EC1EEBA0059678D /* BonjourRelayService.swift in Sources */,
+				2523A6E52EC649A600842508 /* RuleBasedCommandParser.swift in Sources */,
+				2523A6E62EC649A600842508 /* AppleSpeechRecognitionService.swift in Sources */,
+				2523A6E72EC649A600842508 /* VoiceControlDependencies.swift in Sources */,
+				2523A6E82EC649A600842508 /* LLMCommandParser.swift in Sources */,
+				2523A6E92EC649A600842508 /* FallbackVoiceCommandParser.swift in Sources */,
 				2581FF522EBE5E8F0059678D /* ModeSectionView.swift in Sources */,
 				2581FF532EBE5E8F0059678D /* CameraPickerRow.swift in Sources */,
 				2581FF542EBE5E8F0059678D /* CameraSectionView.swift in Sources */,

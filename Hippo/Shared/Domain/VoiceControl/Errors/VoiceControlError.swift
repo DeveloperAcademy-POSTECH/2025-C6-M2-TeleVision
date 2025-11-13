@@ -24,6 +24,9 @@ public enum VoiceControlError: Error, Equatable, Sendable {
 
     /// Permission denied (microphone access)
     case permissionDenied
+
+    /// No entity is currently selected for manipulation
+    case noSelectedEntity
 }
 
 // MARK: - LocalizedError
@@ -43,6 +46,8 @@ extension VoiceControlError: LocalizedError {
             return "지원하지 않는 명령: \(command)"
         case .permissionDenied:
             return "마이크 접근 권한이 필요합니다"
+        case .noSelectedEntity:
+            return "조작할 수 있는 3D 모델이 선택되지 않았습니다"
         }
     }
 }
