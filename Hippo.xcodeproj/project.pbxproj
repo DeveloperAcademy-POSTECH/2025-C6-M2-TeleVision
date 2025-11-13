@@ -264,6 +264,8 @@
 		25E78BB22EB92A2E00D8CAD2 /* UpdateOperationCommand.swift in Sources */ = {isa = PBXBuildFile; fileRef = 25E78BB12EB92A2E00D8CAD2 /* UpdateOperationCommand.swift */; };
 		25E78BB32EB92A2E00D8CAD2 /* UpdateOperationCommand.swift in Sources */ = {isa = PBXBuildFile; fileRef = 25E78BB12EB92A2E00D8CAD2 /* UpdateOperationCommand.swift */; };
 		25E78BB42EB92A2E00D8CAD2 /* UpdateOperationCommand.swift in Sources */ = {isa = PBXBuildFile; fileRef = 25E78BB12EB92A2E00D8CAD2 /* UpdateOperationCommand.swift */; };
+		2720B7D62EC6269B00903C7D /* VoiceControlManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2720B7D52EC6269500903C7D /* VoiceControlManager.swift */; };
+		2720B7D72EC6269B00903C7D /* VoiceControlManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2720B7D52EC6269500903C7D /* VoiceControlManager.swift */; };
 		272BD1B22EADE1BF00C83F81 /* ARSessionController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 272BD1B12EADE1BA00C83F81 /* ARSessionController.swift */; };
 		272BD1B32EADE1BF00C83F81 /* ARSessionController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 272BD1B12EADE1BA00C83F81 /* ARSessionController.swift */; };
 		272BD1B52EADE1E200C83F81 /* HeadPose.swift in Sources */ = {isa = PBXBuildFile; fileRef = 272BD1B42EADE1DE00C83F81 /* HeadPose.swift */; };
@@ -570,6 +572,7 @@
 		25E78B942EB9225600D8CAD2 /* UpdateOperationStatus.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UpdateOperationStatus.swift; sourceTree = "<group>"; };
 		25E78B952EB9225600D8CAD2 /* UpsertOperation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UpsertOperation.swift; sourceTree = "<group>"; };
 		25E78BB12EB92A2E00D8CAD2 /* UpdateOperationCommand.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UpdateOperationCommand.swift; sourceTree = "<group>"; };
+		2720B7D52EC6269500903C7D /* VoiceControlManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VoiceControlManager.swift; sourceTree = "<group>"; };
 		272BD1B12EADE1BA00C83F81 /* ARSessionController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ARSessionController.swift; sourceTree = "<group>"; };
 		272BD1B42EADE1DE00C83F81 /* HeadPose.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HeadPose.swift; sourceTree = "<group>"; };
 		2786232E2EB78F2900F97BE3 /* AssetListScrollView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AssetListScrollView.swift; sourceTree = "<group>"; };
@@ -1526,6 +1529,7 @@
 		C050AA192EA80E9E00352314 /* Runtime */ = {
 			isa = PBXGroup;
 			children = (
+				2720B7D52EC6269500903C7D /* VoiceControlManager.swift */,
 				272BD1B42EADE1DE00C83F81 /* HeadPose.swift */,
 				272BD1B12EADE1BA00C83F81 /* ARSessionController.swift */,
 				C050AA4D2EA8201A00352314 /* ImmersiveSceneRuntime.swift */,
@@ -1950,6 +1954,7 @@
 				1446FBF02EAFAD5C000BCF61 /* PatientInputHeader.swift in Sources */,
 				1494DEA02EA7510A000CD284 /* DetailSubPart.swift in Sources */,
 				C0F97AB02EA401160063E159 /* OperationDisplayModel.swift in Sources */,
+				2720B7D72EC6269B00903C7D /* VoiceControlManager.swift in Sources */,
 				1446FBA32EAE6A27000BCF61 /* GlowingCircleButton.swift in Sources */,
 				14A17F8D2EB3146D009D16CF /* OperationCard.swift in Sources */,
 				144254382EAA9FF000583CC3 /* OperationState.swift in Sources */,
@@ -2074,6 +2079,7 @@
 				2581FF002EBE18A70059678D /* CaptureSource.swift in Sources */,
 				2581FF012EBE18A70059678D /* SyncedPair.swift in Sources */,
 				2581FF022EBE18A70059678D /* ReconnectionPolicy.swift in Sources */,
+				2720B7D62EC6269B00903C7D /* VoiceControlManager.swift in Sources */,
 				2581FF032EBE18A70059678D /* VideoError.swift in Sources */,
 				C050AA3B2EA8197E00352314 /* ImmersiveIDs.swift in Sources */,
 				144254392EAA9FF000583CC3 /* OperationState.swift in Sources */,
@@ -2250,7 +2256,7 @@
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = NB42482NDH;
+				DEVELOPMENT_TEAM = H2WD8C55D7;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = "$(SRCROOT)/Hippo/Applications/VisionApp/Info.plist";
@@ -2283,7 +2289,7 @@
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = NB42482NDH;
+				DEVELOPMENT_TEAM = H2WD8C55D7;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = "$(SRCROOT)/Hippo/Applications/VisionApp/Info.plist";
