@@ -44,7 +44,6 @@
 		1446FBAB2EAE6B55000BCF61 /* PatientInfoHeader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1446FBA82EAE6B51000BCF61 /* PatientInfoHeader.swift */; };
 		1446FBAE2EAE6BBD000BCF61 /* EndoscopeToggle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1446FBAC2EAE6BB8000BCF61 /* EndoscopeToggle.swift */; };
 		1446FBAF2EAE6BBD000BCF61 /* EndoscopeToggle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1446FBAC2EAE6BB8000BCF61 /* EndoscopeToggle.swift */; };
-		1446FBB12EAE6C23000BCF61 /* RecordButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1446FBB02EAE6C20000BCF61 /* RecordButton.swift */; };
 		1446FBB22EAE6C23000BCF61 /* RecordButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1446FBB02EAE6C20000BCF61 /* RecordButton.swift */; };
 		1446FBB32EAE6C23000BCF61 /* RecordButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1446FBB02EAE6C20000BCF61 /* RecordButton.swift */; };
 		1446FBB52EAE6C66000BCF61 /* MenuToggleButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1446FBB42EAE6C61000BCF61 /* MenuToggleButton.swift */; };
@@ -154,6 +153,7 @@
 		2523A6802EC4C3C000842508 /* StereoRendererFactory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2523A6732EC4C3C000842508 /* StereoRendererFactory.swift */; };
 		2523A6812EC4C3C000842508 /* StereoVideoRenderer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2523A6752EC4C3C000842508 /* StereoVideoRenderer.swift */; };
 		2523A6822EC4C3C000842508 /* HEVCVideoDecoderFactory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2523A66C2EC4C3C000842508 /* HEVCVideoDecoderFactory.swift */; };
+		2523A69F2EC5A40800842508 /* StereoVideoPlayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2523A69E2EC5A40800842508 /* StereoVideoPlayer.swift */; };
 		2581FCE52EBBC6870059678D /* OperationInputState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2581FCE42EBBC6870059678D /* OperationInputState.swift */; };
 		2581FCE92EBBC6FA0059678D /* MacNavigationState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2581FCE62EBBC6FA0059678D /* MacNavigationState.swift */; };
 		2581FCEA2EBBC6FA0059678D /* MacRootViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2581FCE72EBBC6FA0059678D /* MacRootViewModel.swift */; };
@@ -519,6 +519,7 @@
 		2523A6732EC4C3C000842508 /* StereoRendererFactory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StereoRendererFactory.swift; sourceTree = "<group>"; };
 		2523A6742EC4C3C000842508 /* StereoRendererProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StereoRendererProtocol.swift; sourceTree = "<group>"; };
 		2523A6752EC4C3C000842508 /* StereoVideoRenderer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StereoVideoRenderer.swift; sourceTree = "<group>"; };
+		2523A69E2EC5A40800842508 /* StereoVideoPlayer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StereoVideoPlayer.swift; sourceTree = "<group>"; };
 		2581FCE42EBBC6870059678D /* OperationInputState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OperationInputState.swift; sourceTree = "<group>"; };
 		2581FCE62EBBC6FA0059678D /* MacNavigationState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MacNavigationState.swift; sourceTree = "<group>"; };
 		2581FCE72EBBC6FA0059678D /* MacRootViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MacRootViewModel.swift; sourceTree = "<group>"; };
@@ -1105,6 +1106,7 @@
 		2523A6762EC4C3C000842508 /* Renderer */ = {
 			isa = PBXGroup;
 			children = (
+				2523A69E2EC5A40800842508 /* StereoVideoPlayer.swift */,
 				2523A6722EC4C3C000842508 /* CompositorStereoRenderer.swift */,
 				2523A6732EC4C3C000842508 /* StereoRendererFactory.swift */,
 				2523A6742EC4C3C000842508 /* StereoRendererProtocol.swift */,
@@ -1849,6 +1851,7 @@
 				14DE513B2EB60E1F0027D9A0 /* ModeFilelListView.swift in Sources */,
 				27AD7ACD2EB496D900E84809 /* LayerButton.swift in Sources */,
 				14DE51352EB60DEC0027D9A0 /* ModelPreviewCard.swift in Sources */,
+				2523A69F2EC5A40800842508 /* StereoVideoPlayer.swift in Sources */,
 				1494DE7C2EA73205000CD284 /* DetailHeader.swift in Sources */,
 				C046782F2EA00B3A00D160DA /* PatientRepositoryImpl.swift in Sources */,
 				C04678302EA00B3A00D160DA /* PatientRemoteDataSource.swift in Sources */,
@@ -2139,7 +2142,6 @@
 				2581FCF42EBCB2B80059678D /* TodaysSurgeryViewModel.swift in Sources */,
 				C0F97B2E2EA439290063E159 /* UpdatePatientCommand.swift in Sources */,
 				C0F97AAA2EA401160063E159 /* PatientDisplayModel.swift in Sources */,
-				1446FBB12EAE6C23000BCF61 /* RecordButton.swift in Sources */,
 				C0F97B2A2EA439080063E159 /* UpdatePatient.swift in Sources */,
 				2581FCED2EBBC76D0059678D /* PatientDetailViewModel.swift in Sources */,
 				2581FCEE2EBBC76D0059678D /* PatientInputState.swift in Sources */,
