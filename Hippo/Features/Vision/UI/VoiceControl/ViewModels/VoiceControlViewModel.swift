@@ -63,6 +63,10 @@ public final class VoiceControlViewModel {
         self.commandExecutor = commandExecutor
     }
 
+    deinit {
+        cancelRetry()
+    }
+
     // MARK: - Public API - State Transitions
 
     /// Called when user starts hovering over the voice control button
