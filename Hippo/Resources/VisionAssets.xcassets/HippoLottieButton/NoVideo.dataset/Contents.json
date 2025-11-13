@@ -1,0 +1,12 @@
+{
+  "data" : [
+    {
+      "filename" : "NoVideo.json",
+      "idiom" : "universal"
+    }
+  ],
+  "info" : {
+    "author" : "xcode",
+    "version" : 1
+  }
+}
