@@ -133,16 +133,16 @@ struct VideoPlayerStereoView: View {
     var body: some View {
         #if os(visionOS)
         RealityView { content in
-            print("🎬 [VIDEOPLAY DEBUG] VideoPlayerStereoView RealityView creating...")
+            print("🎬 VideoPlayerStereoView: Creating RealityView")
             print("   Renderer status: \(receiver.stereoRenderer.status.rawValue)")
             print("   Ready for data: \(receiver.stereoRenderer.isReadyForMoreMediaData)")
 
-            // Create VideoPlayerComponent immediately
-            // Note: Renderer readiness is managed by WebRTCReceiver.setupStereoRenderer()
+            // Create VideoPlayerComponent with StereoVideoPlayer's renderer
+            // Note: receiver.stereoRenderer is a computed property that returns videoPlayer.videoRenderer
             let videoPlayerComponent = VideoPlayerComponent(videoRenderer: receiver.stereoRenderer)
 
-            // Create entity with VideoPlayerComponent ONLY (no mesh, no materials)
-            // VideoPlayerComponent manages its own rendering
+            // Create entity with VideoPlayerComponent ONLY (no mesh, no materials needed)
+            // VideoPlayerComponent automatically creates and manages its own stereo rendering plane
             let entity = Entity()
             entity.components.set(videoPlayerComponent)
 
