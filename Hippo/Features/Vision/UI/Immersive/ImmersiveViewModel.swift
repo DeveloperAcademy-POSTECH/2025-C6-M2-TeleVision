@@ -19,6 +19,7 @@ final class ImmersiveViewModel {
     // MARK: -- 윈도우 라이프사이클 추적 변수
     public var isSurgeryBottomMenuOpen: Bool = true
     public var isOpacityControlPanelOpen: Bool = false
+    public var isEndoscopeStreamWindowOpen: Bool = false
     
     
     // MARK: -- 이벤트 처리 : UI 이벤트 -> WindowController 에 전달
@@ -28,7 +29,20 @@ final class ImmersiveViewModel {
     }
     
     func recordPassThroughVideo() {
-        
+
+    }
+
+    func toggleEndoscope() {
+        isEndoscopicActive.toggle()
+    }
+
+    func handleEndoscopeStreamWindowAppear() {
+        isEndoscopeStreamWindowOpen = true
+    }
+
+    func handleEndoscopeStreamWindowDisappear() {
+        isEndoscopeStreamWindowOpen = false
+        isEndoscopicActive = false
     }
     
     func resetSetting() {

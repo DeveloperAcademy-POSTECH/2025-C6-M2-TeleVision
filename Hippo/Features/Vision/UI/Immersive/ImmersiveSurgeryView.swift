@@ -47,10 +47,6 @@ struct ImmersiveSurgeryView: View {
                 }
             }
             
-            // 3D 애셋 생성 (AssetListView)
-            Attachment(id: AttachmentIDs.assetListView) {
-                AssetListView()
-            }
         }
         .task {
             await dataViewModel.load(patientID: patientID, operationID: operationID)

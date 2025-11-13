@@ -133,7 +133,24 @@ struct HippoVisionApp: App {
         }
         .windowStyle(.plain)
         .windowResizability(.contentSize)
-        
+
+        // EndoscopeStreamWindow (Legacy RealityView - Window-based)
+        WindowGroup(id: WindowIDs.endoscopeStream) {
+            EndoscopeStreamWindow()
+                .onAppear { immersiveViewModel.handleEndoscopeStreamWindowAppear() }
+                .onDisappear { immersiveViewModel.handleEndoscopeStreamWindowDisappear() }
+        }
+        .windowStyle(.plain)
+        .defaultSize(width: 600, height: 338)
+
+        // EndoscopeStereo ImmersiveSpace (CompositorServices - True Stereo)
+        if #available(visionOS 2.0, *) {
+            ImmersiveSpace(id: ImmersiveIDs.endoscopeStereo) {
+                EndoscopeImmersiveSpace()
+            }
+            .immersionStyle(selection: .constant(.mixed), in: .mixed)
+        }
+
     }
 }
 
