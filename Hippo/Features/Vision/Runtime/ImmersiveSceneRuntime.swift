@@ -15,9 +15,8 @@ final class ImmersiveSceneRuntime {
     public init() {}
     
     // MARK: - State
-    
+
     private var topAnchor: AnchorEntity?
-    
     
     //MARK: - 3D model 들이 추가될 루트 엔티티
     var sceneRoot: Entity?
@@ -36,9 +35,9 @@ final class ImmersiveSceneRuntime {
         if let topButton = attachments.entity(for: AttachmentIDs.topToggleButton) {
             anchor1.addChild(topButton)
         }
-        
+
         content.add(anchor1)
-        
+
         topAnchor = anchor1
         
         // 3D 모델들의 월드 앵커의 부모
@@ -46,7 +45,7 @@ final class ImmersiveSceneRuntime {
         rootEntity.name = "SceneRoot"
         content.add(rootEntity)
         self.sceneRoot = rootEntity
-        
+
         // 마지막 조작 Entity 정보 저장
         eventSubscription = content.subscribe(to: ManipulationEvents.WillBegin.self)  { event in
             if let previousSelection = self.selectedEntity {
@@ -56,7 +55,7 @@ final class ImmersiveSceneRuntime {
             self.selectedEntity = event.entity
         }
     }
-    
+
     func placeEntity(url: URL) async {
         guard let sceneRoot = self.sceneRoot else {
             logger.error("Scene root is not yet set up.")

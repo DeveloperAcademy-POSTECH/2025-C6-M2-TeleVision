@@ -1,0 +1,168 @@
+/*
+See the LICENSE.txt file for this sample's licensing information.
+
+Abstract:
+A model that describes typical stereo metadata.
+*/
+
+import CoreVideo
+import Foundation
+import os.log
+
+/// A model that describes typical stereo metadata.
+struct StereoMetadata: Sendable {
+    /// Describes potential frame-packing approaches.
+    enum FramePacking: Sendable, Equatable {
+        /// Indicates that frames are packed side-by-side.
+        case sideBySide
+
+        /// Indicates that frames are packed, one over another.
+        case overUnder
+
+        // Explicit nonisolated Equatable conformance
+        nonisolated static func == (lhs: FramePacking, rhs: FramePacking) -> Bool {
+            switch (lhs, rhs) {
+            case (.sideBySide, .sideBySide), (.overUnder, .overUnder):
+                return true
+            default:
+                return false
+            }
+        }
+    }
+
+    /// Describes the stereo input mode for proper offset calculation.
+    enum StereoInputMode: Sendable, Equatable {
+        /// Single SBS (side-by-side) source where left/right eyes are packed in one buffer.
+        /// Example: 3840×1080 containing two 1920×1080 eyes side-by-side.
+        case singleSourceSBS
+
+        /// Already split into separate per-eye buffers.
+        /// Example: Two separate 1920×1080 buffers, one for each eye.
+        case splitEyes
+
+        // Explicit nonisolated Equatable conformance
+        nonisolated static func == (lhs: StereoInputMode, rhs: StereoInputMode) -> Bool {
+            switch (lhs, rhs) {
+            case (.singleSourceSBS, .singleSourceSBS), (.splitEyes, .splitEyes):
+                return true
+            default:
+                return false
+            }
+        }
+    }
+
+    /// The current frame packing.
+    let framePacking: FramePacking
+
+    // MARK: Internal behavior
+
+    /// Initializes with the specified frame packing applied.
+    /// - Parameter framePacking: The prevailing frame packing.
+    init(framePacking: FramePacking) {
+        self.framePacking = framePacking
+    }
+
+    /// Describes horizontal & vertical components of aperture offset.
+    typealias ApertureOffset = (horizontal: CGFloat, vertical: CGFloat)
+
+    /// Returns the aperture offset for a given source size, layer ID, and input mode (resolution-independent).
+    /// - Parameters:
+    ///   - layerID: The layer ID corresponding to a given frame (0 = left, 1 = right).
+    ///   - sourceSize: The ORIGINAL source frame size (e.g., 3840×1080 for full SBS, or 1920×1080 for split).
+    ///   - mode: The stereo input mode (singleSourceSBS or splitEyes).
+    /// - Returns: The calculated aperture offset relative to the source center.
+    func cleanApertureOffset(for layerID: Int, sourceSize: CGSize, mode: StereoInputMode) -> ApertureOffset {
+        // Removed diagnostic logging for performance - called every frame for each eye
+
+        switch mode {
+        case .singleSourceSBS:
+            // For SBS: each eye should see exactly half of the source width.
+            // Clean aperture offset should be ±(sourceWidth / 4).
+            //
+            // Example: 3840×1080 SBS source
+            // - Source center: (1920, 540)
+            // - Left eye center: (960, 540) → offset = 960 - 1920 = -960 = -(3840/4)
+            // - Right eye center: (2880, 540) → offset = 2880 - 1920 = +960 = +(3840/4)
+            //
+            // Example: 1920×1080 SBS source
+            // - Source center: (960, 540)
+            // - Left eye center: (480, 540) → offset = 480 - 960 = -480 = -(1920/4)
+            // - Right eye center: (1440, 540) → offset = 1440 - 960 = +480 = +(1920/4)
+            //
+            // Example: 852×240 SBS source
+            // - Source center: (426, 120)
+            // - Left eye center: (213, 120) → offset = 213 - 426 = -213 = -(852/4)
+            // - Right eye center: (639, 120) → offset = 639 - 426 = +213 = +(852/4)
+            if isSideBySide {
+                let offset = sourceSize.width / 4.0
+                let multiplier = CGFloat(layerID) * 2.0 - 1.0
+                return (
+                    horizontal: offset * multiplier,
+                    vertical: 0.0
+                )
+            } else {
+                // Over-under packing
+                let offset = sourceSize.height / 4.0
+                let multiplier = CGFloat(layerID) * 2.0 - 1.0
+                return (
+                    horizontal: 0.0,
+                    vertical: offset * multiplier
+                )
+            }
+
+        case .splitEyes:
+            // For already-split buffers: each buffer represents the full eye region.
+            // No offset needed because there's no cropping to do.
+            return (horizontal: 0.0, vertical: 0.0)
+        }
+    }
+
+    /// Legacy method for backwards compatibility. Prefer cleanApertureOffset(for:sourceSize:mode:).
+    /// - Parameters:
+    ///   - bufferSize: The eye buffer size (half of source for SBS).
+    ///   - layerID: The layer ID corresponding to a given frame.
+    /// - Returns: The calculated aperture offset.
+    @available(*, deprecated, message: "Use cleanApertureOffset(for:sourceSize:mode:) instead")
+    func apertureOffset(for bufferSize: CVImageSize, layerID: Int) -> ApertureOffset {
+        // Convert to source size (assuming single SBS mode)
+        let sourceSize = CGSize(
+            width: CGFloat(bufferSize.width) * horizontalScale,
+            height: CGFloat(bufferSize.height) * verticalScale
+        )
+        return cleanApertureOffset(for: layerID, sourceSize: sourceSize, mode: .singleSourceSBS)
+    }
+
+    /// Returns the horizontal scale for a given frame packing.
+    var horizontalScale: CGFloat {
+        switch framePacking {
+        case .sideBySide:
+            return 2
+        case .overUnder:
+            return 1
+        }
+    }
+
+    /// Returns the vertical scale for a given frame packing.
+    var verticalScale: CGFloat {
+        switch framePacking {
+        case .sideBySide:
+            return 1
+        case .overUnder:
+            return 2
+        }
+    }
+
+    // MARK: Private behavior
+
+    /// Returns `true` if the frame packing is side-by-side; `false` otherwise.
+    private var isSideBySide: Bool {
+        return framePacking == .sideBySide
+    }
+}
+
+// MARK: - StereoMetadata (Default)
+
+extension StereoMetadata {
+    /// By default, the stereo metadata assumes side-by-side frame packing.
+    static let `default` = StereoMetadata(framePacking: .sideBySide)
+}
