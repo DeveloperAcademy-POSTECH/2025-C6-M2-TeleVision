@@ -24,14 +24,14 @@ final class ConnectionSettings: ObservableObject {
     @Published var serverIP: String {
         didSet {
             UserDefaults.standard.set(serverIP, forKey: "ServerIP")
-            logger.info("🔧 serverIP updateself.d: \(self.serverIP)")
+            logger.info("🔧 serverIP update: \(self.serverIP)")
         }
     }
 
     @Published var serverPort: String {
         didSet {
             UserDefaults.standard.set(serverPort, forKey: "ServerPort")
-            logger.info("🔧 serverPort uself.pdateself.self.d: \(self.serverPort)")
+            logger.info("🔧 serverPort: \(self.serverPort)")
         }
     }
 
