@@ -9,36 +9,6 @@
 //  - Show transcription results (for debugging/feedback)
 //  - Provide visual feedback during different states
 //
-//  Usage Example:
-//  ```swift
-//  struct ImmersiveView: View {
-//      @State private var voiceControlManager: VoiceControlManager
-//      @State private var voiceControlVM: VoiceControlViewModel
-//
-//      init(manager: VoiceControlManager) {
-//          _voiceControlManager = State(initialValue: manager)
-//          _voiceControlVM = State(initialValue: VoiceControlViewModel(
-//              commandExecutor: manager
-//          ))
-//      }
-//
-//      var body: some View {
-//          ZStack {
-//              // Main 3D content
-//              RealityView { ... }
-//
-//              // Voice control button (triggers voice control)
-//              VoiceControlMenuButton(manager: voiceControlManager) {
-//                  // Toggle menu action
-//              }
-//
-//              // Voice control feedback overlay (shows state messages)
-//              VoiceControlOverlay(viewModel: voiceControlVM)
-//          }
-//      }
-//  }
-//  ```
-//
 //  Note: Button and Overlay should share the same VoiceControlViewModel instance
 //        for synchronized state updates.
 //

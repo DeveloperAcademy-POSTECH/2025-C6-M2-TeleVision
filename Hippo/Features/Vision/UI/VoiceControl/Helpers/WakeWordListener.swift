@@ -1,43 +1,14 @@
-//
-//  WakeWordListener.swift
-//  Hippo
-//
-//  Presentation helper for continuous wake word detection
-//
-//  Responsibilities:
-//  - Continuously listen for wake words in Standby mode
-//  - Notify when wake word is detected
-//  - Manage listening lifecycle (start/stop)
-//
-//  This is a presentation-layer helper, not a domain service.
-//  Wake word detection is specific to this app's UX flow.
-//
-
 import Foundation
 import Dependencies
 
-/// Wake Word Listener
-///
-/// A lightweight helper that continuously listens for wake words
-/// (e.g., "Hippo", "히포") and notifies when detected.
-///
-/// **Usage:**
-/// ```swift
-/// let listener = WakeWordListener()
-/// listener.start(wakeWords: ["hippo", "히포"]) {
-///     print("Wake word detected!")
-/// }
-/// // Later...
-/// listener.stop()
-/// ```
-///
-/// **Design rationale:**
-/// - Lives in Presentation layer (not Domain) because wake word detection
-///   is specific to this app's UX, not a reusable domain concept
-/// - Uses SpeechRecognitionService (Domain) for actual STT
-/// - Implements the continuous listening loop and wake word matching
 @MainActor
 final class WakeWordListener {
+
+    // MARK: - Constants
+
+    private enum Constants {
+        static let errorRetryDelay: UInt64 = 500_000_000  // 0.5 seconds
+    }
 
     // MARK: - Dependencies
 
@@ -47,13 +18,9 @@ final class WakeWordListener {
 
     private var listeningTask: Task<Void, Never>?
 
-    // MARK: - Public API
+    // MARK: - Public Methods
 
     /// Start listening for wake words
-    ///
-    /// This method continuously listens for the specified wake words.
-    /// When detected, it calls the `onDetected` callback and stops listening.
-    ///
     /// - Parameters:
     ///   - wakeWords: Array of wake words to detect (case-insensitive)
     ///   - onDetected: Callback called when wake word is detected
@@ -82,9 +49,7 @@ final class WakeWordListener {
 
                 } catch {
                     print("⚠️ [WakeWordListener] Error: \(error)")
-                    // Continue listening even on error, with small delay
-                    // to avoid tight loop on repeated errors
-                    try? await Task.sleep(nanoseconds: 500_000_000)  // 0.5 seconds
+                    try? await Task.sleep(nanoseconds: Constants.errorRetryDelay)
                 }
             }
 
@@ -92,9 +57,6 @@ final class WakeWordListener {
         }
     }
 
-    /// Stop listening for wake words
-    ///
-    /// This cancels the ongoing wake word detection task.
     func stop() {
         listeningTask?.cancel()
         listeningTask = nil

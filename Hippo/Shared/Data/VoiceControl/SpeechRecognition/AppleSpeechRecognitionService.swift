@@ -27,6 +27,14 @@ import AVFoundation
 @MainActor
 public final class AppleSpeechRecognitionService: SpeechRecognitionService {
 
+    // MARK: - Constants
+
+    private enum Constants {
+        static let audioBufferSize: AVAudioFrameCount = 1024
+        static let recognitionTimeoutNanoseconds: UInt64 = 7_000_000_000  // 7 seconds
+        static let errorRetryDelayNanoseconds: UInt64 = 500_000_000  // 0.5 seconds
+    }
+
     // MARK: - Properties
 
     private let speechRecognizer: SFSpeechRecognizer
@@ -145,7 +153,7 @@ private extension AppleSpeechRecognitionService {
 
         inputNode.installTap(
             onBus: 0,
-            bufferSize: 1024,
+            bufferSize: Constants.audioBufferSize,
             format: recordingFormat
         ) { buffer, _ in
             request.append(buffer)
@@ -251,7 +259,7 @@ private extension AppleSpeechRecognitionService {
             guard let self = self else { return }
 
             // Wait 7 seconds (increased from 5 to allow full command phrases)
-            try? await Task.sleep(nanoseconds: 7_000_000_000)
+            try? await Task.sleep(nanoseconds: Constants.recognitionTimeoutNanoseconds)
 
             guard !state.hasResumed else { return }
             state.hasResumed = true

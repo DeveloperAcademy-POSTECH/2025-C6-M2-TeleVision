@@ -18,13 +18,23 @@ import Foundation
 /// All UI-related logic (error messages, feedback) is encapsulated here.
 public struct VoiceControlUIState: Equatable {
 
-    // MARK: - Properties
+    // MARK: - Properties - State
 
     /// Core domain state
     public var state: VoiceControlState
 
+    /// Type of current feedback message (for styling)
+    public var feedbackType: FeedbackType = .info
+
+    // MARK: - Properties - Messages
+
     /// Current feedback message to display to user
     public var feedbackMessage: String?
+
+    /// Last error message (for user feedback)
+    public var lastErrorMessage: String?
+
+    // MARK: - Properties - Transcriptions
 
     /// Real-time partial transcription (shown while listening)
     public var partialTranscription: String?
@@ -35,14 +45,10 @@ public struct VoiceControlUIState: Equatable {
     /// Last parsed intent (for debugging/UI feedback)
     public var lastParsedIntent: String?
 
-    /// Last error message (for user feedback)
-    public var lastErrorMessage: String?
+    // MARK: - Properties - Processing
 
     /// Whether currently processing (recognition or parsing)
     public var isProcessing: Bool = false
-
-    /// Type of current feedback message (for styling)
-    public var feedbackType: FeedbackType = .info
 
     // MARK: - Initialization
 
