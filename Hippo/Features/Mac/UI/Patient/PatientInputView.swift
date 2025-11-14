@@ -18,81 +18,44 @@ struct PatientInputView: View {
     var body: some View {
         VStack {
             Section {
-                VStack {
-                    HStack(alignment: .center) {
-                        VStack(alignment: .leading) {
-                            Text("Patient Number")
-                            Spacer()
-                            
-                            Text("Name")
-                            Spacer()
-                            
-                            Text("Gender")
-                            Spacer()
-                            
-                            Text("Birth Date")
+                Grid(alignment: .leading, horizontalSpacing: 24, verticalSpacing:  16) {
+                    GridRow {
+                        Text("Patient Number")
+                        TextField("", text: $state.patientNumber)
+                    }
+                    GridRow {
+                        Text("Name")
+                        TextField("", text: $state.name)
+                    }
+                    GridRow {
+                        Text("Gender")
+                        Picker("", selection: $state.selectedGender) {
+                            Text("Male").tag(Gender.male)
+                            Text("Female").tag(Gender.female)
                         }
-                        
-                        Spacer()
-                        
-                        VStack(alignment: .leading) {
-                            TextField("", text: $state.patientNumber)
-                            Spacer()
-                            
-                            TextField("", text: $state.name)
-                            Spacer()
-                            
-                            Picker("", selection: $state.selectedGender) {
-                                Text("Male").tag(Gender.male)
-                                Text("Female").tag(Gender.female)
-                            }
-                            .pickerStyle(.segmented)
-                            .tint(.hippoPrimary)
-                            Spacer()
-                            
-                            HStack {
-                                DatePicker(
-                                    "",
-                                    selection: $state.birthDate,
-                                    displayedComponents: [.date]
-                                )
-                                .environment(\.locale, Locale(identifier: "ko_KR"))
-                                Text("Age \(state.age)")
-                                    .font(.footnote)
-                                    .fontWeight(.medium)
-                                    .foregroundColor(.hippoGray500)
-                            }
+                        .pickerStyle(.segmented)
+                        .tint(.hippoPrimary)
+                    }
+                    GridRow {
+                        Text("Birth Date")
+                        HStack {
+                            DatePicker(
+                                "",
+                                selection: $state.birthDate,
+                                displayedComponents: [.date]
+                            )
+                            .environment(\.locale, Locale(identifier: "ko_KR"))
+                            Text("Age \(state.age)")
+                                .font(.footnote)
+                                .fontWeight(.medium)
+                                .foregroundColor(.hippoGray500)
                         }
                     }
-                    //                        HStack {
-                    //                            Text("Patient Number")
-                    //                            TextField("", text: $state.patientNumber)
-                    //                        }
-                    //                        .padding(.vertical, 4)
-                    //                        HStack {
-                    //                            Text("Patient Number")
-                    //                            TextField(" ", text: $state.name)
-                    //                        }
-                    //                        .padding(.vertical, 4)
-                    //                        Picker("Gender", selection: $state.selectedGender) {
-                    //                            Text("Male").tag(Gender.male)
-                    //                            Text("Female").tag(Gender.female)
-                    //                        }
-                    //                        .pickerStyle(.segmented)
-                    //                        .padding(.vertical, 4)
-                    //                        HStack {
-                    //                            DatePicker(
-                    //                                "Birth Date",
-                    //                                selection: $state.birthDate,
-                    //                                displayedComponents: [.date]
-                    //                            )
-                    //                            .environment(\.locale, Locale(identifier: "ko_KR"))
-                    //                            Text("Age \(state.age)")
-                    //                        }
                 }
                 .font(.callout)
                 .fontWeight(.semibold)
                 .foregroundColor(.hippoGray900)
+                .padding()
             } header: {
                 Text("Add Patient")
                     .font(.headline)

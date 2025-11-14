@@ -53,18 +53,32 @@ struct OperationCardView: View {
                         onEdit(operation.id)
                     } label: {
                         Image(systemName: "square.and.pencil")
+                            .font(.title2)
+                            .padding(12)
+                            .foregroundColor(.hippoGray500)
                     }
+                    .buttonStyle(.plain)
+
                     Button {
                         //수술 삭제
                         onDelete(operation.id)
                     } label: {
                         Image(systemName: "trash")
+                            .font(.title2)
+                            .padding(12)
+                            .foregroundColor(.hippoGray500)
                     }
+                    .buttonStyle(.plain)
+                    
                     Button {
                         //녹화 리스트 UI
                     } label: {
                         Image(systemName: "video")
+                            .font(.title2)
+                            .padding(12)
+                            .foregroundColor(.hippoGray500)
                     }
+                    .buttonStyle(.plain)
                 }
             }
 
@@ -155,11 +169,10 @@ struct OperationCardView: View {
 
                     ScrollView(.horizontal, showsIndicators: false) {
                         HStack(spacing: 12) {
-                            //TODO: 3D 모델 파일로 UI 테스트 필요
                             //TODO: 마우스 호버 시, 배경 Dim처리 + 삭제 버튼 활성화
                             ForEach(operation.assets) { asset in
                                 // 썸네일을 준비하지 않았다면 파일명만 먼저
-                                Text(asset.fileName)
+                                AssetThumnailView(url: asset.fileURL, fileName: asset.fileName)
                             }
                         }
                         .padding(.vertical)
