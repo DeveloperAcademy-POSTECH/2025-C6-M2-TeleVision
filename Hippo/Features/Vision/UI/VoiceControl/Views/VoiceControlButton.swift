@@ -5,29 +5,39 @@
 //  Voice Control Button Component
 //
 //  Responsibilities:
-//  - Display voice control icon/button
+//  - Display voice control icon/button with real-time feedback
 //  - Detect hover state (gaze-based interaction)
+//  - Show STT transcription and command results
 //  - Trigger state transitions via ViewModel
-//
-//  Usage:
-//  ```swift
-//  VoiceControlButton(viewModel: voiceControlViewModel)
-//  ```
 //
 
 import SwiftUI
 
-/// Voice Control Button
+/// Voice Control Button with real-time feedback
 ///
-/// A hands-free button that responds to user gaze (hover).
-/// When the user looks at the button, it enters Standby mode.
-/// When the user says "Hippo", voice control activates.
+/// Hands-free button that responds to user gaze and provides visual feedback
+/// for voice recognition, command parsing, and execution results.
 ///
 /// **Interaction Flow:**
-/// - User looks at button → Standby (shows instructions)
-/// - User says "Hippo" → Listening (STT starts)
-/// - User looks away → Idle (deactivates)
+/// - User looks at button → Standby (shows wake word instruction)
+/// - User says "Hippo" → Wake word detected feedback
+/// - User speaks command → Real-time transcription displayed
+/// - Command executes → Success message with color coding
+/// - User looks away → Returns to Idle (clears all text)
 public struct VoiceControlButton: View {
+
+    // MARK: - Constants
+
+    private enum Constants {
+        static let iconSize: CGFloat = 48
+        static let progressScale: CGFloat = 1.5
+        static let stateIndicatorSize: CGFloat = 16
+        static let horizontalPadding: CGFloat = 32
+        static let verticalPadding: CGFloat = 24
+        static let cornerRadius: CGFloat = 24
+        static let shadowRadius: CGFloat = 12
+        static let shadowY: CGFloat = 6
+    }
 
     // MARK: - Properties
 
@@ -37,21 +47,12 @@ public struct VoiceControlButton: View {
     // MARK: - Body
 
     public var body: some View {
-        Button {
-            // Test: Skip wake word detection, start STT directly
-            // This is useful for testing voice control without implementing wake word detection
-            print("🔘🔘🔘 [VoiceControlButton] BUTTON TAPPED!")
-            handleTap()
-        } label: {
+        Button(action: handleTap) {
             buttonLabel
         }
         .buttonStyle(.borderless)
-        .hoverEffect()  // Vision Pro gaze interaction
-        .onHover { isHovering in
-            print("👁️👁️👁️ [VoiceControlButton] onHover: \(isHovering)")
-        }
+        .hoverEffect()
         .onContinuousHover { phase in
-            print("👁️ [VoiceControlButton] onContinuousHover: \(phase)")
             handleHover(phase: phase)
         }
     }
@@ -63,219 +64,197 @@ public struct VoiceControlButton: View {
     private var buttonLabel: some View {
         VStack(spacing: 12) {
             HStack(spacing: 16) {
-                // Loading indicator or icon
+                // Loading indicator or state icon
                 if viewModel.uiState.isProcessing {
                     ProgressView()
                         .progressViewStyle(.circular)
-                        .scaleEffect(1.5)
-                        .tint(iconColor)
+                        .scaleEffect(Constants.progressScale)
+                        .tint(stateColor)
                 } else {
-                    // Icon
                     Image(systemName: iconName)
-                        .font(.system(size: 48))
-                        .foregroundStyle(iconColor)
+                        .font(.system(size: Constants.iconSize))
+                        .foregroundStyle(stateColor)
                 }
 
-                // State indicator (optional)
-                if viewModel.uiState.state != .idle && !viewModel.uiState.isProcessing {
+                // State indicator dot
+                if shouldShowStateIndicator {
                     stateIndicator
                 }
             }
 
-            // Real-time transcription (shown during listening)
+            // Real-time STT transcription
             if let partialText = viewModel.uiState.partialTranscription, !partialText.isEmpty {
-                Text(partialText)
-                    .font(.title3)
-                    .fontWeight(.medium)
-                    .foregroundStyle(.primary)
-                    .padding(.horizontal, 16)
-                    .padding(.vertical, 8)
-                    .background(Color.primary.opacity(0.1))
-                    .cornerRadius(12)
-                    .transition(.opacity.combined(with: .scale))
+                transcriptionText(partialText)
             }
 
-            // Result/Feedback message (e.g., "✅ 메뉴가 닫힙니다")
-            if let feedback = viewModel.uiState.feedbackMessage, viewModel.uiState.state == .listening && !viewModel.uiState.isProcessing {
-                Text(feedback)
-                    .font(.body)
-                    .fontWeight(.semibold)
-                    .foregroundStyle(feedbackMessageColor)
-                    .multilineTextAlignment(.center)
-                    .padding(.horizontal, 16)
-                    .padding(.vertical, 8)
-                    .background(feedbackMessageBackground)
-                    .cornerRadius(12)
-                    .transition(.opacity.combined(with: .scale))
+            // Command result feedback (success/error messages)
+            if shouldShowFeedback, let feedback = viewModel.uiState.feedbackMessage {
+                feedbackText(feedback)
             }
 
-            // Status message
+            // Status instruction message
             if let message = statusMessage {
-                Text(message)
-                    .font(.caption)
-                    .fontWeight(.medium)
-                    .foregroundStyle(.secondary)
-                    .multilineTextAlignment(.center)
-                    .padding(.horizontal, 8)
+                statusText(message)
             }
         }
-        .padding(.horizontal, 32)
-        .padding(.vertical, 24)
+        .padding(.horizontal, Constants.horizontalPadding)
+        .padding(.vertical, Constants.verticalPadding)
         .background(backgroundColor)
-        .cornerRadius(24)
-        .shadow(color: shadowColor, radius: 12, y: 6)
+        .cornerRadius(Constants.cornerRadius)
+        .shadow(color: shadowColor, radius: Constants.shadowRadius, y: Constants.shadowY)
     }
 
-    /// Shadow color based on state
-    private var shadowColor: Color {
-        switch viewModel.uiState.state {
-        case .idle:
-            return .clear
-        case .standby:
-            return .blue.opacity(0.3)
-        case .listening:
-            return .green.opacity(0.4)
-        case .retry:
-            return .orange.opacity(0.3)
-        }
+    // MARK: - Text Components
+
+    /// Real-time transcription text view
+    @ViewBuilder
+    private func transcriptionText(_ text: String) -> some View {
+        Text(text)
+            .font(.title3)
+            .fontWeight(.medium)
+            .foregroundStyle(.primary)
+            .padding(.horizontal, 16)
+            .padding(.vertical, 8)
+            .background(Color.primary.opacity(0.1))
+            .cornerRadius(12)
+            .transition(.opacity.combined(with: .scale))
     }
 
-    /// State indicator (visual feedback)
+    /// Feedback message text view (color-coded by type)
+    @ViewBuilder
+    private func feedbackText(_ text: String) -> some View {
+        Text(text)
+            .font(.body)
+            .fontWeight(.semibold)
+            .foregroundStyle(feedbackColor)
+            .multilineTextAlignment(.center)
+            .padding(.horizontal, 16)
+            .padding(.vertical, 8)
+            .background(feedbackBackground)
+            .cornerRadius(12)
+            .transition(.opacity.combined(with: .scale))
+    }
+
+    /// Status instruction text view
+    @ViewBuilder
+    private func statusText(_ text: String) -> some View {
+        Text(text)
+            .font(.caption)
+            .fontWeight(.medium)
+            .foregroundStyle(.secondary)
+            .multilineTextAlignment(.center)
+            .padding(.horizontal, 8)
+    }
+
+    /// State indicator dot
     @ViewBuilder
     private var stateIndicator: some View {
         Circle()
-            .fill(stateIndicatorColor)
-            .frame(width: 16, height: 16)
+            .fill(stateColor)
+            .frame(width: Constants.stateIndicatorSize, height: Constants.stateIndicatorSize)
     }
 
-    // MARK: - Computed Properties
+    // MARK: - Computed Properties - State
 
-    /// Icon name based on current state
+    /// Icon name based on voice control state
     private var iconName: String {
         switch viewModel.uiState.state {
-        case .idle:
-            return "waveform.circle"
-        case .standby:
-            return "waveform.circle.fill"
-        case .listening:
-            return "waveform"
-        case .retry:
-            return "exclamationmark.circle"
+        case .idle: "waveform.circle"
+        case .standby: "waveform.circle.fill"
+        case .listening: "waveform"
+        case .retry: "exclamationmark.circle"
         }
     }
 
-    /// Icon color based on current state
-    private var iconColor: Color {
+    /// Unified color for state (icon, indicator dot, shadow)
+    private var stateColor: Color {
         switch viewModel.uiState.state {
-        case .idle:
-            return .secondary
-        case .standby:
-            return .blue
-        case .listening:
-            return .green
-        case .retry:
-            return .orange
+        case .idle: .secondary
+        case .standby: .blue
+        case .listening: .green
+        case .retry: .orange
         }
     }
 
-    /// Background color based on current state
+    /// Whether to show state indicator dot
+    private var shouldShowStateIndicator: Bool {
+        viewModel.uiState.state != .idle && !viewModel.uiState.isProcessing
+    }
+
+    /// Background color based on state
     private var backgroundColor: Color {
+        viewModel.uiState.state == .idle ? .clear : Color.primary.opacity(0.1)
+    }
+
+    /// Shadow color with state-based tint
+    private var shadowColor: Color {
         switch viewModel.uiState.state {
-        case .idle:
-            return Color.clear
-        case .standby, .listening, .retry:
-            return Color.primary.opacity(0.1)
+        case .idle: .clear
+        case .standby: .blue.opacity(0.3)
+        case .listening: .green.opacity(0.4)
+        case .retry: .orange.opacity(0.3)
         }
     }
 
-    /// State indicator color
-    private var stateIndicatorColor: Color {
-        switch viewModel.uiState.state {
-        case .idle:
-            return .clear
-        case .standby:
-            return .blue
-        case .listening:
-            return .green
-        case .retry:
-            return .orange
-        }
-    }
+    // MARK: - Computed Properties - Messages
 
-    /// Status message based on current state
+    /// Status instruction message based on state
     private var statusMessage: String? {
         switch viewModel.uiState.state {
         case .idle:
-            return nil
+            nil
         case .standby:
-            return "'Hippo'라고 말하세요"
+            "'Hippo'라고 말하세요"
         case .listening:
             if viewModel.uiState.isProcessing {
-                return "처리 중..."
+                "처리 중..."
             } else if viewModel.uiState.feedbackType == .success {
-                return nil  // Don't show status when showing success feedback
+                nil  // Hide when showing success feedback
             } else {
-                return "명령을 말씀해주세요"
+                "명령을 말씀해주세요"
             }
         case .retry:
-            return viewModel.uiState.lastErrorMessage ?? "다시 시도해주세요"
+            viewModel.uiState.lastErrorMessage ?? "다시 시도해주세요"
         }
     }
 
-    /// Feedback message color based on type
-    private var feedbackMessageColor: Color {
+    /// Whether to show feedback message
+    private var shouldShowFeedback: Bool {
+        viewModel.uiState.state == .listening && !viewModel.uiState.isProcessing
+    }
+
+    /// Feedback text color based on feedback type
+    private var feedbackColor: Color {
         switch viewModel.uiState.feedbackType {
-        case .success:
-            return .green
-        case .error:
-            return .orange
-        case .info:
-            return .blue
+        case .success: .green
+        case .error: .orange
+        case .info: .blue
         }
     }
 
-    /// Feedback message background based on type
-    private var feedbackMessageBackground: some ShapeStyle {
+    /// Feedback background color based on feedback type
+    private var feedbackBackground: some ShapeStyle {
         switch viewModel.uiState.feedbackType {
-        case .success:
-            return AnyShapeStyle(Color.green.opacity(0.15))
-        case .error:
-            return AnyShapeStyle(Color.orange.opacity(0.15))
-        case .info:
-            return AnyShapeStyle(Color.blue.opacity(0.15))
+        case .success: AnyShapeStyle(Color.green.opacity(0.15))
+        case .error: AnyShapeStyle(Color.orange.opacity(0.15))
+        case .info: AnyShapeStyle(Color.blue.opacity(0.15))
         }
     }
 
     // MARK: - Actions
 
-    /// Handle button tap
-    ///
-    /// Simulates hover interaction: enters Standby mode and waits for wake word.
-    ///
-    /// Flow:
-    /// 1. Tap button → Standby mode
-    /// 2. Say "Hippo" → Wake word detected
-    /// 3. Say command → Command executed
-    ///
-    /// Alternative: For direct testing without wake word, use `startListeningDirectly()`
+    /// Handle button tap - activates voice control
     private func handleTap() {
-        print("🔘 [VoiceControlButton] Tapped - Entering Standby (waiting for wake word)")
-
-        // Simulate hover: Enter standby mode and start wake word listening
-        if case .idle = viewModel.uiState.state {
-            viewModel.onHoverBegan()
-        }
+        guard case .idle = viewModel.uiState.state else { return }
+        viewModel.onHoverBegan()
     }
 
-    /// Handle hover phase changes
+    /// Handle continuous hover phase changes
     private func handleHover(phase: HoverPhase) {
         switch phase {
         case .active:
-            print("👁️ [VoiceControlButton] Hover active detected")
             viewModel.onHoverBegan()
-
         case .ended:
-            print("👁️ [VoiceControlButton] Hover ended detected")
             viewModel.onHoverEnded()
         }
     }
