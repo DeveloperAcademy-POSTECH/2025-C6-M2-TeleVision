@@ -10,17 +10,9 @@ import SwiftUI
 
 /// Voice-enabled Menu Toggle Button
 ///
-/// Integrates menu toggle functionality with voice control, providing
-/// dual interaction modes and real-time visual feedback.
-///
 /// **Interaction Modes:**
-/// - Tap → Toggle menu + activate voice control (test mode)
-/// - Hover → Voice control only (hands-free)
-///
-/// **Visual Feedback:**
-/// - Button opacity changes based on menu and voice state
-/// - Real-time STT transcription display
-/// - Color-coded success/error messages
+/// - Tap → Toggle menu + activate voice control
+/// - Hover → Activate voice control (hands-free mode)
 struct VoiceControlMenuButton: View {
 
     // MARK: - Constants
@@ -34,24 +26,15 @@ struct VoiceControlMenuButton: View {
 
     @Environment(ImmersiveViewModel.self) private var immersiveViewModel
 
-    // MARK: - State
-
-    @State private var voiceControlVM: VoiceControlViewModel
-
     // MARK: - Properties
 
-    /// Action to perform when button is tapped (menu toggle)
+    @Bindable var viewModel: VoiceControlViewModel
     let action: () -> Void
 
     // MARK: - Initialization
 
-    /// Initialize with shared VoiceControlViewModel
-    ///
-    /// - Parameters:
-    ///   - viewModel: VoiceControlViewModel instance (shared with overlay)
-    ///   - action: Menu toggle action
     init(viewModel: VoiceControlViewModel, action: @escaping () -> Void) {
-        _voiceControlVM = State(initialValue: viewModel)
+        self.viewModel = viewModel
         self.action = action
     }
 
@@ -61,22 +44,26 @@ struct VoiceControlMenuButton: View {
         VStack(spacing: 12) {
             buttonImage
 
-            // Real-time STT transcription
-            if let partialText = voiceControlVM.uiState.partialTranscription, !partialText.isEmpty {
+            //  ㅁReal-time STT transcription
+            if let partialText = viewModel.uiState.partialTranscription, !partialText.isEmpty {
                 transcriptionText(partialText)
             }
 
             // Command result feedback
-            if shouldShowFeedback, let feedback = voiceControlVM.uiState.feedbackMessage {
+            if viewModel.uiState.shouldShowFeedback, let feedback = viewModel.uiState.feedbackMessage {
                 feedbackText(feedback)
             }
 
             // Status instruction message
-            if let message = statusMessage {
+            if let message = resolvedStatusMessage {
                 statusText(message)
             }
         }
         .onTapGesture(perform: handleTap)
+        .hoverEffect()
+        .onContinuousHover { phase in
+            handleHover(phase)
+        }
     }
 
     // MARK: - Subviews
@@ -90,8 +77,7 @@ struct VoiceControlMenuButton: View {
                 .frame(width: Constants.buttonSize, height: Constants.buttonSize)
                 .opacity(buttonOpacity)
 
-            // Loading indicator
-            if voiceControlVM.uiState.isProcessing {
+            if viewModel.uiState.isProcessing {
                 ProgressView()
                     .progressViewStyle(.circular)
                     .scaleEffect(Constants.progressScale)
@@ -99,8 +85,6 @@ struct VoiceControlMenuButton: View {
             }
         }
     }
-
-    // MARK: - Text Components
 
     /// Real-time transcription text view
     @ViewBuilder
@@ -144,19 +128,16 @@ struct VoiceControlMenuButton: View {
             .cornerRadius(8)
     }
 
-    // MARK: - Computed Properties - State
+    // MARK: - Computed Properties
 
-    /// Current voice control state
     private var voiceState: VoiceControlState {
-        voiceControlVM.uiState.state
+        viewModel.uiState.state
     }
 
-    /// Whether menu is currently open
     private var isMenuOpen: Bool {
         immersiveViewModel.isMenuActive
     }
 
-    /// Button opacity (voice state > menu state priority)
     private var buttonOpacity: Double {
         switch voiceState {
         case .idle: isMenuOpen ? 1.0 : 0.25
@@ -166,86 +147,63 @@ struct VoiceControlMenuButton: View {
         }
     }
 
-    // MARK: - Computed Properties - Messages
+    // MARK: - UI Mapping (Abstract → SwiftUI)
 
-    /// Status instruction message based on voice state
-    private var statusMessage: String? {
-        switch voiceState {
-        case .idle:
-            nil
-        case .standby:
-            "'Hippo'라고 말하세요"
-        case .listening:
-            if voiceControlVM.uiState.isProcessing {
-                "처리 중..."
-            } else if voiceControlVM.uiState.feedbackType == .success {
-                nil  // Hide when showing success feedback
-            } else {
-                "명령을 말씀해주세요"
-            }
-        case .retry:
-            voiceControlVM.uiState.lastErrorMessage ?? "다시 시도해주세요"
+    /// Resolve abstract message key to actual text
+    private var resolvedStatusMessage: String? {
+        switch viewModel.uiState.statusMessageKey {
+        case .none: return nil
+        case .standbyGuide: return "'Hippo'라고 말하세요"
+        case .listening: return "명령을 말씀해주세요"
+        case .processing: return "처리 중..."
+        case .retry(let errorMessage): return errorMessage ?? "다시 시도해주세요"
         }
     }
 
-    /// Whether to show feedback message
-    private var shouldShowFeedback: Bool {
-        voiceState == .listening && !voiceControlVM.uiState.isProcessing
-    }
-
-    /// Feedback text color based on feedback type
+    /// Map color key to SwiftUI Color
     private var feedbackColor: Color {
-        switch voiceControlVM.uiState.feedbackType {
-        case .success: .green
-        case .error: .orange
-        case .info: .blue
-        }
+        mapColorKey(viewModel.uiState.feedbackColorKey)
     }
 
-    /// Feedback background color based on feedback type
-    private var feedbackBackground: some ShapeStyle {
-        switch voiceControlVM.uiState.feedbackType {
-        case .success: AnyShapeStyle(Color.green.opacity(0.15))
-        case .error: AnyShapeStyle(Color.orange.opacity(0.15))
-        case .info: AnyShapeStyle(Color.blue.opacity(0.15))
-        }
+    private var feedbackBackground: Color {
+        mapColorKey(viewModel.uiState.feedbackColorKey).opacity(0.15)
     }
 
-    /// Status text color based on voice state
     private var statusColor: Color {
         switch voiceState {
-        case .idle: .secondary
-        case .standby: .blue
-        case .listening: .green
-        case .retry: .orange
+        case .idle: return .secondary
+        default: return mapColorKey(viewModel.uiState.statusColorKey)
         }
     }
 
-    /// Status background color based on voice state
-    private var statusBackground: some ShapeStyle {
+    private var statusBackground: Color {
         switch voiceState {
-        case .idle: AnyShapeStyle(Color.clear)
-        case .standby: AnyShapeStyle(Color.blue.opacity(0.15))
-        case .listening: AnyShapeStyle(Color.green.opacity(0.15))
-        case .retry: AnyShapeStyle(Color.orange.opacity(0.15))
+        case .idle: return .clear
+        default: return mapColorKey(viewModel.uiState.statusColorKey).opacity(0.15)
+        }
+    }
+
+    private func mapColorKey(_ key: VoiceFeedbackColor) -> Color {
+        switch key {
+        case .success: return .green
+        case .error: return .orange
+        case .info: return .blue
         }
     }
 
     // MARK: - Actions
 
-    /// Handle button tap - toggle menu and activate voice control
     private func handleTap() {
         action()
-        voiceControlVM.onWakeWordDetected()
+        viewModel.onWakeWordDetected()
     }
 
-    /// Handle hover phase changes (disabled - using tap only)
     private func handleHover(_ phase: HoverPhase) {
         switch phase {
         case .active:
-            voiceControlVM.onHoverBegan()
+            viewModel.onHoverBegan()
         case .ended:
-            voiceControlVM.onHoverEnded()
+            viewModel.onHoverEnded()
         }
     }
 }
@@ -256,9 +214,8 @@ struct VoiceControlMenuButton: View {
     PreviewContainer()
 }
 
-// MARK: - Preview Helpers
-
-private struct PreviewContainer: View {
+#if DEBUG
+fileprivate struct PreviewContainer: View {
     @State private var immersiveVM = ImmersiveViewModel()
     @State private var voiceControlVM = VoiceControlViewModel(
         commandExecutor: MockVoiceControlManager()
@@ -273,9 +230,9 @@ private struct PreviewContainer: View {
     }
 }
 
-/// Mock VoiceControlManager for previews and testing
-internal struct MockVoiceControlManager: VoiceCommandExecutor {
+fileprivate struct MockVoiceControlManager: VoiceCommandExecutor {
     func execute(_ intent: VoiceCommandIntent) async throws {
         print("Mock execute: \(intent)")
     }
 }
+#endif

@@ -1,21 +1,23 @@
-//
-//  VoiceControlUIState.swift
-//  Hippo
-//
-//  UI-specific state for Voice Control
-//  Wraps domain state (VoiceControlState) with UI-specific properties
-//
-
 import Foundation
 
-/// UI state for Voice Control
-///
-/// This struct combines domain state with UI-specific properties:
-/// - Domain state: VoiceControlState (idle, standby, listening, retry)
-/// - UI properties: feedback messages, transcription, errors
-///
-/// The feedback message is automatically computed based on current state.
-/// All UI-related logic (error messages, feedback) is encapsulated here.
+// MARK: - UI State Enums
+
+public enum VoiceFeedbackColor: Equatable {
+    case success
+    case error
+    case info
+}
+
+public enum VoiceStatusMessageKey: Equatable {
+    case none
+    case standbyGuide
+    case listening
+    case processing
+    case retry(errorMessage: String?)
+}
+
+// MARK: - UI State
+
 public struct VoiceControlUIState: Equatable {
 
     // MARK: - Properties - State
@@ -186,6 +188,54 @@ extension VoiceControlUIState {
         case .speechRecognitionFailed, .noIntent, .parsingFailed, .invalidParameters, .unsupportedCommand:
             // These errors can be retried
             return true
+        }
+    }
+}
+
+// MARK: - UI Helpers (Pure Swift)
+
+extension VoiceControlUIState {
+
+    /// Status message key (View resolves to actual text)
+    public var statusMessageKey: VoiceStatusMessageKey {
+        switch state {
+        case .idle:
+            return .none
+        case .standby:
+            return .standbyGuide
+        case .listening:
+            if isProcessing {
+                return .processing
+            } else if feedbackType == .success {
+                return .none
+            } else {
+                return .listening
+            }
+        case .retry:
+            return .retry(errorMessage: lastErrorMessage)
+        }
+    }
+
+    /// Whether to show feedback message
+    public var shouldShowFeedback: Bool {
+        state == .listening && !isProcessing
+    }
+
+    /// Feedback color key (View maps to SwiftUI Color)
+    public var feedbackColorKey: VoiceFeedbackColor {
+        switch feedbackType {
+        case .success: return .success
+        case .error: return .error
+        case .info: return .info
+        }
+    }
+
+    /// Status color key (View maps to SwiftUI Color)
+    public var statusColorKey: VoiceFeedbackColor {
+        switch state {
+        case .idle, .standby: return .info
+        case .listening: return .success
+        case .retry: return .error
         }
     }
 }
