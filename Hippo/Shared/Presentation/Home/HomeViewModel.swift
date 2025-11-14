@@ -259,6 +259,7 @@ public final class HomeViewModel {
         surgicalSite: String,
         date: Date,
         details: String = "",
+        assets: [OperationAsset] = [],
         status: OperationStatus = .planned
     ) async {
         do {
@@ -269,6 +270,7 @@ public final class HomeViewModel {
                 surgicalSite: surgicalSite,
                 date: date,
                 details: details,
+                assets: assets,
                 status: status
             )
 

@@ -171,7 +171,6 @@ struct OperationCardView: View {
                         HStack(spacing: 12) {
                             //TODO: 마우스 호버 시, 배경 Dim처리 + 삭제 버튼 활성화
                             ForEach(operation.assets) { asset in
-                                // 썸네일을 준비하지 않았다면 파일명만 먼저
                                 AssetThumnailView(url: asset.fileURL, fileName: asset.fileName)
                             }
                         }
