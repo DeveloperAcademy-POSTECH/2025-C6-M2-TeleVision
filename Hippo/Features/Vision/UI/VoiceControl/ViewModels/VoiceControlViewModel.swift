@@ -48,6 +48,10 @@ public final class VoiceControlViewModel {
     @ObservationIgnored @Dependency(\.voiceCommandParser) private var commandParser
     @ObservationIgnored private var commandExecutor: VoiceCommandExecutor?
 
+    // MARK: - Helpers
+
+    private let wakeWordListener = WakeWordListener()
+
     // MARK: - Published State
 
     /// UI state (combines domain state + UI-specific properties)
@@ -61,6 +65,21 @@ public final class VoiceControlViewModel {
 
     public init(commandExecutor: VoiceCommandExecutor? = nil) {
         self.commandExecutor = commandExecutor
+
+        // Setup partial result handler for real-time STT feedback
+        setupPartialResultHandler()
+    }
+
+    /// Setup handler for partial STT results
+    private func setupPartialResultHandler() {
+        if let service = speechRecognition as? AppleSpeechRecognitionService {
+            service.onPartialResult = { [weak self] partialText in
+                guard let self else { return }
+                Task { @MainActor in
+                    self.uiState.partialTranscription = partialText
+                }
+            }
+        }
     }
 
 
@@ -72,8 +91,21 @@ public final class VoiceControlViewModel {
     public func onHoverBegan() {
         guard case .idle = uiState.state else { return }
 
+        print("👁️ [VoiceControl] Hover began → Standby")
+
+        // Clear any leftover text from previous sessions
+        uiState.partialTranscription = nil
+        uiState.lastTranscription = nil
+        uiState.lastParsedIntent = nil
+
         uiState.setState(.standby)
         uiState.clearError()
+
+        // Start continuous wake word listening
+        // Using English STT, so only English wake word
+        wakeWordListener.start(wakeWords: ["hippo"]) { [weak self] in
+            self?.onWakeWordDetected()
+        }
     }
 
     /// Called when user stops hovering over the voice control button
@@ -82,13 +114,25 @@ public final class VoiceControlViewModel {
     public func onHoverEnded() {
         switch uiState.state {
         case .standby, .retry:
+            print("👁️ [VoiceControl] Hover ended → Idle")
             cancelRetry()
+            wakeWordListener.stop()
+            clearUIState()
             uiState.setState(.idle)
-            uiState.clearError()
 
         case .idle, .listening:
             break
         }
+    }
+
+    /// Clear all UI state (transcriptions, errors, etc.)
+    private func clearUIState() {
+        uiState.partialTranscription = nil
+        uiState.lastTranscription = nil
+        uiState.lastParsedIntent = nil
+        uiState.clearError()
+        uiState.isProcessing = false
+        uiState.feedbackType = .info
     }
 
     /// Called when wake word "Hippo" is detected
@@ -101,6 +145,43 @@ public final class VoiceControlViewModel {
     /// 3. Execute command (UI/3D manipulation)
     public func onWakeWordDetected() {
         guard case .standby = uiState.state else { return }
+        print("🎯 [VoiceControl] Wake word detected → Starting listening flow")
+
+        // Stop wake word listening before starting command listening
+        wakeWordListener.stop()
+
+        // Clear any previous transcriptions (new voice session starting)
+        uiState.partialTranscription = nil
+        uiState.lastTranscription = nil
+        uiState.lastParsedIntent = nil
+
+        // Show wake word detected feedback
+        print("🎯 [VoiceControl] Showing wake word detected feedback")
+        uiState.setState(.listening)
+        uiState.feedbackMessage = "Hippo 인식됨!"
+        uiState.feedbackType = .success
+        uiState.clearError()
+
+        // Add small delay to clear audio buffer and show feedback
+        Task { @MainActor in
+            try? await Task.sleep(nanoseconds: 800_000_000)  // 0.8 seconds
+            print("🎯 [VoiceControl] Audio buffer cleared, starting command listening")
+            self.startListeningFlow()
+        }
+    }
+
+    /// For testing: Start listening directly without wake word
+    ///
+    /// This bypasses the wake word detection and starts listening immediately.
+    /// Useful for testing voice commands without saying "Hippo" first.
+    public func startListeningDirectly() {
+        print("🔘 [VoiceControl] Direct listening requested")
+
+        // Cancel any ongoing tasks
+        wakeWordListener.stop()
+        cancelRetry()
+
+        // Start listening flow directly
         startListeningFlow()
     }
 
@@ -143,23 +224,34 @@ public final class VoiceControlViewModel {
     /// 4. Execute: Intent → Action
     /// 5. State: Idle (success) or Retry (failure)
     private func startListeningFlow() {
+        print("🎧 [VoiceControl] Starting listening flow")
         uiState.setState(.listening)
         uiState.clearError()
+        uiState.partialTranscription = nil  // Clear previous partial results
 
         Task { @MainActor in
             do {
                 // Step 1: Recognize speech
+                print("🎧 [VoiceControl] Step 1: Starting STT...")
+                uiState.isProcessing = true
+                uiState.feedbackMessage = "음성 인식 중..."
+                uiState.feedbackType = .info
                 let text = try await speechRecognition.recognizeSingleUtterance()
+                print("🎧 [VoiceControl] STT completed: \"\(text)\"")
 
                 // Step 2: Handle recognized text
                 try await handleRecognitionSuccess(text: text)
 
             } catch let error as VoiceControlError {
                 // Handle voice control specific errors
+                print("❌ [VoiceControl] Error: \(error)")
+                uiState.isProcessing = false
                 handleRecognitionFailure(error)
 
             } catch {
                 // Handle unexpected errors
+                print("❌ [VoiceControl] Unexpected error: \(error)")
+                uiState.isProcessing = false
                 handleRecognitionFailure(.speechRecognitionFailed(reason: error.localizedDescription))
             }
         }
@@ -176,21 +268,68 @@ public final class VoiceControlViewModel {
         uiState.lastTranscription = text
 
         // Parse command
+        print("🎧 [VoiceControl] Step 2: Parsing command...")
+        uiState.isProcessing = true
+        uiState.feedbackMessage = "명령 분석 중..."
+        uiState.feedbackType = .info
         let intent = try await commandParser.parse(text: text)
+        print("🎧 [VoiceControl] Parsed intent: \(intent)")
+        uiState.lastParsedIntent = "\(intent)"
 
         // Check if intent is unknown
         if case .unknown = intent {
+            print("❌ [VoiceControl] Unknown intent")
+            uiState.isProcessing = false
             throw VoiceControlError.noIntent
         }
 
         // Execute command
+        print("🎧 [VoiceControl] Step 3: Executing command...")
+        uiState.isProcessing = true
         if let executor = commandExecutor {
             try await executor.execute(intent)
+            print("✅ [VoiceControl] Command executed successfully")
+        } else {
+            print("⚠️ [VoiceControl] No executor available")
         }
 
+        // Show success message
+        uiState.isProcessing = false
+        uiState.feedbackMessage = commandDescription(for: intent)
+        uiState.feedbackType = .success
+
+        // Clear transcription texts immediately after showing success message
+        // This prevents old text from appearing if user reactivates during the 1.5s wait
+        uiState.partialTranscription = nil
+        uiState.lastTranscription = nil
+        uiState.lastParsedIntent = nil
+
+        // Show success message briefly
+        try? await Task.sleep(nanoseconds: 1_500_000_000)  // 1.5 seconds
+
         // Success: Return to idle
+        print("✅ [VoiceControl] Flow completed → Idle")
+        clearUIState()
         uiState.setState(.idle)
-        uiState.clearError()
+    }
+
+    /// Get user-friendly description for command
+    private func commandDescription(for intent: VoiceCommandIntent) -> String {
+        switch intent {
+        case .closeMenu:
+            return "메뉴가 닫힙니다"
+        case .openMenu:
+            return "메뉴가 열립니다"
+        case .closeVideo:
+            return "영상이 닫힙니다"
+        case .showVideo:
+            return "영상이 표시됩니다"
+        case .rotateEntity(let direction, let angle):
+            let dir = direction == .left ? "왼쪽" : direction == .right ? "오른쪽" : direction == .up ? "위" : "아래"
+            return "\(dir)으로 \(Int(angle))도 회전합니다"
+        case .unknown:
+            return "알 수 없는 명령"
+        }
     }
 
     /// Handle recognition or execution failure

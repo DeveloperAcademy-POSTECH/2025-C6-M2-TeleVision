@@ -9,17 +9,16 @@ extension VoiceControlManager: VoiceCommandExecutor {
 
     public func execute(_ intent: VoiceCommandIntent) async throws {
         switch intent {
-        case .hideUI:
+        case .closeMenu:
             closeHeadController()
 
-        case .showUI:
+        case .openMenu:
             openHeadController()
 
-        case .closePanel:
+        case .closeVideo:
             closeEndoscopicView()
 
-        case .showVideoOnly:
-            closeHeadController()
+        case .showVideo:
             openEndoscopicView()
 
         case let .rotateEntity(direction, angle):

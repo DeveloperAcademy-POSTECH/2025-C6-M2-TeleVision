@@ -69,8 +69,8 @@ private enum VoiceCommandParserKey: DependencyKey {
 private enum SpeechRecognitionServiceKey: DependencyKey {
     @MainActor
     static let liveValue: SpeechRecognitionService = {
-        // Apple Speech framework implementation
-        return AppleSpeechRecognitionService()
+        // Apple Speech framework implementation (English for wake word "hippo")
+        return AppleSpeechRecognitionService(locale: Locale(identifier: "en-US"))
     }()
 
     static let testValue: SpeechRecognitionService = {

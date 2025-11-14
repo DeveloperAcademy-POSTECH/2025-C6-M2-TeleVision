@@ -68,6 +68,12 @@ struct ImmersiveSurgeryView: View {
         RealityView { content, attachments in
             runtime.setupScene(in: content, attachments: attachments)
         } attachments: {
+            // Test: Pure hover button (left)
+            Attachment(id: AttachmentIDs.testVoiceButton) {
+                VoiceControlButton(viewModel: voiceControlVM)
+            }
+
+            // Main: Tap + Hover button (right)
             Attachment(id: AttachmentIDs.topToggleButton) {
                 VoiceControlMenuButton(viewModel: voiceControlVM) {
                     immersiveViewModel.toggleMenu(windowController: windowController)

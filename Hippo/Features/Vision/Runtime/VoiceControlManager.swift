@@ -31,15 +31,15 @@ final class VoiceControlManager {
     }
     
     func openEndoscopicView() {
-        if immersiveViewModel.isEndoscopicActive {
+        //if immersiveViewModel.isEndoscopicActive {
             immersiveViewModel.toggleEndoscope()
-        }
+        //}
     }
     
     func closeEndoscopicView() {
-        if !immersiveViewModel.isEndoscopicActive {
+        //if !immersiveViewModel.isEndoscopicActive {
             immersiveViewModel.toggleEndoscope()
-        }
+        //}
     }
     
     // 등록된 엔티티 중 i번째 엔티티 생성

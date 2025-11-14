@@ -32,6 +32,9 @@ public final class AppleSpeechRecognitionService: SpeechRecognitionService {
     private let speechRecognizer: SFSpeechRecognizer
     private let audioEngine = AVAudioEngine()
 
+    /// Handler for partial transcription results (real-time feedback)
+    public var onPartialResult: (@MainActor (String) -> Void)?
+
     // MARK: - Initialization
 
     public init(locale: Locale = Locale(identifier: "ko-KR")) {
@@ -54,10 +57,13 @@ public final class AppleSpeechRecognitionService: SpeechRecognitionService {
 
 // MARK: - Permission Handling
 
-private extension AppleSpeechRecognitionService {
+extension AppleSpeechRecognitionService {
 
     /// Request necessary permissions (Speech + Microphone)
-    func requestPermissions() async throws {
+    ///
+    /// This can be called before starting voice recognition to request permissions early.
+    /// It's recommended to call this when the user starts a surgery session.
+    public func requestPermissions() async throws {
         // Request speech recognition permission
         let authStatus = await withCheckedContinuation { continuation in
             SFSpeechRecognizer.requestAuthorization { status in
@@ -99,74 +105,167 @@ private extension AppleSpeechRecognitionService {
         // Configure audio session
         try configureAudioSession()
 
-        // Create recognition request
-        let recognitionRequest = SFSpeechAudioBufferRecognitionRequest()
-        recognitionRequest.shouldReportPartialResults = true
-        // TODO: Make this configurable (on-device vs cloud) based on environment/settings
-        recognitionRequest.requiresOnDeviceRecognition = false  // Allow cloud for better accuracy
+        // Create and configure recognition request
+        let recognitionRequest = createRecognitionRequest()
 
-        // Get audio input node
+        // Setup audio tap
+        setupAudioTap(for: recognitionRequest)
+
+        // Start audio engine (only if not already running)
+        if !audioEngine.isRunning {
+            audioEngine.prepare()
+            try audioEngine.start()
+            print("🎤 [STT] Audio engine started")
+        } else {
+            print("🎤 [STT] Audio engine already running, reusing")
+        }
+
+        // Perform recognition and wait for result
+        return try await recognizeWithTimeout(request: recognitionRequest)
+    }
+
+    /// Create and configure recognition request
+    private func createRecognitionRequest() -> SFSpeechAudioBufferRecognitionRequest {
+        let request = SFSpeechAudioBufferRecognitionRequest()
+        request.shouldReportPartialResults = true
+        // TODO: Make this configurable (on-device vs cloud) based on environment/settings
+        request.requiresOnDeviceRecognition = false  // Allow cloud for better accuracy
+        return request
+    }
+
+    /// Setup audio tap to feed audio to recognition request
+    private func setupAudioTap(for request: SFSpeechAudioBufferRecognitionRequest) {
         let inputNode = audioEngine.inputNode
         let recordingFormat = inputNode.outputFormat(forBus: 0)
 
-        // Install audio tap to feed audio to recognition request
+        // Remove existing tap if any (prevents errors on retry)
+        if inputNode.numberOfInputs > 0 {
+            inputNode.removeTap(onBus: 0)
+        }
+
         inputNode.installTap(
             onBus: 0,
             bufferSize: 1024,
             format: recordingFormat
         ) { buffer, _ in
-            recognitionRequest.append(buffer)
+            request.append(buffer)
         }
+    }
 
-        // Start audio engine
-        audioEngine.prepare()
-        try audioEngine.start()
+    /// State wrapper class for recognition state
+    private final class RecognitionState {
+        var hasResumed = false
+        var lastPartialResult: String?
+    }
 
-        // Perform recognition and wait for result
-        return try await withCheckedThrowingContinuation { continuation in
-            var hasResumed = false
+    /// Perform recognition with timeout handling
+    private func recognizeWithTimeout(request: SFSpeechAudioBufferRecognitionRequest) async throws -> String {
+        try await withCheckedThrowingContinuation { continuation in
+            let state = RecognitionState()
 
-            speechRecognizer.recognitionTask(with: recognitionRequest) { [weak self] result, error in
+            // Start recognition task
+            speechRecognizer.recognitionTask(with: request) { [weak self] result, error in
                 guard let self = self else { return }
 
-                // Handle error
                 if let error = error {
-                    if !hasResumed {
-                        hasResumed = true
-                        self.cleanup()
-                        continuation.resume(throwing: VoiceControlError.speechRecognitionFailed(
-                            reason: error.localizedDescription
-                        ))
-                    }
+                    self.handleRecognitionError(
+                        error,
+                        state: state,
+                        continuation: continuation
+                    )
                     return
                 }
 
-                // Handle result
                 if let result = result {
-                    // Check if this is a final result
-                    if result.isFinal {
-                        let transcription = result.bestTranscription.formattedString
-
-                        if !hasResumed {
-                            hasResumed = true
-                            self.cleanup()
-                            continuation.resume(returning: transcription)
-                        }
-                    }
+                    self.handleRecognitionResult(
+                        result,
+                        state: state,
+                        continuation: continuation
+                    )
                 }
             }
 
-            // Timeout: If no final result after 10 seconds, use timeout error
-            Task { @MainActor in
-                try? await Task.sleep(nanoseconds: 10_000_000_000)  // 10 seconds
+            // Setup timeout handler
+            setupTimeoutHandler(
+                state: state,
+                continuation: continuation
+            )
+        }
+    }
 
-                if !hasResumed {
-                    hasResumed = true
-                    self.cleanup()
-                    continuation.resume(throwing: VoiceControlError.speechRecognitionFailed(
-                        reason: "Recognition timeout"
-                    ))
-                }
+    /// Handle recognition error
+    private func handleRecognitionError(
+        _ error: Error,
+        state: RecognitionState,
+        continuation: CheckedContinuation<String, Error>
+    ) {
+        print("🎤 [STT Error] \(error.localizedDescription)")
+
+        guard !state.hasResumed else { return }
+        state.hasResumed = true
+        cleanup()
+
+        // Return partial result if available, otherwise throw error
+        if let partial = state.lastPartialResult, !partial.isEmpty {
+            print("🎤 [STT] Returning partial result on error: \"\(partial)\"")
+            continuation.resume(returning: partial)
+        } else {
+            continuation.resume(throwing: VoiceControlError.speechRecognitionFailed(
+                reason: error.localizedDescription
+            ))
+        }
+    }
+
+    /// Handle recognition result (partial or final)
+    private func handleRecognitionResult(
+        _ result: SFSpeechRecognitionResult,
+        state: RecognitionState,
+        continuation: CheckedContinuation<String, Error>
+    ) {
+        let transcription = result.bestTranscription.formattedString
+
+        if result.isFinal {
+            print("🎤 [STT Final] \(transcription)")
+
+            guard !state.hasResumed else { return }
+            state.hasResumed = true
+            cleanup()
+            continuation.resume(returning: transcription)
+        } else {
+            print("🎤 [STT Partial] \(transcription)")
+            state.lastPartialResult = transcription
+
+            // Call partial result handler for real-time UI updates
+            Task { @MainActor in
+                self.onPartialResult?(transcription)
+            }
+        }
+    }
+
+    /// Setup timeout handler to return partial result after 7 seconds
+    private func setupTimeoutHandler(
+        state: RecognitionState,
+        continuation: CheckedContinuation<String, Error>
+    ) {
+        Task { @MainActor [weak self] in
+            guard let self = self else { return }
+
+            // Wait 7 seconds (increased from 5 to allow full command phrases)
+            try? await Task.sleep(nanoseconds: 7_000_000_000)
+
+            guard !state.hasResumed else { return }
+            state.hasResumed = true
+            self.cleanup()
+
+            // Return last partial result if available
+            if let partial = state.lastPartialResult, !partial.isEmpty {
+                print("🎤 [STT] Timeout - Returning partial result: \"\(partial)\"")
+                continuation.resume(returning: partial)
+            } else {
+                print("🎤 [STT] Timeout - No speech detected")
+                continuation.resume(throwing: VoiceControlError.speechRecognitionFailed(
+                    reason: "No speech detected"
+                ))
             }
         }
     }
@@ -175,15 +274,24 @@ private extension AppleSpeechRecognitionService {
     func configureAudioSession() throws {
         let audioSession = AVAudioSession.sharedInstance()
         try audioSession.setCategory(.record, mode: .measurement, options: .duckOthers)
+        // It's safe to call setActive(true) multiple times
         try audioSession.setActive(true, options: .notifyOthersOnDeactivation)
     }
 
     /// Cleanup audio resources
     func cleanup() {
-        audioEngine.stop()
-        audioEngine.inputNode.removeTap(onBus: 0)
+        // Don't stop audio engine! Keep it running for continuous recognition
+        // This is crucial for wake word loop - stopping/starting repeatedly causes issues
 
-        // Deactivate audio session
-        try? AVAudioSession.sharedInstance().setActive(false, options: .notifyOthersOnDeactivation)
+        // Remove tap safely (will be re-installed on next recognition)
+        let inputNode = audioEngine.inputNode
+        if inputNode.numberOfInputs > 0 {
+            inputNode.removeTap(onBus: 0)
+        }
+
+        // Don't deactivate audio session here!
+        // This allows continuous recognition (e.g., wake word loop)
+        // Audio session will be deactivated when the app goes to background
+        // or when explicitly needed
     }
 }
