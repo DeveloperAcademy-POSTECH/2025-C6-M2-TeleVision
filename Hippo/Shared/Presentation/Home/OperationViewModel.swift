@@ -237,7 +237,8 @@ public final class OperationViewModel {
         surgeon: String,
         surgicalSite: String,
         date: Date,
-        details: String) async {
+        details: String,
+        assets: [OperationAsset]) async {
         do {
             logger.debug("Attempting to update operation with ID \(operationID) for patient ID \(patientID)")
             
@@ -249,6 +250,7 @@ public final class OperationViewModel {
                 surgicalSite: surgicalSite,
                 date: date,
                 details: details,
+                assets: assets
             )
 
             try await upsertOperation.run(
