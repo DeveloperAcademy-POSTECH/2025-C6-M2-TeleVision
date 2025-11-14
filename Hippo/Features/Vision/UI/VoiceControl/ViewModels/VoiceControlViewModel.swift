@@ -42,6 +42,22 @@ import Observation
 @Observable
 public final class VoiceControlViewModel {
 
+    // MARK: - Constants
+
+    private enum Constants {
+        /// Delay after wake word detection to clear audio buffer
+        static let wakeWordBufferDelay: UInt64 = 800_000_000  // 0.8 seconds
+
+        /// Duration to show success message
+        static let successMessageDuration: UInt64 = 1_500_000_000  // 1.5 seconds
+
+        /// Duration to show error message before retry
+        static let errorMessageDuration: UInt64 = 1_000_000_000  // 1 second
+
+        /// Retry deadline in seconds
+        static let retryDeadlineSeconds: TimeInterval = 3.0
+    }
+
     // MARK: - Dependencies
 
     @ObservationIgnored @Dependency(\.speechRecognitionService) private var speechRecognition
@@ -164,7 +180,7 @@ public final class VoiceControlViewModel {
 
         // Add small delay to clear audio buffer and show feedback
         Task { @MainActor in
-            try? await Task.sleep(nanoseconds: 800_000_000)  // 0.8 seconds
+            try? await Task.sleep(nanoseconds: Constants.wakeWordBufferDelay)
             print("🎯 [VoiceControl] Audio buffer cleared, starting command listening")
             self.startListeningFlow()
         }
@@ -305,10 +321,10 @@ public final class VoiceControlViewModel {
         uiState.lastParsedIntent = nil
 
         // Show success message briefly
-        try? await Task.sleep(nanoseconds: 1_500_000_000)  // 1.5 seconds
+        try? await Task.sleep(nanoseconds: Constants.successMessageDuration)
 
         // Success: Return to idle
-        print("✅ [VoiceControl] Flow completed → Idle")
+        print(" [VoiceControl] Flow completed → Idle")
         clearUIState()
         uiState.setState(.idle)
     }
@@ -352,10 +368,9 @@ public final class VoiceControlViewModel {
 
     /// Start retry flow with automatic timeout
     ///
-    /// Shows error message for 1 second, then automatically retries
-    /// within 3 seconds deadline.
+    /// Shows error message briefly, then automatically retries within deadline.
     private func startRetryFlow() {
-        let deadline = Date().addingTimeInterval(3.0)
+        let deadline = Date().addingTimeInterval(Constants.retryDeadlineSeconds)
         uiState.setState(.retry(attempt: 1, deadline: deadline))
 
         // Cancel any existing retry task
@@ -365,8 +380,8 @@ public final class VoiceControlViewModel {
         retryTask = Task { @MainActor [weak self] in
             guard let self else { return }
 
-            // Show error message for 1 second
-            try? await Task.sleep(nanoseconds: 1_000_000_000)
+            // Show error message briefly
+            try? await Task.sleep(nanoseconds: Constants.errorMessageDuration)
 
             // Early return if state changed
             guard case .retry = self.uiState.state else { return }
