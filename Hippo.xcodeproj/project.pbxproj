@@ -21,6 +21,7 @@
 		06EF5FD82EC5D02700E1BACC /* HomeViewSideBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06EF5FD72EC5D02700E1BACC /* HomeViewSideBar.swift */; };
 		06EF5FDB2EC5FC2A00E1BACC /* TodaysSurgeryButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06EF5FDA2EC5FC2A00E1BACC /* TodaysSurgeryButton.swift */; };
 		06EF5FDD2EC6098800E1BACC /* PatientSelectButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06EF5FDC2EC6098800E1BACC /* PatientSelectButton.swift */; };
+		06EF5FE12EC6CF6600E1BACC /* FormActionBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06EF5FE02EC6CF6600E1BACC /* FormActionBar.swift */; };
 		06F8CAC32EBA459B00926483 /* StreamingInspectorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06F8CAC22EBA459B00926483 /* StreamingInspectorView.swift */; };
 		06F9D6362EBC765A00AD1EE6 /* OperationInputView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06F9D6352EBC765A00AD1EE6 /* OperationInputView.swift */; };
 		144254312EA9FF7800583CC3 /* OperationContext.swift in Sources */ = {isa = PBXBuildFile; fileRef = 144254302EA9FF7800583CC3 /* OperationContext.swift */; };
@@ -434,6 +435,7 @@
 		06EF5FD72EC5D02700E1BACC /* HomeViewSideBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeViewSideBar.swift; sourceTree = "<group>"; };
 		06EF5FDA2EC5FC2A00E1BACC /* TodaysSurgeryButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TodaysSurgeryButton.swift; sourceTree = "<group>"; };
 		06EF5FDC2EC6098800E1BACC /* PatientSelectButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PatientSelectButton.swift; sourceTree = "<group>"; };
+		06EF5FE02EC6CF6600E1BACC /* FormActionBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FormActionBar.swift; sourceTree = "<group>"; };
 		06F8CAC22EBA459B00926483 /* StreamingInspectorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StreamingInspectorView.swift; sourceTree = "<group>"; };
 		06F9D6352EBC765A00AD1EE6 /* OperationInputView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OperationInputView.swift; sourceTree = "<group>"; };
 		144254302EA9FF7800583CC3 /* OperationContext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OperationContext.swift; sourceTree = "<group>"; };
@@ -697,6 +699,7 @@
 				2581FCEC2EBBC76D0059678D /* PatientInputState.swift */,
 				0667A54B2EB8833D00D7BDF3 /* PatientDetailView.swift */,
 				06ADD9D12EB98E730013665B /* PatientInputView.swift */,
+				06EF5FE02EC6CF6600E1BACC /* FormActionBar.swift */,
 			);
 			path = Patient;
 			sourceTree = "<group>";
@@ -2225,6 +2228,7 @@
 				06F8CAC32EBA459B00926483 /* StreamingInspectorView.swift in Sources */,
 				065DA55A2EBDD12000B454BC /* OperationCardDisplayModel.swift in Sources */,
 				25E78B732EB9164200D8CAD2 /* OperationRepository.swift in Sources */,
+				06EF5FE12EC6CF6600E1BACC /* FormActionBar.swift in Sources */,
 				25E78B662EB90D4600D8CAD2 /* OperationStatus.swift in Sources */,
 				2581FF672EC1A9140059678D /* BonjourServiceDiscovery.swift in Sources */,
 				2523A65A2EC4C3AA00842508 /* CI_SBSComposer.swift in Sources */,
