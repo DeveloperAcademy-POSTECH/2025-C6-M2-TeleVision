@@ -10,10 +10,10 @@ import SwiftUI
 struct SurgeryControlBar: View {
     @Environment(ImmersiveViewModel.self) var immersiveViewModel
     @Environment(WindowController.self) var windowController
-    
+
     var body: some View {
         @Bindable var immersiveViewModel = immersiveViewModel
-        
+
         HStack {
             CircleIconButton(
                 systemName: "iphone.and.arrow.forward.outward",
@@ -21,7 +21,7 @@ struct SurgeryControlBar: View {
                 iconSize: 24,
                 action: { immersiveViewModel.showFinishSurgeryAlert() }
             )
-            
+
             ZStack {
                 HStack {
                     Spacer()
@@ -38,7 +38,6 @@ struct SurgeryControlBar: View {
                             action: {
                                 windowController.pushWindow(id: WindowIDs.assetListView)
                                 immersiveViewModel.isShowingAssetListView = true
-                                
                             }
                         )
                     }
@@ -47,17 +46,17 @@ struct SurgeryControlBar: View {
                 HStack {
                     EndoscopeToggle(isOn: $immersiveViewModel.isEndoscopicActive)
                     Spacer()
-                    RecordButton(action: immersiveViewModel.recordPassThroughVideo)
+                    RecordButton(action: immersiveViewModel.recordPassThroughVideo, isRecording: immersiveViewModel.isRecording)
                 }
             }
             .padding(.horizontal, 20)
             .padding(.vertical, 12)
             .glassBackgroundEffect(in: .capsule, displayMode: .always)
             .frame(width: 420)
-            .onChange(of: immersiveViewModel.isEndoscopicActive) { oldValue, newValue in
+            .onChange(of: immersiveViewModel.isEndoscopicActive) { _, _ in
                 handleEndoscopeToggle()
             }
-            
+
             Circle()
                 .fill(.clear)
                 .frame(width: 60, height: 60)
@@ -75,11 +74,11 @@ struct SurgeryControlBar: View {
             Button("취소", role: .cancel) {
                 immersiveViewModel.isShowingFinishAlert = false
             }
-        } message : {
+        } message: {
             Text("나가면 다시 돌아올 수는 있지만, 현재 상태가 초기화될 수 있습니다.")
         }
     }
-    
+
     func handleEndoscopeToggle() {
         if immersiveViewModel.isEndoscopicActive {
             windowController.openWindow(id: WindowIDs.endoscopeStream)
@@ -88,7 +87,6 @@ struct SurgeryControlBar: View {
         }
     }
 }
-
 
 #Preview {
     SurgeryControlBar()

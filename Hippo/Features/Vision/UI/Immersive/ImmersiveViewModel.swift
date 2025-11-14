@@ -9,27 +9,28 @@ import SwiftUI
 
 @Observable
 final class ImmersiveViewModel {
-    
-    // MARK: -- 수술 중 환경 상태
+    // MARK: - - 수술 중 환경 상태
+
     public var isMenuActive: Bool = true
     public var isEndoscopicActive: Bool = false
     public var isShowingFinishAlert: Bool = false
     public var isShowingAssetListView: Bool = false
-    
-    // MARK: -- 윈도우 라이프사이클 추적 변수
+    public var isRecording: Bool = false
+
+    // MARK: - - 윈도우 라이프사이클 추적 변수
+
     public var isSurgeryBottomMenuOpen: Bool = true
     public var isOpacityControlPanelOpen: Bool = false
     public var isEndoscopeStreamWindowOpen: Bool = false
-    
-    
-    // MARK: -- 이벤트 처리 : UI 이벤트 -> WindowController 에 전달
-    
-    func showFinishSurgeryAlert() {
-        self.isShowingFinishAlert = true
-    }
-    
-    func recordPassThroughVideo() {
 
+    // MARK: - - 이벤트 처리 : UI 이벤트 -> WindowController 에 전달
+
+    func showFinishSurgeryAlert() {
+        isShowingFinishAlert = true
+    }
+
+    func recordPassThroughVideo() {
+        isRecording.toggle()
     }
 
     func toggleEndoscope() {
@@ -44,29 +45,27 @@ final class ImmersiveViewModel {
         isEndoscopeStreamWindowOpen = false
         isEndoscopicActive = false
     }
-    
+
     func resetSetting() {
         isMenuActive = true
         isEndoscopicActive = false
         isShowingFinishAlert = false
         isShowingAssetListView = false
-        
+
         isSurgeryBottomMenuOpen = true
         isOpacityControlPanelOpen = false
         print("reset")
     }
-    
+
     // 컨트롤러 on
     func openMenuSetting(windowController: WindowController) {
         ARSessionController.shared.runARSession()
         if !isSurgeryBottomMenuOpen {
-            
             windowController.openWindow(id: WindowIDs.surgeryBottomMenu)
-            self.isSurgeryBottomMenuOpen = true
-            
+            isSurgeryBottomMenuOpen = true
         }
     }
-    
+
     // 컨트롤러 off
     func closeMenuSetting(windowController: WindowController) {
         ARSessionController.shared.stopARSession()
@@ -83,10 +82,10 @@ final class ImmersiveViewModel {
             isShowingAssetListView = false
         }
     }
-    
+
     func toggleMenu(windowController: WindowController) {
         isMenuActive.toggle()
-        
+
         if isMenuActive {
             openMenuSetting(windowController: windowController)
         } else {
