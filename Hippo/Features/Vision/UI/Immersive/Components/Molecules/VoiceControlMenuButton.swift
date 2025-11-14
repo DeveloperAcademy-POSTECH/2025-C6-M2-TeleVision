@@ -5,33 +5,30 @@
 //  Voice-enabled Menu Toggle Button
 //  Combines traditional tap-to-toggle with hands-free voice control
 //
-//  Interaction Modes:
-//  1. Tap → Toggle menu (traditional)
-//  2. Hover → Voice control activation (hands-free)
-//
-//  ViewModel Ownership:
-//  - ViewModel은 버튼 내부에서 소유하지만,
-//  - overlay 등 다른 UI에서 동일 인스턴스를 공유할 가능성을 고려해
-//  - 추후 주입 방식 개선 여지를 남겨둠.
-//
 
 import SwiftUI
 
 /// Voice-enabled Menu Toggle Button
 ///
-/// This button integrates menu toggle functionality with voice control:
+/// Integrates menu toggle functionality with voice control, providing
+/// dual interaction modes and real-time visual feedback.
 ///
-/// **Traditional Interaction (Tap):**
-/// - User taps button → Menu toggles open/closed
-///
-/// **Voice Interaction (Hover):**
-/// - User gazes at button → Enters Standby mode
-/// - User says "Hippo" → Listening mode activates
-/// - User looks away → Returns to Idle mode
+/// **Interaction Modes:**
+/// - Tap → Toggle menu + activate voice control (test mode)
+/// - Hover → Voice control only (hands-free)
 ///
 /// **Visual Feedback:**
-/// - Opacity changes based on menu state and voice control state
+/// - Button opacity changes based on menu and voice state
+/// - Real-time STT transcription display
+/// - Color-coded success/error messages
 struct VoiceControlMenuButton: View {
+
+    // MARK: - Constants
+
+    private enum Constants {
+        static let buttonSize: CGFloat = 160
+        static let progressScale: CGFloat = 2.0
+    }
 
     // MARK: - Environment
 
@@ -43,16 +40,16 @@ struct VoiceControlMenuButton: View {
 
     // MARK: - Properties
 
-    /// Action to perform when button is tapped
+    /// Action to perform when button is tapped (menu toggle)
     let action: () -> Void
 
     // MARK: - Initialization
 
-    /// Initialize with VoiceControlViewModel
+    /// Initialize with shared VoiceControlViewModel
     ///
     /// - Parameters:
     ///   - viewModel: VoiceControlViewModel instance (shared with overlay)
-    ///   - action: Action to perform when button is tapped (menu toggle)
+    ///   - action: Menu toggle action
     init(viewModel: VoiceControlViewModel, action: @escaping () -> Void) {
         _voiceControlVM = State(initialValue: viewModel)
         self.action = action
@@ -62,214 +59,192 @@ struct VoiceControlMenuButton: View {
 
     var body: some View {
         VStack(spacing: 12) {
-            ZStack {
-                // Main button image
-                Image("TopButton")
-                    .resizable()
-                    .frame(width: 160, height: 160)
-                    .opacity(buttonOpacity)
+            buttonImage
 
-                // Loading indicator overlay
-                if voiceControlVM.uiState.isProcessing {
-                    ProgressView()
-                        .progressViewStyle(.circular)
-                        .scaleEffect(2.0)
-                        .tint(.white)
-                }
-            }
-
-            // Real-time transcription (shown during listening)
+            // Real-time STT transcription
             if let partialText = voiceControlVM.uiState.partialTranscription, !partialText.isEmpty {
-                Text(partialText)
-                    .font(.title3)
-                    .fontWeight(.medium)
-                    .foregroundStyle(.primary)
-                    .padding(.horizontal, 16)
-                    .padding(.vertical, 8)
-                    .background(Color.primary.opacity(0.15))
-                    .cornerRadius(12)
-                    .transition(.opacity.combined(with: .scale))
+                transcriptionText(partialText)
             }
 
-            // Result/Feedback message (e.g., "✅ 메뉴가 닫힙니다")
-            if let feedback = voiceControlVM.uiState.feedbackMessage, voiceState == .listening && !voiceControlVM.uiState.isProcessing {
-                Text(feedback)
-                    .font(.body)
-                    .fontWeight(.semibold)
-                    .foregroundStyle(feedbackColor)
-                    .multilineTextAlignment(.center)
-                    .padding(.horizontal, 16)
-                    .padding(.vertical, 8)
-                    .background(feedbackBackground)
-                    .cornerRadius(12)
-                    .transition(.opacity.combined(with: .scale))
+            // Command result feedback
+            if shouldShowFeedback, let feedback = voiceControlVM.uiState.feedbackMessage {
+                feedbackText(feedback)
             }
 
-            // Status message
+            // Status instruction message
             if let message = statusMessage {
-                Text(message)
-                    .font(.caption)
-                    .fontWeight(.semibold)
-                    .foregroundStyle(statusMessageColor)
-                    .padding(.horizontal, 12)
-                    .padding(.vertical, 6)
-                    .background(statusMessageBackground)
-                    .cornerRadius(8)
+                statusText(message)
             }
         }
-//        .hoverEffect()  // Vision Pro gaze interaction
-        .onTapGesture {
-            print("🔘🔘🔘 [VoiceControlMenuButton] IMAGE TAPPED!")
-            handleTap()
+        .onTapGesture(perform: handleTap)
+    }
+
+    // MARK: - Subviews
+
+    /// Main button image with loading overlay
+    @ViewBuilder
+    private var buttonImage: some View {
+        ZStack {
+            Image("TopButton")
+                .resizable()
+                .frame(width: Constants.buttonSize, height: Constants.buttonSize)
+                .opacity(buttonOpacity)
+
+            // Loading indicator
+            if voiceControlVM.uiState.isProcessing {
+                ProgressView()
+                    .progressViewStyle(.circular)
+                    .scaleEffect(Constants.progressScale)
+                    .tint(.white)
+            }
         }
-//        .onHover { isHovering in
-//            print("👁️👁️👁️ [VoiceControlMenuButton] onHover: \(isHovering)")
-//        }
-//        .onContinuousHover { phase in
-//            print("👁️ [VoiceControlMenuButton] onContinuousHover: \(phase)")
-//            handleHover(phase)
-//        }
     }
 
-    // MARK: - Computed Properties
+    // MARK: - Text Components
 
-    /// Whether the menu is currently open
-    private var isMenuOpen: Bool {
-        immersiveViewModel.isMenuActive
+    /// Real-time transcription text view
+    @ViewBuilder
+    private func transcriptionText(_ text: String) -> some View {
+        Text(text)
+            .font(.title3)
+            .fontWeight(.medium)
+            .foregroundStyle(.primary)
+            .padding(.horizontal, 16)
+            .padding(.vertical, 8)
+            .background(Color.primary.opacity(0.15))
+            .cornerRadius(12)
+            .transition(.opacity.combined(with: .scale))
     }
+
+    /// Feedback message text view (color-coded by type)
+    @ViewBuilder
+    private func feedbackText(_ text: String) -> some View {
+        Text(text)
+            .font(.body)
+            .fontWeight(.semibold)
+            .foregroundStyle(feedbackColor)
+            .multilineTextAlignment(.center)
+            .padding(.horizontal, 16)
+            .padding(.vertical, 8)
+            .background(feedbackBackground)
+            .cornerRadius(12)
+            .transition(.opacity.combined(with: .scale))
+    }
+
+    /// Status instruction text view
+    @ViewBuilder
+    private func statusText(_ text: String) -> some View {
+        Text(text)
+            .font(.caption)
+            .fontWeight(.semibold)
+            .foregroundStyle(statusColor)
+            .padding(.horizontal, 12)
+            .padding(.vertical, 6)
+            .background(statusBackground)
+            .cornerRadius(8)
+    }
+
+    // MARK: - Computed Properties - State
 
     /// Current voice control state
     private var voiceState: VoiceControlState {
         voiceControlVM.uiState.state
     }
 
-    /// Button opacity based on menu state and voice control state
-    ///
-    /// Priority: Voice control state > Menu state
-    /// - Voice control active (standby/listening/retry): Override menu opacity
-    /// - Voice control idle: Follow menu state (open=1.0, closed=0.25)
+    /// Whether menu is currently open
+    private var isMenuOpen: Bool {
+        immersiveViewModel.isMenuActive
+    }
+
+    /// Button opacity (voice state > menu state priority)
     private var buttonOpacity: Double {
         switch voiceState {
-        case .idle:
-            // No voice control active - follow menu state
-            return isMenuOpen ? 1.0 : 0.25
-
-        case .standby:
-            // Waiting for wake word - slightly dimmed
-            return 0.7
-
-        case .listening:
-            // Actively listening - full brightness for visual feedback
-            return 1.0
-
-        case .retry:
-            // Error state - dimmed to indicate problem
-            return 0.6
+        case .idle: isMenuOpen ? 1.0 : 0.25
+        case .standby: 0.7
+        case .listening: 1.0
+        case .retry: 0.6
         }
     }
 
-    /// Status message based on voice control state
+    // MARK: - Computed Properties - Messages
+
+    /// Status instruction message based on voice state
     private var statusMessage: String? {
         switch voiceState {
         case .idle:
-            return nil
+            nil
         case .standby:
-            return "'Hippo'라고 말하세요"
+            "'Hippo'라고 말하세요"
         case .listening:
             if voiceControlVM.uiState.isProcessing {
-                return "처리 중..."
+                "처리 중..."
             } else if voiceControlVM.uiState.feedbackType == .success {
-                return nil  // Don't show status when showing success feedback
+                nil  // Hide when showing success feedback
             } else {
-                return "명령을 말씀해주세요"
+                "명령을 말씀해주세요"
             }
         case .retry:
-            return voiceControlVM.uiState.lastErrorMessage ?? "다시 시도해주세요"
+            voiceControlVM.uiState.lastErrorMessage ?? "다시 시도해주세요"
         }
     }
 
-    /// Feedback message color based on type
+    /// Whether to show feedback message
+    private var shouldShowFeedback: Bool {
+        voiceState == .listening && !voiceControlVM.uiState.isProcessing
+    }
+
+    /// Feedback text color based on feedback type
     private var feedbackColor: Color {
         switch voiceControlVM.uiState.feedbackType {
-        case .success:
-            return .green
-        case .error:
-            return .orange
-        case .info:
-            return .blue
+        case .success: .green
+        case .error: .orange
+        case .info: .blue
         }
     }
 
-    /// Feedback message background based on type
+    /// Feedback background color based on feedback type
     private var feedbackBackground: some ShapeStyle {
         switch voiceControlVM.uiState.feedbackType {
-        case .success:
-            return AnyShapeStyle(Color.green.opacity(0.15))
-        case .error:
-            return AnyShapeStyle(Color.orange.opacity(0.15))
-        case .info:
-            return AnyShapeStyle(Color.blue.opacity(0.15))
+        case .success: AnyShapeStyle(Color.green.opacity(0.15))
+        case .error: AnyShapeStyle(Color.orange.opacity(0.15))
+        case .info: AnyShapeStyle(Color.blue.opacity(0.15))
         }
     }
 
-    /// Status message color based on voice control state
-    private var statusMessageColor: Color {
+    /// Status text color based on voice state
+    private var statusColor: Color {
         switch voiceState {
-        case .idle:
-            return .secondary
-        case .standby:
-            return .blue
-        case .listening:
-            return .green
-        case .retry:
-            return .orange
+        case .idle: .secondary
+        case .standby: .blue
+        case .listening: .green
+        case .retry: .orange
         }
     }
 
-    /// Status message background based on voice control state
-    private var statusMessageBackground: some ShapeStyle {
+    /// Status background color based on voice state
+    private var statusBackground: some ShapeStyle {
         switch voiceState {
-        case .idle:
-            return AnyShapeStyle(Color.clear)
-        case .standby:
-            return AnyShapeStyle(Color.blue.opacity(0.15))
-        case .listening:
-            return AnyShapeStyle(Color.green.opacity(0.15))
-        case .retry:
-            return AnyShapeStyle(Color.orange.opacity(0.15))
+        case .idle: AnyShapeStyle(Color.clear)
+        case .standby: AnyShapeStyle(Color.blue.opacity(0.15))
+        case .listening: AnyShapeStyle(Color.green.opacity(0.15))
+        case .retry: AnyShapeStyle(Color.orange.opacity(0.15))
         }
     }
 
     // MARK: - Actions
 
-    /// Handle button tap
-    ///
-    /// Performs:
-    /// 1. Menu toggle action (original functionality)
-    /// 2. Start voice recognition (for testing)
+    /// Handle button tap - toggle menu and activate voice control
     private func handleTap() {
         action()
-
-        // Test: Also start STT directly on tap
-        print("🔘 [VoiceControlMenuButton] Starting STT on tap (test mode)")
         voiceControlVM.onWakeWordDetected()
     }
 
-    /// Handle hover phase changes
-    ///
-    /// Activates voice control when user gazes at the button.
-    ///
-    /// - Parameter phase: Current hover phase (active/ended)
+    /// Handle hover phase changes (disabled - using tap only)
     private func handleHover(_ phase: HoverPhase) {
         switch phase {
         case .active:
-            // User started looking at button
-            print("👁️ [VoiceControlMenuButton] Hover active detected")
             voiceControlVM.onHoverBegan()
-
         case .ended:
-            // User looked away from button
-            print("👁️ [VoiceControlMenuButton] Hover ended detected")
             voiceControlVM.onHoverEnded()
         }
     }
