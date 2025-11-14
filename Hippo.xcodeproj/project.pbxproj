@@ -22,6 +22,8 @@
 		06EF5FDB2EC5FC2A00E1BACC /* TodaysSurgeryButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06EF5FDA2EC5FC2A00E1BACC /* TodaysSurgeryButton.swift */; };
 		06EF5FDD2EC6098800E1BACC /* PatientSelectButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06EF5FDC2EC6098800E1BACC /* PatientSelectButton.swift */; };
 		06EF5FE12EC6CF6600E1BACC /* FormActionBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06EF5FE02EC6CF6600E1BACC /* FormActionBar.swift */; };
+		06EF5FE42EC709E000E1BACC /* ThumnailLoader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06EF5FE32EC709E000E1BACC /* ThumnailLoader.swift */; };
+		06EF5FE62EC70F1A00E1BACC /* AssetThumnailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06EF5FE52EC70F1A00E1BACC /* AssetThumnailView.swift */; };
 		06F8CAC32EBA459B00926483 /* StreamingInspectorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06F8CAC22EBA459B00926483 /* StreamingInspectorView.swift */; };
 		06F9D6362EBC765A00AD1EE6 /* OperationInputView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06F9D6352EBC765A00AD1EE6 /* OperationInputView.swift */; };
 		144254312EA9FF7800583CC3 /* OperationContext.swift in Sources */ = {isa = PBXBuildFile; fileRef = 144254302EA9FF7800583CC3 /* OperationContext.swift */; };
@@ -436,6 +438,8 @@
 		06EF5FDA2EC5FC2A00E1BACC /* TodaysSurgeryButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TodaysSurgeryButton.swift; sourceTree = "<group>"; };
 		06EF5FDC2EC6098800E1BACC /* PatientSelectButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PatientSelectButton.swift; sourceTree = "<group>"; };
 		06EF5FE02EC6CF6600E1BACC /* FormActionBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FormActionBar.swift; sourceTree = "<group>"; };
+		06EF5FE32EC709E000E1BACC /* ThumnailLoader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThumnailLoader.swift; sourceTree = "<group>"; };
+		06EF5FE52EC70F1A00E1BACC /* AssetThumnailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AssetThumnailView.swift; sourceTree = "<group>"; };
 		06F8CAC22EBA459B00926483 /* StreamingInspectorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StreamingInspectorView.swift; sourceTree = "<group>"; };
 		06F9D6352EBC765A00AD1EE6 /* OperationInputView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OperationInputView.swift; sourceTree = "<group>"; };
 		144254302EA9FF7800583CC3 /* OperationContext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OperationContext.swift; sourceTree = "<group>"; };
@@ -699,7 +703,7 @@
 				2581FCEC2EBBC76D0059678D /* PatientInputState.swift */,
 				0667A54B2EB8833D00D7BDF3 /* PatientDetailView.swift */,
 				06ADD9D12EB98E730013665B /* PatientInputView.swift */,
-				06EF5FE02EC6CF6600E1BACC /* FormActionBar.swift */,
+				06EF5FE22EC6D0CF00E1BACC /* Components_InputView */,
 			);
 			path = Patient;
 			sourceTree = "<group>";
@@ -722,6 +726,8 @@
 				06BF173D2EBB27C700996C86 /* OperationCardView.swift */,
 				06BF173B2EBB25AF00996C86 /* OperationMockDataModel.swift */,
 				06F9D6352EBC765A00AD1EE6 /* OperationInputView.swift */,
+				06EF5FE32EC709E000E1BACC /* ThumnailLoader.swift */,
+				06EF5FE52EC70F1A00E1BACC /* AssetThumnailView.swift */,
 				2581FCE42EBBC6870059678D /* OperationInputState.swift */,
 			);
 			path = Operation;
@@ -743,6 +749,14 @@
 				06EF5FDC2EC6098800E1BACC /* PatientSelectButton.swift */,
 			);
 			path = Components;
+			sourceTree = "<group>";
+		};
+		06EF5FE22EC6D0CF00E1BACC /* Components_InputView */ = {
+			isa = PBXGroup;
+			children = (
+				06EF5FE02EC6CF6600E1BACC /* FormActionBar.swift */,
+			);
+			path = Components_InputView;
 			sourceTree = "<group>";
 		};
 		1442542F2EA9FF3900583CC3 /* Context */ = {
@@ -2190,6 +2204,7 @@
 				C04678472EA00C2700D160DA /* PatientView.swift in Sources */,
 				C0F97A7D2EA3FD370063E159 /* PatientDTO.swift in Sources */,
 				C046781C2EA00B1F00D160DA /* DeletePatient.swift in Sources */,
+				06EF5FE62EC70F1A00E1BACC /* AssetThumnailView.swift in Sources */,
 				C0F97B042EA430880063E159 /* Gender.swift in Sources */,
 				06EF5FDB2EC5FC2A00E1BACC /* TodaysSurgeryButton.swift in Sources */,
 				14DE51332EB60DB00027D9A0 /* FileAttachmentPlaceholder.swift in Sources */,
@@ -2218,6 +2233,7 @@
 				25E78BA62EB9225600D8CAD2 /* UpdateOperationStatus.swift in Sources */,
 				25E78BA72EB9225600D8CAD2 /* DeleteOperation.swift in Sources */,
 				06BF173C2EBB25AF00996C86 /* OperationMockDataModel.swift in Sources */,
+				06EF5FE42EC709E000E1BACC /* ThumnailLoader.swift in Sources */,
 				C0F97B1D2EA435490063E159 /* ValidationError.swift in Sources */,
 				C0F97B1E2EA435490063E159 /* CreatePatientCommand.swift in Sources */,
 				14DE51422EB64A2F0027D9A0 /* DetailModelSection.swift in Sources */,

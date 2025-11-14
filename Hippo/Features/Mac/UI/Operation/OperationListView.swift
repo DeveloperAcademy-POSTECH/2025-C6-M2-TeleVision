@@ -41,6 +41,7 @@ struct OperationListView: View {
                                 onEdit: onEdit,
                                 onDelete: onDelete
                             )
+                            .shadow(color: .black.opacity(0.08), radius: 20, x: 0, y: 8)
                         }
                     } header: {
                         HStack {
@@ -61,6 +62,7 @@ struct OperationListView: View {
                                 onEdit: onEdit,
                                 onDelete: onDelete
                             )
+                            .shadow(color: .black.opacity(0.08), radius: 20, x: 0, y: 8)
                         }
                     } header: {
                         HStack {
