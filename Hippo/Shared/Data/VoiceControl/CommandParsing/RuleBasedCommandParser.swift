@@ -14,10 +14,10 @@ import Foundation
 /// It's fast, works offline, and doesn't require external API calls.
 ///
 /// Supported patterns:
-/// - "UI 숨겨줘", "UI 닫아줘" → hideUI
-/// - "UI 보여줘", "UI 표시해줘" → showUI
-/// - "패널 닫아줘", "창 닫아줘" → closePanel
-/// - "영상만 크게", "영상만 보여줘" → showVideoOnly
+/// - "메뉴 닫아줘", "close menu" → closeMenu
+/// - "메뉴 열어줘", "open menu" → openMenu
+/// - "비디오 닫아줘", "close video" → closeVideo
+/// - "비디오 보여줘", "show video" → showVideo
 /// - "왼쪽으로 30도 회전" → rotateEntity(left, 30)
 /// - "오른쪽으로 10도 돌려줘" → rotateEntity(right, 10)
 public struct RuleBasedCommandParser: VoiceCommandParser {
@@ -25,34 +25,42 @@ public struct RuleBasedCommandParser: VoiceCommandParser {
     public init() {}
 
     public func parse(text: String) async throws -> VoiceCommandIntent {
+        print("🔍 [Parser] Input text: \"\(text)\"")
         let normalized = normalize(text)
+        print("🔍 [Parser] Normalized: \"\(normalized)\"")
 
-        // 1. Hide UI patterns
-        if matchesHideUI(normalized) {
-            return .hideUI
+        // 1. Close Menu patterns
+        if matchesCloseMenu(normalized) {
+            print("✅ [Parser] Matched: closeMenu")
+            return .closeMenu
         }
 
-        // 2. Show UI patterns
-        if matchesShowUI(normalized) {
-            return .showUI
+        // 2. Open Menu patterns
+        if matchesOpenMenu(normalized) {
+            print("✅ [Parser] Matched: openMenu")
+            return .openMenu
         }
 
-        // 3. Close Panel patterns
-        if matchesClosePanel(normalized) {
-            return .closePanel
+        // 3. Close Video patterns
+        if matchesCloseVideo(normalized) {
+            print("✅ [Parser] Matched: closeVideo")
+            return .closeVideo
         }
 
-        // 4. Show Video Only patterns
-        if matchesShowVideoOnly(normalized) {
-            return .showVideoOnly
+        // 4. Show Video patterns
+        if matchesShowVideo(normalized) {
+            print("✅ [Parser] Matched: showVideo")
+            return .showVideo
         }
 
         // 5. Rotation patterns (most complex, check last)
         if let rotation = parseRotation(normalized) {
+            print("✅ [Parser] Matched: \(rotation)")
             return rotation
         }
 
         // No match found - return unknown
+        print("❌ [Parser] No match found - returning unknown")
         return .unknown(rawText: text)
     }
 }
@@ -84,51 +92,96 @@ private extension RuleBasedCommandParser {
 
 private extension RuleBasedCommandParser {
 
-    /// Check if text matches "Hide UI" command
-    func matchesHideUI(_ text: String) -> Bool {
+    /// Check if text matches "Close Menu" command
+    func matchesCloseMenu(_ text: String) -> Bool {
         let patterns = [
-            "ui 숨겨",
-            "ui 닫아",
-            "ui 가려",
-            "화면 숨겨",
-            "인터페이스 숨겨"
-        ]
-        return patterns.contains { text.contains($0) }
-    }
-
-    /// Check if text matches "Show UI" command
-    func matchesShowUI(_ text: String) -> Bool {
-        let patterns = [
-            "ui 보여",
-            "ui 표시",
-            "ui 켜",
-            "화면 보여",
-            "인터페이스 보여"
-        ]
-        return patterns.contains { text.contains($0) }
-    }
-
-    /// Check if text matches "Close Panel" command
-    func matchesClosePanel(_ text: String) -> Bool {
-        let patterns = [
+            // Korean
+            "메뉴 닫아",
+            "메뉴 숨겨",
+            "메뉴 종료",
+            "메뉴 가려",
+            "컨트롤 닫아",
+            "설정 닫아",
             "패널 닫아",
-            "창 닫아",
-            "패널 종료",
-            "창 종료"
+            // English
+            "close menu",
+            "close the menu",
+            "hide menu",
+            "hide the menu",
+            "menu off",
+            "close control",
+            "hide control"
         ]
         return patterns.contains { text.contains($0) }
     }
 
-    /// Check if text matches "Show Video Only" command
-    ///
-    /// More strict patterns to avoid false positives
-    func matchesShowVideoOnly(_ text: String) -> Bool {
+    /// Check if text matches "Open Menu" command
+    func matchesOpenMenu(_ text: String) -> Bool {
         let patterns = [
-            "영상만 보여",
-            "영상만 크게",
-            "영상만 보이게",
+            // Korean
+            "메뉴 열어",
+            "메뉴 보여",
+            "메뉴 켜",
+            "메뉴 표시",
+            "컨트롤 열어",
+            "설정 열어",
+            "패널 열어",
+            // English
+            "open menu",
+            "open the menu",
+            "show menu",
+            "show the menu",
+            "menu on",
+            "display menu",
+            "open control",
+            "show control"
+        ]
+        return patterns.contains { text.contains($0) }
+    }
+
+    /// Check if text matches "Close Video" command
+    func matchesCloseVideo(_ text: String) -> Bool {
+        let patterns = [
+            // Korean
+            "비디오 닫아",
+            "영상 닫아",
+            "동영상 닫아",
+            "비디오 종료",
+            "영상 종료",
+            "내시경 닫아",
+            // English
+            "close video",
+            "close the video",
+            "hide video",
+            "hide the video",
+            "video off",
+            "close endoscope",
+            "hide endoscope"
+        ]
+        return patterns.contains { text.contains($0) }
+    }
+
+    /// Check if text matches "Show Video" command
+    func matchesShowVideo(_ text: String) -> Bool {
+        let patterns = [
+            // Korean
+            "비디오 보여",
+            "영상 보여",
+            "동영상 보여",
+            "비디오 열어",
+            "영상 열어",
+            "내시경 보여",
+            "영상만",
             "비디오만",
-            "동영상만"
+            // English
+            "show video",
+            "show the video",
+            "open video",
+            "open the video",
+            "video on",
+            "video only",
+            "show endoscope",
+            "open endoscope"
         ]
         return patterns.contains { text.contains($0) }
     }
@@ -139,9 +192,11 @@ private extension RuleBasedCommandParser {
     /// - "왼쪽으로 30도 회전" → rotateEntity(left, 30)
     /// - "오른쪽 10도 돌려줘" → rotateEntity(right, 10)
     /// - "위로 45도" → rotateEntity(up, 45)
+    /// - "rotate left 30 degrees" → rotateEntity(left, 30)
+    /// - "turn right 10" → rotateEntity(right, 10)
     func parseRotation(_ text: String) -> VoiceCommandIntent? {
-        // Keywords that indicate rotation command (removed "도" to avoid false positives)
-        let rotationKeywords = ["회전", "돌려", "돌아"]
+        // Keywords that indicate rotation command
+        let rotationKeywords = ["회전", "돌려", "돌아", "rotate", "turn", "spin"]
         guard rotationKeywords.contains(where: { text.contains($0) }) else {
             return nil
         }
@@ -164,6 +219,7 @@ private extension RuleBasedCommandParser {
 
     /// Extract rotation direction from text
     func extractDirection(from text: String) -> RotationDirection? {
+        // Korean
         if text.contains("왼쪽") || text.contains("좌") {
             return .left
         } else if text.contains("오른쪽") || text.contains("우") {
@@ -171,6 +227,16 @@ private extension RuleBasedCommandParser {
         } else if text.contains("위") || text.contains("상") {
             return .up
         } else if text.contains("아래") || text.contains("하") {
+            return .down
+        }
+        // English
+        else if text.contains("left") {
+            return .left
+        } else if text.contains("right") {
+            return .right
+        } else if text.contains("up") {
+            return .up
+        } else if text.contains("down") {
             return .down
         }
         return nil

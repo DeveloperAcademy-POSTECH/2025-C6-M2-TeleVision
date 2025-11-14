@@ -169,17 +169,17 @@ private extension LLMCommandParser {
     /// Map LLMIntentResponse to VoiceCommandIntent
     func mapIntentResponse(_ response: LLMIntentResponse, originalText: String) throws -> VoiceCommandIntent {
         switch response.intent.lowercased() {
-        case "hideui":
-            return .hideUI
+        case "closemenu", "hideui":
+            return .closeMenu
 
-        case "showui":
-            return .showUI
+        case "openmenu", "showui":
+            return .openMenu
 
-        case "closepanel":
-            return .closePanel
+        case "closevideo", "closepanel":
+            return .closeVideo
 
-        case "showvideoonly":
-            return .showVideoOnly
+        case "showvideo", "showvideoonly":
+            return .showVideo
 
         case "rotateentity":
             return try parseRotateEntityFromLLM(response.parameters, originalText: originalText)

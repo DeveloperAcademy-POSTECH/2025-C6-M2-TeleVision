@@ -7,6 +7,7 @@
 
 enum AttachmentIDs {
     static let topToggleButton = "TopToggleButton"
+    static let testVoiceButton = "TestVoiceButton"  // 테스트용 음성 제어 버튼
     static let bottomMenuBar = "BottomMenuBar"
     static let finishSurgeryAlert = "FinishSurgeryAlert"
     static let assetListView = "AssetListView"

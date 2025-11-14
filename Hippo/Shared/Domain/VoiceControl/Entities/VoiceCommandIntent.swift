@@ -5,22 +5,29 @@
 
 import Foundation
 
+/// Type of feedback message for UI styling
+public enum FeedbackType: Equatable, Sendable {
+    case info      // Blue - general information
+    case success   // Green - command executed successfully
+    case error     // Red/Orange - error occurred
+}
+
 /// Parsed voice command intent
 public enum VoiceCommandIntent: Equatable, Sendable {
-    /// Hide UI panel
-    case hideUI
+    /// Close menu/control panel
+    case closeMenu
 
-    /// Show UI panel
-    case showUI
+    /// Open menu/control panel
+    case openMenu
 
-    /// Close current panel/window
-    case closePanel
+    /// Close video/endoscopic view
+    case closeVideo
+
+    /// Show video/endoscopic view
+    case showVideo
 
     /// Rotate 3D entity
     case rotateEntity(direction: RotationDirection, angle: Double)
-
-    /// Show video only (hide all UI)
-    case showVideoOnly
 
     /// Unrecognized command
     case unknown(rawText: String)

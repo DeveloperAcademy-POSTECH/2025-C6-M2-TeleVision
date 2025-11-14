@@ -254,6 +254,7 @@
 		2581FF752EC20A970059678D /* ConnectionSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2581FF722EC20A970059678D /* ConnectionSettings.swift */; };
 		2581FF782EC20B030059678D /* ConnectionSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2581FF762EC20B030059678D /* ConnectionSettingsView.swift */; };
 		2581FF7A2EC2753A0059678D /* EndoscopeImmersiveSpace.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2581FF792EC2753A0059678D /* EndoscopeImmersiveSpace.swift */; };
+		25869FF12EC6CD3200882FC5 /* WakeWordListener.swift in Sources */ = {isa = PBXBuildFile; fileRef = 25869FEF2EC6CD3200882FC5 /* WakeWordListener.swift */; };
 		25E78B602EB90D4600D8CAD2 /* OperationStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = 25E78B5D2EB90D4600D8CAD2 /* OperationStatus.swift */; };
 		25E78B612EB90D4600D8CAD2 /* Operation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 25E78B542EB90D4600D8CAD2 /* Operation.swift */; };
 		25E78B622EB90D4600D8CAD2 /* OperationAsset.swift in Sources */ = {isa = PBXBuildFile; fileRef = 25E78B552EB90D4600D8CAD2 /* OperationAsset.swift */; };
@@ -622,6 +623,7 @@
 		2581FF722EC20A970059678D /* ConnectionSettings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConnectionSettings.swift; sourceTree = "<group>"; };
 		2581FF762EC20B030059678D /* ConnectionSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConnectionSettingsView.swift; sourceTree = "<group>"; };
 		2581FF792EC2753A0059678D /* EndoscopeImmersiveSpace.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EndoscopeImmersiveSpace.swift; sourceTree = "<group>"; };
+		25869FEF2EC6CD3200882FC5 /* WakeWordListener.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WakeWordListener.swift; sourceTree = "<group>"; };
 		25E78B542EB90D4600D8CAD2 /* Operation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Operation.swift; sourceTree = "<group>"; };
 		25E78B552EB90D4600D8CAD2 /* OperationAsset.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OperationAsset.swift; sourceTree = "<group>"; };
 		25E78B562EB90D4600D8CAD2 /* OperationRecording.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OperationRecording.swift; sourceTree = "<group>"; };
@@ -1291,6 +1293,7 @@
 		2523A6D72EC6497B00842508 /* VoiceControl */ = {
 			isa = PBXGroup;
 			children = (
+				25869FF02EC6CD3200882FC5 /* Helpers */,
 				2523A6D32EC6497B00842508 /* ViewModels */,
 				2523A6D62EC6497B00842508 /* Views */,
 			);
@@ -1380,6 +1383,14 @@
 				2581FF762EC20B030059678D /* ConnectionSettingsView.swift */,
 			);
 			path = Settings;
+			sourceTree = "<group>";
+		};
+		25869FF02EC6CD3200882FC5 /* Helpers */ = {
+			isa = PBXGroup;
+			children = (
+				25869FEF2EC6CD3200882FC5 /* WakeWordListener.swift */,
+			);
+			path = Helpers;
 			sourceTree = "<group>";
 		};
 		25E78B522EB90D4600D8CAD2 /* Commands */ = {
@@ -2200,6 +2211,7 @@
 				2581FF6D2EC1C4640059678D /* ConnectionOverlay.swift in Sources */,
 				C0F97ADA2EA420E10063E159 /* DataDependencies.swift in Sources */,
 				14DE513F2EB60E610027D9A0 /* FileAttachmentSection.swift in Sources */,
+				25869FF12EC6CD3200882FC5 /* WakeWordListener.swift in Sources */,
 				1446FBED2EAFA477000BCF61 /* FormSection.swift in Sources */,
 				278F28BD2EB3877300DF2F73 /* AssetListView.swift in Sources */,
 				1446FBE82EAF9E3B000BCF61 /* PatientDetailView.swift in Sources */,
@@ -2508,7 +2520,7 @@
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = H2WD8C55D7;
+				DEVELOPMENT_TEAM = NB42482NDH;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = "$(SRCROOT)/Hippo/Applications/VisionApp/Info.plist";
@@ -2541,7 +2553,7 @@
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = H2WD8C55D7;
+				DEVELOPMENT_TEAM = NB42482NDH;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = "$(SRCROOT)/Hippo/Applications/VisionApp/Info.plist";

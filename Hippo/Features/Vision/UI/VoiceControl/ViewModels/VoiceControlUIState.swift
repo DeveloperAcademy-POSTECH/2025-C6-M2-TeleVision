@@ -26,24 +26,44 @@ public struct VoiceControlUIState: Equatable {
     /// Current feedback message to display to user
     public var feedbackMessage: String?
 
+    /// Real-time partial transcription (shown while listening)
+    public var partialTranscription: String?
+
     /// Last recognized transcription (for debugging/UI feedback)
     public var lastTranscription: String?
 
+    /// Last parsed intent (for debugging/UI feedback)
+    public var lastParsedIntent: String?
+
     /// Last error message (for user feedback)
     public var lastErrorMessage: String?
+
+    /// Whether currently processing (recognition or parsing)
+    public var isProcessing: Bool = false
+
+    /// Type of current feedback message (for styling)
+    public var feedbackType: FeedbackType = .info
 
     // MARK: - Initialization
 
     public init(
         state: VoiceControlState = .idle,
         feedbackMessage: String? = nil,
+        partialTranscription: String? = nil,
         lastTranscription: String? = nil,
-        lastErrorMessage: String? = nil
+        lastParsedIntent: String? = nil,
+        lastErrorMessage: String? = nil,
+        isProcessing: Bool = false,
+        feedbackType: FeedbackType = .info
     ) {
         self.state = state
         self.feedbackMessage = feedbackMessage
+        self.partialTranscription = partialTranscription
         self.lastTranscription = lastTranscription
+        self.lastParsedIntent = lastParsedIntent
         self.lastErrorMessage = lastErrorMessage
+        self.isProcessing = isProcessing
+        self.feedbackType = feedbackType
     }
 }
 
@@ -91,10 +111,10 @@ extension VoiceControlUIState {
             feedbackMessage = nil
 
         case .standby:
-            feedbackMessage = "아이콘을 바라본 상태에서 'Hippo'라고 말하면 음성 제어가 시작됩니다."
+            feedbackMessage = "아이콘을 바라본 상태에서 'Hippo'라고 말하세요"
 
         case .listening:
-            feedbackMessage = "듣는 중… 말씀을 끝내시면 명령을 실행합니다."
+            feedbackMessage = "명령을 말씀해주세요"
 
         case .retry:
             feedbackMessage = lastErrorMessage ?? "명령을 이해하지 못했어요. 다시 말씀해 주세요."

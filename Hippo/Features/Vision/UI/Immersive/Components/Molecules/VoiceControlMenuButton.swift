@@ -61,16 +61,74 @@ struct VoiceControlMenuButton: View {
     // MARK: - Body
 
     var body: some View {
-        Image("TopButton")
-            .resizable()
-            .frame(width: 120, height: 120)
-            .opacity(buttonOpacity)
-            .onTapGesture {
-                handleTap()
+        VStack(spacing: 12) {
+            ZStack {
+                // Main button image
+                Image("TopButton")
+                    .resizable()
+                    .frame(width: 160, height: 160)
+                    .opacity(buttonOpacity)
+
+                // Loading indicator overlay
+                if voiceControlVM.uiState.isProcessing {
+                    ProgressView()
+                        .progressViewStyle(.circular)
+                        .scaleEffect(2.0)
+                        .tint(.white)
+                }
             }
-            .onContinuousHover { phase in
-                handleHover(phase)
+
+            // Real-time transcription (shown during listening)
+            if let partialText = voiceControlVM.uiState.partialTranscription, !partialText.isEmpty {
+                Text(partialText)
+                    .font(.title3)
+                    .fontWeight(.medium)
+                    .foregroundStyle(.primary)
+                    .padding(.horizontal, 16)
+                    .padding(.vertical, 8)
+                    .background(Color.primary.opacity(0.15))
+                    .cornerRadius(12)
+                    .transition(.opacity.combined(with: .scale))
             }
+
+            // Result/Feedback message (e.g., "✅ 메뉴가 닫힙니다")
+            if let feedback = voiceControlVM.uiState.feedbackMessage, voiceState == .listening && !voiceControlVM.uiState.isProcessing {
+                Text(feedback)
+                    .font(.body)
+                    .fontWeight(.semibold)
+                    .foregroundStyle(feedbackColor)
+                    .multilineTextAlignment(.center)
+                    .padding(.horizontal, 16)
+                    .padding(.vertical, 8)
+                    .background(feedbackBackground)
+                    .cornerRadius(12)
+                    .transition(.opacity.combined(with: .scale))
+            }
+
+            // Status message
+            if let message = statusMessage {
+                Text(message)
+                    .font(.caption)
+                    .fontWeight(.semibold)
+                    .foregroundStyle(statusMessageColor)
+                    .padding(.horizontal, 12)
+                    .padding(.vertical, 6)
+                    .background(statusMessageBackground)
+                    .cornerRadius(8)
+            }
+        }
+//        .hoverEffect()  // Vision Pro gaze interaction
+        .onTapGesture {
+            print("🔘🔘🔘 [VoiceControlMenuButton] IMAGE TAPPED!")
+            handleTap()
+        }
+//        .onHover { isHovering in
+//            print("👁️👁️👁️ [VoiceControlMenuButton] onHover: \(isHovering)")
+//        }
+//        .onContinuousHover { phase in
+//            print("👁️ [VoiceControlMenuButton] onContinuousHover: \(phase)")
+//            handleHover(phase)
+//        }
     }
 
     // MARK: - Computed Properties
@@ -110,14 +168,91 @@ struct VoiceControlMenuButton: View {
         }
     }
 
+    /// Status message based on voice control state
+    private var statusMessage: String? {
+        switch voiceState {
+        case .idle:
+            return nil
+        case .standby:
+            return "'Hippo'라고 말하세요"
+        case .listening:
+            if voiceControlVM.uiState.isProcessing {
+                return "처리 중..."
+            } else if voiceControlVM.uiState.feedbackType == .success {
+                return nil  // Don't show status when showing success feedback
+            } else {
+                return "명령을 말씀해주세요"
+            }
+        case .retry:
+            return voiceControlVM.uiState.lastErrorMessage ?? "다시 시도해주세요"
+        }
+    }
+
+    /// Feedback message color based on type
+    private var feedbackColor: Color {
+        switch voiceControlVM.uiState.feedbackType {
+        case .success:
+            return .green
+        case .error:
+            return .orange
+        case .info:
+            return .blue
+        }
+    }
+
+    /// Feedback message background based on type
+    private var feedbackBackground: some ShapeStyle {
+        switch voiceControlVM.uiState.feedbackType {
+        case .success:
+            return AnyShapeStyle(Color.green.opacity(0.15))
+        case .error:
+            return AnyShapeStyle(Color.orange.opacity(0.15))
+        case .info:
+            return AnyShapeStyle(Color.blue.opacity(0.15))
+        }
+    }
+
+    /// Status message color based on voice control state
+    private var statusMessageColor: Color {
+        switch voiceState {
+        case .idle:
+            return .secondary
+        case .standby:
+            return .blue
+        case .listening:
+            return .green
+        case .retry:
+            return .orange
+        }
+    }
+
+    /// Status message background based on voice control state
+    private var statusMessageBackground: some ShapeStyle {
+        switch voiceState {
+        case .idle:
+            return AnyShapeStyle(Color.clear)
+        case .standby:
+            return AnyShapeStyle(Color.blue.opacity(0.15))
+        case .listening:
+            return AnyShapeStyle(Color.green.opacity(0.15))
+        case .retry:
+            return AnyShapeStyle(Color.orange.opacity(0.15))
+        }
+    }
+
     // MARK: - Actions
 
     /// Handle button tap
     ///
-    /// Performs the traditional menu toggle action.
-    /// Voice control state is not affected by taps.
+    /// Performs:
+    /// 1. Menu toggle action (original functionality)
+    /// 2. Start voice recognition (for testing)
     private func handleTap() {
         action()
+
+        // Test: Also start STT directly on tap
+        print("🔘 [VoiceControlMenuButton] Starting STT on tap (test mode)")
+        voiceControlVM.onWakeWordDetected()
     }
 
     /// Handle hover phase changes
@@ -129,10 +264,12 @@ struct VoiceControlMenuButton: View {
         switch phase {
         case .active:
             // User started looking at button
+            print("👁️ [VoiceControlMenuButton] Hover active detected")
             voiceControlVM.onHoverBegan()
 
         case .ended:
             // User looked away from button
+            print("👁️ [VoiceControlMenuButton] Hover ended detected")
             voiceControlVM.onHoverEnded()
         }
     }
