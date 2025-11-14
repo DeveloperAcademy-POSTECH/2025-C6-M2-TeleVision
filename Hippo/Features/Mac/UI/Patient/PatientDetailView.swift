@@ -22,7 +22,6 @@ struct PatientDetailView: View {
             onEdit: { operationID in
                 viewModel.selectedOperationID = operationID
                 //수술 수정 시트 열기
-                //Patient수정과 다르게 id를 전달받아서 OperationDisplayModel을 반환하는 헬퍼함수를 추가했습니다.
                 if let op = viewModel.operation(by: operationID) {
                     viewModel.openOperationEditSheet(operation: op)
                 }

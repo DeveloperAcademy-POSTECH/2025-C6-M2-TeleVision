@@ -20,9 +20,10 @@ struct HomeViewSideBar: View {
                 } header: {
                     HStack {
                         //헤더 텍스트
-                        Text("Patient List")
-                            .font(.body)
-                            .fontWeight(.bold)
+                            Text("Patient List")
+                                .font(.body)
+                                .fontWeight(.bold)
+                        
                         Spacer()
 
                         //환자 추가 버튼
@@ -30,7 +31,11 @@ struct HomeViewSideBar: View {
                             rootVM.openPatientCreateSheet()
                         } label: {
                             Image(systemName: "person.badge.plus")
+                                .font(.title2)
+                                .padding(12)
+                                .foregroundColor(.hippoPrimary)
                         }
+                        .buttonStyle(.plain)
                     }
                     .padding()
                 }
