@@ -14,18 +14,23 @@ struct OperationInputView: View {
     // ViewModel State 바인딩 (HomeView의 rootVM에서 전달받음)
     @Binding var state: OperationInputState
     let mode: OperationInputMode
-    
+
     let onSave: () async -> Void
+
 
     var body: some View {
         VStack {
             Section {
-                Grid(alignment: .leading, horizontalSpacing: 24, verticalSpacing: 16) {
+                Grid(
+                    alignment: .leading,
+                    horizontalSpacing: 24,
+                    verticalSpacing: 16
+                ) {
                     GridRow {
                         Text("Title")
                         TextField("", text: $state.title)
                     }
-                    
+
                     GridRow {
                         Text("Operation Date")
                         HStack {
@@ -36,22 +41,22 @@ struct OperationInputView: View {
                             .environment(\.locale, Locale(identifier: "ko_KR"))
                         }
                     }
-                    
+
                     GridRow {
                         Text("Surgeon")
                         TextField("", text: $state.surgeon)
                     }
-                    
+
                     GridRow {
                         Text("Surgical site")
                         TextField("", text: $state.surgicalSite)
                     }
-                    
+
                     GridRow {
                         Text("Diagnosis")
                         TextField("", text: $state.diagnosis)
                     }
-                    
+
                     GridRow {
                         Text("Details")
                         TextField("", text: $state.details, axis: .vertical)
@@ -61,7 +66,6 @@ struct OperationInputView: View {
                 .font(.callout)
                 .fontWeight(.semibold)
                 .foregroundColor(.hippoGray900)
-
 
                 //3D 모델링 추가 뷰
                 HStack(alignment: .top) {
@@ -79,14 +83,34 @@ struct OperationInputView: View {
                         }
                     } label: {
                         Image(systemName: "plus")
+                            .font(.title2)
+                            .fontWeight(.semibold)
+                            .foregroundColor(.hippoGray500)
+                            .background(
+                                Circle()
+                                    .fill(Color.hippoBackground) // 혹은 .hippoPrimary
+                                    .frame(width: 32, height: 32)
+                            )
                     }
+                    .buttonStyle(.plain)
+                    .padding()
                 }
+
+                //에셋 횡스크롤 뷰
                 ScrollView(.horizontal, showsIndicators: false) {
                     HStack(spacing: 12) {
-                        //TODO: 마우스 호버 시, 배경 Dim처리 + 삭제 버튼 활성화
-                        //TODO: 저장 시, 애셋 저장이 안 됨. 해결하기.
                         ForEach(state.assets) { asset in
-                            AssetThumnailView(url: asset.fileURL, fileName: asset.fileName)
+                            Button {
+                                state.removeAsset(id: asset.id)
+                            } label: {
+                                AssetThumnailView(
+                                    url: asset.fileURL,
+                                    fileName: asset.fileName,
+                                    onDelete: { state.removeAsset(id: asset.id) },
+                                    enableHoverDimming: true
+                                )
+                            }
+                            .buttonStyle(.plain)
                         }
                     }
                     .padding(.vertical)
@@ -106,7 +130,7 @@ struct OperationInputView: View {
             //취소/저장 버튼
             HStack {
                 Spacer()
-                
+
                 Button {
                     isPresentingOperationInput = false
                 } label: {
@@ -118,14 +142,14 @@ struct OperationInputView: View {
                 .foregroundColor(.hippoGray500)
                 .clipShape(RoundedRectangle(cornerRadius: 8))
                 .buttonStyle(.plain)
-                
+
                 Button {
                     if mode == .create {
                         print("operation created")
                     } else {
                         print("operation edited")
                     }
-                    
+
                     Task {
                         await onSave()
                     }

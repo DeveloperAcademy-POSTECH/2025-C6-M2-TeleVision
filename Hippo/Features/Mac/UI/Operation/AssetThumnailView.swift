@@ -11,7 +11,11 @@ struct AssetThumnailView: View {
     @StateObject private var loader = ThumnailLoader()
     let url: URL
     let fileName: String
-   
+    var onDelete: (() -> Void)? = nil
+    // Enable dimming on hover only when requested by the caller (e.g., OperationInputView)
+    var enableHoverDimming: Bool = false
+    @State private var isHovered: Bool = false
+
     var body: some View {
         VStack {
             Group {
@@ -30,7 +34,30 @@ struct AssetThumnailView: View {
             }
             .frame(width: 80, height: 80)
             .clipShape(RoundedRectangle(cornerRadius: 8))
-            
+            .overlay(
+                ZStack {
+                    if enableHoverDimming && isHovered {
+                        RoundedRectangle(cornerRadius: 8)
+                            .fill(Color.black.opacity(0.25))
+                    }
+                    if enableHoverDimming && isHovered, let onDelete {
+                        Button(action: onDelete) {
+                            Image(systemName: "trash")
+                                .font(.title2)
+                                .fontWeight(.semibold)
+                                .foregroundColor(.white)
+                        }
+                        .buttonStyle(.plain)
+                    }
+                }
+
+            )
+            .onHover { hovering in
+                if enableHoverDimming {
+                    isHovered = hovering
+                }
+            }
+
             Text(fileName)
                 .font(.caption2)
                 .lineLimit(1)
