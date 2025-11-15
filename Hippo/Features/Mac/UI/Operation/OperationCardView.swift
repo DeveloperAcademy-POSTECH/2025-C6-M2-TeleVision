@@ -169,9 +169,12 @@ struct OperationCardView: View {
 
                     ScrollView(.horizontal, showsIndicators: false) {
                         HStack(spacing: 12) {
-                            //TODO: 마우스 호버 시, 배경 Dim처리 + 삭제 버튼 활성화
                             ForEach(operation.assets) { asset in
-                                AssetThumnailView(url: asset.fileURL, fileName: asset.fileName)
+                                AssetThumnailView(
+                                    url: asset.fileURL,
+                                    fileName: asset.fileName,
+                                    enableHoverDimming: false
+                                )
                             }
                         }
                         .padding(.vertical)
