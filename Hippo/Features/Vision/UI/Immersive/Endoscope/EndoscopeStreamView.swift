@@ -176,6 +176,7 @@ struct VideoPlayerStereoView: View {
                 }
             }
         }
+        .frame(depth: 0)
         .onAppear {
             print("✅ VideoPlayerStereoView appeared, stereoRenderer status: \(receiver.stereoRenderer.status.rawValue)")
         }
@@ -201,6 +202,7 @@ struct StereoVideoView: View {
             // Setup the stereo video scene with left/right planes
             renderer.setupScene(in: content)
         }
+        .frame(depth: 0)
         #else
         Color.black
             .overlay(
