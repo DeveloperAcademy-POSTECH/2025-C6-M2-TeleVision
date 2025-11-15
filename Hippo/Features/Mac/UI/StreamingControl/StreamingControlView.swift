@@ -26,54 +26,56 @@ struct StreamingControlView: View {
     private let videoLayer = AVSampleBufferDisplayLayer()
 
     var body: some View {
-        VStack(spacing: 20) {
-            ModeSectionView(
-                selectedMode: $viewModel.videoMode,
-                cameraInputMode: viewModel.cameraInputMode
-            )
+        ScrollView {
+            VStack(spacing: 20) {
+                ModeSectionView(
+                    selectedMode: $viewModel.videoMode,
+                    cameraInputMode: viewModel.cameraInputMode
+                )
 
-            CameraSectionView(
-                cameraInputMode: $viewModel.cameraInputMode,
-                selectedLeftDevice: $viewModel.selectedLeftDevice,
-                selectedRightDevice: $viewModel.selectedRightDevice,
-                selectedSingleDevice: $viewModel.selectedSingleDevice,
-                availableDevices: viewModel.availableDevices
-            )
+                CameraSectionView(
+                    cameraInputMode: $viewModel.cameraInputMode,
+                    selectedLeftDevice: $viewModel.selectedLeftDevice,
+                    selectedRightDevice: $viewModel.selectedRightDevice,
+                    selectedSingleDevice: $viewModel.selectedSingleDevice,
+                    availableDevices: viewModel.availableDevices
+                )
 
-            PreviewSectionView(videoLayer: videoLayer)
+                PreviewSectionView(videoLayer: videoLayer)
 
-            StreamingButton(
-                isStreaming: viewModel.isStreaming,
-                isDisabled: viewModel.availableDevices.isEmpty
-            ) {
-                Task {
-                    do {
-                        if viewModel.isStreaming {
-                            viewModel.stopStreaming()
-                        } else {
-                            try await viewModel.startStreaming()
+                StreamingButton(
+                    isStreaming: viewModel.isStreaming,
+                    isDisabled: viewModel.availableDevices.isEmpty
+                ) {
+                    Task {
+                        do {
+                            if viewModel.isStreaming {
+                                viewModel.stopStreaming()
+                            } else {
+                                try await viewModel.startStreaming()
+                            }
+                        } catch {
+                            print("Streaming error: \(error.localizedDescription)")
                         }
-                    } catch {
-                        print("Streaming error: \(error.localizedDescription)")
                     }
                 }
             }
-        }
-        .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .toolbar {
-            //우측 인스펙터 버튼
-            Button {
-                viewModel.toggleInspector()
-            } label: { Label("Debug", systemImage: "sidebar.right") }
-        }
-        .padding(32)
-        .inspector(isPresented: $viewModel.isInspectorPresented) {
-            StreamingInspectorView()
-        }
-        .task {
-            // View가 나타날 때 장치 목록 로드 및 preview layer 연결
-            viewModel.loadAvailableDevices()
-            viewModel.previewLayer = videoLayer
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
+            .toolbar {
+                //우측 인스펙터 버튼
+                Button {
+                    viewModel.toggleInspector()
+                } label: { Label("Debug", systemImage: "sidebar.right") }
+            }
+            .padding(32)
+            .inspector(isPresented: $viewModel.isInspectorPresented) {
+                StreamingInspectorView()
+            }
+            .task {
+                // View가 나타날 때 장치 목록 로드 및 preview layer 연결
+                viewModel.loadAvailableDevices()
+                viewModel.previewLayer = videoLayer
+            }
         }
     }
 }
