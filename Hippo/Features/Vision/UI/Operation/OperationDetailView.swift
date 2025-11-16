@@ -85,7 +85,18 @@ struct OperationDetailView: View {
                     if !viewModel.isShowingEditInputView {
                         ToolbarItem(placement: .bottomOrnament) {
                             StartOperationButton {
-                                Task {
+                                Task { @MainActor in
+                                    // Request voice permissions before starting surgery
+                                    let speechService = AppleSpeechRecognitionService()
+                                    do {
+                                        try await speechService.requestPermissions()
+                                        print("✅ Voice permissions granted")
+                                    } catch {
+                                        print("⚠️ Voice permissions denied: \(error)")
+                                        // Continue anyway - voice control will be unavailable
+                                    }
+
+                                    // Start surgery session
                                     dismissWindow(id: WindowIDs.home)
                                     dismissWindow(id: WindowIDs.operationDetail)
                                     dismissWindow(id: WindowIDs.patientDetail)
