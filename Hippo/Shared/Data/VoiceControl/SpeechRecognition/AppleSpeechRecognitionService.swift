@@ -17,7 +17,6 @@ import AVFoundation
 ///
 /// **Implementation details:**
 /// - Uses `SFSpeechAudioBufferRecognitionRequest` for live audio recognition
-/// - Configures for Korean language (`ko-KR`)
 /// - Automatically stops after detecting a complete utterance
 /// - Handles microphone permissions via `AVAudioSession`
 ///
