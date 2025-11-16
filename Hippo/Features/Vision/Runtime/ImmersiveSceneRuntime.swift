@@ -32,8 +32,16 @@ final class ImmersiveSceneRuntime {
     func setupScene(in content: RealityViewContent, attachments: RealityViewAttachments) {
         let anchor1 = AnchorEntity(.head)
         anchor1.position = [0, 0.25, -1.0]
+
+        // Main toggle button (original position - center)
         if let topButton = attachments.entity(for: AttachmentIDs.topToggleButton) {
             anchor1.addChild(topButton)
+        }
+
+        // Test voice button (bottom-left corner, for testing only)
+        if let testButton = attachments.entity(for: AttachmentIDs.testVoiceButton) {
+            testButton.position = [-0.4, -0.2, 0]  // Bottom-left, less intrusive
+            anchor1.addChild(testButton)
         }
 
         content.add(anchor1)
