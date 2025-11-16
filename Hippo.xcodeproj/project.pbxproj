@@ -7,7 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		065DA5582EBD844600B454BC /* PatientButtonView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 065DA5572EBD844600B454BC /* PatientButtonView.swift */; };
 		065DA55A2EBDD12000B454BC /* OperationCardDisplayModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 065DA5592EBDD12000B454BC /* OperationCardDisplayModel.swift */; };
 		0667A53A2EB79DBB00D7BDF3 /* HomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0667A5392EB79DBB00D7BDF3 /* HomeView.swift */; };
 		0667A54A2EB8814100D7BDF3 /* StreamingControlView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0667A5492EB8814100D7BDF3 /* StreamingControlView.swift */; };
@@ -18,6 +17,13 @@
 		06ADD9D22EB98E730013665B /* PatientInputView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06ADD9D12EB98E730013665B /* PatientInputView.swift */; };
 		06BF173C2EBB25AF00996C86 /* OperationMockDataModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06BF173B2EBB25AF00996C86 /* OperationMockDataModel.swift */; };
 		06BF173E2EBB27C700996C86 /* OperationCardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06BF173D2EBB27C700996C86 /* OperationCardView.swift */; };
+		06EF5FC82EC5BF0D00E1BACC /* TabPicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06EF5FC72EC5BF0D00E1BACC /* TabPicker.swift */; };
+		06EF5FD82EC5D02700E1BACC /* HomeViewSideBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06EF5FD72EC5D02700E1BACC /* HomeViewSideBar.swift */; };
+		06EF5FDB2EC5FC2A00E1BACC /* TodaysSurgeryButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06EF5FDA2EC5FC2A00E1BACC /* TodaysSurgeryButton.swift */; };
+		06EF5FDD2EC6098800E1BACC /* PatientSelectButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06EF5FDC2EC6098800E1BACC /* PatientSelectButton.swift */; };
+		06EF5FE12EC6CF6600E1BACC /* FormActionBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06EF5FE02EC6CF6600E1BACC /* FormActionBar.swift */; };
+		06EF5FE42EC709E000E1BACC /* ThumbnailLoader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06EF5FE32EC709E000E1BACC /* ThumbnailLoader.swift */; };
+		06EF5FE62EC70F1A00E1BACC /* AssetThumbnailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06EF5FE52EC70F1A00E1BACC /* AssetThumbnailView.swift */; };
 		06F8CAC32EBA459B00926483 /* StreamingInspectorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06F8CAC22EBA459B00926483 /* StreamingInspectorView.swift */; };
 		06F9D6362EBC765A00AD1EE6 /* OperationInputView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06F9D6352EBC765A00AD1EE6 /* OperationInputView.swift */; };
 		144254312EA9FF7800583CC3 /* OperationContext.swift in Sources */ = {isa = PBXBuildFile; fileRef = 144254302EA9FF7800583CC3 /* OperationContext.swift */; };
@@ -420,7 +426,6 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		065DA5572EBD844600B454BC /* PatientButtonView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PatientButtonView.swift; sourceTree = "<group>"; };
 		065DA5592EBDD12000B454BC /* OperationCardDisplayModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OperationCardDisplayModel.swift; sourceTree = "<group>"; };
 		0667A5392EB79DBB00D7BDF3 /* HomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeView.swift; sourceTree = "<group>"; };
 		0667A5492EB8814100D7BDF3 /* StreamingControlView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StreamingControlView.swift; sourceTree = "<group>"; };
@@ -431,6 +436,13 @@
 		06ADD9D12EB98E730013665B /* PatientInputView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PatientInputView.swift; sourceTree = "<group>"; };
 		06BF173B2EBB25AF00996C86 /* OperationMockDataModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OperationMockDataModel.swift; sourceTree = "<group>"; };
 		06BF173D2EBB27C700996C86 /* OperationCardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OperationCardView.swift; sourceTree = "<group>"; };
+		06EF5FC72EC5BF0D00E1BACC /* TabPicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TabPicker.swift; sourceTree = "<group>"; };
+		06EF5FD72EC5D02700E1BACC /* HomeViewSideBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeViewSideBar.swift; sourceTree = "<group>"; };
+		06EF5FDA2EC5FC2A00E1BACC /* TodaysSurgeryButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TodaysSurgeryButton.swift; sourceTree = "<group>"; };
+		06EF5FDC2EC6098800E1BACC /* PatientSelectButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PatientSelectButton.swift; sourceTree = "<group>"; };
+		06EF5FE02EC6CF6600E1BACC /* FormActionBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FormActionBar.swift; sourceTree = "<group>"; };
+		06EF5FE32EC709E000E1BACC /* ThumbnailLoader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThumbnailLoader.swift; sourceTree = "<group>"; };
+		06EF5FE52EC70F1A00E1BACC /* AssetThumbnailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AssetThumbnailView.swift; sourceTree = "<group>"; };
 		06F8CAC22EBA459B00926483 /* StreamingInspectorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StreamingInspectorView.swift; sourceTree = "<group>"; };
 		06F9D6352EBC765A00AD1EE6 /* OperationInputView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OperationInputView.swift; sourceTree = "<group>"; };
 		144254302EA9FF7800583CC3 /* OperationContext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OperationContext.swift; sourceTree = "<group>"; };
@@ -696,6 +708,7 @@
 				2581FCEC2EBBC76D0059678D /* PatientInputState.swift */,
 				0667A54B2EB8833D00D7BDF3 /* PatientDetailView.swift */,
 				06ADD9D12EB98E730013665B /* PatientInputView.swift */,
+				06EF5FE22EC6D0CF00E1BACC /* Components_InputView */,
 			);
 			path = Patient;
 			sourceTree = "<group>";
@@ -705,7 +718,7 @@
 			children = (
 				0667A5502EB8A33400D7BDF3 /* HomeMockDataModel.swift */,
 				0667A5392EB79DBB00D7BDF3 /* HomeView.swift */,
-				065DA5572EBD844600B454BC /* PatientButtonView.swift */,
+				06EF5FD92EC5D05100E1BACC /* Components */,
 			);
 			path = Home;
 			sourceTree = "<group>";
@@ -718,9 +731,37 @@
 				06BF173D2EBB27C700996C86 /* OperationCardView.swift */,
 				06BF173B2EBB25AF00996C86 /* OperationMockDataModel.swift */,
 				06F9D6352EBC765A00AD1EE6 /* OperationInputView.swift */,
+				06EF5FE32EC709E000E1BACC /* ThumbnailLoader.swift */,
+				06EF5FE52EC70F1A00E1BACC /* AssetThumbnailView.swift */,
 				2581FCE42EBBC6870059678D /* OperationInputState.swift */,
 			);
 			path = Operation;
+			sourceTree = "<group>";
+		};
+		06EF5FC32EC5B1CD00E1BACC /* Components */ = {
+			isa = PBXGroup;
+			children = (
+				06EF5FC72EC5BF0D00E1BACC /* TabPicker.swift */,
+			);
+			path = Components;
+			sourceTree = "<group>";
+		};
+		06EF5FD92EC5D05100E1BACC /* Components */ = {
+			isa = PBXGroup;
+			children = (
+				06EF5FD72EC5D02700E1BACC /* HomeViewSideBar.swift */,
+				06EF5FDA2EC5FC2A00E1BACC /* TodaysSurgeryButton.swift */,
+				06EF5FDC2EC6098800E1BACC /* PatientSelectButton.swift */,
+			);
+			path = Components;
+			sourceTree = "<group>";
+		};
+		06EF5FE22EC6D0CF00E1BACC /* Components_InputView */ = {
+			isa = PBXGroup;
+			children = (
+				06EF5FE02EC6CF6600E1BACC /* FormActionBar.swift */,
+			);
+			path = Components_InputView;
 			sourceTree = "<group>";
 		};
 		1442542F2EA9FF3900583CC3 /* Context */ = {
@@ -1140,6 +1181,7 @@
 			isa = PBXGroup;
 			children = (
 				C02FFA532E9FFF6F00F16742 /* RootView.swift */,
+				06EF5FC32EC5B1CD00E1BACC /* Components */,
 				2581FCE62EBBC6FA0059678D /* MacNavigationState.swift */,
 				2581FCE72EBBC6FA0059678D /* MacRootViewModel.swift */,
 			);
@@ -2134,6 +2176,7 @@
 				144254372EAA9FF000583CC3 /* OperationState.swift in Sources */,
 				C0F97AC92EA41D4B0063E159 /* SDOperationAsset.swift in Sources */,
 				2581FF042EBE18A70059678D /* ITransport.swift in Sources */,
+				06EF5FC82EC5BF0D00E1BACC /* TabPicker.swift in Sources */,
 				2581FF052EBE18A70059678D /* CaptureSource.swift in Sources */,
 				2581FF062EBE18A70059678D /* SyncedPair.swift in Sources */,
 				2581FF072EBE18A70059678D /* ReconnectionPolicy.swift in Sources */,
@@ -2171,7 +2214,9 @@
 				C04678472EA00C2700D160DA /* PatientView.swift in Sources */,
 				C0F97A7D2EA3FD370063E159 /* PatientDTO.swift in Sources */,
 				C046781C2EA00B1F00D160DA /* DeletePatient.swift in Sources */,
+				06EF5FE62EC70F1A00E1BACC /* AssetThumbnailView.swift in Sources */,
 				C0F97B042EA430880063E159 /* Gender.swift in Sources */,
+				06EF5FDB2EC5FC2A00E1BACC /* TodaysSurgeryButton.swift in Sources */,
 				14DE51332EB60DB00027D9A0 /* FileAttachmentPlaceholder.swift in Sources */,
 				0667A54A2EB8814100D7BDF3 /* StreamingControlView.swift in Sources */,
 				25E78B7C2EB9164E00D8CAD2 /* CreateOperationCommand.swift in Sources */,
@@ -2198,15 +2243,18 @@
 				25E78BA62EB9225600D8CAD2 /* UpdateOperationStatus.swift in Sources */,
 				25E78BA72EB9225600D8CAD2 /* DeleteOperation.swift in Sources */,
 				06BF173C2EBB25AF00996C86 /* OperationMockDataModel.swift in Sources */,
+				06EF5FE42EC709E000E1BACC /* ThumbnailLoader.swift in Sources */,
 				C0F97B1D2EA435490063E159 /* ValidationError.swift in Sources */,
 				C0F97B1E2EA435490063E159 /* CreatePatientCommand.swift in Sources */,
 				14DE51422EB64A2F0027D9A0 /* DetailModelSection.swift in Sources */,
 				06BF173E2EBB27C700996C86 /* OperationCardView.swift in Sources */,
 				06F9D6362EBC765A00AD1EE6 /* OperationInputView.swift in Sources */,
+				06EF5FDD2EC6098800E1BACC /* PatientSelectButton.swift in Sources */,
 				25E78B852EB9166900D8CAD2 /* OperationWithPatient.swift in Sources */,
 				06F8CAC32EBA459B00926483 /* StreamingInspectorView.swift in Sources */,
 				065DA55A2EBDD12000B454BC /* OperationCardDisplayModel.swift in Sources */,
 				25E78B732EB9164200D8CAD2 /* OperationRepository.swift in Sources */,
+				06EF5FE12EC6CF6600E1BACC /* FormActionBar.swift in Sources */,
 				25E78B662EB90D4600D8CAD2 /* OperationStatus.swift in Sources */,
 				2581FF672EC1A9140059678D /* BonjourServiceDiscovery.swift in Sources */,
 				2523A65A2EC4C3AA00842508 /* CI_SBSComposer.swift in Sources */,
@@ -2216,6 +2264,7 @@
 				2523A65E2EC4C3AA00842508 /* PipelineConfigurationManager.swift in Sources */,
 				2523A65F2EC4C3AA00842508 /* HEVCVideoEncoder.swift in Sources */,
 				2523A6602EC4C3AA00842508 /* NormalizePolicy.swift in Sources */,
+				06EF5FD82EC5D02700E1BACC /* HomeViewSideBar.swift in Sources */,
 				2523A6612EC4C3AA00842508 /* SBSMode.swift in Sources */,
 				2523A6622EC4C3AA00842508 /* RightCaptureSession.swift in Sources */,
 				2523A6632EC4C3AA00842508 /* CaptureOutputDelegate.swift in Sources */,
@@ -2232,7 +2281,6 @@
 				25E78B692EB90D4600D8CAD2 /* OperationRecording.swift in Sources */,
 				25E78B6A2EB90D4600D8CAD2 /* OperationError.swift in Sources */,
 				25E78B6B2EB90D4600D8CAD2 /* OperationAssetExtension.swift in Sources */,
-				065DA5582EBD844600B454BC /* PatientButtonView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
