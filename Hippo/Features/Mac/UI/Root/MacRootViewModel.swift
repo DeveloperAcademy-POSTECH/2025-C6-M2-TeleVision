@@ -185,6 +185,7 @@ public final class MacRootViewModel {
             surgicalSite: operationInputState.surgicalSite,
             date: operationInputState.operationDate,
             details: operationInputState.details,
+            assets: operationAssets,
             status: .planned
         )
 
@@ -212,6 +213,8 @@ public final class MacRootViewModel {
             return false
         }
         
+        let operationAssets = operationInputState.assets.map { $0.toDomain() }
+        
         await operationViewModel.updateOperation(
             patientID: patientID,
             operationID: operationID,
@@ -220,7 +223,8 @@ public final class MacRootViewModel {
             surgeon: operationInputState.surgeon,
             surgicalSite: operationInputState.surgicalSite,
             date: operationInputState.operationDate,
-            details: operationInputState.details
+            details: operationInputState.details,
+            assets: operationAssets
         )
         
         if operationViewModel.state.alert == nil {

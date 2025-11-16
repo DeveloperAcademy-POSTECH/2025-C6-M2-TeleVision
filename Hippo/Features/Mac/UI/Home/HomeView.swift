@@ -15,75 +15,9 @@ struct HomeView: View {
     var body: some View {
 
         NavigationSplitView {
-            //오늘의 수술 버튼
-            Button {
-                rootVM.selectTodaysSurgery()
-            } label: {
-                Text("Today's Surgery")
-            }
-            List {
-                //Patient List 타이틀 위해서 section 추가함
-                Section {
-                    //TODO: 환자 리스트에 데이터가 없는 경우
-
-                    //환자 리스트에 데이터가 있는 경우
-                    ForEach(rootVM.loadedPatients, id: \.id) { data in
-                        HStack {
-                            Button {
-                                rootVM.selectPatient(data.id)
-                            } label: {
-                                HStack {
-                                    Text(data.patientNumber)
-                                    Text(data.name)
-                                    Text(data.genderText)
-                                    Text("Age \(data.age)")
-                                }
-                            }
-                            .onHover { hovering in
-                                hoveredPatientID =
-                                    hovering
-                                    ? data.id
-                                    : (hoveredPatientID == data.id
-                                        ? nil : hoveredPatientID)
-                            }
-
-                            Button {
-                                // 환자 수정 버튼
-                                rootVM.openPatientEditSheet(patient: data)
-                                //                                Task {
-                                //                                    await rootVM.deletePatient(data.id)
-                                //                                }
-
-                            } label: {
-                                Image(systemName: "ellipsis.circle")
-                            }
-                            .opacity(hoveredPatientID == data.id ? 1 : 0)
-                            .onHover { hovering in
-                                hoveredPatientID =
-                                    hovering
-                                    ? data.id
-                                    : (hoveredPatientID == data.id
-                                        ? nil : hoveredPatientID)
-                            }
-                        }
-                    }
-                } header: {
-                    HStack {
-                        //헤더 텍스트
-                        Text("Patient List")
-                        Spacer()
-
-                        //환자 추가 버튼
-                        Button {
-                            rootVM.openPatientCreateSheet()
-                        } label: {
-                            Image(systemName: "person.badge.plus")
-                        }
-                    }
-                }
-            }
+            HomeViewSideBar(rootVM: $rootVM, hoveredPatientID: $hoveredPatientID)
+                .background(Color.white)
         } detail: {
-
             if rootVM.isTodaysSurgerySelected {
                 TodaysSurgeryView(
                     viewModel: TodaysSurgeryViewModel(rootVM: rootVM)

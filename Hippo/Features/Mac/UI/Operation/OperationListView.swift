@@ -30,9 +30,6 @@ struct OperationListView: View {
                 .filter { $0.operationDate <= now }
                 .sorted { $0.operationDate > $1.operationDate }
 
-            // TODO: 리스트 뷰 or 스크롤 뷰 선택
-            // TODO: 수술 디테일 카드뷰 추가
-
             ScrollView {
                 LazyVStack {
 
@@ -44,14 +41,19 @@ struct OperationListView: View {
                                 onEdit: onEdit,
                                 onDelete: onDelete
                             )
+                            .shadow(color: .black.opacity(0.08), radius: 20, x: 0, y: 8)
                         }
                     } header: {
                         HStack {
                             Text("Scheduled Surgery")
+                                .font(.headline)
+                                .foregroundColor(.hippoGray200)
                             Spacer()
                         }
                     }
-
+                    
+                    Spacer()
+                    
                     // 완료 수술 섹션
                     Section {
                         ForEach(finished) { sample in
@@ -60,10 +62,13 @@ struct OperationListView: View {
                                 onEdit: onEdit,
                                 onDelete: onDelete
                             )
+                            .shadow(color: .black.opacity(0.08), radius: 20, x: 0, y: 8)
                         }
                     } header: {
                         HStack {
                             Text("Completed Surgery")
+                                .font(.headline)
+                                .foregroundColor(.hippoGray200)
                             Spacer()
                         }
                     }
