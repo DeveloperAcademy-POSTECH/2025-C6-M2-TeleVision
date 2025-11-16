@@ -42,6 +42,8 @@ public final class OperationViewModel {
 
     private let _state = OperationState()
     public var state: OperationState { _state } // 읽기 전용, 관찰 가능
+    
+    public var path = NavigationPath()
 
     // MARK: - UI State (Accessible)
 

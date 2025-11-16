@@ -74,6 +74,13 @@ public extension DependencyValues {
         get { self[RemoveAssetFromOperation.self] }
         set { self[RemoveAssetFromOperation.self] = newValue }
     }
+
+    // MARK: - Recording Use Cases
+
+    var addRecordingToOperation: AddRecordingToOperation {
+        get { self[AddRecordingToOperation.self] }
+        set { self[AddRecordingToOperation.self] = newValue }
+    }
 }
 
 // MARK: - Use Case Dependency Keys
@@ -231,5 +238,17 @@ extension RemoveAssetFromOperation: DependencyKey {
     public static var testValue: RemoveAssetFromOperation {
         @Dependency(\.operationRepository) var repository
         return RemoveAssetFromOperation(repository: repository)
+    }
+}
+
+extension AddRecordingToOperation: DependencyKey {
+    public static var liveValue: AddRecordingToOperation {
+        @Dependency(\.operationRepository) var repository
+        return AddRecordingToOperation(repository: repository)
+    }
+
+    public static var testValue: AddRecordingToOperation {
+        @Dependency(\.operationRepository) var repository
+        return AddRecordingToOperation(repository: repository)
     }
 }
