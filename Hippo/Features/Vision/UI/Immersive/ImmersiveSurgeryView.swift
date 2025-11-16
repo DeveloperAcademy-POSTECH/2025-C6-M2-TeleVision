@@ -21,7 +21,7 @@ struct ImmersiveSurgeryView: View {
     let operationID: String
 
     // Voice Control
-    @State private var voiceControlVM: VoiceControlViewModel = VoiceControlViewModel()
+    @State private var voiceControlVM: VoiceControlViewModel = .init()
 
     // 생성한 runtime 을 ViewModel에 주입시키기 위한 init
     init(patientID: String, operationID: String) {
@@ -38,7 +38,7 @@ struct ImmersiveSurgeryView: View {
             dismissWindow: dismissWindow
         )
     }
-    
+
     // MARK: - Body
 
     var body: some View {
@@ -121,4 +121,3 @@ struct ImmersiveSurgeryView: View {
         }
     }
 }
-

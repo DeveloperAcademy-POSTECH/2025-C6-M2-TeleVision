@@ -15,6 +15,7 @@ public struct OperationDisplayModel: Identifiable, Equatable, Sendable {
     public let status: OperationStatus
     public let assets: [OperationAssetDisplayModel]
     public let assetCount: Int
+    public let records: [OperationRecording]
 
     public init(
         id: String,
@@ -27,7 +28,8 @@ public struct OperationDisplayModel: Identifiable, Equatable, Sendable {
         details: String,
         status: OperationStatus,
         assets: [OperationAssetDisplayModel],
-        assetCount: Int
+        assetCount: Int,
+        records: [OperationRecording]
     ) {
         self.id = id
         self.title = title
@@ -40,6 +42,7 @@ public struct OperationDisplayModel: Identifiable, Equatable, Sendable {
         self.status = status
         self.assets = assets
         self.assetCount = assetCount
+        self.records = records
     }
 
     // MOCK Data
@@ -54,6 +57,7 @@ public struct OperationDisplayModel: Identifiable, Equatable, Sendable {
         details: "Laparoscopic appendectomy performed successfully without complications.",
         status: .completed,
         assets: [],
-        assetCount: 0
+        assetCount: 0,
+        records: []
     )
 }
