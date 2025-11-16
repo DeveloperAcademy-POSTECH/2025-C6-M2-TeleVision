@@ -47,7 +47,7 @@ struct OperationListView: View {
                         HStack {
                             Text("Scheduled Surgery")
                                 .font(.headline)
-                                .foregroundColor(.gray)
+                                .foregroundColor(.hippoGray200)
                             Spacer()
                         }
                     }
@@ -68,7 +68,7 @@ struct OperationListView: View {
                         HStack {
                             Text("Completed Surgery")
                                 .font(.headline)
-                                .foregroundColor(.gray)
+                                .foregroundColor(.hippoGray200)
                             Spacer()
                         }
                     }
