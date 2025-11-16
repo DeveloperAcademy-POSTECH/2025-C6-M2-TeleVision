@@ -44,7 +44,7 @@ struct VoiceControlMenuButton: View {
         VStack(spacing: 12) {
             buttonImage
 
-            //  ㅁReal-time STT transcription
+            //  Real-time STT transcription
             if let partialText = viewModel.uiState.partialTranscription, !partialText.isEmpty {
                 transcriptionText(partialText)
             }
