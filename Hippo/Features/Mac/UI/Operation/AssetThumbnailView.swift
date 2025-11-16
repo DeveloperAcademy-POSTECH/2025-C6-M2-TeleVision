@@ -1,5 +1,5 @@
 //
-//  AssetThumnailView.swift
+//  AssetThumbnailView.swift
 //  HippoMac
 //
 //  Created by Hyeok Cho on 11/14/25.
@@ -7,8 +7,8 @@
 
 import SwiftUI
 
-struct AssetThumnailView: View {
-    @StateObject private var loader = ThumnailLoader()
+struct AssetThumbnailView: View {
+    @State private var loader = ThumbnailLoader()
     let url: URL
     let fileName: String
     var onDelete: (() -> Void)? = nil
@@ -25,7 +25,7 @@ struct AssetThumnailView: View {
                         .scaledToFill()
                 } else {
                     RoundedRectangle(cornerRadius: 8)
-                        .fill(.gray)
+                        .fill(.hippoGray500)
                         .overlay(
                             ProgressView()
                                 .controlSize(.small)

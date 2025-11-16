@@ -24,8 +24,8 @@ struct FormActionBar: View {
             Button {
                 if canSave {
                     Task { await onSave() }
-                }
-                isPresenting = false
+                    isPresenting = false
+                } 
             } label: {
                 Text("Save")
                     .font(.callout)

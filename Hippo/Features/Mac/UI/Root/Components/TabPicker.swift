@@ -9,14 +9,15 @@ struct TabPicker: View {
                 selectedTab = .Home
             }
             .background(selectedTab == .Home ? .hippoPrimary : Color.clear)
-            .foregroundColor(selectedTab == .Home ? Color.white : .gray)
+            .foregroundColor(selectedTab == .Home ? Color.white : .hippoGray500)
             .clipShape(RoundedRectangle(cornerRadius: 20))
+
             
             Button("Streaming") {
                 selectedTab = .StreamingControl
             }
             .background(selectedTab == .StreamingControl ? .hippoPrimary : Color.clear)
-            .foregroundColor(selectedTab == .StreamingControl ? Color.white : .gray)
+            .foregroundColor(selectedTab == .StreamingControl ? Color.white : .hippoGray500)
             .clipShape(RoundedRectangle(cornerRadius: 20))
         }
     }

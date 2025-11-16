@@ -23,7 +23,7 @@ struct TodaysSurgeryButton: View {
             .padding(.horizontal, 12)
             .font(.title3)
             .fontWeight(.bold)
-            .foregroundColor(rootVM.isTodaysSurgerySelected ? .white : .gray)
+            .foregroundColor(rootVM.isTodaysSurgerySelected ? .white : .hippoGray500)
             .background(RoundedRectangle(cornerRadius: 8).fill(rootVM.isTodaysSurgerySelected ? .hippoPrimary : .white))
         }
         .buttonStyle(.plain)

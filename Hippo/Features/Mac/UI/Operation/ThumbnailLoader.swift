@@ -1,5 +1,5 @@
 //
-//  ThumnailLoader.swift
+//  ThumbnailLoader.swift
 //  HippoMac
 //
 //  Created by Hyeok Cho on 11/14/25.
@@ -10,8 +10,9 @@ import QuickLookThumbnailing
 import AppKit
 import Combine
 
-class ThumnailLoader: ObservableObject {
-    @Published var image :NSImage?
+@Observable
+class ThumbnailLoader {
+    var image :NSImage?
     
     func load(for url: URL, size: CGSize = .init(width: 80, height: 80)) {
         let scale = NSScreen.main?.backingScaleFactor ?? 2.0

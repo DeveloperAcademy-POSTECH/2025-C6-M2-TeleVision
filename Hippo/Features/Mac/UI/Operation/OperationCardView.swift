@@ -170,7 +170,7 @@ struct OperationCardView: View {
                     ScrollView(.horizontal, showsIndicators: false) {
                         HStack(spacing: 12) {
                             ForEach(operation.assets) { asset in
-                                AssetThumnailView(
+                                AssetThumbnailView(
                                     url: asset.fileURL,
                                     fileName: asset.fileName,
                                     enableHoverDimming: false

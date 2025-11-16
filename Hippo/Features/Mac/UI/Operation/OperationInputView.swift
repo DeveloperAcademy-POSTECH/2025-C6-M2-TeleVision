@@ -103,7 +103,7 @@ struct OperationInputView: View {
                             Button {
                                 state.removeAsset(id: asset.id)
                             } label: {
-                                AssetThumnailView(
+                                AssetThumbnailView(
                                     url: asset.fileURL,
                                     fileName: asset.fileName,
                                     onDelete: { state.removeAsset(id: asset.id) },

@@ -19,7 +19,7 @@ struct PatientSelectButton: View {
                 .padding(.vertical, 8)
                 .padding(.horizontal, 12)
                 .font(.body)
-                .foregroundColor(rootVM.navigationState.selectedPatientID == data.id ? .white : .gray)
+                .foregroundColor(rootVM.navigationState.selectedPatientID == data.id ? .white : .hippoGray700)
                 .background(
                     RoundedRectangle(cornerRadius: 8)
                         .fill(rootVM.navigationState.selectedPatientID == data.id ? .hippoPrimary : .white)
