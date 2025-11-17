@@ -11,8 +11,10 @@ import CoreVideo
 import VideoToolbox
 import os
 
-actor ConvertingModel {
+@MainActor
+final class ConvertingModel {
     private let stereoMetadata: StereoMetadata
+    private let recommendedPixelBufferAttributes: CVPixelBufferAttributes?
     private var transferSession: VTPixelTransferSession?
     private var pixelBufferPool: CVMutablePixelBuffer.Pool?
     private let log = Logger(subsystem: Bundle.main.bundleIdentifier ?? "App", category: "Converting")
@@ -34,9 +36,14 @@ actor ConvertingModel {
         return value & ~1
     }
 
-    // 기본 인자 제거: 호출부에서 명시적으로 StereoMetadata.default 전달
-    init(stereoMetadata: StereoMetadata) {
+    /// Initialize with stereo metadata and recommended pixel buffer attributes from AVSampleBufferVideoRenderer
+    /// - Parameters:
+    ///   - stereoMetadata: Stereo configuration (frame packing, scaling, etc.)
+    ///   - recommendedPixelBufferAttributes: Attributes from AVSampleBufferVideoRenderer.recommendedPixelBufferAttributes
+    init(stereoMetadata: StereoMetadata, recommendedPixelBufferAttributes: CVPixelBufferAttributes? = nil) {
         self.stereoMetadata = stereoMetadata
+        self.recommendedPixelBufferAttributes = recommendedPixelBufferAttributes
+        log.info("ConvertingModel initialized with recommended attributes: \(recommendedPixelBufferAttributes != nil)")
     }
 
     func process(_ sample: CMSampleBuffer) throws -> CMSampleBuffer? {
@@ -152,7 +159,7 @@ actor ConvertingModel {
     func process(_ pixelBuffer: CVPixelBuffer, pts: CMTime, duration: CMTime = .invalid) throws -> CMSampleBuffer? {
         try ensureResources(for: pixelBuffer)
         guard let pool = pixelBufferPool, let session = transferSession else {
-            log.error("❌ Pool or session not initialized")
+            log.error("Pool or session not initialized")
             return nil
         }
 
@@ -166,9 +173,9 @@ actor ConvertingModel {
         let srcFormat = CVPixelBufferGetPixelFormatType(pixelBuffer)
         let sourceSize = CGSize(width: srcWidth, height: srcHeight)
 
-        // 🔍 DIAGNOSTIC: Log source frame info (first 3 frames only)
+        // DIAGNOSTIC: Log source frame info (first frame only)
         if enableDiagnostics {
-            log.info("🔍 [DIAGNOSTIC] Source frame: \(srcWidth)×\(srcHeight) fmt=\(self.formatString(srcFormat))")
+            log.info("[ConvertingModel] Input buffer: \(srcWidth)x\(srcHeight) fmt=\(self.formatString(srcFormat))")
         }
 
         // Determine stereo input mode (currently always SBS, but can be extended)
@@ -202,6 +209,11 @@ actor ConvertingModel {
             let eyeW = pool.pixelBufferAttributes.size.width
             let eyeH = pool.pixelBufferAttributes.size.height
 
+            // DIAGNOSTIC: Log output buffer size (first frame only)
+            if enableDiagnostics && layerID == 0 {
+                log.info("[ConvertingModel] Output buffer (per eye): \(eyeW)x\(eyeH)")
+            }
+
             // Source clean aperture: crop from SBS
             let cropRectDict: [CFString: Any] = [
                 kCVImageBufferCleanApertureHorizontalOffsetKey: apertureOffset.horizontal,
@@ -219,12 +231,19 @@ actor ConvertingModel {
             out.withUnsafeBuffer { dst in
                 let status = VTPixelTransferSessionTransferImage(session, from: pixelBuffer, to: dst)
                 if status != kCVReturnSuccess {
-                    log.error("❌ VTPixelTransferSessionTransferImage failed: \(status)")
+                    log.error("VTPixelTransferSessionTransferImage failed: \(status)")
                 }
 
                 // CRITICAL: Remove clean apertures from output buffer
                 // VideoPlayerComponent should see the full square buffer (640×640) without any cropping
                 CVBufferRemoveAttachment(dst, kCVImageBufferCleanApertureKey)
+
+                // DIAGNOSTIC: Verify actual transferred size (first frame only)
+                if enableDiagnostics && layerID == 0 {
+                    let actualW = CVPixelBufferGetWidth(dst)
+                    let actualH = CVPixelBufferGetHeight(dst)
+                    log.info("[ConvertingModel] Transferred buffer actual size: \(actualW)x\(actualH)")
+                }
             }
 
             let tags: [CMTag] = [.videoLayerID(Int64(layerID)), .stereoView(eye), .mediaType(.video)]
@@ -246,15 +265,14 @@ actor ConvertingModel {
         // The actual dimensions are in each tagged pixel buffer
         let formatDesc = CMTaggedBufferGroupFormatDescription(taggedBuffers: taggedBuffers)
 
-        // Debug logging for first few frames
+        // Debug logging for first frame only
         if enableDiagnostics {
             let dims = CMVideoFormatDescriptionGetDimensions(formatDesc)
-            log.info("🔍 [FORMAT DEBUG] Format description dimensions: \(dims.width)×\(dims.height)")
-            log.info("🔍 [FORMAT DEBUG] Expected dimensions: \(eyeW)×\(eyeH) per eye")
+            log.info("[ConvertingModel] Format description dimensions: \(dims.width)x\(dims.height)")
+            log.info("[ConvertingModel] Expected per-eye dimensions: \(eyeW)x\(eyeH)")
 
             if dims.width == 0 || dims.height == 0 {
-                log.info("💡 [FORMAT DEBUG] Format description has 0×0 dimensions (expected for tagged buffer groups)")
-                log.info("💡 [FORMAT DEBUG] Each tagged pixel buffer has its own dimensions: \(eyeW)×\(eyeH)")
+                log.info("[ConvertingModel] Format description has 0x0 (expected for tagged buffer groups)")
 
                 // Verify that the tagged buffers themselves have proper dimensions
                 for (idx, taggedBuffer) in taggedBuffers.enumerated() {
@@ -262,18 +280,11 @@ actor ConvertingModel {
                         pb.withUnsafeBuffer { cvBuffer in
                             let w = CVPixelBufferGetWidth(cvBuffer)
                             let h = CVPixelBufferGetHeight(cvBuffer)
-                            log.info("   Tagged buffer[\(idx)] dimensions: \(w)×\(h)")
+                            log.info("[ConvertingModel] Tagged buffer[\(idx)] actual: \(w)x\(h)")
                         }
                     }
                 }
-            } else {
-                log.info("✅ [FORMAT DEBUG] Format description has non-zero dimensions: \(dims.width)×\(dims.height)")
             }
-
-            // Check if format description has proper media type
-            let mediaType = CMFormatDescriptionGetMediaType(formatDesc)
-            let mediaSubType = CMFormatDescriptionGetMediaSubType(formatDesc)
-            log.info("🔍 [FORMAT DEBUG] Media type: \(mediaType), subtype: \(mediaSubType)")
         }
 
         let buffer = CMReadySampleBuffer(
@@ -311,12 +322,21 @@ actor ConvertingModel {
                 attachmentMode: kCMAttachmentMode_ShouldPropagate
             )
 
-            // Only log on first frame to reduce CPU usage
+            // DIAGNOSTIC: Verify final sample buffer (first frame only)
             if processedFrameCount == 1 {
-                log.debug("✅ Stereo sample buffer created with \(taggedBuffers.count) tagged buffers + HeroEye attachment")
+                // Check if we can get an image buffer from the sample
+                if let imageBuffer = CMSampleBufferGetImageBuffer(outSB) {
+                    let finalW = CVPixelBufferGetWidth(imageBuffer)
+                    let finalH = CVPixelBufferGetHeight(imageBuffer)
+                    log.info("[ConvertingModel] Final sample buffer image: \(finalW)x\(finalH)")
+                } else {
+                    log.info("[ConvertingModel] Final sample buffer has NO image buffer (tagged buffer group)")
+                }
+
+                log.info("[ConvertingModel] Stereo sample buffer created with \(taggedBuffers.count) tagged buffers")
             }
         } else if processedFrameCount == 1 {
-            log.error("❌ Failed to create stereo sample buffer or attachments")
+            log.error("[ConvertingModel] Failed to create stereo sample buffer")
         }
 
         return outSB
@@ -366,8 +386,8 @@ actor ConvertingModel {
             transferSession = try makeTransferSessionWithCropScaling()
 
             // Create new pixel buffer pool
+            // Note: Always uses kCVPixelFormatType_420YpCbCr8BiPlanarVideoRange regardless of srcFormat
             pixelBufferPool = try makePixelBufferPool(
-                pixelFormat: srcFormat,
                 width: eyeWidth,
                 height: eyeHeight
             )
@@ -441,17 +461,34 @@ actor ConvertingModel {
         return session
     }
 
-    /// Create a pixel buffer pool with specified format and size
+    /// Create pixel buffer pool using Apple's recommended approach
+    /// Matches SerialProcessor.swift (line 94-104) from Apple's sample code
+    /// Always uses kCVPixelFormatType_420YpCbCr8BiPlanarVideoRange for VideoPlayerComponent compatibility
     private func makePixelBufferPool(
-        pixelFormat: OSType,
         width: Int,
         height: Int
     ) throws -> CVMutablePixelBuffer.Pool {
-        let attrs = CVPixelBufferCreationAttributes(
-            pixelFormatType: CVPixelFormatType(rawValue: pixelFormat),
+        // Use kCVPixelFormatType_420YpCbCr8BiPlanarVideoRange for compatibility with VideoPlayerComponent
+        // This is the standard format that AVSampleBufferVideoRenderer expects
+        let defaultAttributes = CVPixelBufferCreationAttributes(
+            pixelFormatType: CVPixelFormatType(rawValue: kCVPixelFormatType_420YpCbCr8BiPlanarVideoRange),
             size: CVImageSize(width: width, height: height)
         )
-        return try CVMutablePixelBuffer.Pool(pixelBufferAttributes: attrs)
+
+        // Merge with recommended attributes from AVSampleBufferVideoRenderer if available
+        if let recommendedAttrs = recommendedPixelBufferAttributes {
+            log.info("Merging recommended pixel buffer attributes from AVSampleBufferVideoRenderer")
+            guard let mergedAttributes = CVPixelBufferAttributes(
+                    merging: [CVPixelBufferAttributes(defaultAttributes), recommendedAttrs]),
+                  let creationAttributes = CVPixelBufferCreationAttributes(mergedAttributes) else {
+                log.error("Failed to merge pixel buffer attributes, using defaults only")
+                return try CVMutablePixelBuffer.Pool(pixelBufferAttributes: defaultAttributes)
+            }
+            return try CVMutablePixelBuffer.Pool(pixelBufferAttributes: creationAttributes)
+        } else {
+            log.warning("No recommended attributes available, using default 420v format")
+            return try CVMutablePixelBuffer.Pool(pixelBufferAttributes: defaultAttributes)
+        }
     }
 
     // MARK: - Validation Methods
