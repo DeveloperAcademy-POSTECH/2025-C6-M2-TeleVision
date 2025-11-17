@@ -33,6 +33,10 @@ struct StreamingControlView: View {
                     cameraInputMode: viewModel.cameraInputMode
                 )
 
+                ScalingSectionView(
+                    selectedScaling: $viewModel.scalingMode
+                )
+
                 CameraSectionView(
                     cameraInputMode: $viewModel.cameraInputMode,
                     selectedLeftDevice: $viewModel.selectedLeftDevice,

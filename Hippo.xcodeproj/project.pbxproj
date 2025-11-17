@@ -194,8 +194,6 @@
 		2523A6DA2EC6497B00842508 /* VoiceControlButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2523A6D42EC6497B00842508 /* VoiceControlButton.swift */; };
 		2523A6DB2EC6497B00842508 /* VoiceControlUIState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2523A6D12EC6497B00842508 /* VoiceControlUIState.swift */; };
 		2523A6E52EC649A600842508 /* RuleBasedCommandParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2523A6DE2EC649A600842508 /* RuleBasedCommandParser.swift */; };
-		2523A6E62EC649A600842508 /* AppleSpeechRecognitionService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2523A6E22EC649A600842508 /* AppleSpeechRecognitionService.swift */; };
-		2523A6E72EC649A600842508 /* VoiceControlDependencies.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2523A6E02EC649A600842508 /* VoiceControlDependencies.swift */; };
 		2523A6E82EC649A600842508 /* LLMCommandParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2523A6DD2EC649A600842508 /* LLMCommandParser.swift */; };
 		2523A6E92EC649A600842508 /* FallbackVoiceCommandParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2523A6DC2EC649A600842508 /* FallbackVoiceCommandParser.swift */; };
 		2523A6EA2EC649A600842508 /* RuleBasedCommandParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2523A6DE2EC649A600842508 /* RuleBasedCommandParser.swift */; };
@@ -261,6 +259,8 @@
 		2581FF782EC20B030059678D /* ConnectionSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2581FF762EC20B030059678D /* ConnectionSettingsView.swift */; };
 		2581FF7A2EC2753A0059678D /* EndoscopeImmersiveSpace.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2581FF792EC2753A0059678D /* EndoscopeImmersiveSpace.swift */; };
 		25869FF12EC6CD3200882FC5 /* WakeWordListener.swift in Sources */ = {isa = PBXBuildFile; fileRef = 25869FEF2EC6CD3200882FC5 /* WakeWordListener.swift */; };
+		25B8D6872ECBC07400676A3A /* ScalingMode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 25B8D6862ECBC07400676A3A /* ScalingMode.swift */; };
+		25B8D6892ECBC16100676A3A /* ScalingSectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 25B8D6882ECBC16100676A3A /* ScalingSectionView.swift */; };
 		25E78B602EB90D4600D8CAD2 /* OperationStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = 25E78B5D2EB90D4600D8CAD2 /* OperationStatus.swift */; };
 		25E78B612EB90D4600D8CAD2 /* Operation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 25E78B542EB90D4600D8CAD2 /* Operation.swift */; };
 		25E78B622EB90D4600D8CAD2 /* OperationAsset.swift in Sources */ = {isa = PBXBuildFile; fileRef = 25E78B552EB90D4600D8CAD2 /* OperationAsset.swift */; };
@@ -636,6 +636,8 @@
 		2581FF762EC20B030059678D /* ConnectionSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConnectionSettingsView.swift; sourceTree = "<group>"; };
 		2581FF792EC2753A0059678D /* EndoscopeImmersiveSpace.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EndoscopeImmersiveSpace.swift; sourceTree = "<group>"; };
 		25869FEF2EC6CD3200882FC5 /* WakeWordListener.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WakeWordListener.swift; sourceTree = "<group>"; };
+		25B8D6862ECBC07400676A3A /* ScalingMode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScalingMode.swift; sourceTree = "<group>"; };
+		25B8D6882ECBC16100676A3A /* ScalingSectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScalingSectionView.swift; sourceTree = "<group>"; };
 		25E78B542EB90D4600D8CAD2 /* Operation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Operation.swift; sourceTree = "<group>"; };
 		25E78B552EB90D4600D8CAD2 /* OperationAsset.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OperationAsset.swift; sourceTree = "<group>"; };
 		25E78B562EB90D4600D8CAD2 /* OperationRecording.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OperationRecording.swift; sourceTree = "<group>"; };
@@ -1152,6 +1154,7 @@
 		2523A6502EC4C3A900842508 /* Composer */ = {
 			isa = PBXGroup;
 			children = (
+				25B8D6862ECBC07400676A3A /* ScalingMode.swift */,
 				2523A64C2EC4C3A900842508 /* CI_SBSComposer.swift */,
 				2523A64D2EC4C3A900842508 /* NormalizePolicy.swift */,
 				2523A64E2EC4C3A900842508 /* SBSComposerConfig.swift */,
@@ -1407,6 +1410,7 @@
 		2581FF4B2EBE576E0059678D /* Components */ = {
 			isa = PBXGroup;
 			children = (
+				25B8D6882ECBC16100676A3A /* ScalingSectionView.swift */,
 				2581FF582EBE6AE00059678D /* DevicePreview.swift */,
 				2581FF562EBE63A20059678D /* PreviewSectionView.swift */,
 				2581FF4E2EBE5E8F0059678D /* CameraPickerRow.swift */,
@@ -2404,6 +2408,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				25B8D6872ECBC07400676A3A /* ScalingMode.swift in Sources */,
 				06ADD9D22EB98E730013665B /* PatientInputView.swift in Sources */,
 				0667A54E2EB8961C00D7BDF3 /* TodaysSurgeryView.swift in Sources */,
 				144254672EAAC44900583CC3 /* StartOperationButton.swift in Sources */,
@@ -2415,8 +2420,6 @@
 				C0F97ADE2EA420EB0063E159 /* DomainDependencies.swift in Sources */,
 				2581FF712EC1EEBA0059678D /* BonjourRelayService.swift in Sources */,
 				2523A6E52EC649A600842508 /* RuleBasedCommandParser.swift in Sources */,
-				2523A6E62EC649A600842508 /* AppleSpeechRecognitionService.swift in Sources */,
-				2523A6E72EC649A600842508 /* VoiceControlDependencies.swift in Sources */,
 				2523A6E82EC649A600842508 /* LLMCommandParser.swift in Sources */,
 				2523A6E92EC649A600842508 /* FallbackVoiceCommandParser.swift in Sources */,
 				2581FF522EBE5E8F0059678D /* ModeSectionView.swift in Sources */,
@@ -2527,6 +2530,7 @@
 				2523A65D2EC4C3AA00842508 /* AppModule.swift in Sources */,
 				2523A65E2EC4C3AA00842508 /* PipelineConfigurationManager.swift in Sources */,
 				2523A65F2EC4C3AA00842508 /* HEVCVideoEncoder.swift in Sources */,
+				25B8D6892ECBC16100676A3A /* ScalingSectionView.swift in Sources */,
 				2523A6602EC4C3AA00842508 /* NormalizePolicy.swift in Sources */,
 				06EF5FD82EC5D02700E1BACC /* HomeViewSideBar.swift in Sources */,
 				2523A6612EC4C3AA00842508 /* SBSMode.swift in Sources */,
@@ -2577,7 +2581,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 0.1.3;
+				MARKETING_VERSION = 0.1.4;
 				PRODUCT_BUNDLE_IDENTIFIER = com.television.hippo.vision;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -2610,7 +2614,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 0.1.3;
+				MARKETING_VERSION = 0.1.4;
 				PRODUCT_BUNDLE_IDENTIFIER = com.television.hippo.vision;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
