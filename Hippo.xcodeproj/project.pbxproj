@@ -68,6 +68,13 @@
 		14541ACD2EB994990013107E /* OpacityControlSlider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 278623362EB8EB7800F97BE3 /* OpacityControlSlider.swift */; };
 		146F102D2EA3AD1500DDDC35 /* HippoAssets in Frameworks */ = {isa = PBXBuildFile; productRef = 146F102C2EA3AD1500DDDC35 /* HippoAssets */; };
 		146F10302EA3AF1000DDDC35 /* HomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 146F102E2EA3AF1000DDDC35 /* HomeView.swift */; };
+		1479B8AB2ECAC9AE003397B0 /* AppleSpeechRecognitionService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2523A6E22EC649A600842508 /* AppleSpeechRecognitionService.swift */; };
+		1479B8AD2ECB1134003397B0 /* RecordingViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1479B8AC2ECB112D003397B0 /* RecordingViewModel.swift */; };
+		1479B8AE2ECB1134003397B0 /* RecordingViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1479B8AC2ECB112D003397B0 /* RecordingViewModel.swift */; };
+		1479B8B12ECB376C003397B0 /* SceneProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1479B8B02ECB3769003397B0 /* SceneProvider.swift */; };
+		1479B8B32ECB3D0E003397B0 /* RecordCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1479B8B22ECB3D0B003397B0 /* RecordCard.swift */; };
+		1479B8B42ECB3D0E003397B0 /* RecordCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1479B8B22ECB3D0B003397B0 /* RecordCard.swift */; };
+		1479B8B52ECB3D0E003397B0 /* RecordCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1479B8B22ECB3D0B003397B0 /* RecordCard.swift */; };
 		147EB27D2EB0782100D9CFB3 /* OperationStatusBadge.swift in Sources */ = {isa = PBXBuildFile; fileRef = 147EB27C2EB0781300D9CFB3 /* OperationStatusBadge.swift */; };
 		1494DE712EA72BCE000CD284 /* OperationDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1494DE702EA72BCE000CD284 /* OperationDetailView.swift */; };
 		1494DE732EA72BCE000CD284 /* OperationDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1494DE702EA72BCE000CD284 /* OperationDetailView.swift */; };
@@ -95,14 +102,7 @@
 		149D92682ECA44CA0043B1A2 /* AddRecordingToOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 149D92652ECA44C60043B1A2 /* AddRecordingToOperation.swift */; };
 		149D926A2ECA71040043B1A2 /* dummy_video.mp4 in Resources */ = {isa = PBXBuildFile; fileRef = 149D92692ECA71040043B1A2 /* dummy_video.mp4 */; };
 		149D926D2ECA78AB0043B1A2 /* RecordingPlayerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 149D926C2ECA78780043B1A2 /* RecordingPlayerView.swift */; };
-		149D926E2ECA78AB0043B1A2 /* RecordingPlayerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 149D926C2ECA78780043B1A2 /* RecordingPlayerView.swift */; };
 		149D926F2ECA78AB0043B1A2 /* RecordingPlayerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 149D926C2ECA78780043B1A2 /* RecordingPlayerView.swift */; };
-		149D92722ECA798B0043B1A2 /* MainVideoPlayerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 149D92712ECA79860043B1A2 /* MainVideoPlayerView.swift */; };
-		149D92732ECA798B0043B1A2 /* MainVideoPlayerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 149D92712ECA79860043B1A2 /* MainVideoPlayerView.swift */; };
-		149D92742ECA798B0043B1A2 /* MainVideoPlayerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 149D92712ECA79860043B1A2 /* MainVideoPlayerView.swift */; };
-		149D92762ECA79E00043B1A2 /* ThumbnailVideoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 149D92752ECA79D80043B1A2 /* ThumbnailVideoView.swift */; };
-		149D92772ECA79E00043B1A2 /* ThumbnailVideoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 149D92752ECA79D80043B1A2 /* ThumbnailVideoView.swift */; };
-		149D92782ECA79E00043B1A2 /* ThumbnailVideoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 149D92752ECA79D80043B1A2 /* ThumbnailVideoView.swift */; };
 		149D927A2ECA8A220043B1A2 /* PathType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 149D92792ECA8A170043B1A2 /* PathType.swift */; };
 		149D927B2ECA8A220043B1A2 /* PathType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 149D92792ECA8A170043B1A2 /* PathType.swift */; };
 		149D927C2ECA8A220043B1A2 /* PathType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 149D92792ECA8A170043B1A2 /* PathType.swift */; };
@@ -212,8 +212,6 @@
 		2523A6DA2EC6497B00842508 /* VoiceControlButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2523A6D42EC6497B00842508 /* VoiceControlButton.swift */; };
 		2523A6DB2EC6497B00842508 /* VoiceControlUIState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2523A6D12EC6497B00842508 /* VoiceControlUIState.swift */; };
 		2523A6E52EC649A600842508 /* RuleBasedCommandParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2523A6DE2EC649A600842508 /* RuleBasedCommandParser.swift */; };
-		2523A6E62EC649A600842508 /* AppleSpeechRecognitionService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2523A6E22EC649A600842508 /* AppleSpeechRecognitionService.swift */; };
-		2523A6E72EC649A600842508 /* VoiceControlDependencies.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2523A6E02EC649A600842508 /* VoiceControlDependencies.swift */; };
 		2523A6E82EC649A600842508 /* LLMCommandParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2523A6DD2EC649A600842508 /* LLMCommandParser.swift */; };
 		2523A6E92EC649A600842508 /* FallbackVoiceCommandParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2523A6DC2EC649A600842508 /* FallbackVoiceCommandParser.swift */; };
 		2523A6EA2EC649A600842508 /* RuleBasedCommandParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2523A6DE2EC649A600842508 /* RuleBasedCommandParser.swift */; };
@@ -222,7 +220,6 @@
 		2523A6ED2EC649A600842508 /* LLMCommandParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2523A6DD2EC649A600842508 /* LLMCommandParser.swift */; };
 		2523A6EE2EC649A600842508 /* FallbackVoiceCommandParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2523A6DC2EC649A600842508 /* FallbackVoiceCommandParser.swift */; };
 		2523A6EF2EC649A600842508 /* RuleBasedCommandParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2523A6DE2EC649A600842508 /* RuleBasedCommandParser.swift */; };
-		2523A6F02EC649A600842508 /* AppleSpeechRecognitionService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2523A6E22EC649A600842508 /* AppleSpeechRecognitionService.swift */; };
 		2523A6F12EC649A600842508 /* VoiceControlDependencies.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2523A6E02EC649A600842508 /* VoiceControlDependencies.swift */; };
 		2523A6F22EC649A600842508 /* LLMCommandParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2523A6DD2EC649A600842508 /* LLMCommandParser.swift */; };
 		2523A6F32EC649A600842508 /* FallbackVoiceCommandParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2523A6DC2EC649A600842508 /* FallbackVoiceCommandParser.swift */; };
@@ -411,7 +408,6 @@
 		C050AA3B2EA8197E00352314 /* ImmersiveIDs.swift in Sources */ = {isa = PBXBuildFile; fileRef = C050AA3A2EA8197E00352314 /* ImmersiveIDs.swift */; };
 		C050AA3C2EA8197E00352314 /* ImmersiveIDs.swift in Sources */ = {isa = PBXBuildFile; fileRef = C050AA3A2EA8197E00352314 /* ImmersiveIDs.swift */; };
 		C050AA3D2EA8197E00352314 /* ImmersiveIDs.swift in Sources */ = {isa = PBXBuildFile; fileRef = C050AA3A2EA8197E00352314 /* ImmersiveIDs.swift */; };
-		C050AA3F2EA81A5800352314 /* View+VisionDependencies.swift in Sources */ = {isa = PBXBuildFile; fileRef = C050AA3E2EA81A5400352314 /* View+VisionDependencies.swift */; };
 		C050AA442EA81D6300352314 /* DependenciesMacros in Frameworks */ = {isa = PBXBuildFile; productRef = C050AA432EA81D6300352314 /* DependenciesMacros */; };
 		C050AA4B2EA81EBE00352314 /* VisionEnvironmentKey.swift in Sources */ = {isa = PBXBuildFile; fileRef = C050AA4A2EA81EBD00352314 /* VisionEnvironmentKey.swift */; };
 		C050AA4E2EA8201A00352314 /* ImmersiveSceneRuntime.swift in Sources */ = {isa = PBXBuildFile; fileRef = C050AA4D2EA8201A00352314 /* ImmersiveSceneRuntime.swift */; };
@@ -538,6 +534,9 @@
 		145E0F612E9C0F3B00CE6C97 /* HippoVisionTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = HippoVisionTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		146F102A2EA3ACFD00DDDC35 /* HippoAssets */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = HippoAssets; sourceTree = "<group>"; };
 		146F102E2EA3AF1000DDDC35 /* HomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeView.swift; sourceTree = "<group>"; };
+		1479B8AC2ECB112D003397B0 /* RecordingViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecordingViewModel.swift; sourceTree = "<group>"; };
+		1479B8B02ECB3769003397B0 /* SceneProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneProvider.swift; sourceTree = "<group>"; };
+		1479B8B22ECB3D0B003397B0 /* RecordCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecordCard.swift; sourceTree = "<group>"; };
 		147EB27C2EB0781300D9CFB3 /* OperationStatusBadge.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OperationStatusBadge.swift; sourceTree = "<group>"; };
 		1494DE702EA72BCE000CD284 /* OperationDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OperationDetailView.swift; sourceTree = "<group>"; };
 		1494DE7B2EA73205000CD284 /* DetailHeader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetailHeader.swift; sourceTree = "<group>"; };
@@ -550,8 +549,6 @@
 		149D92652ECA44C60043B1A2 /* AddRecordingToOperation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddRecordingToOperation.swift; sourceTree = "<group>"; };
 		149D92692ECA71040043B1A2 /* dummy_video.mp4 */ = {isa = PBXFileReference; lastKnownFileType = file; path = dummy_video.mp4; sourceTree = "<group>"; };
 		149D926C2ECA78780043B1A2 /* RecordingPlayerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecordingPlayerView.swift; sourceTree = "<group>"; };
-		149D92712ECA79860043B1A2 /* MainVideoPlayerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainVideoPlayerView.swift; sourceTree = "<group>"; };
-		149D92752ECA79D80043B1A2 /* ThumbnailVideoView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThumbnailVideoView.swift; sourceTree = "<group>"; };
 		149D92792ECA8A170043B1A2 /* PathType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PathType.swift; sourceTree = "<group>"; };
 		14A17F862EB3138D009D16CF /* PatientDetailHeader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PatientDetailHeader.swift; sourceTree = "<group>"; };
 		14A17F882EB313E6009D16CF /* OperationInfoSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OperationInfoSection.swift; sourceTree = "<group>"; };
@@ -718,7 +715,6 @@
 		C04678452EA00C2700D160DA /* PatientView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PatientView.swift; sourceTree = "<group>"; };
 		C050AA352EA8175C00352314 /* RootView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RootView.swift; sourceTree = "<group>"; };
 		C050AA3A2EA8197E00352314 /* ImmersiveIDs.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImmersiveIDs.swift; sourceTree = "<group>"; };
-		C050AA3E2EA81A5400352314 /* View+VisionDependencies.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "View+VisionDependencies.swift"; sourceTree = "<group>"; };
 		C050AA4A2EA81EBD00352314 /* VisionEnvironmentKey.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VisionEnvironmentKey.swift; sourceTree = "<group>"; };
 		C050AA4D2EA8201A00352314 /* ImmersiveSceneRuntime.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImmersiveSceneRuntime.swift; sourceTree = "<group>"; };
 		C05F32242E9FF303009C5974 /* HippoMac.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = HippoMac.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -1040,6 +1036,14 @@
 			name = Frameworks;
 			sourceTree = "<group>";
 		};
+		1479B8AF2ECB3765003397B0 /* Shared */ = {
+			isa = PBXGroup;
+			children = (
+				1479B8B02ECB3769003397B0 /* SceneProvider.swift */,
+			);
+			path = Shared;
+			sourceTree = "<group>";
+		};
 		148F5BDA2EA8D61B0041BA60 /* Operation */ = {
 			isa = PBXGroup;
 			children = (
@@ -1076,6 +1080,7 @@
 			children = (
 				149D92702ECA797C0043B1A2 /* Components */,
 				149D926C2ECA78780043B1A2 /* RecordingPlayerView.swift */,
+				1479B8AC2ECB112D003397B0 /* RecordingViewModel.swift */,
 			);
 			path = Recording;
 			sourceTree = "<group>";
@@ -1083,8 +1088,7 @@
 		149D92702ECA797C0043B1A2 /* Components */ = {
 			isa = PBXGroup;
 			children = (
-				149D92712ECA79860043B1A2 /* MainVideoPlayerView.swift */,
-				149D92752ECA79D80043B1A2 /* ThumbnailVideoView.swift */,
+				1479B8B22ECB3D0B003397B0 /* RecordCard.swift */,
 			);
 			path = Components;
 			sourceTree = "<group>";
@@ -1593,6 +1597,7 @@
 		C02FFA582E9FFF6F00F16742 /* Vision */ = {
 			isa = PBXGroup;
 			children = (
+				1479B8AF2ECB3765003397B0 /* Shared */,
 				2523A6782EC4C3C000842508 /* Endoscope */,
 				1442542F2EA9FF3900583CC3 /* Context */,
 				C050AA192EA80E9E00352314 /* Runtime */,
@@ -1843,7 +1848,6 @@
 			isa = PBXGroup;
 			children = (
 				C050AA4A2EA81EBD00352314 /* VisionEnvironmentKey.swift */,
-				C050AA3E2EA81A5400352314 /* View+VisionDependencies.swift */,
 			);
 			path = DI;
 			sourceTree = "<group>";
@@ -2124,7 +2128,6 @@
 				149D927B2ECA8A220043B1A2 /* PathType.swift in Sources */,
 				27D1DB492EBC781200AC7F3D /* ImmersiveViewModel.swift in Sources */,
 				C0F97B0E2EA4348D0063E159 /* CreatePatient.swift in Sources */,
-				C050AA3F2EA81A5800352314 /* View+VisionDependencies.swift in Sources */,
 				1446FBBA2EAE770A000BCF61 /* SurgeryControlBar.swift in Sources */,
 				27AD7ADE2EB5BA2E00E84809 /* OpacityControlPanelButton.swift in Sources */,
 				1446FBAB2EAE6B55000BCF61 /* PatientInfoHeader.swift in Sources */,
@@ -2136,7 +2139,6 @@
 				1494DE982EA73359000CD284 /* SectionTitle.swift in Sources */,
 				272BD1B52EADE1E200C83F81 /* HeadPose.swift in Sources */,
 				14CC754F2EA6A77C00399562 /* OrnamentButton.swift in Sources */,
-				149D92722ECA798B0043B1A2 /* MainVideoPlayerView.swift in Sources */,
 				C050AA4B2EA81EBE00352314 /* VisionEnvironmentKey.swift in Sources */,
 				1446FBD52EAF262F000BCF61 /* EntityPlacementService.swift in Sources */,
 				C0F97ADF2EA420EB0063E159 /* DomainDependencies.swift in Sources */,
@@ -2173,6 +2175,7 @@
 				2523A6D92EC6497B00842508 /* VoiceControlOverlay.swift in Sources */,
 				2523A6DA2EC6497B00842508 /* VoiceControlButton.swift in Sources */,
 				2523A6DB2EC6497B00842508 /* VoiceControlUIState.swift in Sources */,
+				1479B8AB2ECAC9AE003397B0 /* AppleSpeechRecognitionService.swift in Sources */,
 				2523A6822EC4C3C000842508 /* HEVCVideoDecoderFactory.swift in Sources */,
 				278F28B92EB3874800DF2F73 /* GlowingCapsuleButton.swift in Sources */,
 				14C8FF6D2EABA4250089101B /* AttachmentIDs.swift in Sources */,
@@ -2195,10 +2198,10 @@
 				1446FBBD2EAE77B5000BCF61 /* SurgeryBottomMenu.swift in Sources */,
 				1446FBB22EAE6C23000BCF61 /* RecordButton.swift in Sources */,
 				2523A6EF2EC649A600842508 /* RuleBasedCommandParser.swift in Sources */,
-				2523A6F02EC649A600842508 /* AppleSpeechRecognitionService.swift in Sources */,
 				2523A6F12EC649A600842508 /* VoiceControlDependencies.swift in Sources */,
 				2523A6F22EC649A600842508 /* LLMCommandParser.swift in Sources */,
 				2523A6F32EC649A600842508 /* FallbackVoiceCommandParser.swift in Sources */,
+				1479B8B12ECB376C003397B0 /* SceneProvider.swift in Sources */,
 				2581FF752EC20A970059678D /* ConnectionSettings.swift in Sources */,
 				149D926D2ECA78AB0043B1A2 /* RecordingPlayerView.swift in Sources */,
 				1446FBE42EAF5801000BCF61 /* PatientInputView.swift in Sources */,
@@ -2207,6 +2210,7 @@
 				C02FFA9D2E9FFF6F00F16742 /* AppModel.swift in Sources */,
 				25E78BA82EB9225600D8CAD2 /* GetOperation.swift in Sources */,
 				25E78BA92EB9225600D8CAD2 /* GetTodayOperations.swift in Sources */,
+				1479B8B52ECB3D0E003397B0 /* RecordCard.swift in Sources */,
 				25E78BAA2EB9225600D8CAD2 /* CreateOperation.swift in Sources */,
 				25E78BAB2EB9225600D8CAD2 /* UpsertOperation.swift in Sources */,
 				25E78BAC2EB9225600D8CAD2 /* AttachAssetToOperation.swift in Sources */,
@@ -2238,6 +2242,7 @@
 				C0F97ACF2EA41D4B0063E159 /* PatientLocalDataSourceSwiftData.swift in Sources */,
 				C050AA3C2EA8197E00352314 /* ImmersiveIDs.swift in Sources */,
 				27D1DB4D2EBC953D00AC7F3D /* WindowController.swift in Sources */,
+				1479B8AD2ECB1134003397B0 /* RecordingViewModel.swift in Sources */,
 				C0F97AD02EA41D4B0063E159 /* SDOperationAsset.swift in Sources */,
 				C0F97AD12EA41D4B0063E159 /* PatientLocalDataSourceLegacyJSON.swift in Sources */,
 				C050AA362EA8176300352314 /* RootView.swift in Sources */,
@@ -2255,7 +2260,6 @@
 				C0F97B242EA435490063E159 /* CreatePatientCommand.swift in Sources */,
 				25E78B6C2EB90D4600D8CAD2 /* OperationStatus.swift in Sources */,
 				25E78B6D2EB90D4600D8CAD2 /* Operation.swift in Sources */,
-				149D92772ECA79E00043B1A2 /* ThumbnailVideoView.swift in Sources */,
 				25E78B6E2EB90D4600D8CAD2 /* OperationAsset.swift in Sources */,
 				25E78B6F2EB90D4600D8CAD2 /* OperationRecording.swift in Sources */,
 				25E78B702EB90D4600D8CAD2 /* OperationError.swift in Sources */,
@@ -2321,11 +2325,11 @@
 				25E78B9A2EB9225600D8CAD2 /* AttachAssetToOperation.swift in Sources */,
 				25E78B9B2EB9225600D8CAD2 /* RemoveAssetFromOperation.swift in Sources */,
 				25E78B9D2EB9225600D8CAD2 /* UpdateOperationStatus.swift in Sources */,
-				149D92762ECA79E00043B1A2 /* ThumbnailVideoView.swift in Sources */,
 				25E78B9E2EB9225600D8CAD2 /* DeleteOperation.swift in Sources */,
 				C04678042EA00B1F00D160DA /* DeletePatient.swift in Sources */,
 				2523A6CD2EC6493900842508 /* VoiceControlManager+Executor.swift in Sources */,
 				1446FBBE2EAE77B5000BCF61 /* SurgeryBottomMenu.swift in Sources */,
+				1479B8AE2ECB1134003397B0 /* RecordingViewModel.swift in Sources */,
 				C0F97AE02EA420EB0063E159 /* DomainDependencies.swift in Sources */,
 				C0F97B202EA435490063E159 /* ValidationError.swift in Sources */,
 				1446FBA42EAE6A27000BCF61 /* GlowingCircleButton.swift in Sources */,
@@ -2407,6 +2411,7 @@
 				2581FF032EBE18A70059678D /* VideoError.swift in Sources */,
 				2523A6C22EC61D8200842508 /* StartVoiceListening.swift in Sources */,
 				2523A6C32EC61D8200842508 /* SpeechRecognitionService.swift in Sources */,
+				1479B8B42ECB3D0E003397B0 /* RecordCard.swift in Sources */,
 				2523A6C42EC61D8200842508 /* VoiceCommandExecutor.swift in Sources */,
 				2523A6C52EC61D8200842508 /* ParseVoiceCommand.swift in Sources */,
 				2523A6C62EC61D8200842508 /* VoiceControlState.swift in Sources */,
@@ -2434,7 +2439,6 @@
 				C0F97AA52EA401160063E159 /* PatientDisplayModel.swift in Sources */,
 				C0F97AA62EA401160063E159 /* OperationDisplayModel.swift in Sources */,
 				C0F97AA72EA401160063E159 /* DisplayHelpers.swift in Sources */,
-				149D92742ECA798B0043B1A2 /* MainVideoPlayerView.swift in Sources */,
 				278F28BB2EB3874800DF2F73 /* GlowingCapsuleButton.swift in Sources */,
 				2581FF742EC20A970059678D /* ConnectionSettings.swift in Sources */,
 				1446FBAF2EAE6BBD000BCF61 /* EndoscopeToggle.swift in Sources */,
@@ -2459,17 +2463,13 @@
 				2581FF732EC20A970059678D /* ConnectionSettings.swift in Sources */,
 				C0F97ADE2EA420EB0063E159 /* DomainDependencies.swift in Sources */,
 				2581FF712EC1EEBA0059678D /* BonjourRelayService.swift in Sources */,
-				149D926E2ECA78AB0043B1A2 /* RecordingPlayerView.swift in Sources */,
 				2523A6E52EC649A600842508 /* RuleBasedCommandParser.swift in Sources */,
-				2523A6E62EC649A600842508 /* AppleSpeechRecognitionService.swift in Sources */,
-				2523A6E72EC649A600842508 /* VoiceControlDependencies.swift in Sources */,
 				2523A6E82EC649A600842508 /* LLMCommandParser.swift in Sources */,
 				2523A6E92EC649A600842508 /* FallbackVoiceCommandParser.swift in Sources */,
 				2581FF522EBE5E8F0059678D /* ModeSectionView.swift in Sources */,
 				2581FF532EBE5E8F0059678D /* CameraPickerRow.swift in Sources */,
 				2581FF542EBE5E8F0059678D /* CameraSectionView.swift in Sources */,
 				2581FF552EBE5E8F0059678D /* StreamingButton.swift in Sources */,
-				149D92782ECA79E00043B1A2 /* ThumbnailVideoView.swift in Sources */,
 				C0F97AD42EA41FB50063E159 /* PatientLocalDataSource.swift in Sources */,
 				C0F97AC62EA41D4B0063E159 /* SDOperationRecording.swift in Sources */,
 				C0F97AC72EA41D4B0063E159 /* SwiftDataMappers.swift in Sources */,
@@ -2571,7 +2571,7 @@
 				2581FF672EC1A9140059678D /* BonjourServiceDiscovery.swift in Sources */,
 				2523A65A2EC4C3AA00842508 /* CI_SBSComposer.swift in Sources */,
 				2523A65B2EC4C3AA00842508 /* LatencyMeter.swift in Sources */,
-				149D92732ECA798B0043B1A2 /* MainVideoPlayerView.swift in Sources */,
+				1479B8B32ECB3D0E003397B0 /* RecordCard.swift in Sources */,
 				2523A65C2EC4C3AA00842508 /* WebRTCManager.swift in Sources */,
 				2523A65D2EC4C3AA00842508 /* AppModule.swift in Sources */,
 				2523A65E2EC4C3AA00842508 /* PipelineConfigurationManager.swift in Sources */,
@@ -2618,7 +2618,7 @@
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = "";
+				DEVELOPMENT_TEAM = 4FCV7BL65G;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = "$(SRCROOT)/Hippo/Applications/VisionApp/Info.plist";
@@ -2655,7 +2655,7 @@
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = "";
+				DEVELOPMENT_TEAM = 4FCV7BL65G;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = "$(SRCROOT)/Hippo/Applications/VisionApp/Info.plist";

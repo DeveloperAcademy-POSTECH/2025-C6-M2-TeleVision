@@ -19,8 +19,6 @@ struct RootView: View {
                 .onChange(of: geometry.size) {
                     appModel.updateHomeWindowSize(geometry.size)
                 }
-//                .environment(\.entityLocator, RealityEntityLocator())
-//                .environment(\.anchorService, RealityAnchorService())
         }
     }
 }

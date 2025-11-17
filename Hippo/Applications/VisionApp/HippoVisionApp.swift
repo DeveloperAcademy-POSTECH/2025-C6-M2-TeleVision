@@ -9,6 +9,8 @@ import SwiftUI
 
 @main
 struct HippoVisionApp: App {
+    @UIApplicationDelegateAdaptor private var appDelegate: AppDelegate
+
     @State private var appModel = AppModel()
     @State private var homeViewModel = HomeViewModel()
 
