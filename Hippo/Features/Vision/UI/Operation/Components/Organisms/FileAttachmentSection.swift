@@ -20,7 +20,7 @@ struct FileAttachmentSection: View {
                 if selectedAssets.isEmpty {
                     FileAttachmentPlaceholder()
                 } else {
-                    ModelFileListView(assets: selectedAssets.map { $0.toDisplayModel() })
+                    ModelFileListView(assets: selectedAssets.map { $0.toDisplayModel() }, isReadOnly: false)
                 }
             }
             .frame(maxWidth: .infinity, maxHeight: 150)
