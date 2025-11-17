@@ -43,9 +43,15 @@ public final class CI_SBSComposer: SBSComposing {
 
     // MARK: Pixel Buffer Pool
 
-    /// Pixel buffer pools for each output mode
+    /// Pixel buffer pool cache key (mode + scaling)
+    private struct PoolKey: Hashable {
+        let mode: SBSMode
+        let scalingMode: ScalingMode
+    }
+
+    /// Pixel buffer pools for each output mode and scaling combination
     /// Reuses buffers to avoid allocation overhead
-    private var pixelBufferPools: [SBSMode: CVPixelBufferPool] = [:]
+    private var pixelBufferPools: [PoolKey: CVPixelBufferPool] = [:]
 
     // MARK: Initialization
 
@@ -59,17 +65,7 @@ public final class CI_SBSComposer: SBSComposing {
 
         self.ciContext = CIContext(options: options)
 
-        // Pre-create pixel buffer pools
-        for mode in SBSMode.allCases {
-            do {
-                pixelBufferPools[mode] = try createPixelBufferPool(
-                    width: Int(mode.outputSize.width),
-                    height: Int(mode.outputSize.height)
-                )
-            } catch {
-                logger.error("❌ Failed to create pixel buffer pool for \(mode.rawValue): \(error)")
-            }
-        }
+        // Pixel buffer pools will be created on-demand based on mode and scaling
     }
 
     // MARK: - Public Methods
@@ -84,7 +80,7 @@ public final class CI_SBSComposer: SBSComposing {
         // Debug: Log first few compositions
         composeCount += 1
         if composeCount <= 3 {
-            logger.info("🎨 [SBS Compose #\(self.composeCount)] Left: \(Int(leftSize.width))×\(Int(leftSize.height)), Right: \(Int(rightSize.width))×\(Int(rightSize.height)), Mode: \(config.mode.rawValue)")
+            logger.info("🎨 [SBS Compose #\(self.composeCount)] Left: \(Int(leftSize.width))×\(Int(leftSize.height)), Right: \(Int(rightSize.width))×\(Int(rightSize.height)), Mode: \(config.mode.rawValue), Scale: \(config.scalingMode.rawValue)")
         }
 
         // 1. Create CIImages from pixel buffers
@@ -107,14 +103,22 @@ public final class CI_SBSComposer: SBSComposing {
         )
 
         // 3. Compose side-by-side
-        let composedImage = try composeSideBySide(
+        var composedImage = try composeSideBySide(
             left: normalizedLeft,
             right: normalizedRight,
             mode: config.mode
         )
 
-        // 4. Render to output pixel buffer
-        let outputBuffer = try createOutputBuffer(for: config.mode)
+        // 4. Apply resolution scaling if needed
+        if config.scalingMode != .none {
+            composedImage = try applyScaling(
+                image: composedImage,
+                scalingMode: config.scalingMode
+            )
+        }
+
+        // 5. Render to output pixel buffer
+        let outputBuffer = try createOutputBuffer(for: config.mode, scalingMode: config.scalingMode)
         try render(image: composedImage, to: outputBuffer)
 
         return outputBuffer
@@ -284,11 +288,35 @@ public final class CI_SBSComposer: SBSComposing {
         return composited.cropped(to: outputRect)
     }
 
+    // MARK: - Private Methods: Scaling
+
+    private func applyScaling(image: CIImage, scalingMode: ScalingMode) throws -> CIImage {
+        let scaleFactor = CGFloat(scalingMode.scaleFactor)
+        return try applyLanczosScale(image: image, scale: scaleFactor)
+    }
+
     // MARK: - Private Methods: Rendering
 
-    private func createOutputBuffer(for mode: SBSMode) throws -> CVPixelBuffer {
-        guard let pool = pixelBufferPools[mode] else {
-            throw VideoError.compositionFailed(reason: "No pixel buffer pool for mode \(mode)")
+    private func createOutputBuffer(for mode: SBSMode, scalingMode: ScalingMode) throws -> CVPixelBuffer {
+        let poolKey = PoolKey(mode: mode, scalingMode: scalingMode)
+
+        // Get or create pool for this mode + scaling combination
+        if pixelBufferPools[poolKey] == nil {
+            let baseSize = mode.outputSize
+            let scaleFactor = scalingMode.scaleFactor
+            let scaledWidth = Int(baseSize.width * scaleFactor)
+            let scaledHeight = Int(baseSize.height * scaleFactor)
+
+            pixelBufferPools[poolKey] = try createPixelBufferPool(
+                width: scaledWidth,
+                height: scaledHeight
+            )
+
+            logger.info("📦 Created pixel buffer pool: \(scaledWidth)×\(scaledHeight) (mode: \(mode.rawValue), scale: \(scalingMode.rawValue))")
+        }
+
+        guard let pool = pixelBufferPools[poolKey] else {
+            throw VideoError.compositionFailed(reason: "No pixel buffer pool for mode \(mode) + scale \(scalingMode)")
         }
 
         var pixelBuffer: CVPixelBuffer?
