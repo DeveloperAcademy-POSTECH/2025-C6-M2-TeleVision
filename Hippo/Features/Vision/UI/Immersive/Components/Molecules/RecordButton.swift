@@ -8,41 +8,60 @@
 import SwiftUI
 
 struct RecordButton: View {
-    let action: () -> Void
-    let isRecording: Bool
+    @Environment(ImmersiveViewModel.self) private var viewModel
+    @Environment(OperationViewModel.self) private var operationViewModel
+    @State private var manager = RecordingManager()
 
     var body: some View {
-        Button(action: action) {
+        Button(action: manager.toggleRecording) {
             HStack {
                 Text("녹화")
                     .font(.callout)
                 Spacer()
-                RecordingIndicator(isRecording: isRecording)
+
+                if manager.isRecording {
+                    Text(manager.formattedElapsedTime)
+                        .font(.caption2)
+                        .foregroundStyle(.tertiary)
+                        .padding(.trailing, 2)
+                }
+
+                RecordingIndicator(isRecording: manager.isRecording)
             }
             .padding(.horizontal, 10)
             .frame(maxHeight: .infinity)
         }
         .contentShape(.capsule)
-//        .frame(width: 100, height: 44)
-        .frame(width: isRecording ? 130 : 100, height: 44)
+        .frame(width: manager.isRecording ? 150 : 100, height: 44)
         .buttonStyle(.plain)
         .glassBackgroundEffect(in: .capsule, displayMode: .always)
         .background(.clear)
-//        .overlay {
-//            Capsule()
-//                .stroke(.white.opacity(0.25), lineWidth: 1)
-//        }
-//        .shadow(color: .black.opacity(0.7), radius: 4, x: 2, y: 2)
         .overlay {
             Capsule()
-                .stroke(isRecording ? Color.red.opacity(0.7) : .white.opacity(0.5), lineWidth: 1)
+                .stroke(manager.isRecording ? Color.red.opacity(0.5) : .white.opacity(0.5), lineWidth: 1)
         }
-        .shadow(color: isRecording ? .red.opacity(0.3) : .black.opacity(0.5), radius: 10, x: 2, y: 2)
-        .animation(.smooth(duration: 1.0), value: isRecording)
-//        .animation(.spring(response: 1.0, dampingFraction: 0.5), value: isRecording)
+        .shadow(color: manager.isRecording ? .red.opacity(0.5) : .black.opacity(0.5), radius: 10, x: 2, y: 2)
+        .animation(.smooth(duration: 0.5), value: manager.isRecording)
+        .task {
+            manager.onRecordingFinished = { tempURL in
+                Task {
+                    await manager.addRecordingToOperation(
+                        operationID: operationViewModel.state.operation!.id,
+                        patientID: operationViewModel.state.patient!.id,
+                        tempURL: tempURL
+                    )
+                }
+            }
+        }
+        .onChange(of: manager.isRecording) {
+            manager.isRecordingStateChanged()
+        }
+        .onDisappear {
+            manager.setTimerReset()
+        }
     }
 }
 
 #Preview {
-    RecordButton(action: {}, isRecording: true)
+    RecordButton()
 }

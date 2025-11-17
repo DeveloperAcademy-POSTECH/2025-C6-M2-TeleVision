@@ -20,7 +20,9 @@ struct DetailHeader: View {
             Spacer()
 
             HStack(spacing: 16) {
-                Button {} label: {
+                Button {
+                    viewModel.path.append(PathType.recordView)
+                } label: {
                     Image(systemName: "video")
                         .foregroundStyle(.primary)
                 }
