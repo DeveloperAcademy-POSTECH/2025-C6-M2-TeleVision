@@ -6,7 +6,7 @@
 //  Separated from WebRTC receiver for clean architecture
 //
 
-import AVFoundation
+@preconcurrency import AVFoundation
 import CoreMedia
 import os.log
 
@@ -35,6 +35,10 @@ public final class StereoVideoPlayer {
         setupRenderer()
 
         logger.info("StereoVideoPlayer initialized with synchronizer")
+    }
+
+    deinit {
+        logger.info("StereoVideoPlayer DEINIT - being destroyed!")
     }
 
     // MARK: - Public Methods
@@ -66,12 +70,11 @@ public final class StereoVideoPlayer {
     /// Enqueue a stereo-tagged sample buffer for rendering
     /// - Parameter sample: CMSampleBuffer with stereo tags (from ConvertingModel)
     func enqueueSample(_ sample: CMSampleBuffer) {
-        // Don't check isRendererReady - just enqueue
-        // The renderer will handle buffering internally
-
-        guard videoRenderer.status != .failed else {
-            if framesEnqueued % 60 == 0 {
-                logger.error("Renderer status is failed, cannot enqueue")
+        // Check renderer status first
+        let status = videoRenderer.status
+        if status == .failed {
+            if framesEnqueued == 0 {
+                logger.error("❌ Renderer status is FAILED before first frame")
                 if let error = videoRenderer.error {
                     logger.error("   Error: \(error.localizedDescription)")
                 }
@@ -79,34 +82,34 @@ public final class StereoVideoPlayer {
             return
         }
 
-        guard videoRenderer.isReadyForMoreMediaData else {
-            // Skip but don't log too much
-            if framesEnqueued % 120 == 0 {
-                logger.debug("Renderer not ready for more data, skipping frame \(self.framesEnqueued)")
+        // Check if ready for more data
+        let isReady = videoRenderer.isReadyForMoreMediaData
+        if !isReady {
+            if framesEnqueued == 0 {
+                logger.warning("⚠️ Renderer not ready for first frame (will retry)")
             }
             return
         }
 
-        // Get sample buffer info for debugging
+        // Log first frame details
         if framesEnqueued == 0 {
             if let formatDesc = CMSampleBufferGetFormatDescription(sample) {
                 let dimensions = CMVideoFormatDescriptionGetDimensions(formatDesc)
-                logger.info("First sample buffer info:")
-                logger.info("   Dimensions: \(dimensions.width)x\(dimensions.height)")
-                logger.info("   Has attachments: \(CMSampleBufferGetSampleAttachmentsArray(sample, createIfNecessary: false) != nil)")
+                logger.info("📦 First sample buffer:")
+                logger.info("   Dimensions: \(dimensions.width)×\(dimensions.height)")
+                logger.info("   Renderer status: \(status.rawValue) (0=unknown, 1=ready, 2=failed)")
+                logger.info("   Ready for data: \(isReady)")
             }
         }
 
+        // Enqueue to renderer
         videoRenderer.enqueue(sample)
         framesEnqueued += 1
 
+        // Log first frame success
         if framesEnqueued == 1 {
-            logger.info("First stereo frame enqueued successfully")
-            logger.info("   Renderer status after enqueue: \(self.videoRenderer.status.rawValue)")
-            logger.info("   isReadyForMoreMediaData: \(self.videoRenderer.isReadyForMoreMediaData)")
-            isRendererReady = true  // Mark as ready after first successful enqueue
-        } else if framesEnqueued % 60 == 0 {
-            logger.debug("Enqueued \(self.framesEnqueued) frames (status: \(self.videoRenderer.status.rawValue))")
+            logger.info("✅ First stereo frame enqueued to AVSampleBufferVideoRenderer")
+            isRendererReady = true
         }
     }
 

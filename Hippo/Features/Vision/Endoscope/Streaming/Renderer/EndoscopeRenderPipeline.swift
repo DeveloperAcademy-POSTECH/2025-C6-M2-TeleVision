@@ -262,23 +262,15 @@ public final class EndoscopeRenderPipeline: ObservableObject {
             return
         }
 
-        // Create ConvertingModel with recommended pixel buffer attributes from VideoPlayer
+        // Create ConvertingModel WITHOUT recommended attributes
+        // Testing: recommendedPixelBufferAttributes may cause issues with tagged buffer groups
         if convertingModel == nil {
             logger.info("   ✓ Creating ConvertingModel for Stereo 3D mode...")
-
-            // Get recommended pixel buffer attributes from AVSampleBufferVideoRenderer
-            // This ensures compatibility with VideoPlayerComponent (Apple's recommended approach)
-            let recommendedAttrs = videoPlayer?.videoRenderer.recommendedPixelBufferAttributes
-
-            if recommendedAttrs != nil {
-                logger.info("   Using recommended pixel buffer attributes from AVSampleBufferVideoRenderer")
-            } else {
-                logger.warning("   No recommended attributes available, using defaults")
-            }
+            logger.info("   Using default pixel buffer attributes (testing without recommendations)")
 
             convertingModel = ConvertingModel(
                 stereoMetadata: .default,
-                recommendedPixelBufferAttributes: recommendedAttrs
+                recommendedPixelBufferAttributes: nil  // Test without recommended attrs
             )
             logger.info("   ✓ ConvertingModel initialized")
         } else {
@@ -326,8 +318,16 @@ public final class EndoscopeRenderPipeline: ObservableObject {
 
     private func feedStereo3D(_ pixelBuffer: CVPixelBuffer, pts: CMTime, duration: CMTime) {
         guard let player = videoPlayer else {
+            if framesProcessed == 1 || framesProcessed % 120 == 0 {
+                logger.warning("[feedStereo3D] VideoPlayer is NIL at frame \(self.framesProcessed)")
+                logger.warning("[feedStereo3D] Pipeline mode: \(self.currentMode.rawValue)")
+            }
+            return
+        }
+
+        guard let converter = convertingModel else {
             if framesProcessed % 120 == 0 {
-                logger.warning("Stereo 3D mode but VideoPlayer not initialized")
+                logger.warning("Stereo 3D mode but ConvertingModel not initialized")
             }
             return
         }
@@ -339,34 +339,43 @@ public final class EndoscopeRenderPipeline: ObservableObject {
 
         updateFrameSize(width: perEyeWidth, height: srcHeight, label: "Stereo 3D")
 
-        // Use ConvertingModel to create stereo-tagged sample buffer
-        Task { [weak self] in
-            guard let self = self else { return }
+        // TEST: Bypass ConvertingModel - send raw SBS directly
+        if framesProcessed == 1 {
+            logger.warning("⚠️ TEST MODE: Bypassing ConvertingModel, sending raw SBS")
+        }
 
-            do {
-                guard let stereoSample = try await self.convertingModel?.process(
-                    pixelBuffer,
-                    pts: pts,
-                    duration: duration
-                ) else {
-                    if self.framesProcessed <= 10 {
-                        self.logger.error("Failed to convert to stereo sample")
-                    }
-                    return
-                }
+        player.enqueuePixelBuffer(pixelBuffer, pts: pts, duration: duration)
 
-                // Enqueue to VideoPlayer
-                player.enqueueSample(stereoSample)
+        if framesProcessed == 1 {
+            logger.info("✅ TEST: Raw SBS frame sent to VideoPlayer")
+        }
 
-                if self.framesProcessed == 1 {
-                    self.logger.info("First stereo frame enqueued")
+        // ORIGINAL CODE (commented out for testing):
+        /*
+        do {
+            guard let stereoSample = try converter.process(
+                pixelBuffer,
+                pts: pts,
+                duration: duration
+            ) else {
+                if framesProcessed == 1 {
+                    logger.error("Failed to convert to stereo sample")
                 }
-            } catch {
-                if self.framesProcessed <= 10 {
-                    self.logger.error("ConvertingModel error: \(error.localizedDescription)")
-                }
+                return
+            }
+
+            // Enqueue to VideoPlayer
+            player.enqueueSample(stereoSample)
+
+            if framesProcessed == 1 {
+                logger.info("First stereo frame enqueued to VideoPlayer")
+            }
+        } catch {
+            if framesProcessed == 1 {
+                logger.error("ConvertingModel error: \(error.localizedDescription)")
             }
         }
+        */
     }
 
     // MARK: - Common Helpers
