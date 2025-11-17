@@ -61,7 +61,9 @@ extension SDOperationRecording {
     static func fromDomain(_ r: OperationRecording, owner op: SDOperation) -> SDOperationRecording {
         let sdRecording = SDOperationRecording(
             id: r.id,
-            fileURLString: r.fileURL.absoluteString
+            videoData: r.videoData,
+            thumbnailData: r.thumbnailData,
+            createdAt: r.createdAt
         )
         sdRecording.operation = op
         return sdRecording
@@ -125,7 +127,9 @@ extension OperationRecording {
     static func fromSwiftData(_ s: SDOperationRecording) -> OperationRecording {
         OperationRecording(
             id: s.id,
-            fileURL: URL(string: s.fileURLString) ?? URL(fileURLWithPath: "/dev/null")
+            videoData: s.videoData,
+            thumbnailData: s.thumbnailData,
+            createdAt: s.createdAt
         )
     }
 }

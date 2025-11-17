@@ -8,11 +8,13 @@
 import SwiftUI
 
 struct SurgeryControlBar: View {
+    @Environment(OperationViewModel.self) var dataViewModel
     @Environment(ImmersiveViewModel.self) var immersiveViewModel
     @Environment(WindowController.self) var windowController
 
     var body: some View {
         @Bindable var immersiveViewModel = immersiveViewModel
+        
 
         HStack {
             CircleIconButton(
@@ -46,13 +48,13 @@ struct SurgeryControlBar: View {
                 HStack {
                     EndoscopeToggle(isOn: $immersiveViewModel.isEndoscopicActive)
                     Spacer()
-                    RecordButton(action: immersiveViewModel.recordPassThroughVideo, isRecording: immersiveViewModel.isRecording)
+                    RecordButton()
                 }
             }
             .padding(.horizontal, 20)
             .padding(.vertical, 12)
             .glassBackgroundEffect(in: .capsule, displayMode: .always)
-            .frame(width: 420)
+            .frame(width: 460)
             .onChange(of: immersiveViewModel.isEndoscopicActive) { _, _ in
                 handleEndoscopeToggle()
             }
@@ -69,6 +71,7 @@ struct SurgeryControlBar: View {
                         windowController.dismissWindow(id: WindowIDs.opacityControlPanel)
                         immersiveViewModel.isOpacityControlPanelOpen = false
                     }
+                    
                 }
             }
             Button("취소", role: .cancel) {
