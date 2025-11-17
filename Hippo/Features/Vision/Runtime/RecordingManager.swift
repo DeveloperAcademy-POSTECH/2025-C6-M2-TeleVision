@@ -48,6 +48,11 @@ final class RecordingManager: NSObject, RPScreenRecorderDelegate {
 
     var isAvailable: Bool = false
     var isRecording: Bool = false
+
+    // 녹화 중, 녹화 중지 처리 중을 구분하기 위한 상태
+    // 단순히 isRecording만으로는 '중지 중(Stopping)'인 과도기 상태를 표현 못함
+    var isProcessing: Bool = false
+
     var isMicrophoneEnabled: Bool = false {
         didSet {
             recorder.isMicrophoneEnabled = isMicrophoneEnabled
@@ -76,7 +81,6 @@ final class RecordingManager: NSObject, RPScreenRecorderDelegate {
         super.init()
         recorder.delegate = self
         isAvailable = recorder.isAvailable
-        logger.debug("ReplayKit availability: \(self.isAvailable)")
     }
 
     // MARK: - Methods
@@ -120,8 +124,16 @@ final class RecordingManager: NSObject, RPScreenRecorderDelegate {
             return
         }
 
+        recorder.isMicrophoneEnabled = true
+
+        // 처리 중 상태 진입
+        isProcessing = true
+
+        // discard 완료 후 녹화 시작
         recorder.startRecording { error in
-            Task {
+            Task { @MainActor in
+                self.isProcessing = false // 처리 완료
+
                 if let error = error {
                     self.logger.error("Error starting recording: \(error.localizedDescription)")
                     self.setRecordingState(active: false)
@@ -129,11 +141,15 @@ final class RecordingManager: NSObject, RPScreenRecorderDelegate {
                     return
                 }
                 self.setRecordingState(active: true)
+                self.logger.debug("Recording started successfully.")
             }
         }
     }
 
     private func stopRecording() {
+        // 중지 시작 시 처리 중 상태로 변경
+        isProcessing = true
+
         let tempDirectory = FileManager.default.temporaryDirectory
         let fileName = "recording-\(Date().timeIntervalSince1970).mp4"
         let outputURL = tempDirectory.appendingPathComponent(fileName)
@@ -142,8 +158,12 @@ final class RecordingManager: NSObject, RPScreenRecorderDelegate {
 
         // (Deprecated API 사용 - InAppRecording 프로젝트와 동일한 로직)
         recorder.stopRecording(withOutput: outputURL) { error in
-            Task {
-                await self.setRecordingState(active: false)
+            Task { @MainActor in
+                // 약간의 딜레이를 주어 시스템 리소스가 해제될 시간을 확보
+                try? await Task.sleep(nanoseconds: 500_000_000) // 0.5초 대기
+
+                self.setRecordingState(active: false)
+                self.isProcessing = false // 처리 완료
 
                 if let error = error {
                     print("Error received in stopRecording handler: \(error.localizedDescription)")
@@ -151,10 +171,10 @@ final class RecordingManager: NSObject, RPScreenRecorderDelegate {
 
                 if FileManager.default.fileExists(atPath: outputURL.path) {
                     self.logger.debug("Successfully confirmed temp file exists at \(outputURL.path)")
-                    await self.onRecordingFinished?(outputURL)
+                    self.onRecordingFinished?(outputURL)
                 } else {
                     self.logger.error("Failed to save recording. Temp file does not exist.")
-                    await self.onRecordingFailed?(RecordingError.fileNotFound)
+                    self.onRecordingFailed?(RecordingError.fileNotFound)
                 }
             }
         }

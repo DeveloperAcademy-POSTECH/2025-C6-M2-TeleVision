@@ -116,6 +116,7 @@ struct OperationDetailView: View {
                         .controlSize(.large)
                 }
             }
+            .frame(width: 480, height: appModel.homeWindowSize.height)
             .environment(viewModel)
             .task {
                 await viewModel.load(patientID: patientID, operationID: operationID)
