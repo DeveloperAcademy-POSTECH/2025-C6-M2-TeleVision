@@ -15,11 +15,12 @@ final class ImmersiveSceneRuntime {
     public init() {}
     
     // MARK: - State
-
+    
     private var topAnchor: AnchorEntity?
     
     //MARK: - 3D model 들이 추가될 루트 엔티티
     var sceneRoot: Entity?
+    var hudRoot: Entity?
     
     // MARK: - Setup
     
@@ -30,30 +31,39 @@ final class ImmersiveSceneRuntime {
     
     // RealityView 의 content 관리
     func setupScene(in content: RealityViewContent, attachments: RealityViewAttachments) {
-        let anchor1 = AnchorEntity(.head)
-        anchor1.position = [0, 0.25, -1.0]
-
+        
+        let headAnchor = AnchorEntity(.head)
+        content.add(headAnchor)
+        self.topAnchor = headAnchor
+        
+        let hudRoot = Entity()
+        hudRoot.position = [0, 0.0, -1.0]   // 처음엔 정면
+        headAnchor.addChild(hudRoot)
+        self.hudRoot = hudRoot
+        
         // Main toggle button (original position - center)
         if let topButton = attachments.entity(for: AttachmentIDs.topToggleButton) {
-            anchor1.addChild(topButton)
+            topButton.components.set([
+                InputTargetComponent(),
+                HoverEffectComponent()]
+            )
+            hudRoot.addChild(topButton)
         }
-
+        
         // Test voice button (bottom-left corner, for testing only)
         if let testButton = attachments.entity(for: AttachmentIDs.testVoiceButton) {
             testButton.position = [-0.4, -0.2, 0]  // Bottom-left, less intrusive
-            anchor1.addChild(testButton)
+            headAnchor.addChild(testButton)
         }
-
-        content.add(anchor1)
-
-        topAnchor = anchor1
+        
+        topAnchor = headAnchor
         
         // 3D 모델들의 월드 앵커의 부모
         let rootEntity = Entity()
         rootEntity.name = "SceneRoot"
         content.add(rootEntity)
         self.sceneRoot = rootEntity
-
+        
         // 마지막 조작 Entity 정보 저장
         eventSubscription = content.subscribe(to: ManipulationEvents.WillBegin.self)  { event in
             if let previousSelection = self.selectedEntity {
@@ -62,8 +72,22 @@ final class ImmersiveSceneRuntime {
             event.entity.name = "selected"
             self.selectedEntity = event.entity
         }
+        
+        // 버튼 이동 애니메이션
+        Task { @MainActor in
+            try? await Task.sleep(for: .seconds(1))
+            var targetTransform = hudRoot.transform
+            targetTransform.translation = SIMD3<Float>(0, 0.25, -1.0)
+            
+            hudRoot.move(
+                to: targetTransform,
+                relativeTo: headAnchor,
+                duration: 1.0,
+                timingFunction: .easeInOut
+            )
+        }
     }
-
+    
     func placeEntity(url: URL) async {
         guard let sceneRoot = self.sceneRoot else {
             logger.error("Scene root is not yet set up.")
