@@ -129,7 +129,7 @@ public final class WebRTCReceiver: NSObject, ObservableObject {
     public let renderPipeline: EndoscopeRenderPipeline
 
     /// Current view mode - synced with pipeline
-    @Published public var currentViewMode: EndoscopeViewMode = .stereo3D
+    @Published public var currentViewMode: EndoscopeViewMode = .rawStream
 
     /// Pipeline configuration based on current mode
     private var pipelineConfig: EndoscopePipelineConfig {
@@ -507,6 +507,9 @@ extension WebRTCReceiver: LKRTCPeerConnectionDelegate {
                 self.logger.info("Media stream added: track enabled=\(videoTrack.isEnabled), state=\(videoTrack.readyState.rawValue)")
                 self.remoteVideoTrack = videoTrack
                 videoTrack.add(self)
+
+                // Setup notification observer for HEVC frames
+                self.setupStereoRenderer()
             }
         } else {
             Task { @MainActor in
@@ -579,8 +582,19 @@ extension WebRTCReceiver: LKRTCVideoRenderer {
     }
 
     nonisolated public func renderFrame(_ frame: LKRTCVideoFrame?) {
+        Task { @MainActor in
+            print("🎬 renderFrame called!")
+        }
+
         guard let frame = frame else {
+            Task { @MainActor in
+                print("⚠️ renderFrame: frame is nil")
+            }
             return
+        }
+
+        Task { @MainActor in
+            print("✅ renderFrame: Got frame \(frame.width)x\(frame.height)")
         }
 
         // Get pixel buffer (either directly or via conversion)

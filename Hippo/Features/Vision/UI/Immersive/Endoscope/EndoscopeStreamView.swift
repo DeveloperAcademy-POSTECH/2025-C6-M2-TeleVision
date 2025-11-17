@@ -51,10 +51,16 @@ struct EndoscopeStreamView: View {
                 // Route to appropriate view based on pipeline mode
                 switch viewMode {
                 case .rawStream:
-                    RawStreamView(pipeline: receiver.renderPipeline)
+                    RawStreamView(
+                        receiver: receiver,
+                        pipeline: receiver.renderPipeline
+                    )
 
                 case .splitSBS:
-                    SplitSBSView(pipeline: receiver.renderPipeline)
+                    SplitSBSView(
+                        receiver: receiver,
+                        pipeline: receiver.renderPipeline
+                    )
 
                 case .stereo3D:
                     Stereo3DView(

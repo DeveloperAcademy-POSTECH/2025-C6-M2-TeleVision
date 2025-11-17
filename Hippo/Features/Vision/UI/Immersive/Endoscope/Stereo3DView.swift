@@ -2,8 +2,10 @@
 //  Stereo3DView.swift
 //  Hippo
 //
-//  Stage 3: Stereo 3D view using VideoPlayerComponent
-//  Production mode for clinical use with true stereo depth perception
+//  Unified VideoPlayer view for all 3 rendering modes
+//  - Raw SBS: Full SBS displayed (3840×1080 or 1920×540)
+//  - Left-only Mono: Left eye only (1920×1080 or 960×540, safest for OR)
+//  - Stereo 3D: True stereoscopic rendering
 //
 
 import SwiftUI
@@ -11,8 +13,7 @@ import RealityKit
 import AVFoundation
 import os.log
 
-/// Stage 3: Stereo 3D View (Production Mode)
-/// Uses VideoPlayerComponent for true stereoscopic rendering
+/// Unified view for all VideoPlayer-based rendering modes
 struct Stereo3DView: View {
     // Only observe receiver (pipeline is accessed via receiver)
     @ObservedObject var receiver: WebRTCReceiver
@@ -25,62 +26,27 @@ struct Stereo3DView: View {
         category: "Stereo3DView"
     )
 
-    // Constants
-    private static let entityName = "stereo-video-entity"
-    private static let baseHeight: Float = 1.35  // meters
-    private static let minWidth: Float = 1.0     // meters (minimum)
-    private static let maxWidth: Float = 3.0     // meters (maximum)
-    private static let defaultWidth: Float = 2.4 // meters (16:9 default)
-
-    /// Calculate plane scale based on frame size
-    /// Maintains aspect ratio with width clamping for safety
-    private var planeScale: SIMD3<Float> {
-        let frameSize = receiver.currentFrameSize
-
-        guard frameSize.width > 0, frameSize.height > 0 else {
-            // Default scale (16:9 aspect ratio: 2.4m × 1.35m)
-            return SIMD3(
-                x: Self.defaultWidth,
-                y: Self.baseHeight,
-                z: 1.0
-            )
-        }
-
-        // Calculate aspect ratio
-        let aspectRatio = Float(frameSize.width) / Float(frameSize.height)
-
-        // Width adjusted to maintain aspect ratio
-        var calculatedWidth = Self.baseHeight * aspectRatio
-
-        // Clamp width to safe range (1.0m ~ 3.0m)
-        calculatedWidth = max(
-            Self.minWidth,
-            min(Self.maxWidth, calculatedWidth)
-        )
-
-        return SIMD3(
-            x: calculatedWidth,
-            y: Self.baseHeight,
-            z: 1.0
-        )
-    }
+    // Constants for stable positioning
+    private static let entityName = "video-player-entity"
+    private static let entityPosition = SIMD3<Float>.zero  // Default position
+    private static let entityScale = SIMD3<Float>(0.2, 0.2, 0.2)  // Original size
 
     // MARK: - Body
 
     var body: some View {
         #if os(visionOS)
         RealityView { content in
-            logRendererStatus()
+            logSetup()
 
-            // 1) 엔티티 생성 & 추가
-            let entity = makeStereoEntity()
+            // Create entity with VideoPlayerComponent
+            let entity = makeVideoPlayerEntity()
             content.add(entity)
+
             logEntityCreated(entity)
 
         } update: { content in
-            // TEST: Disable scale update to prevent overwriting
-            // updateStereoEntityScale(in: content)
-
+            // Position and scale are fixed for stability
+            // No dynamic updates needed for OR demo
         }
         .frame(depth: 0)  // RealityView origin on window plane
         .onAppear {
@@ -97,7 +63,7 @@ struct Stereo3DView: View {
         #else
         Color.black
             .overlay(
-                Text("Stereo 3D requires visionOS")
+                Text("VideoPlayer rendering requires visionOS")
                     .foregroundColor(.white)
             )
         #endif
@@ -105,8 +71,8 @@ struct Stereo3DView: View {
 
     // MARK: - Setup Helpers
 
-    /// RealityView가 처음 생성될 때 렌더러 상태 로그
-    private func logRendererStatus() {
+    /// Log renderer status at setup
+    private func logSetup() {
         logger.info("Stereo3DView: Creating RealityView")
 
         // Get renderer directly from pipeline
@@ -129,13 +95,12 @@ struct Stereo3DView: View {
         logger.info("   Current frame size: \(Int(receiver.currentFrameSize.width))×\(Int(receiver.currentFrameSize.height))")
     }
 
-    /// VideoPlayerComponent + Entity 생성
-    /// Architecture: HEVC → I420 → AVSampleBufferVideoRenderer → VideoPlayerComponent → Entity
-    private func makeStereoEntity() -> Entity {
-        // Get VideoPlayer directly from pipeline (guaranteed to exist in stereo3D mode)
+    /// Create VideoPlayerComponent entity with stable position and scale
+    private func makeVideoPlayerEntity() -> Entity {
+        // Get VideoPlayer directly from pipeline
         guard let videoPlayer = pipeline.getVideoRenderer() else {
             logger.error("CRITICAL: VideoPlayer not found in pipeline!")
-            logger.error("   This should never happen in Stereo 3D mode")
+            logger.error("   This should never happen - pipeline should initialize VideoPlayer")
             logger.error("   Creating empty entity as fallback")
 
             let entity = Entity()
@@ -148,58 +113,41 @@ struct Stereo3DView: View {
         logger.info("   Renderer status: \(videoPlayer.videoRenderer.status.rawValue)")
 
         // Create VideoPlayerComponent with AVSampleBufferVideoRenderer
-        // This is the only component needed - no AVPlayer, no VideoMaterial
         let videoPlayerComponent = VideoPlayerComponent(
             videoRenderer: videoPlayer.videoRenderer
         )
 
         logger.info("VideoPlayerComponent created successfully")
 
-        // Create entity with VideoPlayerComponent only
+        // Create entity with VideoPlayerComponent
         let entity = Entity()
         entity.name = Self.entityName
         entity.components.set(videoPlayerComponent)
 
-        // TEST: Match reference code (UDPListenerVisionOS/ContentView.swift:69)
-        // Reference uses: position = default (0,0,0), scale = 1
-        entity.position = .zero
-        entity.scale = SIMD3<Float>(repeating: 1.0)
+        // Set stable position and scale for OR demo
+        entity.position = Self.entityPosition
+        entity.scale = Self.entityScale
 
-        logger.info("Stereo3D entity configured (TEST: reference code style):")
+        logger.info("VideoPlayer entity configured:")
         logger.info("   Position: \(entity.position)")
         logger.info("   Scale: \(entity.scale)")
 
         return entity
     }
 
-    /// Entity 생성 로그
+    /// Log entity creation
     private func logEntityCreated(_ entity: Entity) {
-        logger.info("Stereo3D VideoPlayerComponent created")
+        logger.info("VideoPlayer entity created")
         logger.info("   Entity name: \(entity.name)")
         logger.info("   Position: \(entity.position)")
         logger.info("   Scale: \(entity.scale)")
-    }
-
-    /// frameSize 변경 시 RealityKit 엔티티 scale 업데이트
-    private func updateStereoEntityScale(in content: RealityViewContent) {
-        guard let entity = content.entities.first(where: { $0.name == Self.entityName }) else {
-            logger.debug("Could not find video entity for scale update")
-            return
-        }
-
-        let newScale = planeScale
-
-        if entity.scale != newScale {
-            entity.scale = newScale
-            logger.info("Stereo3D scale updated: \(newScale)")
-        }
+        logger.info("   Mode: \(receiver.currentViewMode.rawValue)")
     }
 
     // MARK: - Debug Monitoring
 
     #if DEBUG
     /// Monitor renderer status for debugging (DEBUG builds only)
-    /// TODO: Remove this after stereo rendering is stable
     private func startDebugMonitoring() {
         Task {
             logger.debug("Starting debug monitoring (10 seconds)...")
@@ -218,6 +166,9 @@ struct Stereo3DView: View {
 
                 if status == .failed {
                     logger.error("[Debug \(i+1)/10] Renderer status: FAILED")
+                    if let error = videoPlayer.videoRenderer.error {
+                        logger.error("[Debug \(i+1)/10] Error: \(error.localizedDescription)")
+                    }
                 } else if !readyForData {
                     logger.warning("[Debug \(i+1)/10] Renderer not ready for data")
                 } else {
@@ -239,11 +190,11 @@ private struct Stereo3DView_PreviewWrapper: View {
     @StateObject private var mockReceiver: WebRTCReceiver
 
     init() {
-        // @MainActor 컨텍스트에서 파이프라인 생성
+        // @MainActor context에서 pipeline 생성
         let pipeline = EndoscopeRenderPipeline()
         _mockPipeline = StateObject(wrappedValue: pipeline)
 
-        // DI 패턴으로 파이프라인을 주입한 Receiver 생성
+        // DI pattern으로 pipeline을 주입한 Receiver 생성
         _mockReceiver = StateObject(
             wrappedValue: WebRTCReceiver(renderPipeline: pipeline)
         )
@@ -255,8 +206,9 @@ private struct Stereo3DView_PreviewWrapper: View {
             pipeline: mockPipeline
         )
         .onAppear {
-            // Set mock frame size (1920×1080, typical Full HD)
-            mockReceiver.currentFrameSize = CGSize(width: 1920, height: 1080)
+            // Set mock frame size to default: full1080 (3840×1080)
+            // This matches PipelineConfigurationManager default: SBSMode.full1080
+            mockReceiver.currentFrameSize = CGSize(width: 3840, height: 1080)
             mockPipeline.configure(for: .stereo3D)
         }
     }

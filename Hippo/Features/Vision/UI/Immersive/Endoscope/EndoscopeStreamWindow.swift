@@ -13,7 +13,7 @@ struct EndoscopeStreamWindow: View {
     @Environment(\.dismiss) private var dismiss
     @StateObject private var viewModel = EndoscopeStreamViewModel()
     @State private var showSettings = false
-    @State private var viewMode: EndoscopeViewMode = .stereo3D
+    @State private var viewMode: EndoscopeViewMode = .rawStream
 
     var body: some View {
         ZStack(alignment: .top) {
