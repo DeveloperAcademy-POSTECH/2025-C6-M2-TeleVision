@@ -78,8 +78,8 @@ struct Stereo3DView: View {
             logEntityCreated(entity)
 
         } update: { content in
-            // 2) frameSize 변경 시 scale 업데이트
-            updateStereoEntityScale(in: content)
+            // TEST: Disable scale update to prevent overwriting
+            // updateStereoEntityScale(in: content)
 
         }
         .frame(depth: 0)  // RealityView origin on window plane
@@ -160,13 +160,12 @@ struct Stereo3DView: View {
         entity.name = Self.entityName
         entity.components.set(videoPlayerComponent)
 
-        // Position: 2 meters in front of user
-        entity.position = SIMD3<Float>(0, 0, -2.0)
+        // TEST: Match reference code (UDPListenerVisionOS/ContentView.swift:69)
+        // Reference uses: position = default (0,0,0), scale = 1
+        entity.position = .zero
+        entity.scale = SIMD3<Float>(repeating: 1.0)
 
-        // Scale: Based on frame size (dynamically calculated)
-        entity.scale = planeScale
-
-        logger.info("Stereo3D entity configured:")
+        logger.info("Stereo3D entity configured (TEST: reference code style):")
         logger.info("   Position: \(entity.position)")
         logger.info("   Scale: \(entity.scale)")
 

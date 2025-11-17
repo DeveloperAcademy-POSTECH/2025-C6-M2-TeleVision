@@ -11,7 +11,8 @@ import CoreVideo
 import VideoToolbox
 import os
 
-actor ConvertingModel {
+@MainActor
+final class ConvertingModel {
     private let stereoMetadata: StereoMetadata
     private let recommendedPixelBufferAttributes: CVPixelBufferAttributes?
     private var transferSession: VTPixelTransferSession?
@@ -158,7 +159,7 @@ actor ConvertingModel {
     func process(_ pixelBuffer: CVPixelBuffer, pts: CMTime, duration: CMTime = .invalid) throws -> CMSampleBuffer? {
         try ensureResources(for: pixelBuffer)
         guard let pool = pixelBufferPool, let session = transferSession else {
-            log.error("❌ Pool or session not initialized")
+            log.error("Pool or session not initialized")
             return nil
         }
 
@@ -172,9 +173,9 @@ actor ConvertingModel {
         let srcFormat = CVPixelBufferGetPixelFormatType(pixelBuffer)
         let sourceSize = CGSize(width: srcWidth, height: srcHeight)
 
-        // 🔍 DIAGNOSTIC: Log source frame info (first 3 frames only)
+        // DIAGNOSTIC: Log source frame info (first frame only)
         if enableDiagnostics {
-            log.info("🔍 [DIAGNOSTIC] Source frame: \(srcWidth)×\(srcHeight) fmt=\(self.formatString(srcFormat))")
+            log.info("[ConvertingModel] Input buffer: \(srcWidth)x\(srcHeight) fmt=\(self.formatString(srcFormat))")
         }
 
         // Determine stereo input mode (currently always SBS, but can be extended)
@@ -208,6 +209,11 @@ actor ConvertingModel {
             let eyeW = pool.pixelBufferAttributes.size.width
             let eyeH = pool.pixelBufferAttributes.size.height
 
+            // DIAGNOSTIC: Log output buffer size (first frame only)
+            if enableDiagnostics && layerID == 0 {
+                log.info("[ConvertingModel] Output buffer (per eye): \(eyeW)x\(eyeH)")
+            }
+
             // Source clean aperture: crop from SBS
             let cropRectDict: [CFString: Any] = [
                 kCVImageBufferCleanApertureHorizontalOffsetKey: apertureOffset.horizontal,
@@ -225,12 +231,19 @@ actor ConvertingModel {
             out.withUnsafeBuffer { dst in
                 let status = VTPixelTransferSessionTransferImage(session, from: pixelBuffer, to: dst)
                 if status != kCVReturnSuccess {
-                    log.error("❌ VTPixelTransferSessionTransferImage failed: \(status)")
+                    log.error("VTPixelTransferSessionTransferImage failed: \(status)")
                 }
 
                 // CRITICAL: Remove clean apertures from output buffer
                 // VideoPlayerComponent should see the full square buffer (640×640) without any cropping
                 CVBufferRemoveAttachment(dst, kCVImageBufferCleanApertureKey)
+
+                // DIAGNOSTIC: Verify actual transferred size (first frame only)
+                if enableDiagnostics && layerID == 0 {
+                    let actualW = CVPixelBufferGetWidth(dst)
+                    let actualH = CVPixelBufferGetHeight(dst)
+                    log.info("[ConvertingModel] Transferred buffer actual size: \(actualW)x\(actualH)")
+                }
             }
 
             let tags: [CMTag] = [.videoLayerID(Int64(layerID)), .stereoView(eye), .mediaType(.video)]
@@ -252,15 +265,14 @@ actor ConvertingModel {
         // The actual dimensions are in each tagged pixel buffer
         let formatDesc = CMTaggedBufferGroupFormatDescription(taggedBuffers: taggedBuffers)
 
-        // Debug logging for first few frames
+        // Debug logging for first frame only
         if enableDiagnostics {
             let dims = CMVideoFormatDescriptionGetDimensions(formatDesc)
-            log.info("🔍 [FORMAT DEBUG] Format description dimensions: \(dims.width)×\(dims.height)")
-            log.info("🔍 [FORMAT DEBUG] Expected dimensions: \(eyeW)×\(eyeH) per eye")
+            log.info("[ConvertingModel] Format description dimensions: \(dims.width)x\(dims.height)")
+            log.info("[ConvertingModel] Expected per-eye dimensions: \(eyeW)x\(eyeH)")
 
             if dims.width == 0 || dims.height == 0 {
-                log.info("💡 [FORMAT DEBUG] Format description has 0×0 dimensions (expected for tagged buffer groups)")
-                log.info("💡 [FORMAT DEBUG] Each tagged pixel buffer has its own dimensions: \(eyeW)×\(eyeH)")
+                log.info("[ConvertingModel] Format description has 0x0 (expected for tagged buffer groups)")
 
                 // Verify that the tagged buffers themselves have proper dimensions
                 for (idx, taggedBuffer) in taggedBuffers.enumerated() {
@@ -268,18 +280,11 @@ actor ConvertingModel {
                         pb.withUnsafeBuffer { cvBuffer in
                             let w = CVPixelBufferGetWidth(cvBuffer)
                             let h = CVPixelBufferGetHeight(cvBuffer)
-                            log.info("   Tagged buffer[\(idx)] dimensions: \(w)×\(h)")
+                            log.info("[ConvertingModel] Tagged buffer[\(idx)] actual: \(w)x\(h)")
                         }
                     }
                 }
-            } else {
-                log.info("✅ [FORMAT DEBUG] Format description has non-zero dimensions: \(dims.width)×\(dims.height)")
             }
-
-            // Check if format description has proper media type
-            let mediaType = CMFormatDescriptionGetMediaType(formatDesc)
-            let mediaSubType = CMFormatDescriptionGetMediaSubType(formatDesc)
-            log.info("🔍 [FORMAT DEBUG] Media type: \(mediaType), subtype: \(mediaSubType)")
         }
 
         let buffer = CMReadySampleBuffer(
@@ -317,12 +322,21 @@ actor ConvertingModel {
                 attachmentMode: kCMAttachmentMode_ShouldPropagate
             )
 
-            // Only log on first frame to reduce CPU usage
+            // DIAGNOSTIC: Verify final sample buffer (first frame only)
             if processedFrameCount == 1 {
-                log.debug("✅ Stereo sample buffer created with \(taggedBuffers.count) tagged buffers + HeroEye attachment")
+                // Check if we can get an image buffer from the sample
+                if let imageBuffer = CMSampleBufferGetImageBuffer(outSB) {
+                    let finalW = CVPixelBufferGetWidth(imageBuffer)
+                    let finalH = CVPixelBufferGetHeight(imageBuffer)
+                    log.info("[ConvertingModel] Final sample buffer image: \(finalW)x\(finalH)")
+                } else {
+                    log.info("[ConvertingModel] Final sample buffer has NO image buffer (tagged buffer group)")
+                }
+
+                log.info("[ConvertingModel] Stereo sample buffer created with \(taggedBuffers.count) tagged buffers")
             }
         } else if processedFrameCount == 1 {
-            log.error("❌ Failed to create stereo sample buffer or attachments")
+            log.error("[ConvertingModel] Failed to create stereo sample buffer")
         }
 
         return outSB
