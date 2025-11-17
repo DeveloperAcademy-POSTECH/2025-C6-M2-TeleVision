@@ -4,43 +4,19 @@
 //
 //  Endoscope video streaming view for Vision Pro
 //  Displays real-time stereo video from Mac
+//  Refactored to use 3-stage pipeline (Raw / Split / Stereo3D)
 //
 
 import SwiftUI
 import RealityKit
 import AVFoundation
 
-/// Video display mode for Vision Pro
-enum VideoDisplayMode: String, CaseIterable {
-    case stereo = "Stereo"
-    case mono = "Mono"
-
-    var icon: String {
-        switch self {
-        case .stereo: return "view.3d"
-        case .mono: return "view.2d"
-        }
-    }
-}
-
-/// Rendering path selection for video display
-enum VideoRenderPath: String, CaseIterable {
-    case metal = "Metal"
-    case videoPlayer = "VideoPlayer"
-
-    var icon: String {
-        switch self {
-        case .metal: return "cube.fill"
-        case .videoPlayer: return "play.rectangle.fill"
-        }
-    }
-}
+// MARK: - Main Stream View
 
 struct EndoscopeStreamView: View {
     @ObservedObject var receiver: WebRTCReceiver
     let isVisible: Bool
-    @Binding var displayMode: VideoDisplayMode
-    @Binding var renderPath: VideoRenderPath
+    @Binding var viewMode: EndoscopeViewMode
 
     // Calculate dynamic view size based on frame resolution
     private var viewSize: CGSize {
@@ -70,26 +46,30 @@ struct EndoscopeStreamView: View {
     }
 
     var body: some View {
-        // Video content only - controls moved to EndoscopeStreamWindow overlay
         if isVisible {
-            // Select rendering path
             Group {
-                switch renderPath {
-                case .metal:
-                    // Path B: Use StereoVideoRenderer (Metal-based)
-                    StereoVideoView(
-                        renderer: receiver.stereoMetalRenderer,
-                        displayMode: displayMode
-                    )
-                case .videoPlayer:
-                    // Path A: Use VideoPlayerComponent (AVSampleBufferVideoRenderer)
-                    VideoPlayerStereoView(
+                // Route to appropriate view based on pipeline mode
+                switch viewMode {
+                case .rawStream:
+                    RawStreamView(
                         receiver: receiver,
-                        displayMode: displayMode
+                        pipeline: receiver.renderPipeline
+                    )
+
+                case .splitSBS:
+                    SplitSBSView(
+                        receiver: receiver,
+                        pipeline: receiver.renderPipeline
+                    )
+
+                case .stereo3D:
+                    Stereo3DView(
+                        receiver: receiver,
+                        pipeline: receiver.renderPipeline
                     )
                 }
             }
-            .id("\(renderPath.rawValue)-\(displayMode.rawValue)")
+            .id(viewMode.rawValue)  // Force recreation on mode change
             .frame(width: viewSize.width, height: viewSize.height)
             .onChange(of: viewSize) { oldValue, newValue in
                 if oldValue != newValue {
@@ -106,122 +86,34 @@ struct EndoscopeStreamView: View {
             .transition(.opacity)
             .animation(.easeInOut(duration: 0.3), value: isVisible)
             .onAppear {
-                // Initialize receiver's render path to match UI state
-                receiver.setRenderPath(renderPath == .metal ? .metal : .videoPlayer)
+                // Sync receiver to current view mode
+                receiver.setViewMode(viewMode)
+            }
+            .onChange(of: viewMode) { oldMode, newMode in
+                // Update receiver when view mode changes
+                receiver.setViewMode(newMode)
             }
         }
     }
 }
 
-// MARK: - Path A: VideoPlayer-based Stereo View
+// MARK: - View Mode Toggle
 
-struct VideoPlayerStereoView: View {
-    @ObservedObject var receiver: WebRTCReceiver
-    let displayMode: VideoDisplayMode
-
-    @State private var videoEntity: Entity?
-    @State private var isRendererReady = false
-
-    // Fixed plane dimensions for video display
-    // VideoPlayerComponent will scale the video to fit the plane
-    private var planeDimensions: (width: Float, height: Float) {
-        // Optimized size for performance and visibility
-        // 16:9 aspect ratio - reduced from 4.0m for better performance
-        return (width: 2.4, height: 1.35)  // ~2.4m wide, maintains 16:9 ratio
-    }
-
-    var body: some View {
-        #if os(visionOS)
-        RealityView { content in
-            print("🎬 VideoPlayerStereoView: Creating RealityView")
-            print("   Renderer status: \(receiver.stereoRenderer.status.rawValue)")
-            print("   Ready for data: \(receiver.stereoRenderer.isReadyForMoreMediaData)")
-
-            // Create VideoPlayerComponent with StereoVideoPlayer's renderer
-            // Note: receiver.stereoRenderer is a computed property that returns videoPlayer.videoRenderer
-            let videoPlayerComponent = VideoPlayerComponent(videoRenderer: receiver.stereoRenderer)
-
-            // Create entity with VideoPlayerComponent ONLY (no mesh, no materials needed)
-            // VideoPlayerComponent automatically creates and manages its own stereo rendering plane
-            let entity = Entity()
-            entity.components.set(videoPlayerComponent)
-
-            // MATCH Metal position: Same as StereoVideoRenderer for consistency
-            // In ImmersiveSpace, position at origin like Metal planes
-            entity.position = SIMD3<Float>(0, 0, 0)
-
-            // Set scale for comfortable viewing
-            let dimensions = planeDimensions
-            entity.scale = SIMD3<Float>(repeating: 1.0)  // 1:1 scale with plane dimensions
-
-            content.add(entity)
-
-            // Store reference for potential updates
-            videoEntity = entity
-
-            print("✅ VideoPlayerComponent created with scale: \(entity.scale.x), plane: \(dimensions.width)m × \(dimensions.height)m)")
-
-            // Monitor for pink screen issues - check renderer status periodically
-            Task {
-                for _ in 0..<10 {
-                    try? await Task.sleep(for: .seconds(1))
-                    let status = receiver.stereoRenderer.status
-                    let readyForData = receiver.stereoRenderer.isReadyForMoreMediaData
-
-                    if status == .failed {
-                        print("❌ [PINK SCREEN DEBUG] Renderer status: FAILED")
-                    } else if !readyForData {
-                        print("⚠️ [PINK SCREEN DEBUG] Renderer not ready for data")
-                    }
-                }
-            }
-        }
-        .frame(depth: 0)
-        .onAppear {
-            print("✅ VideoPlayerStereoView appeared, stereoRenderer status: \(receiver.stereoRenderer.status.rawValue)")
-        }
-        #else
-        Color.black
-            .overlay(
-                Text("Stereo video requires visionOS")
-                    .foregroundColor(.white)
-            )
-        #endif
-    }
-}
-
-// MARK: - Path B: Metal-based Stereo Video View (using StereoVideoRenderer)
-
-struct StereoVideoView: View {
-    @ObservedObject var renderer: StereoVideoRenderer
-    let displayMode: VideoDisplayMode
-
-    var body: some View {
-        #if os(visionOS)
-        RealityView { content in
-            // Setup the stereo video scene with left/right planes
-            renderer.setupScene(in: content)
-        }
-        .frame(depth: 0)
-        #else
-        Color.black
-            .overlay(
-                Text("Stereo video requires visionOS")
-                    .foregroundColor(.white)
-            )
-        #endif
-    }
-}
-
-// MARK: - Display Mode Toggle
-
-struct DisplayModeToggle: View {
-    @Binding var mode: VideoDisplayMode
+struct ViewModeToggle: View {
+    @Binding var mode: EndoscopeViewMode
 
     var body: some View {
         Button {
             withAnimation(.easeInOut(duration: 0.2)) {
-                mode = mode == .stereo ? .mono : .stereo
+                // Cycle through modes: Raw → SplitSBS → Stereo3D → Raw
+                switch mode {
+                case .rawStream:
+                    mode = .splitSBS
+                case .splitSBS:
+                    mode = .stereo3D
+                case .stereo3D:
+                    mode = .rawStream
+                }
             }
         } label: {
             HStack(spacing: 4) {
@@ -229,43 +121,7 @@ struct DisplayModeToggle: View {
                     .font(.system(size: 11))
                     .foregroundStyle(.primary)
 
-                Text(mode.rawValue)
-                    .font(.system(size: 10))
-                    .foregroundStyle(.secondary)
-            }
-            .padding(.horizontal, 10)
-            .padding(.vertical, 5)
-            .background(.ultraThinMaterial, in: Capsule())
-        }
-        .buttonStyle(.plain)
-        .hoverEffect()
-    }
-}
-
-// MARK: - Render Path Toggle
-
-struct RenderPathToggle: View {
-    @Binding var path: VideoRenderPath
-    @ObservedObject var receiver: WebRTCReceiver
-
-    var body: some View {
-        Button {
-            // Toggle path
-            let newPath: VideoRenderPath = path == .metal ? .videoPlayer : .metal
-
-            withAnimation(.easeInOut(duration: 0.2)) {
-                path = newPath
-            }
-
-            // Update receiver's render path (this will cleanup old renderer and prepare new one)
-            receiver.setRenderPath(newPath == .metal ? .metal : .videoPlayer)
-        } label: {
-            HStack(spacing: 4) {
-                Image(systemName: path.icon)
-                    .font(.system(size: 11))
-                    .foregroundStyle(.primary)
-
-                Text(path.rawValue)
+                Text(mode.description)
                     .font(.system(size: 10))
                     .foregroundStyle(.secondary)
             }
@@ -300,20 +156,34 @@ struct ConnectionStatusBadge: View {
     }
 }
 
-#Preview {
-    struct PreviewWrapper: View {
-        @State private var displayMode: VideoDisplayMode = .stereo
-        @State private var renderPath: VideoRenderPath = .videoPlayer
+// MARK: - Preview
 
-        var body: some View {
-            EndoscopeStreamView(
-                receiver: WebRTCReceiver(),
-                isVisible: true,
-                displayMode: $displayMode,
-                renderPath: $renderPath
-            )
-        }
+@MainActor
+private struct EndoscopeStreamView_PreviewWrapper: View {
+    @State private var viewMode: EndoscopeViewMode = .stereo3D
+    @StateObject private var mockPipeline: EndoscopeRenderPipeline
+    @StateObject private var mockReceiver: WebRTCReceiver
+
+    init() {
+        // @MainActor 컨텍스트에서 파이프라인 생성
+        let pipeline = EndoscopeRenderPipeline()
+        _mockPipeline = StateObject(wrappedValue: pipeline)
+
+        // DI 패턴으로 파이프라인을 주입한 Receiver 생성
+        _mockReceiver = StateObject(
+            wrappedValue: WebRTCReceiver(renderPipeline: pipeline)
+        )
     }
 
-    return PreviewWrapper()
+    var body: some View {
+        EndoscopeStreamView(
+            receiver: mockReceiver,
+            isVisible: true,
+            viewMode: $viewMode
+        )
+    }
+}
+
+#Preview {
+    EndoscopeStreamView_PreviewWrapper()
 }

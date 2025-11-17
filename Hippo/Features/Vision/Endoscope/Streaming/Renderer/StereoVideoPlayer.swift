@@ -6,7 +6,7 @@
 //  Separated from WebRTC receiver for clean architecture
 //
 
-import AVFoundation
+@preconcurrency import AVFoundation
 import CoreMedia
 import os.log
 
@@ -26,6 +26,9 @@ public final class StereoVideoPlayer {
     private var framesEnqueued: Int = 0
     private var isRendererReady: Bool = false
 
+    /// Task for observing flush notifications (must be cancelled on cleanup)
+    private var notificationTask: Task<Void, Never>?
+
     // MARK: - Initialization
 
     init() {
@@ -34,7 +37,13 @@ public final class StereoVideoPlayer {
 
         setupRenderer()
 
-        logger.info("✅ StereoVideoPlayer initialized with synchronizer")
+        logger.info("StereoVideoPlayer initialized with synchronizer")
+    }
+
+    deinit {
+        notificationTask?.cancel()
+        notificationTask = nil
+        logger.info("StereoVideoPlayer DEINIT - being destroyed!")
     }
 
     // MARK: - Public Methods
@@ -42,13 +51,13 @@ public final class StereoVideoPlayer {
     /// Start playback
     func play() {
         synchronizer.setRate(1.0, time: .zero)
-        logger.info("▶️ Playback started (rate: 1.0)")
+        logger.info("Playback started (rate: 1.0)")
     }
 
     /// Pause playback
     func pause() {
         synchronizer.rate = 0.0
-        logger.info("⏸️ Playback paused")
+        logger.info("Playback paused")
     }
 
     /// Stop playback and flush renderer
@@ -57,41 +66,59 @@ public final class StereoVideoPlayer {
         videoRenderer.stopRequestingMediaData()
         videoRenderer.flush()
 
+        // Cancel notification observer task to prevent memory leak
+        notificationTask?.cancel()
+        notificationTask = nil
+
         framesEnqueued = 0
         isRendererReady = false
 
-        logger.info("⏹️ Playback stopped and renderer flushed")
+        logger.info("Playback stopped and renderer flushed")
     }
 
     /// Enqueue a stereo-tagged sample buffer for rendering
     /// - Parameter sample: CMSampleBuffer with stereo tags (from ConvertingModel)
     func enqueueSample(_ sample: CMSampleBuffer) {
-        // Don't check isRendererReady - just enqueue
-        // The renderer will handle buffering internally
-
-        guard videoRenderer.status != .failed else {
-            if framesEnqueued % 60 == 0 {
-                logger.error("Renderer status is failed, cannot enqueue")
+        // Check renderer status first
+        let status = videoRenderer.status
+        if status == .failed {
+            if framesEnqueued == 0 {
+                logger.error("❌ Renderer status is FAILED before first frame")
+                if let error = videoRenderer.error {
+                    logger.error("   Error: \(error.localizedDescription)")
+                }
             }
             return
         }
 
-        guard videoRenderer.isReadyForMoreMediaData else {
-            // Skip but don't log too much
-            if framesEnqueued % 120 == 0 {
-                logger.debug("Renderer not ready for more data, skipping frame")
+        // Check if ready for more data
+        let isReady = videoRenderer.isReadyForMoreMediaData
+        if !isReady {
+            if framesEnqueued == 0 {
+                logger.warning("⚠️ Renderer not ready for first frame (will retry)")
             }
             return
         }
 
+        // Log first frame details
+        if framesEnqueued == 0 {
+            if let formatDesc = CMSampleBufferGetFormatDescription(sample) {
+                let dimensions = CMVideoFormatDescriptionGetDimensions(formatDesc)
+                logger.info("📦 First sample buffer:")
+                logger.info("   Dimensions: \(dimensions.width)×\(dimensions.height)")
+                logger.info("   Renderer status: \(status.rawValue) (0=unknown, 1=ready, 2=failed)")
+                logger.info("   Ready for data: \(isReady)")
+            }
+        }
+
+        // Enqueue to renderer
         videoRenderer.enqueue(sample)
         framesEnqueued += 1
 
+        // Log first frame success
         if framesEnqueued == 1 {
-            logger.info("✅ First stereo frame enqueued")
-            isRendererReady = true  // Mark as ready after first successful enqueue
-        } else if framesEnqueued % 60 == 0 {
-            logger.debug("Enqueued \(self.framesEnqueued) frames")
+            logger.info("✅ First stereo frame enqueued to AVSampleBufferVideoRenderer")
+            isRendererReady = true
         }
     }
 
@@ -112,19 +139,19 @@ public final class StereoVideoPlayer {
         videoRenderer.requestMediaDataWhenReady(on: .main) { [weak self] in
             guard let self = self else { return }
 
-            Task { @MainActor [weak self] in
-                guard let self = self else { return }
-
-                // Renderer is now ready
-                if !self.isRendererReady {
-                    self.isRendererReady = true
-                    self.logger.info("✅ AVSampleBufferVideoRenderer is ready")
-                }
+            // Already on main queue, no need for Task
+            // Renderer is now ready
+            if !self.isRendererReady {
+                self.isRendererReady = true
+                self.logger.info("AVSampleBufferVideoRenderer is ready")
             }
         }
 
-        // Observe flush notifications
-        Task { @MainActor [weak self] in
+        // Cancel previous notification task if exists
+        notificationTask?.cancel()
+
+        // Observe flush notifications - store task for proper cleanup
+        notificationTask = Task { @MainActor [weak self] in
             guard let self = self else { return }
             for await _ in NotificationCenter.default.notifications(
                 named: AVSampleBufferVideoRenderer.requiresFlushToResumeDecodingDidChangeNotification,
@@ -195,7 +222,7 @@ public final class StereoVideoPlayer {
         framesEnqueued += 1
 
         if framesEnqueued == 1 {
-            logger.info("✅ First frame enqueued")
+            logger.info("First frame enqueued")
         } else if framesEnqueued % 60 == 0 {
             logger.debug("Enqueued \(self.framesEnqueued) frames")
         }
