@@ -60,22 +60,35 @@ public final class WebRTCReceiver: NSObject, ObservableObject {
     @Published public var stats: ReceiverStats = ReceiverStats()
     @Published public var currentFrameSize: CGSize = .zero  // Track current per-eye frame size
 
-    // Path A: StereoVideoPlayer (recommended) - Manages AVSampleBufferVideoRenderer with proper synchronization
-    public let videoPlayer = StereoVideoPlayer()
+    // MARK: - Pipeline Components
 
-    // Path B (stereo Metal) renderer - Legacy RealityKit approach (deprecated, use Path A instead)
-    public let stereoMetalRenderer = StereoVideoRenderer()
+    /// Rendering components (Metal, VideoPlayer, ConvertingModel) are now managed by EndoscopeRenderPipeline.
+    /// WebRTCReceiver only manages WebRTC-specific resources (I420 converter, signaling, peer connection).
+    /// This separation follows Dependency Injection pattern for better testability and resource management.
 
-    // Backward compatibility: Expose videoRenderer for components that need direct access
-    public var stereoRenderer: AVSampleBufferVideoRenderer {
-        videoPlayer.videoRenderer
-    }
-
-    // Optional: legacy converting model for tagged stereo CMSampleBuffer (kept for experimentation)
-    private var convertingModel: ConvertingModel?
-
-    // I420 buffer converter for non-CVPixelBuffer frames
+    // I420 buffer converter for non-CVPixelBuffer frames (WebRTC-specific)
     private var i420Converter: I420BufferConverter?
+
+    // MARK: - Backward Compatibility
+
+    /// Dummy renderer for fallback (used before pipeline is ready or in non-stereo modes)
+    /// Created lazily and reused to avoid repeated instantiation
+    private lazy var dummyRenderer: AVSampleBufferVideoRenderer = {
+        let renderer = AVSampleBufferVideoRenderer()
+        logger.info("📦 Dummy AVSampleBufferVideoRenderer created (fallback)")
+        return renderer
+    }()
+
+    /// Backward compatibility: Expose videoRenderer for VideoPlayerComponent
+    /// Returns actual pipeline renderer in stereo3D mode, dummy renderer otherwise
+    public var stereoRenderer: AVSampleBufferVideoRenderer {
+        if let renderer = renderPipeline.getVideoRenderer()?.videoRenderer {
+            return renderer
+        } else {
+            logger.warning("⚠️ stereoRenderer accessed before pipeline ready or in non-stereo mode (\(self.currentViewMode.rawValue))")
+            return dummyRenderer
+        }
+    }
 
     private let logger = Logger(subsystem: "com.television.hippo", category: "WebRTCReceiver")
 
@@ -104,17 +117,24 @@ public final class WebRTCReceiver: NSObject, ObservableObject {
     private var isInitialized: Bool = false
     private var isRendererSetup: Bool = false  // Prevent duplicate setupStereoRenderer() calls
     private nonisolated(unsafe) static var globalInitCount: Int = 0
-    private static let initLock = NSLock()
+    nonisolated private static let initLock = NSLock()
 
     // MARK: Log throttling
     private var loggingState = LoggingState()
 
-    // Rendering path selection
-    public enum RenderPath {
-        case metal      // Path B: StereoVideoRenderer (for stereoPlanes/mono)
-        case videoPlayer // Path A: AVSampleBufferVideoRenderer (for stereoVideo)
+    // MARK: - Rendering Pipeline (DI)
+
+    /// Rendering pipeline - injected via DI for testability
+    /// Manages all mode-specific rendering logic and resources
+    public let renderPipeline: EndoscopeRenderPipeline
+
+    /// Current view mode - synced with pipeline
+    @Published public var currentViewMode: EndoscopeViewMode = .rawStream
+
+    /// Pipeline configuration based on current mode
+    private var pipelineConfig: EndoscopePipelineConfig {
+        EndoscopePipelineConfig(mode: currentViewMode)
     }
-    private var currentRenderPath: RenderPath = .videoPlayer  // Default to VideoPlayer path
 
     // MARK: CIContext for YUV -> BGRA conversion (for Metal renderer path)
     private lazy var ciContext: CIContext = {
@@ -125,9 +145,24 @@ public final class WebRTCReceiver: NSObject, ObservableObject {
         return CIContext(options: options)
     }()
 
-    public init(signalingServerURL: URL = URL(string: "ws://127.0.0.1:8080")!) {
+    /// Initialize WebRTCReceiver with dependency injection
+    /// - Parameters:
+    ///   - signalingServerURL: WebSocket URL for signaling server
+    ///   - renderPipeline: Rendering pipeline (must be created in @MainActor context)
+    /// - Note: renderPipeline must be created by caller in @MainActor context to avoid actor isolation issues
+    public init(
+        signalingServerURL: URL = URL(string: "ws://127.0.0.1:8080")!,
+        renderPipeline: EndoscopeRenderPipeline
+    ) {
         self.signalingServerURL = signalingServerURL
+        self.renderPipeline = renderPipeline
         super.init()
+
+        // Setup pipeline callbacks for data flow: Pipeline → Receiver
+        setupPipelineCallbacks()
+
+        // Configure pipeline with initial mode to ensure resources are initialized
+        renderPipeline.configure(for: currentViewMode)
     }
 
     /// Performs global WebRTC initialization in a thread-safe manner (nonisolated for lock usage)
@@ -143,48 +178,58 @@ public final class WebRTCReceiver: NSObject, ObservableObject {
         return Self.globalInitCount
     }
 
-    /// Set rendering path (Path A: VideoPlayerComponent or Path B: Metal)
-    public func setRenderPath(_ path: RenderPath) {
-        // Skip if already on this path
-        guard currentRenderPath != path else {
-            logger.info("Already on render path: \(path == .metal ? "Metal" : "VideoPlayer")")
+    // MARK: - Pipeline Callbacks Setup
+
+    /// Setup callbacks for Pipeline → Receiver communication
+    private func setupPipelineCallbacks() {
+        // Frame size changes from pipeline
+        renderPipeline.onFrameSizeChanged = { [weak self] newSize in
+            guard let self = self else { return }
+            Task { @MainActor in
+                self.currentFrameSize = newSize
+                self.logger.debug("📐 Frame size updated: \(Int(newSize.width))×\(Int(newSize.height))")
+            }
+        }
+
+        // Mode changes from pipeline
+        renderPipeline.onModeChanged = { [weak self] newMode in
+            guard let self = self else { return }
+            Task { @MainActor in
+                self.currentViewMode = newMode
+                self.logger.info("🔄 Mode synced: \(newMode.rawValue)")
+            }
+        }
+
+        // Error handling from pipeline
+        renderPipeline.onError = { [weak self] error in
+            guard let self = self else { return }
+            Task { @MainActor in
+                self.logger.error("❌ Pipeline error: \(error.localizedDescription)")
+            }
+        }
+
+        logger.info("✅ Pipeline callbacks configured")
+    }
+
+    // MARK: - View Mode Management
+
+    /// Set view mode and reconfigure pipeline accordingly
+    /// - Parameter mode: Target view mode
+    /// - Note: Delegates to renderPipeline for actual resource management
+    public func setViewMode(_ mode: EndoscopeViewMode) {
+        // Skip if already in this mode
+        guard currentViewMode != mode else {
+            logger.info("✓ Already in mode: \(mode.rawValue)")
             return
         }
 
-        let oldPath = currentRenderPath
-        currentRenderPath = path
+        logger.info("🔄 Receiver: Requesting mode switch to \(mode.rawValue)")
 
-        // Cleanup previous renderer
-        switch oldPath {
-        case .videoPlayer:
-            // Stop StereoVideoPlayer
-            logger.info("Stopping StereoVideoPlayer...")
-            videoPlayer.stop()
+        // Delegate to pipeline (will trigger onModeChanged callback)
+        renderPipeline.configure(for: mode)
 
-        case .metal:
-            // Deactivate StereoVideoRenderer
-            logger.info("Deactivating StereoVideoRenderer...")
-            stereoMetalRenderer.deactivate()
-        }
-
-        // Prepare new renderer
-        switch path {
-        case .videoPlayer:
-            logger.info("Activating StereoVideoPlayer...")
-            videoPlayerFrameCounter = 0  // Reset frame counter
-            loggingState.framesEnqueuedCount = 0  // Reset enqueued counter
-            // Note: Do NOT call play() here - it's already playing from start()
-            // Do NOT call setupStereoRenderer() - already set up in start()
-            logger.info("   Renderer status: \(self.stereoRenderer.status.rawValue)")
-            logger.info("   Ready for data: \(self.stereoRenderer.isReadyForMoreMediaData)")
-
-        case .metal:
-            logger.info("Activating StereoVideoRenderer...")
-            stereoMetalRenderer.activate()
-        }
-
-        let pathName = path == .metal ? "Path B (StereoVideoRenderer)" : "Path A (VideoPlayerComponent)"
-        logger.info("Render path switched to: \(pathName)")
+        // currentViewMode will be updated via callback
+        logger.info("✅ Mode switch request complete")
     }
 
     /// Update the signaling server URL (requires restart)
@@ -211,21 +256,19 @@ public final class WebRTCReceiver: NSObject, ObservableObject {
         }
 
         logger.info("WebRTC Receiver starting...")
+        logger.info("Initial mode: \(self.currentViewMode.rawValue)")
 
-        // Keep legacy converting model available (optional)
-        convertingModel = ConvertingModel(stereoMetadata: .default)
-        logger.info("ConvertingModel initialized (optional)")
-
-        // Initialize I420 buffer converter
+        // Initialize I420 buffer converter (common for all modes)
         i420Converter = I420BufferConverter()
         logger.info("I420BufferConverter initialized")
 
-        // Configure AVSampleBufferVideoRenderer (Path A)
-        setupStereoRenderer()
+        // Configure pipeline for current mode
+        renderPipeline.configure(for: currentViewMode)
 
-        // Start video player immediately
-        videoPlayer.play()
-        logger.info("StereoVideoPlayer started")
+        // Configure AVSampleBufferVideoRenderer if needed (for VideoPlayer mode)
+        if pipelineConfig.enableVideoPlayer {
+            setupStereoRenderer()
+        }
 
         // Thread-safe global initialization
         let initCount = performGlobalInitIfNeeded()
@@ -279,11 +322,14 @@ public final class WebRTCReceiver: NSObject, ObservableObject {
         peerConnection?.close()
         signalingClient?.disconnect()
 
-        // Stop StereoVideoPlayer (Path A)
-        videoPlayer.stop()
+        // Cleanup all pipeline resources
+        renderPipeline.cleanup()
 
         // Remove notification observers to prevent memory leaks
         NotificationCenter.default.removeObserver(self, name: .hevcFrameDecoded, object: nil)
+
+        // Release common resources
+        i420Converter = nil
 
         isConnected = false
         isInitialized = false
@@ -291,6 +337,8 @@ public final class WebRTCReceiver: NSObject, ObservableObject {
         lastPTS = nil
         loggingState = LoggingState()
         videoPlayerFrameCounter = 0
+
+        logger.info("✅ WebRTC Receiver stopped, all resources released")
     }
 
     private func startSignaling() throws {
@@ -345,156 +393,25 @@ public final class WebRTCReceiver: NSObject, ObservableObject {
         logger.info("StereoVideoPlayer configured, listening for HEVC frames...")
     }
 
-    // MARK: - Path A: Single-stream CMSampleBuffer wrapping
-
-    private func enqueueSingleStream(buffer pixelBuffer: CVPixelBuffer, pts: CMTime, duration: CMTime) {
-        // Delegate to StereoVideoPlayer (handles buffering, timing, and rendering)
-        videoPlayer.enqueuePixelBuffer(pixelBuffer, pts: pts, duration: duration)
-
-        // Track frames for logging
-        self.loggingState.framesEnqueuedCount += 1
-        if self.loggingState.framesEnqueuedCount == 1 {
-            logger.info("First frame sent to StereoVideoPlayer")
-        } else if self.loggingState.framesEnqueuedCount % LoggingInterval.standardFrames == 0 {
-            logger.debug("Sent \(self.loggingState.framesEnqueuedCount) frames to player")
-        }
-    }
-
-    // MARK: - Stereo Tagged Stream (ConvertingModel path)
-
-    private func enqueueStereoTaggedStream(buffer pixelBuffer: CVPixelBuffer, pts: CMTime, duration: CMTime) {
-        // Update frame size immediately from source
-        let srcWidth = CVPixelBufferGetWidth(pixelBuffer)
-        let srcHeight = CVPixelBufferGetHeight(pixelBuffer)
-        let perEyeWidth = srcWidth / 2  // SBS, so per-eye is half width
-
-        if currentFrameSize.width != CGFloat(perEyeWidth) || currentFrameSize.height != CGFloat(srcHeight) {
-            let oldSize = currentFrameSize
-            currentFrameSize = CGSize(width: perEyeWidth, height: srcHeight)
-            logger.info("VideoPlayer frame size: \(Int(oldSize.width))×\(Int(oldSize.height)) → \(perEyeWidth)×\(srcHeight)")
-        }
-
-        // Frame counter for logging
-        videoPlayerFrameCounter += 1
-
-        // Log processing (reduced frequency for CPU optimization)
-        if videoPlayerFrameCounter <= LoggingInterval.initialFramesU64 || videoPlayerFrameCounter % LoggingInterval.frequentFramesU64 == 0 {
-            logger.info("Processing VideoPlayer frame #\(self.videoPlayerFrameCounter): \(srcWidth)×\(srcHeight)")
-        }
-
-        Task { [weak self] in
-            guard let self = self else { return }
-
-            do {
-                // Use ConvertingModel to split SBS into tagged stereo sample
-                guard let stereoSample = try await self.convertingModel?.process(pixelBuffer, pts: pts, duration: duration) else {
-                    if self.videoPlayerFrameCounter <= LoggingInterval.initialFramesU64 {
-                        self.logger.error("Failed to convert SBS to stereo tagged sample")
-                    }
-                    return
-                }
-
-                await self.enqueueReadyStereoSample(stereoSample)
-            } catch {
-                if self.videoPlayerFrameCounter <= LoggingInterval.initialFramesU64 {
-                    self.logger.error("ConvertingModel error: \(error.localizedDescription)")
-                }
-            }
-        }
-    }
-
-    private func enqueueReadyStereoSample(_ sample: CMSampleBuffer) async {
-        // Log on first frame
-        if self.loggingState.framesEnqueuedCount == 0 {
-            logger.info("First stereo tagged frame from ConvertingModel")
-
-            // Debug stereo sample buffer format (first frame only)
-            if let formatDesc = CMSampleBufferGetFormatDescription(sample) {
-                let mediaType = CMFormatDescriptionGetMediaType(formatDesc)
-                let mediaSubType = CMFormatDescriptionGetMediaSubType(formatDesc)
-                logger.info("Format: mediaType=\(mediaType), subType=\(mediaSubType)")
-
-                // Check dimensions
-                let dims = CMVideoFormatDescriptionGetDimensions(formatDesc)
-                logger.info("Format dimensions: \(dims.width)×\(dims.height)")
-            }
-
-            // Check for hero eye attachment on SAMPLE BUFFER
-            if let heroEye = CMGetAttachment(sample as CMAttachmentBearer, key: kCMFormatDescriptionExtension_HeroEye as CFString, attachmentModeOut: nil) {
-                logger.info("HeroEye attachment: \(heroEye as! NSObject)")
-            } else {
-                logger.warning("No HeroEye attachment found on sample buffer!")
-            }
-
-            // Check sample buffer validity
-            let isValid = CMSampleBufferIsValid(sample)
-            let dataReady = CMSampleBufferDataIsReady(sample)
-            logger.info("Sample valid: \(isValid), dataReady: \(dataReady)")
-        }
-
-        // Delegate to StereoVideoPlayer
-        videoPlayer.enqueueSample(sample)
-
-        self.loggingState.framesEnqueuedCount += 1
-        if self.loggingState.framesEnqueuedCount == 1 {
-            logger.info("First stereo tagged sample sent to StereoVideoPlayer")
-        } else if self.loggingState.framesEnqueuedCount % LoggingInterval.standardFrames == 0 {
-            logger.debug("Sent \(self.loggingState.framesEnqueuedCount) stereo samples to player")
-        }
-    }
-
-    // MARK: - Path B: Stereo Metal update (legacy, deprecated)
-
-    private func feedStereoMetal(with pixelBuffer: CVPixelBuffer) {
-        // Update frame size (SBS source, so per-eye is half width)
-        let width = CVPixelBufferGetWidth(pixelBuffer)
-        let height = CVPixelBufferGetHeight(pixelBuffer)
-        // For SBS, each eye is half the width
-        let perEyeWidth = width / 2
-
-        if currentFrameSize.width != CGFloat(perEyeWidth) || currentFrameSize.height != CGFloat(height) {
-            let oldSize = currentFrameSize
-            currentFrameSize = CGSize(width: perEyeWidth, height: height)
-            logger.info("Metal frame size: \(Int(oldSize.width))×\(Int(oldSize.height)) → \(perEyeWidth)×\(height)")
-        }
-
-        // Ensure BGRA for StereoVideoRenderer
-        let format = CVPixelBufferGetPixelFormatType(pixelBuffer)
-        if format == kCVPixelFormatType_32BGRA {
-            stereoMetalRenderer.updateFrame(pixelBuffer)
-            return
-        }
-
-        // Convert YUV (e.g., 420f/NV12) to BGRA via CIContext
-        guard let bgraBuffer = makeBGRA(from: pixelBuffer) else {
-            logger.error("Failed to convert to BGRA")
-            return
-        }
-
-        stereoMetalRenderer.updateFrame(bgraBuffer)
-    }
-
-    private func makeBGRA(from pixelBuffer: CVPixelBuffer) -> CVPixelBuffer? {
-        let width = CVPixelBufferGetWidth(pixelBuffer)
-        let height = CVPixelBufferGetHeight(pixelBuffer)
-
-        let attrs: [CFString: Any] = [
-            kCVPixelBufferPixelFormatTypeKey: kCVPixelFormatType_32BGRA,
-            kCVPixelBufferWidthKey: width,
-            kCVPixelBufferHeightKey: height,
-            kCVPixelBufferIOSurfacePropertiesKey: [:] as CFDictionary
-        ]
-
-        var outPB: CVPixelBuffer?
-        guard CVPixelBufferCreate(kCFAllocatorDefault, width, height, kCVPixelFormatType_32BGRA, attrs as CFDictionary, &outPB) == kCVReturnSuccess,
-              let dst = outPB else {
-            return nil
-        }
-
-        let srcImage = CIImage(cvPixelBuffer: pixelBuffer)
-        ciContext.render(srcImage, to: dst)
-        return dst
-    }
+    // MARK: - Legacy Methods Removed (DI Refactoring)
+    //
+    // The following methods were removed as part of DI pattern refactoring:
+    //
+    // Removed Methods:
+    //   - enqueueSingleStream(buffer:pts:duration:)
+    //   - enqueueStereoTaggedStream(buffer:pts:duration:)
+    //   - enqueueReadyStereoSample(_:)
+    //   - feedStereoMetal(with:)
+    //   - makeBGRA(from:)
+    //
+    // New Delegation Point:
+    //   All frame processing is now delegated to EndoscopeRenderPipeline:
+    //   → renderPipeline.processFrame(_:pts:duration:)
+    //
+    // Benefits:
+    //   • Single source of truth for mode-specific frame routing
+    //   • Pipeline handles all Stage 1/2/3 logic internally
+    //   • WebRTCReceiver focuses solely on WebRTC connection management
 
     nonisolated private func handleOffer(_ offer: String) {
         Task { @MainActor [weak self] in
@@ -590,6 +507,9 @@ extension WebRTCReceiver: LKRTCPeerConnectionDelegate {
                 self.logger.info("Media stream added: track enabled=\(videoTrack.isEnabled), state=\(videoTrack.readyState.rawValue)")
                 self.remoteVideoTrack = videoTrack
                 videoTrack.add(self)
+
+                // Setup notification observer for HEVC frames
+                self.setupStereoRenderer()
             }
         } else {
             Task { @MainActor in
@@ -662,8 +582,19 @@ extension WebRTCReceiver: LKRTCVideoRenderer {
     }
 
     nonisolated public func renderFrame(_ frame: LKRTCVideoFrame?) {
+        Task { @MainActor in
+            print("🎬 renderFrame called!")
+        }
+
         guard let frame = frame else {
+            Task { @MainActor in
+                print("⚠️ renderFrame: frame is nil")
+            }
             return
+        }
+
+        Task { @MainActor in
+            print("✅ renderFrame: Got frame \(frame.width)x\(frame.height)")
         }
 
         // Get pixel buffer (either directly or via conversion)
@@ -714,23 +645,13 @@ extension WebRTCReceiver: LKRTCVideoRenderer {
         }
         self.lastPTS = pts
 
-        // Render to selected path only (no simultaneous multi-path rendering)
-        switch currentRenderPath {
-        case .videoPlayer:
-            // PATH A: Use ConvertingModel to split SBS and create tagged stereo CMSampleBuffer
-            // This properly splits SBS video into left/right eye buffers with stereo tags
-            enqueueStereoTaggedStream(buffer: pixelBuffer, pts: pts, duration: duration)
-
-        case .metal:
-            // PATH B: Update Stereo Metal renderer with BGRA frames
-            // This is the working path for RealityKit stereo display
-            self.feedStereoMetal(with: pixelBuffer)
-        }
+        // Delegate frame processing to pipeline
+        // Pipeline will route to appropriate stage based on current mode
+        renderPipeline.processFrame(pixelBuffer, pts: pts, duration: duration)
 
         // Log frames received periodically
         if self.framesReceived % LoggingInterval.standardFrames == 0 {
-            let pathName = currentRenderPath == .videoPlayer ? "VideoPlayerComponent" : "StereoVideoRenderer"
-            self.logger.info("Received \(self.framesReceived) frames, feeding to \(pathName)")
+            self.logger.info("Received \(self.framesReceived) frames, mode: \(self.currentViewMode.rawValue)")
         }
     }
 }

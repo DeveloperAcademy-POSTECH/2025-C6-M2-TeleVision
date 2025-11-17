@@ -28,6 +28,25 @@ private enum Eye {
 @MainActor
 public final class StereoVideoRenderer: ObservableObject {
 
+    // MARK: - Scene Mode
+
+    /// Defines the scene setup mode for Metal renderer
+    /// Used to distinguish Stage 1 (single plane) from Stage 2 (dual planes)
+    public enum SceneMode: CustomStringConvertible {
+        /// Stage 1: Raw stream mode - single plane for debugging original stream
+        case singlePlane
+
+        /// Stage 2: Split SBS mode - dual planes for left/right eye separation debugging
+        case dualPlanes
+
+        public var description: String {
+            switch self {
+            case .singlePlane: return "singlePlane"
+            case .dualPlanes: return "dualPlanes"
+            }
+        }
+    }
+
     // MARK: Published Properties
 
     @Published public var isReady: Bool = false
@@ -39,7 +58,7 @@ public final class StereoVideoRenderer: ObservableObject {
     // Renderer lifecycle tracking (nonisolated to allow access from deinit)
     private let rendererID = UUID()
     private nonisolated(unsafe) static var activeRendererID: UUID?
-    private static let rendererLock = NSLock()
+    nonisolated private static let rendererLock = NSLock()
 
     // RealityKit components
     private var leftPlaneEntity: ModelEntity?
@@ -68,7 +87,7 @@ public final class StereoVideoRenderer: ObservableObject {
 
     public init() {
         setupMetal()
-        logger.info("🔧 Renderer created: \(self.rendererID) (not active yet)")
+        logger.info("Renderer created: \(self.rendererID) (not active yet)")
     }
 
     deinit {
@@ -78,9 +97,9 @@ public final class StereoVideoRenderer: ObservableObject {
 
         if Self.activeRendererID == rendererID {
             Self.activeRendererID = nil
-            logger.info("🗑️ Active renderer destroyed: \(self.rendererID)")
+            logger.info("Active renderer destroyed: \(self.rendererID)")
         } else {
-            logger.info("🗑️ Inactive renderer destroyed: \(self.rendererID)")
+            logger.info("Inactive renderer destroyed: \(self.rendererID)")
         }
     }
 
@@ -92,11 +111,11 @@ public final class StereoVideoRenderer: ObservableObject {
         defer { Self.rendererLock.unlock() }
 
         if let existingID = Self.activeRendererID, existingID != rendererID {
-            logger.warning("⚠️ Activating renderer \(self.rendererID), deactivating \(existingID)")
+            logger.warning("Activating renderer \(self.rendererID), deactivating \(existingID)")
         }
 
         Self.activeRendererID = rendererID
-        logger.info("✅ Renderer activated: \(self.rendererID)")
+        logger.info("Renderer activated: \(self.rendererID)")
     }
 
     /// Deactivate this renderer (stop receiving frames)
@@ -106,35 +125,63 @@ public final class StereoVideoRenderer: ObservableObject {
 
         if Self.activeRendererID == rendererID {
             Self.activeRendererID = nil
-            logger.info("🛑 Renderer deactivated: \(self.rendererID)")
+            logger.info("Renderer deactivated: \(self.rendererID)")
         }
     }
 
     // MARK: - Public Methods
 
-    /// Setup stereo planes in RealityKit scene
-    public func setupScene(in content: RealityViewContent) {
-        // For window-based RealityView, add planes directly without anchor
-        // Create left eye plane positioned for left eye viewing
-        let leftPlane = createVideoPlane(forEye: .left)
-        // Don't override position - it's already set in createVideoPlane
-        leftPlaneEntity = leftPlane
-        content.add(leftPlane)
-        logger.info("👁️ Left eye plane created and added to content at position: \(leftPlane.position)")
+    /// Setup RealityKit scene based on the specified mode
+    /// - Parameters:
+    ///   - content: RealityViewContent to add entities to
+    ///   - mode: Scene mode (singlePlane for Stage 1, dualPlanes for Stage 2)
+    public func setupScene(in content: RealityViewContent, mode: SceneMode) {
+        switch mode {
+        case .singlePlane:
+            setupSinglePlaneScene(in: content)
 
-        // Create right eye plane positioned for right eye viewing
-        let rightPlane = createVideoPlane(forEye: .right)
-        // Don't override position - it's already set in createVideoPlane
-        rightPlaneEntity = rightPlane
-        content.add(rightPlane)
-        logger.info("👁️ Right eye plane created and added to content at position: \(rightPlane.position)")
+        case .dualPlanes:
+            setupDualPlanesScene(in: content)
+        }
 
         isReady = true
-
-        // Activate this renderer when scene is set up
         activate()
 
-        logger.info("✅ Stereo scene ready - planes added directly to RealityView content")
+        logger.info("Scene setup complete - mode: \(mode)")
+    }
+
+    // MARK: - Private Scene Setup
+
+    /// Setup single plane scene (Stage 1: Raw Stream)
+    /// Creates only left plane for debugging original stream
+    private func setupSinglePlaneScene(in content: RealityViewContent) {
+        let plane = createVideoPlane(forEye: .left)
+        leftPlaneEntity = plane
+        content.add(plane)
+
+        // Explicitly set right plane to nil for single plane mode
+        rightPlaneEntity = nil
+
+        logger.info("Single plane scene created (Raw Stream mode)")
+        logger.info("  Plane position: \(plane.position)")
+    }
+
+    /// Setup dual planes scene (Stage 2: Split SBS)
+    /// Creates left and right planes for SBS debugging
+    private func setupDualPlanesScene(in content: RealityViewContent) {
+        // Create left eye plane
+        let leftPlane = createVideoPlane(forEye: .left)
+        leftPlaneEntity = leftPlane
+        content.add(leftPlane)
+        logger.info("Left eye plane created at position: \(leftPlane.position)")
+
+        // Create right eye plane
+        let rightPlane = createVideoPlane(forEye: .right)
+        rightPlaneEntity = rightPlane
+        content.add(rightPlane)
+        logger.info("Right eye plane created at position: \(rightPlane.position)")
+
+        logger.info("Dual planes scene created (Split SBS mode)")
     }
 
     /// Update video texture with new frame (SBS or Mono)
@@ -152,11 +199,11 @@ public final class StereoVideoRenderer: ObservableObject {
 
         // Log only occasionally to avoid spam
         if frameCounter <= 10 || frameCounter % 120 == 0 {
-            logger.info("🔍 updateFrame called - isReady: \(self.isReady), leftPlane: \(self.leftPlaneEntity != nil), rightPlane: \(self.rightPlaneEntity != nil)")
+            logger.info("updateFrame called - isReady: \(self.isReady), leftPlane: \(self.leftPlaneEntity != nil), rightPlane: \(self.rightPlaneEntity != nil)")
         }
 
         guard isReady else {
-            logger.warning("⚠️ Renderer not ready")
+            logger.warning("Renderer not ready")
             return
         }
 
@@ -166,13 +213,13 @@ public final class StereoVideoRenderer: ObservableObject {
         Self.rendererLock.unlock()
 
         guard currentActiveID == rendererID else {
-            logger.warning("⚠️ Frame sent to inactive renderer \(self.rendererID), active is \(currentActiveID?.description ?? "none")")
+            logger.warning("Frame sent to inactive renderer \(self.rendererID), active is \(currentActiveID?.description ?? "none")")
             return
         }
 
         // Create Metal texture from pixel buffer
         guard let sourceTexture = createMetalTexture(from: pixelBuffer) else {
-            logger.warning("⚠️ Failed to create Metal texture from pixel buffer")
+            logger.warning("Failed to create Metal texture from pixel buffer")
             return
         }
 
@@ -185,12 +232,12 @@ public final class StereoVideoRenderer: ObservableObject {
 
         if isMono {
             if frameCounter <= 10 {
-                logger.info("📺 Mono mode detected: \(srcW)×\(srcH) (aspect: \(String(format: "%.2f", aspectRatio)))")
+                logger.info("Mono mode detected: \(srcW)×\(srcH) (aspect: \(String(format: "%.2f", aspectRatio)))")
             }
             updateMonoFrame(sourceTexture: sourceTexture, width: srcW, height: srcH)
         } else {
             if frameCounter <= 10 {
-                logger.info("👁️👁️ SBS mode detected: \(srcW)×\(srcH) (aspect: \(String(format: "%.2f", aspectRatio)))")
+                logger.info("SBS mode detected: \(srcW)×\(srcH) (aspect: \(String(format: "%.2f", aspectRatio)))")
             }
             updateSBSFrame(sourceTexture: sourceTexture, width: srcW, height: srcH)
         }
@@ -202,11 +249,11 @@ public final class StereoVideoRenderer: ObservableObject {
         if cachedSourceSize?.w != width || cachedSourceSize?.h != height {
             cachedLeftTexture = makeRGBA8Texture(width: width, height: height)
             cachedSourceSize = (width, height)
-            logger.info("📐 Mono texture allocated: \(width)×\(height)")
+            logger.info("Mono texture allocated: \(width)×\(height)")
         }
 
         guard let monoTexture = cachedLeftTexture else {
-            logger.error("❌ Failed to allocate mono texture")
+            logger.error("Failed to allocate mono texture")
             return
         }
 
@@ -218,7 +265,7 @@ public final class StereoVideoRenderer: ObservableObject {
             height: height,
             to: monoTexture
         ) else {
-            logger.error("❌ Failed to copy mono frame")
+            logger.error("Failed to copy mono frame")
             return
         }
 
@@ -234,16 +281,21 @@ public final class StereoVideoRenderer: ObservableObject {
 
         // Log only occasionally
         if frameCounter % 120 == 0 {
-            logger.debug("📐 Mono plane scaled: aspect=\(String(format: "%.2f", sourceAspect)), scale=\(String(format: "%.2f", widthScale))x")
+            logger.debug("Mono plane scaled: aspect=\(String(format: "%.2f", sourceAspect)), scale=\(String(format: "%.2f", widthScale))x")
         }
 
-        // Update left plane with mono texture (right plane is hidden/unused)
+        // Update left plane with mono texture
         updatePlaneMaterial(leftPlaneEntity, with: monoTexture)
-        updatePlaneMaterial(rightPlaneEntity, with: nil)  // Clear right plane
+
+        // Clear right plane only if it exists (dual planes mode)
+        // In singlePlane mode, rightPlaneEntity is nil
+        if rightPlaneEntity != nil {
+            updatePlaneMaterial(rightPlaneEntity, with: nil)
+        }
 
         // Log only occasionally (every 120 frames = ~2 seconds)
         if frameCounter % 120 == 0 {
-            logger.debug("🎬 Mono frame updated: \(width)×\(height)")
+            logger.debug("Mono frame updated: \(width)×\(height)")
         }
     }
 
@@ -251,7 +303,15 @@ public final class StereoVideoRenderer: ObservableObject {
     private func updateSBSFrame(sourceTexture: MTLTexture, width: Int, height: Int) {
         // Validate SBS: width must be divisible by 2
         guard width >= 2, width % 2 == 0, height >= 1 else {
-            logger.warning("⚠️ Invalid SBS size: \(width)×\(height). Expected width divisible by 2.")
+            logger.warning("Invalid SBS size: \(width)×\(height). Expected width divisible by 2.")
+            return
+        }
+
+        // Validate dual planes mode (SBS requires both left and right planes)
+        guard rightPlaneEntity != nil else {
+            logger.warning("SBS frame received but scene is in singlePlane mode. Skipping SBS split.")
+            // Fall back to mono rendering for safety
+            updateMonoFrame(sourceTexture: sourceTexture, width: width, height: height)
             return
         }
 
@@ -262,12 +322,12 @@ public final class StereoVideoRenderer: ObservableObject {
             cachedLeftTexture = makeRGBA8Texture(width: halfWidth, height: height)
             cachedRightTexture = makeRGBA8Texture(width: halfWidth, height: height)
             cachedSourceSize = (width, height)
-            logger.info("📐 SBS textures updated: \(halfWidth)×\(height)")
+            logger.info("SBS textures updated: \(halfWidth)×\(height)")
         }
 
         guard let leftTexture = cachedLeftTexture,
               let rightTexture = cachedRightTexture else {
-            logger.error("❌ Failed to allocate destination textures for split")
+            logger.error("Failed to allocate destination textures for split")
             return
         }
 
@@ -289,7 +349,7 @@ public final class StereoVideoRenderer: ObservableObject {
             height: height,
             to: rightTexture
         ) else {
-            logger.error("❌ Failed to split SBS texture via blit")
+            logger.error("Failed to split SBS texture via blit")
             return
         }
 
@@ -299,7 +359,7 @@ public final class StereoVideoRenderer: ObservableObject {
 
         // Log only occasionally (every 120 frames = ~2 seconds)
         if frameCounter % 120 == 0 {
-            logger.debug("🎬 SBS frame updated: \(width)×\(height) (half=\(halfWidth)×\(height))")
+            logger.debug("SBS frame updated: \(width)×\(height) (half=\(halfWidth)×\(height))")
         }
     }
 
@@ -308,7 +368,7 @@ public final class StereoVideoRenderer: ObservableObject {
     /// Setup Metal device and texture cache
     private func setupMetal() {
         guard let device = MTLCreateSystemDefaultDevice() else {
-            logger.error("❌ Failed to create Metal device")
+            logger.error("Failed to create Metal device")
             return
         }
 
@@ -324,7 +384,7 @@ public final class StereoVideoRenderer: ObservableObject {
         )
 
         guard result == kCVReturnSuccess, let cache = textureCache else {
-            logger.error("❌ Failed to create Metal texture cache")
+            logger.error("Failed to create Metal texture cache")
             return
         }
 
@@ -333,7 +393,7 @@ public final class StereoVideoRenderer: ObservableObject {
         // Create command queue
         self.commandQueue = device.makeCommandQueue()
 
-        logger.info("✅ Metal setup complete")
+        logger.info("Metal setup complete")
     }
 
     /// Create video plane entity for specific eye
