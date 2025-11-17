@@ -34,7 +34,7 @@ struct OperationDetailView: View {
                                     .foregroundStyle(.primary)
 
                                 // 모델 이미지
-                                ModelFileListView(assets: operation.assets)
+                                ModelFileListView(assets: operation.assets, isReadOnly: true)
 
                                 // 수술 상세 정보
                                 DetailSubPart(
