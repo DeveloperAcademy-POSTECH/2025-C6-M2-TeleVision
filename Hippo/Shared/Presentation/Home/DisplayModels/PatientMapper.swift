@@ -41,7 +41,8 @@ public extension Operation {
             details: details,
             status: status,
             assets: operationAssets.map { $0.toDisplayModel() },
-            assetCount: operationAssets.count
+            assetCount: operationAssets.count,
+            records: recordings
         )
     }
 }

@@ -7,30 +7,26 @@
 
 import SwiftUI
 
+@MainActor
 @Observable
 final class ImmersiveViewModel {
-    // MARK: - - 수술 중 환경 상태
+    // MARK: - 수술 중 환경 상태
 
     public var isMenuActive: Bool = true
     public var isEndoscopicActive: Bool = false
     public var isShowingFinishAlert: Bool = false
     public var isShowingAssetListView: Bool = false
-    public var isRecording: Bool = false
 
-    // MARK: - - 윈도우 라이프사이클 추적 변수
+    // MARK: - 윈도우 라이프사이클 추적 변수
 
     public var isSurgeryBottomMenuOpen: Bool = true
     public var isOpacityControlPanelOpen: Bool = false
     public var isEndoscopeStreamWindowOpen: Bool = false
 
-    // MARK: - - 이벤트 처리 : UI 이벤트 -> WindowController 에 전달
+    // MARK: - 이벤트 처리 : UI 이벤트 -> WindowController 에 전달
 
     func showFinishSurgeryAlert() {
         isShowingFinishAlert = true
-    }
-
-    func recordPassThroughVideo() {
-        isRecording.toggle()
     }
 
     func toggleEndoscope() {
@@ -54,6 +50,7 @@ final class ImmersiveViewModel {
 
         isSurgeryBottomMenuOpen = true
         isOpacityControlPanelOpen = false
+
         print("reset")
     }
 

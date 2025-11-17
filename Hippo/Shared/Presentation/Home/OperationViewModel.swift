@@ -43,6 +43,8 @@ public final class OperationViewModel {
     private let _state = OperationState()
     public var state: OperationState { _state } // 읽기 전용, 관찰 가능
 
+    public var path = NavigationPath()
+
     // MARK: - UI State (Accessible)
 
     // 수술 전
@@ -178,21 +180,9 @@ public final class OperationViewModel {
         state.selectedAssetID = id
     }
 
-    public func deleteModelAsset(_ id: String) async {
-        do {
-            if let patientID = state.patient?.id, let operationID = state.operation?.id {
-                try await removeAssetFromOperation.run(
-                    RemoveAssetFromOperation.Input(
-                        patientID: patientID,
-                        operationID: operationID,
-                        assetID: id
-                    )
-                )
-            }
-            state.selectedAssetID = nil
-        } catch {
-            _state.alert = "Failed to remove asset: \(error.localizedDescription)"
-        }
+    public func deleteModelAsset(_: String) async {
+        operation3DAssets.removeAll { $0.id == state.selectedAssetID }
+        state.selectedAssetID = nil
     }
 
     public func updateOperation() async {
@@ -228,7 +218,7 @@ public final class OperationViewModel {
             _state.alert = "Failed to update operation: \(error.localizedDescription)"
         }
     }
-    
+
     public func updateOperation(
         patientID: String,
         operationID: String,
@@ -238,10 +228,11 @@ public final class OperationViewModel {
         surgicalSite: String,
         date: Date,
         details: String,
-        assets: [OperationAsset]) async {
+        assets: [OperationAsset]
+    ) async {
         do {
             logger.debug("Attempting to update operation with ID \(operationID) for patient ID \(patientID)")
-            
+
             let command = try UpdateOperationCommand(
                 operationID: operationID,
                 title: title,
@@ -256,7 +247,7 @@ public final class OperationViewModel {
             try await upsertOperation.run(
                 UpsertOperation.Input(patientID: patientID, command: command)
             )
-            
+
             // Reload operation from DB to update state
             let updatedOperation = try await getOperation.run(
                 GetOperation.Input(patientID: patientID, operationID: operationID)

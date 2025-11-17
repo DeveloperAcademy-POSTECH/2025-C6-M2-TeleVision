@@ -97,7 +97,6 @@ public final class HomeViewModel {
             todayOperations = operationsWithPatient.map { owp in
                 (patient: owp.patient.toDisplayModel(), operation: owp.operation.toDisplayModel())
             }
-            logger.debug("Loaded \(self.todayOperations.count) today's operations")
         } catch {
             logger.error("Failed to load data: \(error.localizedDescription)")
             _state.alert = "Failed to load data: \(error.localizedDescription)"
@@ -303,39 +302,6 @@ public final class HomeViewModel {
     }
 
     // MARK: - Asset Management
-
-    public func attachAsset(
-        toOperationID operationID: String,
-        inPatientID patientID: String,
-        name: String,
-        fileURL: URL
-    ) async {
-        do {
-            let command = try AttachAssetCommand(
-                name: name,
-                fileURL: fileURL
-            )
-
-            await executeWithErrorHandling(
-                operation: { [self] in
-                    try await self.attachAssetToOperation.run(
-                        AttachAssetToOperation.Input(
-                            patientID: patientID,
-                            operationID: operationID,
-                            command: command
-                        )
-                    )
-                },
-                errorMessage: "Failed to attach asset"
-            )
-        } catch let validationError as ValidationError {
-            logger.warning("Validation failed: \(validationError.localizedDescription)")
-            _state.alert = validationError.localizedDescription
-        } catch {
-            logger.error("Unexpected error creating attach asset command: \(error.localizedDescription)")
-            _state.alert = "Failed to attach asset: \(error.localizedDescription)"
-        }
-    }
 
     public func removeAsset(
         assetID: String,
