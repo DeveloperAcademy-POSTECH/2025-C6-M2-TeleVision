@@ -26,6 +26,9 @@ public final class StereoVideoPlayer {
     private var framesEnqueued: Int = 0
     private var isRendererReady: Bool = false
 
+    /// Task for observing flush notifications (must be cancelled on cleanup)
+    private var notificationTask: Task<Void, Never>?
+
     // MARK: - Initialization
 
     init() {
@@ -38,6 +41,8 @@ public final class StereoVideoPlayer {
     }
 
     deinit {
+        notificationTask?.cancel()
+        notificationTask = nil
         logger.info("StereoVideoPlayer DEINIT - being destroyed!")
     }
 
@@ -60,6 +65,10 @@ public final class StereoVideoPlayer {
         synchronizer.rate = 0.0
         videoRenderer.stopRequestingMediaData()
         videoRenderer.flush()
+
+        // Cancel notification observer task to prevent memory leak
+        notificationTask?.cancel()
+        notificationTask = nil
 
         framesEnqueued = 0
         isRendererReady = false
@@ -130,19 +139,19 @@ public final class StereoVideoPlayer {
         videoRenderer.requestMediaDataWhenReady(on: .main) { [weak self] in
             guard let self = self else { return }
 
-            Task { @MainActor [weak self] in
-                guard let self = self else { return }
-
-                // Renderer is now ready
-                if !self.isRendererReady {
-                    self.isRendererReady = true
-                    self.logger.info("AVSampleBufferVideoRenderer is ready")
-                }
+            // Already on main queue, no need for Task
+            // Renderer is now ready
+            if !self.isRendererReady {
+                self.isRendererReady = true
+                self.logger.info("AVSampleBufferVideoRenderer is ready")
             }
         }
 
-        // Observe flush notifications
-        Task { @MainActor [weak self] in
+        // Cancel previous notification task if exists
+        notificationTask?.cancel()
+
+        // Observe flush notifications - store task for proper cleanup
+        notificationTask = Task { @MainActor [weak self] in
             guard let self = self else { return }
             for await _ in NotificationCenter.default.notifications(
                 named: AVSampleBufferVideoRenderer.requiresFlushToResumeDecodingDidChangeNotification,
