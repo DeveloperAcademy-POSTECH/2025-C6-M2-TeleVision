@@ -32,16 +32,25 @@ struct DetailHeader: View {
                 .help(operation.assets.isEmpty ? "No Video" : "Video")
 
                 Menu {
-                    Button("수술 완료") {
-                        Task {
-                            await viewModel.updateOperationStatus(to: .completed)
-                            appModel.refreshUI()
+                    if viewModel.state.operation?.status == .planned {
+                        Button("수술 완료하기") {
+                            Task {
+                                await viewModel.updateOperationStatus(to: .completed)
+                                appModel.refreshUI()
+                            }
+                        }
+                    } else {
+                        Button("수술 대기하기") {
+                            Task {
+                                await viewModel.updateOperationStatus(to: .planned)
+                                appModel.refreshUI()
+                            }
                         }
                     }
-                    Button("수술 편집") {
+                    Button("수술 편집하기") {
                         viewModel.isShowingEditInputView = true
                     }
-                    Button("수술 삭제", role: .destructive) {
+                    Button("수술 삭제하기", role: .destructive) {
                         Task {
                             await viewModel.deleteOperation()
                             appModel.refreshUI()
