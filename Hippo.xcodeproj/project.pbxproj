@@ -72,7 +72,6 @@
 		1479B8AD2ECB1134003397B0 /* RecordingViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1479B8AC2ECB112D003397B0 /* RecordingViewModel.swift */; };
 		1479B8AE2ECB1134003397B0 /* RecordingViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1479B8AC2ECB112D003397B0 /* RecordingViewModel.swift */; };
 		1479B8B12ECB376C003397B0 /* SceneProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1479B8B02ECB3769003397B0 /* SceneProvider.swift */; };
-		1479B8B32ECB3D0E003397B0 /* RecordCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1479B8B22ECB3D0B003397B0 /* RecordCard.swift */; };
 		1479B8B42ECB3D0E003397B0 /* RecordCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1479B8B22ECB3D0B003397B0 /* RecordCard.swift */; };
 		1479B8B52ECB3D0E003397B0 /* RecordCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1479B8B22ECB3D0B003397B0 /* RecordCard.swift */; };
 		147EB27D2EB0782100D9CFB3 /* OperationStatusBadge.swift in Sources */ = {isa = PBXBuildFile; fileRef = 147EB27C2EB0781300D9CFB3 /* OperationStatusBadge.swift */; };
@@ -2605,7 +2604,6 @@
 				2581FF672EC1A9140059678D /* BonjourServiceDiscovery.swift in Sources */,
 				2523A65A2EC4C3AA00842508 /* CI_SBSComposer.swift in Sources */,
 				2523A65B2EC4C3AA00842508 /* LatencyMeter.swift in Sources */,
-				1479B8B32ECB3D0E003397B0 /* RecordCard.swift in Sources */,
 				2523A65C2EC4C3AA00842508 /* WebRTCManager.swift in Sources */,
 				2523A65D2EC4C3AA00842508 /* AppModule.swift in Sources */,
 				2523A65E2EC4C3AA00842508 /* PipelineConfigurationManager.swift in Sources */,
