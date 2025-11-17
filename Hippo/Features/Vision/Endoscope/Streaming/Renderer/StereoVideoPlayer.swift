@@ -34,7 +34,7 @@ public final class StereoVideoPlayer {
 
         setupRenderer()
 
-        logger.info("✅ StereoVideoPlayer initialized with synchronizer")
+        logger.info("StereoVideoPlayer initialized with synchronizer")
     }
 
     // MARK: - Public Methods
@@ -42,13 +42,13 @@ public final class StereoVideoPlayer {
     /// Start playback
     func play() {
         synchronizer.setRate(1.0, time: .zero)
-        logger.info("▶️ Playback started (rate: 1.0)")
+        logger.info("Playback started (rate: 1.0)")
     }
 
     /// Pause playback
     func pause() {
         synchronizer.rate = 0.0
-        logger.info("⏸️ Playback paused")
+        logger.info("Playback paused")
     }
 
     /// Stop playback and flush renderer
@@ -60,7 +60,7 @@ public final class StereoVideoPlayer {
         framesEnqueued = 0
         isRendererReady = false
 
-        logger.info("⏹️ Playback stopped and renderer flushed")
+        logger.info("Playback stopped and renderer flushed")
     }
 
     /// Enqueue a stereo-tagged sample buffer for rendering
@@ -72,6 +72,9 @@ public final class StereoVideoPlayer {
         guard videoRenderer.status != .failed else {
             if framesEnqueued % 60 == 0 {
                 logger.error("Renderer status is failed, cannot enqueue")
+                if let error = videoRenderer.error {
+                    logger.error("   Error: \(error.localizedDescription)")
+                }
             }
             return
         }
@@ -79,19 +82,31 @@ public final class StereoVideoPlayer {
         guard videoRenderer.isReadyForMoreMediaData else {
             // Skip but don't log too much
             if framesEnqueued % 120 == 0 {
-                logger.debug("Renderer not ready for more data, skipping frame")
+                logger.debug("Renderer not ready for more data, skipping frame \(self.framesEnqueued)")
             }
             return
+        }
+
+        // Get sample buffer info for debugging
+        if framesEnqueued == 0 {
+            if let formatDesc = CMSampleBufferGetFormatDescription(sample) {
+                let dimensions = CMVideoFormatDescriptionGetDimensions(formatDesc)
+                logger.info("First sample buffer info:")
+                logger.info("   Dimensions: \(dimensions.width)x\(dimensions.height)")
+                logger.info("   Has attachments: \(CMSampleBufferGetSampleAttachmentsArray(sample, createIfNecessary: false) != nil)")
+            }
         }
 
         videoRenderer.enqueue(sample)
         framesEnqueued += 1
 
         if framesEnqueued == 1 {
-            logger.info("✅ First stereo frame enqueued")
+            logger.info("First stereo frame enqueued successfully")
+            logger.info("   Renderer status after enqueue: \(self.videoRenderer.status.rawValue)")
+            logger.info("   isReadyForMoreMediaData: \(self.videoRenderer.isReadyForMoreMediaData)")
             isRendererReady = true  // Mark as ready after first successful enqueue
         } else if framesEnqueued % 60 == 0 {
-            logger.debug("Enqueued \(self.framesEnqueued) frames")
+            logger.debug("Enqueued \(self.framesEnqueued) frames (status: \(self.videoRenderer.status.rawValue))")
         }
     }
 
@@ -118,7 +133,7 @@ public final class StereoVideoPlayer {
                 // Renderer is now ready
                 if !self.isRendererReady {
                     self.isRendererReady = true
-                    self.logger.info("✅ AVSampleBufferVideoRenderer is ready")
+                    self.logger.info("AVSampleBufferVideoRenderer is ready")
                 }
             }
         }
@@ -195,7 +210,7 @@ public final class StereoVideoPlayer {
         framesEnqueued += 1
 
         if framesEnqueued == 1 {
-            logger.info("✅ First frame enqueued")
+            logger.info("First frame enqueued")
         } else if framesEnqueued % 60 == 0 {
             logger.debug("Enqueued \(self.framesEnqueued) frames")
         }

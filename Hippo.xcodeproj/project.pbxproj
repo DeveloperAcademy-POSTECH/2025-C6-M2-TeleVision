@@ -194,8 +194,6 @@
 		2523A6DA2EC6497B00842508 /* VoiceControlButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2523A6D42EC6497B00842508 /* VoiceControlButton.swift */; };
 		2523A6DB2EC6497B00842508 /* VoiceControlUIState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2523A6D12EC6497B00842508 /* VoiceControlUIState.swift */; };
 		2523A6E52EC649A600842508 /* RuleBasedCommandParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2523A6DE2EC649A600842508 /* RuleBasedCommandParser.swift */; };
-		2523A6E62EC649A600842508 /* AppleSpeechRecognitionService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2523A6E22EC649A600842508 /* AppleSpeechRecognitionService.swift */; };
-		2523A6E72EC649A600842508 /* VoiceControlDependencies.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2523A6E02EC649A600842508 /* VoiceControlDependencies.swift */; };
 		2523A6E82EC649A600842508 /* LLMCommandParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2523A6DD2EC649A600842508 /* LLMCommandParser.swift */; };
 		2523A6E92EC649A600842508 /* FallbackVoiceCommandParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2523A6DC2EC649A600842508 /* FallbackVoiceCommandParser.swift */; };
 		2523A6EA2EC649A600842508 /* RuleBasedCommandParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2523A6DE2EC649A600842508 /* RuleBasedCommandParser.swift */; };
@@ -210,6 +208,11 @@
 		2523A6F32EC649A600842508 /* FallbackVoiceCommandParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2523A6DC2EC649A600842508 /* FallbackVoiceCommandParser.swift */; };
 		2523A6F52EC663DB00842508 /* ImmersiveSceneRuntime+VoiceControl.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2523A6F42EC663DB00842508 /* ImmersiveSceneRuntime+VoiceControl.swift */; };
 		2523A6F62EC663DB00842508 /* ImmersiveSceneRuntime+VoiceControl.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2523A6F42EC663DB00842508 /* ImmersiveSceneRuntime+VoiceControl.swift */; };
+		253881C62ECA1DEE001442C9 /* EndoscopeRenderPipeline.swift in Sources */ = {isa = PBXBuildFile; fileRef = 253881C52ECA1DEE001442C9 /* EndoscopeRenderPipeline.swift */; };
+		253881CB2ECA3C00001442C9 /* SplitSBSView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 253881C92ECA3C00001442C9 /* SplitSBSView.swift */; };
+		253881CC2ECA3C00001442C9 /* EndoscopeViewMode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 253881C72ECA3C00001442C9 /* EndoscopeViewMode.swift */; };
+		253881CD2ECA3C00001442C9 /* RawStreamView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 253881C82ECA3C00001442C9 /* RawStreamView.swift */; };
+		253881CE2ECA3C00001442C9 /* Stereo3DView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 253881CA2ECA3C00001442C9 /* Stereo3DView.swift */; };
 		2581FCE52EBBC6870059678D /* OperationInputState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2581FCE42EBBC6870059678D /* OperationInputState.swift */; };
 		2581FCE92EBBC6FA0059678D /* MacNavigationState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2581FCE62EBBC6FA0059678D /* MacNavigationState.swift */; };
 		2581FCEA2EBBC6FA0059678D /* MacRootViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2581FCE72EBBC6FA0059678D /* MacRootViewModel.swift */; };
@@ -605,6 +608,11 @@
 		2523A6E02EC649A600842508 /* VoiceControlDependencies.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VoiceControlDependencies.swift; sourceTree = "<group>"; };
 		2523A6E22EC649A600842508 /* AppleSpeechRecognitionService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppleSpeechRecognitionService.swift; sourceTree = "<group>"; };
 		2523A6F42EC663DB00842508 /* ImmersiveSceneRuntime+VoiceControl.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ImmersiveSceneRuntime+VoiceControl.swift"; sourceTree = "<group>"; };
+		253881C52ECA1DEE001442C9 /* EndoscopeRenderPipeline.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EndoscopeRenderPipeline.swift; sourceTree = "<group>"; };
+		253881C72ECA3C00001442C9 /* EndoscopeViewMode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EndoscopeViewMode.swift; sourceTree = "<group>"; };
+		253881C82ECA3C00001442C9 /* RawStreamView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RawStreamView.swift; sourceTree = "<group>"; };
+		253881C92ECA3C00001442C9 /* SplitSBSView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SplitSBSView.swift; sourceTree = "<group>"; };
+		253881CA2ECA3C00001442C9 /* Stereo3DView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Stereo3DView.swift; sourceTree = "<group>"; };
 		2581FCE42EBBC6870059678D /* OperationInputState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OperationInputState.swift; sourceTree = "<group>"; };
 		2581FCE62EBBC6FA0059678D /* MacNavigationState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MacNavigationState.swift; sourceTree = "<group>"; };
 		2581FCE72EBBC6FA0059678D /* MacRootViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MacRootViewModel.swift; sourceTree = "<group>"; };
@@ -1222,6 +1230,7 @@
 		2523A6762EC4C3C000842508 /* Renderer */ = {
 			isa = PBXGroup;
 			children = (
+				253881C52ECA1DEE001442C9 /* EndoscopeRenderPipeline.swift */,
 				2523A69E2EC5A40800842508 /* StereoVideoPlayer.swift */,
 				2523A6722EC4C3C000842508 /* CompositorStereoRenderer.swift */,
 				2523A6732EC4C3C000842508 /* StereoRendererFactory.swift */,
@@ -1928,6 +1937,10 @@
 		E0A1B0012EC5D00000000001 /* Endoscope */ = {
 			isa = PBXGroup;
 			children = (
+				253881C72ECA3C00001442C9 /* EndoscopeViewMode.swift */,
+				253881C82ECA3C00001442C9 /* RawStreamView.swift */,
+				253881C92ECA3C00001442C9 /* SplitSBSView.swift */,
+				253881CA2ECA3C00001442C9 /* Stereo3DView.swift */,
 				2581FF792EC2753A0059678D /* EndoscopeImmersiveSpace.swift */,
 				2581FF6A2EC1C4640059678D /* ConnectionOverlay.swift */,
 				2581FF6B2EC1C4640059678D /* EndoscopeStreamViewModel.swift */,
@@ -2186,6 +2199,7 @@
 				2523A6BE2EC61D8200842508 /* VoiceControlError.swift in Sources */,
 				2523A6BF2EC61D8200842508 /* ExecuteVoiceCommand.swift in Sources */,
 				2523A6C02EC61D8200842508 /* VoiceCommandIntent.swift in Sources */,
+				253881C62ECA1DEE001442C9 /* EndoscopeRenderPipeline.swift in Sources */,
 				2523A6C12EC61D8200842508 /* VoiceCommandParser.swift in Sources */,
 				14A17F8B2EB31411009D16CF /* SurgeonInfoSection.swift in Sources */,
 				27AD7AE02EB5BE2E00E84809 /* OpacityControlPanelHeaderComponent.swift in Sources */,
@@ -2257,6 +2271,10 @@
 				1446FBED2EAFA477000BCF61 /* FormSection.swift in Sources */,
 				278F28BD2EB3877300DF2F73 /* AssetListView.swift in Sources */,
 				1446FBE82EAF9E3B000BCF61 /* PatientDetailView.swift in Sources */,
+				253881CB2ECA3C00001442C9 /* SplitSBSView.swift in Sources */,
+				253881CC2ECA3C00001442C9 /* EndoscopeViewMode.swift in Sources */,
+				253881CD2ECA3C00001442C9 /* RawStreamView.swift in Sources */,
+				253881CE2ECA3C00001442C9 /* Stereo3DView.swift in Sources */,
 				27AD7AC62EB4948A00E84809 /* LayerEyeButton.swift in Sources */,
 				C04678402EA00B4A00D160DA /* HomeViewModel.swift in Sources */,
 				1442546A2EAAC61F00583CC3 /* WindowIDs.swift in Sources */,
@@ -2415,8 +2433,6 @@
 				C0F97ADE2EA420EB0063E159 /* DomainDependencies.swift in Sources */,
 				2581FF712EC1EEBA0059678D /* BonjourRelayService.swift in Sources */,
 				2523A6E52EC649A600842508 /* RuleBasedCommandParser.swift in Sources */,
-				2523A6E62EC649A600842508 /* AppleSpeechRecognitionService.swift in Sources */,
-				2523A6E72EC649A600842508 /* VoiceControlDependencies.swift in Sources */,
 				2523A6E82EC649A600842508 /* LLMCommandParser.swift in Sources */,
 				2523A6E92EC649A600842508 /* FallbackVoiceCommandParser.swift in Sources */,
 				2581FF522EBE5E8F0059678D /* ModeSectionView.swift in Sources */,

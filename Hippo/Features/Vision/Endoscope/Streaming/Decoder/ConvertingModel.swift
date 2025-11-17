@@ -13,6 +13,7 @@ import os
 
 actor ConvertingModel {
     private let stereoMetadata: StereoMetadata
+    private let recommendedPixelBufferAttributes: CVPixelBufferAttributes?
     private var transferSession: VTPixelTransferSession?
     private var pixelBufferPool: CVMutablePixelBuffer.Pool?
     private let log = Logger(subsystem: Bundle.main.bundleIdentifier ?? "App", category: "Converting")
@@ -34,9 +35,14 @@ actor ConvertingModel {
         return value & ~1
     }
 
-    // 기본 인자 제거: 호출부에서 명시적으로 StereoMetadata.default 전달
-    init(stereoMetadata: StereoMetadata) {
+    /// Initialize with stereo metadata and recommended pixel buffer attributes from AVSampleBufferVideoRenderer
+    /// - Parameters:
+    ///   - stereoMetadata: Stereo configuration (frame packing, scaling, etc.)
+    ///   - recommendedPixelBufferAttributes: Attributes from AVSampleBufferVideoRenderer.recommendedPixelBufferAttributes
+    init(stereoMetadata: StereoMetadata, recommendedPixelBufferAttributes: CVPixelBufferAttributes? = nil) {
         self.stereoMetadata = stereoMetadata
+        self.recommendedPixelBufferAttributes = recommendedPixelBufferAttributes
+        log.info("ConvertingModel initialized with recommended attributes: \(recommendedPixelBufferAttributes != nil)")
     }
 
     func process(_ sample: CMSampleBuffer) throws -> CMSampleBuffer? {
@@ -366,8 +372,8 @@ actor ConvertingModel {
             transferSession = try makeTransferSessionWithCropScaling()
 
             // Create new pixel buffer pool
+            // Note: Always uses kCVPixelFormatType_420YpCbCr8BiPlanarVideoRange regardless of srcFormat
             pixelBufferPool = try makePixelBufferPool(
-                pixelFormat: srcFormat,
                 width: eyeWidth,
                 height: eyeHeight
             )
@@ -441,17 +447,34 @@ actor ConvertingModel {
         return session
     }
 
-    /// Create a pixel buffer pool with specified format and size
+    /// Create pixel buffer pool using Apple's recommended approach
+    /// Matches SerialProcessor.swift (line 94-104) from Apple's sample code
+    /// Always uses kCVPixelFormatType_420YpCbCr8BiPlanarVideoRange for VideoPlayerComponent compatibility
     private func makePixelBufferPool(
-        pixelFormat: OSType,
         width: Int,
         height: Int
     ) throws -> CVMutablePixelBuffer.Pool {
-        let attrs = CVPixelBufferCreationAttributes(
-            pixelFormatType: CVPixelFormatType(rawValue: pixelFormat),
+        // Use kCVPixelFormatType_420YpCbCr8BiPlanarVideoRange for compatibility with VideoPlayerComponent
+        // This is the standard format that AVSampleBufferVideoRenderer expects
+        let defaultAttributes = CVPixelBufferCreationAttributes(
+            pixelFormatType: CVPixelFormatType(rawValue: kCVPixelFormatType_420YpCbCr8BiPlanarVideoRange),
             size: CVImageSize(width: width, height: height)
         )
-        return try CVMutablePixelBuffer.Pool(pixelBufferAttributes: attrs)
+
+        // Merge with recommended attributes from AVSampleBufferVideoRenderer if available
+        if let recommendedAttrs = recommendedPixelBufferAttributes {
+            log.info("Merging recommended pixel buffer attributes from AVSampleBufferVideoRenderer")
+            guard let mergedAttributes = CVPixelBufferAttributes(
+                    merging: [CVPixelBufferAttributes(defaultAttributes), recommendedAttrs]),
+                  let creationAttributes = CVPixelBufferCreationAttributes(mergedAttributes) else {
+                log.error("Failed to merge pixel buffer attributes, using defaults only")
+                return try CVMutablePixelBuffer.Pool(pixelBufferAttributes: defaultAttributes)
+            }
+            return try CVMutablePixelBuffer.Pool(pixelBufferAttributes: creationAttributes)
+        } else {
+            log.warning("No recommended attributes available, using default 420v format")
+            return try CVMutablePixelBuffer.Pool(pixelBufferAttributes: defaultAttributes)
+        }
     }
 
     // MARK: - Validation Methods
