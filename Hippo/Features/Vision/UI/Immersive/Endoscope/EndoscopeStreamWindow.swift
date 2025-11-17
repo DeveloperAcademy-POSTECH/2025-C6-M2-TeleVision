@@ -13,8 +13,7 @@ struct EndoscopeStreamWindow: View {
     @Environment(\.dismiss) private var dismiss
     @StateObject private var viewModel = EndoscopeStreamViewModel()
     @State private var showSettings = false
-    @State private var displayMode: VideoDisplayMode = .stereo
-    @State private var renderPath: VideoRenderPath = .videoPlayer
+    @State private var viewMode: EndoscopeViewMode = .stereo3D
 
     var body: some View {
         ZStack(alignment: .top) {
@@ -22,8 +21,7 @@ struct EndoscopeStreamWindow: View {
             EndoscopeStreamView(
                 receiver: viewModel.webRTCReceiver,
                 isVisible: viewModel.connectionStatus.isActive,
-                displayMode: $displayMode,
-                renderPath: $renderPath
+                viewMode: $viewMode
             )
             .frame(minWidth: 600, minHeight: 338)
 
@@ -42,9 +40,8 @@ struct EndoscopeStreamWindow: View {
             if viewModel.connectionStatus == .connected {
                 VStack {
                     HStack(spacing: 12) {
-                        // Left: Control buttons
-                        DisplayModeToggle(mode: $displayMode)
-                        RenderPathToggle(path: $renderPath, receiver: viewModel.webRTCReceiver)
+                        // Left: View mode toggle (Raw / SplitSBS / Stereo3D)
+                        ViewModeToggle(mode: $viewMode)
 
                         Spacer()
 

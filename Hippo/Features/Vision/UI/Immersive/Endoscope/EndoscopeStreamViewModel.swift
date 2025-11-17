@@ -23,6 +23,7 @@ final class EndoscopeStreamViewModel: ObservableObject {
 
     private let bonjourDiscovery = BonjourServiceDiscovery()
     private let logger = Logger(subsystem: "com.television.hippo", category: "EndoscopeStreamViewModel")
+    private let renderPipeline: EndoscopeRenderPipeline
 
     // MARK: - Connection Status
 
@@ -46,7 +47,11 @@ final class EndoscopeStreamViewModel: ObservableObject {
     // MARK: - Initialization
 
     init() {
-        self.webRTCReceiver = WebRTCReceiver()
+        // Create pipeline in @MainActor context (no actor isolation issues)
+        self.renderPipeline = EndoscopeRenderPipeline()
+
+        // Inject pipeline into receiver (DI pattern)
+        self.webRTCReceiver = WebRTCReceiver(renderPipeline: self.renderPipeline)
     }
 
     // MARK: - Public Methods
