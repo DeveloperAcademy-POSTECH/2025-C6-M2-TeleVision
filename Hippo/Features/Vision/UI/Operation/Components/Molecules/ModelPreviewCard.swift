@@ -7,15 +7,16 @@
 
 // Hippo/Features/Vision/UI/Operation/Components/Molecules/Model3DPreviewCard.swift
 
+import os.log
 import QuickLookThumbnailing
 import RealityKit
 import SwiftUI
-import os.log
 
 /// 3D 모델 파일을 미리보기로 표시하는 Molecule 컴포넌트
 struct ModelPreviewCard: View {
     let asset: OperationAssetDisplayModel
     let size: CGFloat
+    let isReadOnly: Bool
     let isSelected: Bool
     let onSelect: () -> Void
     let onDelete: () -> Void
@@ -23,12 +24,14 @@ struct ModelPreviewCard: View {
     init(
         asset: OperationAssetDisplayModel,
         size: CGFloat = 130,
+        isReadOnly: Bool = true,
         isSelected: Bool,
         onSelect: @escaping () -> Void,
         onDelete: @escaping () -> Void
     ) {
         self.asset = asset
         self.size = size
+        self.isReadOnly = isReadOnly
         self.isSelected = isSelected
         self.onSelect = onSelect
         self.onDelete = onDelete
@@ -55,19 +58,20 @@ struct ModelPreviewCard: View {
                         .frame(width: size, height: size)
                 }
 
-                // 삭제 오버레이
-                if isSelected {
-                    RoundedRectangle(cornerRadius: 12)
-                        .fill(.hippoBlack)
-                        .frame(width: size, height: size)
+                if !isReadOnly {
+                    if isSelected {
+                        RoundedRectangle(cornerRadius: 12)
+                            .fill(.hippoBlack)
+                            .frame(width: size, height: size)
 
-                    Image(systemName: "trash.fill")
-                        .font(.system(size: 40))
-                        .foregroundStyle(.white)
+                        Image(systemName: "trash.fill")
+                            .font(.system(size: 40))
+                            .foregroundStyle(.white)
+                    }
                 }
             }
         }
-        .onTapGesture { handleTap() }
+        .onTapGesture { isReadOnly ? nil : handleTap() }
         .task {
             await generateThumbnail()
         }
@@ -100,7 +104,7 @@ struct ModelPreviewCard: View {
     }
 }
 
- #Preview {
+#Preview {
     ModelPreviewCard(
         asset: OperationAssetDisplayModel(id: "", fileName: "", createdAt: Date(), fileURL: URL(string: "")!),
         isSelected: false,
@@ -108,4 +112,4 @@ struct ModelPreviewCard: View {
         onDelete: {}
     )
     .padding()
- }
+}
