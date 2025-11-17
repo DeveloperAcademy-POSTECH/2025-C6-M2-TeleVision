@@ -28,10 +28,16 @@ struct StreamingControlView: View {
     var body: some View {
         ScrollView {
             VStack(spacing: 20) {
-                ModeSectionView(
-                    selectedMode: $viewModel.videoMode,
-                    cameraInputMode: viewModel.cameraInputMode
-                )
+                HStack(spacing: 20) {
+                    ModeSectionView(
+                        selectedMode: $viewModel.videoMode,
+                        cameraInputMode: viewModel.cameraInputMode
+                    )
+
+                    ScalingSectionView(
+                        selectedScaling: $viewModel.scalingMode
+                    )
+                }
 
                 CameraSectionView(
                     cameraInputMode: $viewModel.cameraInputMode,
