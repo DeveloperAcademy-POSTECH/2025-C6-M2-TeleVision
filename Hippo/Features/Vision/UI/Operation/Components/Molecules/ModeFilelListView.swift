@@ -14,6 +14,7 @@ struct ModelFileListView: View {
     @Environment(AppModel.self) private var appModel
     @Environment(OperationViewModel.self) private var viewModel
     let assets: [OperationAssetDisplayModel]
+    let isReadOnly: Bool
 
     var body: some View {
         ScrollView(.horizontal, showsIndicators: false) {
@@ -23,6 +24,7 @@ struct ModelFileListView: View {
                 ForEach(assets, id: \.self.id) { asset in
                     ModelPreviewCard(
                         asset: asset,
+                        isReadOnly: isReadOnly,
                         isSelected: viewModel.state.selectedAssetID == asset.id,
                         onSelect: {
                             withAnimation(.easeInOut(duration: 0.2)) {
@@ -45,7 +47,7 @@ struct ModelFileListView: View {
 }
 
 #Preview {
-    ModelFileListView(assets: [])
+    ModelFileListView(assets: [], isReadOnly: true)
         .frame(height: 150)
         .background(.thinMaterial)
 }

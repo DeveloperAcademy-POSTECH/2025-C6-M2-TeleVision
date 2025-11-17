@@ -19,114 +19,123 @@ struct OperationDetailView: View {
     @State private var isLoaded = false
 
     var body: some View {
-        Group {
-            if isLoaded, let operation = viewModel.state.operation, let patient = viewModel.state.patient {
-                VStack(alignment: .leading, spacing: 0) {
-                    DetailHeader(operation: operation)
-                        .padding(.horizontal, 32)
-                        .padding(.top, 32)
+        NavigationStack(path: $viewModel.path) {
+            Group {
+                if isLoaded, let operation = viewModel.state.operation, let patient = viewModel.state.patient {
+                    VStack(alignment: .leading, spacing: 0) {
+                        DetailHeader(operation: operation)
+                            .padding(.horizontal, 32)
+                            .padding(.top, 32)
 
-                    ScrollView {
-                        VStack(alignment: .leading, spacing: 32) {
-                            Text(operation.title)
-                                .font(.largeTitle)
-                                .foregroundStyle(.primary)
+                        ScrollView {
+                            VStack(alignment: .leading, spacing: 32) {
+                                Text(operation.title)
+                                    .font(.largeTitle)
+                                    .foregroundStyle(.primary)
 
-                            // 모델 이미지
-                            ModelFileListView(assets: operation.assets)
+                                // 모델 이미지
+                                ModelFileListView(assets: operation.assets, isReadOnly: true)
 
-                            // 수술 상세 정보
-                            DetailSubPart(
-                                title: "수술 상세",
-                                content: operation.details
-                            )
+                                // 수술 상세 정보
+                                DetailSubPart(
+                                    title: "수술 상세",
+                                    content: operation.details
+                                )
 
-                            // 환자 정보
-                            DetailSubPart(
-                                title: "환자 정보",
-                                content: "\(patient.name) (\(patient.gender) / \(patient.ageText))"
-                            )
+                                // 환자 정보
+                                DetailSubPart(
+                                    title: "환자 정보",
+                                    content: "\(patient.name) (\(patient.gender) / \(patient.ageText))"
+                                )
 
-                            // 집도의 정보
-                            DetailSubPart(
-                                title: "집도의",
-                                content: operation.surgeon
-                            )
+                                // 집도의 정보
+                                DetailSubPart(
+                                    title: "집도의",
+                                    content: operation.surgeon
+                                )
 
-                            // 수술 부위 정보
-                            DetailSubPart(
-                                title: "수술 부위",
-                                content: operation.surgicalSite
-                            )
+                                // 수술 부위 정보
+                                DetailSubPart(
+                                    title: "수술 부위",
+                                    content: operation.surgicalSite
+                                )
 
-                            // 진단(병명) 정보
-                            DetailSubPart(
-                                title: "진단(병명)",
-                                content: operation.diagnosis
-                            )
+                                // 진단(병명) 정보
+                                DetailSubPart(
+                                    title: "진단(병명)",
+                                    content: operation.diagnosis
+                                )
 
-                            // 수술 날짜 정보
-                            DetailSubPart(
-                                title: "수술 날짜",
-                                content: operation.dateText
-                            )
+                                // 수술 날짜 정보
+                                DetailSubPart(
+                                    title: "수술 날짜",
+                                    content: operation.dateText
+                                )
+                            }
+                            .padding(.horizontal, 32)
+                            .padding(.vertical, 24)
                         }
-                        .padding(.horizontal, 32)
-                        .padding(.vertical, 24)
                     }
-                }
-                .onDisappear {
-                    // 윈도우가 닫힐 때 컨텍스트 정리
-                    if appModel.currentOperationContext?.operationID == operationID {
-                        appModel.currentOperationContext = nil
+                    .onDisappear {
+                        // 윈도우가 닫힐 때 컨텍스트 정리
+                        if appModel.currentOperationContext?.operationID == operationID {
+                            appModel.currentOperationContext = nil
+                        }
                     }
-                }
-                .toolbar {
-                    if !viewModel.isShowingEditInputView {
-                        ToolbarItem(placement: .bottomOrnament) {
-                            StartOperationButton {
-                                Task { @MainActor in
-                                    // Request voice permissions before starting surgery
-                                    let speechService = AppleSpeechRecognitionService()
-                                    do {
-                                        try await speechService.requestPermissions()
-                                        print("✅ Voice permissions granted")
-                                    } catch {
-                                        print("⚠️ Voice permissions denied: \(error)")
-                                        // Continue anyway - voice control will be unavailable
-                                    }
+                    .toolbar {
+                        if !viewModel.isShowingEditInputView {
+                            ToolbarItem(placement: .bottomOrnament) {
+                                StartOperationButton {
+                                    Task { @MainActor in
+                                        // Request voice permissions before starting surgery
+                                        let speechService = AppleSpeechRecognitionService()
+                                        do {
+                                            try await speechService.requestPermissions()
+                                            print("✅ Voice permissions granted")
+                                        } catch {
+                                            print("⚠️ Voice permissions denied: \(error)")
+                                            // Continue anyway - voice control will be unavailable
+                                        }
 
-                                    // Start surgery session
-                                    dismissWindow(id: WindowIDs.home)
-                                    dismissWindow(id: WindowIDs.operationDetail)
-                                    dismissWindow(id: WindowIDs.patientDetail)
-                                    let context = OperationContext(
-                                        patientID: patientID,
-                                        operationID: operationID
-                                    )
-                                    await openImmersiveSpace(id: ImmersiveIDs.surgery, value: context)
+                                        // Start surgery session
+                                        dismissWindow(id: WindowIDs.home)
+                                        dismissWindow(id: WindowIDs.operationDetail)
+                                        dismissWindow(id: WindowIDs.patientDetail)
+                                        let context = OperationContext(
+                                            patientID: patientID,
+                                            operationID: operationID
+                                        )
+                                        await openImmersiveSpace(id: ImmersiveIDs.surgery, value: context)
+                                    }
                                 }
                             }
                         }
                     }
+                } else {
+                    ProgressView()
+                        .controlSize(.large)
                 }
-            } else {
-                ProgressView()
-                    .controlSize(.large)
             }
-        }
-        .environment(viewModel)
-        .task {
-            await viewModel.load(patientID: patientID, operationID: operationID)
-            isLoaded = true
-        }
-        .onChange(of: appModel.refreshID) {
-            Task {
+            .frame(width: 480, height: appModel.homeWindowSize.height)
+            .environment(viewModel)
+            .task {
                 await viewModel.load(patientID: patientID, operationID: operationID)
+                isLoaded = true
             }
-        }
-        .sheet(isPresented: $viewModel.isShowingEditInputView) {
-            OperationInputView(mode: .edit(operationID: operationID), patientID: patientID)
+            .onChange(of: appModel.refreshID) {
+                Task {
+                    await viewModel.load(patientID: patientID, operationID: operationID)
+                }
+            }
+            .sheet(isPresented: $viewModel.isShowingEditInputView) {
+                OperationInputView(mode: .edit(operationID: operationID), patientID: patientID)
+            }
+            .navigationDestination(for: PathType.self) { path in
+                switch path {
+                case .recordView:
+                    RecordingPlayerView(recordings: viewModel.state.operation!.records)
+                }
+            }
         }
     }
 }
