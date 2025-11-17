@@ -22,6 +22,7 @@ public final class StereoVideoPlayerHelper {
     // MARK: - 2단계: Left-only Mono Mode
 
     /// Extract left eye only from SBS (Side-by-Side) pixel buffer
+    /// Uses VTPixelTransferSession for reliable color handling (same as Stereo 3D)
     /// - Parameter sbs: Source SBS pixel buffer (e.g., 1920×540)
     /// - Returns: Left-only pixel buffer (e.g., 960×540) in NV12 format
     public func makeLeftEyeMono(from sbs: CVPixelBuffer) -> CVPixelBuffer? {
@@ -37,13 +38,52 @@ public final class StereoVideoPlayerHelper {
         let dstWidth = srcWidth / 2
         let dstHeight = srcHeight
 
-        // 2. Create destination buffer
+        // 2. Create VTPixelTransferSession
+        var transferSession: VTPixelTransferSession?
+        let status = VTPixelTransferSessionCreate(
+            allocator: kCFAllocatorDefault,
+            pixelTransferSessionOut: &transferSession
+        )
+        guard status == kCVReturnSuccess, let session = transferSession else {
+            logger.error("Failed to create VTPixelTransferSession: \(status)")
+            return nil
+        }
+        defer {
+            VTPixelTransferSessionInvalidate(session)
+        }
+
+        // Set scaling mode to crop source to clean aperture
+        VTSessionSetProperty(
+            session,
+            key: kVTPixelTransferPropertyKey_ScalingMode,
+            value: kVTScalingMode_CropSourceToCleanAperture
+        )
+
+        // 3. Create destination buffer
         guard let dst = createNV12Buffer(width: dstWidth, height: dstHeight, format: format) else {
             return nil
         }
 
-        // 3. Copy left half (FIXED UV PLANE COPY)
-        guard copyLeftHalfFixed(from: sbs, to: dst) else {
+        // 4. Set CleanAperture to crop left half
+        // Left eye offset: -width/4 (to center the left half)
+        let horizontalOffset = CGFloat(dstWidth) * -0.5
+        let cropRectDict: [CFString: Any] = [
+            kCVImageBufferCleanApertureHorizontalOffsetKey: horizontalOffset,
+            kCVImageBufferCleanApertureVerticalOffsetKey: 0,
+            kCVImageBufferCleanApertureWidthKey: dstWidth,
+            kCVImageBufferCleanApertureHeightKey: dstHeight
+        ]
+        CVBufferSetAttachment(
+            sbs,
+            kCVImageBufferCleanApertureKey,
+            cropRectDict as CFDictionary,
+            .shouldPropagate
+        )
+
+        // 5. Transfer image using VTPixelTransferSession
+        let transferStatus = VTPixelTransferSessionTransferImage(session, from: sbs, to: dst)
+        guard transferStatus == kCVReturnSuccess else {
+            logger.error("VTPixelTransferSessionTransferImage failed: \(transferStatus)")
             return nil
         }
 
