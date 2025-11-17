@@ -37,7 +37,7 @@ final class ImmersiveSceneRuntime {
         self.topAnchor = headAnchor
         
         let hudRoot = Entity()
-        hudRoot.position = [0, 0.0, -1.0]   // 처음엔 정면
+        hudRoot.position = [0, -0.2, -1.0]   // 처음엔 정면
         headAnchor.addChild(hudRoot)
         self.hudRoot = hudRoot
         
@@ -82,7 +82,7 @@ final class ImmersiveSceneRuntime {
             hudRoot.move(
                 to: targetTransform,
                 relativeTo: headAnchor,
-                duration: 1.0,
+                duration: 2.0,
                 timingFunction: .easeInOut
             )
         }

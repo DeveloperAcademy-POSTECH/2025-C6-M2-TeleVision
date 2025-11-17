@@ -20,7 +20,7 @@ struct VoiceControlMenuButton: View {
     // MARK: - Constants
     
     private enum Constants {
-        static let buttonSize: CGFloat = 120
+        static let buttonSize: CGFloat = 70
         static let progressScale: CGFloat = 2.0
     }
     
@@ -82,14 +82,14 @@ struct VoiceControlMenuButton: View {
             guard !hasShownTooltip else { return }
             hasShownTooltip = true
             
-            try? await Task.sleep(for: .seconds(2))
+            try? await Task.sleep(for: .seconds(3))
             await MainActor.run {
                 withAnimation(.easeInOut) {
                     show = true
                 }
             }
             
-            try? await Task.sleep(for: .seconds(4))
+            try? await Task.sleep(for: .seconds(6))
             await MainActor.run {
                 withAnimation(.easeInOut) {
                     show = false
