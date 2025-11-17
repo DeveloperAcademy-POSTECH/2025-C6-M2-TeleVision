@@ -505,6 +505,10 @@ extension StreamingControlViewModel: CaptureOutputDelegate {
         let sendableBuffer = SendablePixelBuffer(pixelBuffer)
         Task { @MainActor [weak self] in
             guard let self = self else { return }
+
+            // Ignore frames when not streaming (during shutdown)
+            guard self.isStreaming else { return }
+
             if self.videoMode == .mono {
                 // Mono mode: send frame directly
                 if source == .left {  // Only process left camera in mono mode
