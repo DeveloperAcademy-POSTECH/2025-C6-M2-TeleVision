@@ -105,7 +105,10 @@ struct ImmersiveSurgeryView: View {
     private func setupInitialState() async {
         await dataViewModel.load(patientID: patientID, operationID: operationID)
         windowController.dismissWindow(id: WindowIDs.home)
-        windowController.openWindow(id: WindowIDs.surgeryBottomMenu)
+        Task {
+            try? await Task.sleep(for: .seconds(3))
+            windowController.openWindow(id: WindowIDs.surgeryBottomMenu)
+        }
         immersiveViewModel.isMenuActive = true
     }
 
