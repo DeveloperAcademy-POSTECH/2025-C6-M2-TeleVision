@@ -15,13 +15,13 @@ import SwiftUI
 class RecordingViewModel {
     /// The scene used to present the video.
     var scene: UIScene?
-    
+
     var recordings: [OperationRecording] = []
 
     /// An object that controls the playback of a video.
-    private let player = AVPlayer()
+    var player = AVPlayer()
     /// An object that provides the playback user interface.
-    private var playerViewController: AVPlayerViewController?
+    var playerViewController: AVPlayerViewController?
 
     /// Creates a player model.
     init() {
@@ -50,7 +50,7 @@ class RecordingViewModel {
             // videoData를 디스크에 임시 파일로 쓰기
             try record.videoData.write(to: tempURL, options: .atomic)
 
-            let player = AVPlayer(url: tempURL)
+            player = AVPlayer(url: tempURL)
         } catch {
             print("Error writing temporary video file: \(error.localizedDescription)")
         }
@@ -149,7 +149,7 @@ class RecordingViewModel {
 
     // -------------------------------------------------------
 //
-    
+
 //    var selectedRecording: OperationRecording?
 //
 //    var sortedRecordings: [OperationRecording] {
