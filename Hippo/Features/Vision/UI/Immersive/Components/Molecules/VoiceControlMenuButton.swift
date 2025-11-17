@@ -260,12 +260,12 @@ struct VoiceControlMenuButton: View {
 }
 
 // MARK: - Preview
-
+#if DEBUG
 #Preview {
     PreviewContainer()
 }
 
-#if DEBUG
+
 fileprivate struct PreviewContainer: View {
     @State private var immersiveVM = ImmersiveViewModel()
     @State private var voiceControlVM = VoiceControlViewModel(

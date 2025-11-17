@@ -73,6 +73,22 @@ public final class StreamingControlViewModel {
         }
     }
 
+    var scalingMode: ScalingMode = .none {
+        didSet {
+            logger.info("Scaling mode changed: \(oldValue.rawValue) → \(self.scalingMode.rawValue)")
+
+            // 스트리밍 중이면 재시작
+            if isStreaming {
+                logger.info("Restarting streaming due to scaling mode change...")
+                Task {
+                    stopStreaming()
+                    try? await Task.sleep(for: .milliseconds(500))
+                    try? await startStreaming()
+                }
+            }
+        }
+    }
+
     var cameraInputMode: CameraInputMode = .dual {
         didSet {
             logger.info("Camera input mode changed: \(oldValue.rawValue) → \(self.cameraInputMode.rawValue)")
@@ -371,7 +387,8 @@ public final class StreamingControlViewModel {
             let config = SBSComposerConfig(
                 mode: sbsMode,
                 policy: normalizationPolicy,
-                colorSpace: CGColorSpace(name: CGColorSpace.itur_709)
+                colorSpace: CGColorSpace(name: CGColorSpace.itur_709),
+                scalingMode: scalingMode
             )
 
             let composed = try composer.compose(
@@ -488,6 +505,10 @@ extension StreamingControlViewModel: CaptureOutputDelegate {
         let sendableBuffer = SendablePixelBuffer(pixelBuffer)
         Task { @MainActor [weak self] in
             guard let self = self else { return }
+
+            // Ignore frames when not streaming (during shutdown)
+            guard self.isStreaming else { return }
+
             if self.videoMode == .mono {
                 // Mono mode: send frame directly
                 if source == .left {  // Only process left camera in mono mode
