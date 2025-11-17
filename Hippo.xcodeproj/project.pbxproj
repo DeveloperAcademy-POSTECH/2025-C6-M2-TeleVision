@@ -327,6 +327,9 @@
 		272BD1B32EADE1BF00C83F81 /* ARSessionController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 272BD1B12EADE1BA00C83F81 /* ARSessionController.swift */; };
 		272BD1B52EADE1E200C83F81 /* HeadPose.swift in Sources */ = {isa = PBXBuildFile; fileRef = 272BD1B42EADE1DE00C83F81 /* HeadPose.swift */; };
 		272BD1B62EADE1E200C83F81 /* HeadPose.swift in Sources */ = {isa = PBXBuildFile; fileRef = 272BD1B42EADE1DE00C83F81 /* HeadPose.swift */; };
+		276096352ECB37BD0058031A /* Lottie in Frameworks */ = {isa = PBXBuildFile; productRef = 276096342ECB37BD0058031A /* Lottie */; };
+		276096372ECB6BFC0058031A /* TooltipView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 276096362ECB6BFC0058031A /* TooltipView.swift */; };
+		276096382ECB6BFC0058031A /* TooltipView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 276096362ECB6BFC0058031A /* TooltipView.swift */; };
 		2786232F2EB78F2900F97BE3 /* AssetListScrollView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2786232E2EB78F2900F97BE3 /* AssetListScrollView.swift */; };
 		278623302EB78F2900F97BE3 /* AssetListScrollView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2786232E2EB78F2900F97BE3 /* AssetListScrollView.swift */; };
 		278623332EB790CE00F97BE3 /* AssetListScrollCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 278623322EB790CE00F97BE3 /* AssetListScrollCard.swift */; };
@@ -659,6 +662,7 @@
 		2720B7D52EC6269500903C7D /* VoiceControlManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VoiceControlManager.swift; sourceTree = "<group>"; };
 		272BD1B12EADE1BA00C83F81 /* ARSessionController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ARSessionController.swift; sourceTree = "<group>"; };
 		272BD1B42EADE1DE00C83F81 /* HeadPose.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HeadPose.swift; sourceTree = "<group>"; };
+		276096362ECB6BFC0058031A /* TooltipView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TooltipView.swift; sourceTree = "<group>"; };
 		2786232E2EB78F2900F97BE3 /* AssetListScrollView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AssetListScrollView.swift; sourceTree = "<group>"; };
 		278623322EB790CE00F97BE3 /* AssetListScrollCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AssetListScrollCard.swift; sourceTree = "<group>"; };
 		278623362EB8EB7800F97BE3 /* OpacityControlSlider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OpacityControlSlider.swift; sourceTree = "<group>"; };
@@ -726,6 +730,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				276096352ECB37BD0058031A /* Lottie in Frameworks */,
 				146F102D2EA3AD1500DDDC35 /* HippoAssets in Frameworks */,
 				C04677B92EA006FB00D160DA /* Dependencies in Frameworks */,
 				C050AA442EA81D6300352314 /* DependenciesMacros in Frameworks */,
@@ -871,6 +876,7 @@
 				1446FB972EAE6906000BCF61 /* CircleIconButton.swift */,
 				27AD7AC32EB4948A00E84809 /* LayerEyeButton.swift */,
 				27AD7ADB2EB5BA2E00E84809 /* OpacityControlPanelButton.swift */,
+				276096362ECB6BFC0058031A /* TooltipView.swift */,
 			);
 			path = Atoms;
 			sourceTree = "<group>";
@@ -1958,6 +1964,7 @@
 				146F102C2EA3AD1500DDDC35 /* HippoAssets */,
 				C050AA432EA81D6300352314 /* DependenciesMacros */,
 				2581FF1C2EBE24520059678D /* LiveKit */,
+				276096342ECB37BD0058031A /* Lottie */,
 			);
 			productName = Hippo;
 			productReference = 145E0F4D2E9C0F3900CE6C97 /* HippoVision.app */;
@@ -2039,6 +2046,7 @@
 			packageReferences = (
 				C04677B72EA006FB00D160DA /* XCRemoteSwiftPackageReference "swift-dependencies" */,
 				2581FF192EBE21680059678D /* XCRemoteSwiftPackageReference "client-sdk-swift" */,
+				276096332ECB05170058031A /* XCRemoteSwiftPackageReference "lottie-spm" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 145E0F4E2E9C0F3900CE6C97 /* Products */;
@@ -2157,6 +2165,7 @@
 				1446FBDE2EAF2962000BCF61 /* HippoAlertView.swift in Sources */,
 				C02FFA992E9FFF6F00F16742 /* HippoVisionApp.swift in Sources */,
 				1446FBBD2EAE77B5000BCF61 /* SurgeryBottomMenu.swift in Sources */,
+				276096372ECB6BFC0058031A /* TooltipView.swift in Sources */,
 				1446FBB22EAE6C23000BCF61 /* RecordButton.swift in Sources */,
 				2523A6EF2EC649A600842508 /* RuleBasedCommandParser.swift in Sources */,
 				2523A6F02EC649A600842508 /* AppleSpeechRecognitionService.swift in Sources */,
@@ -2309,6 +2318,7 @@
 				14DE513E2EB60E610027D9A0 /* FileAttachmentSection.swift in Sources */,
 				C04678082EA00B1F00D160DA /* Patient.swift in Sources */,
 				1446FBD42EAF262F000BCF61 /* EntityPlacementService.swift in Sources */,
+				276096382ECB6BFC0058031A /* TooltipView.swift in Sources */,
 				14541ACD2EB994990013107E /* OpacityControlSlider.swift in Sources */,
 				C0F97A7C2EA3FD370063E159 /* PatientDTO.swift in Sources */,
 				144254352EAA232300583CC3 /* OperationViewModel.swift in Sources */,
@@ -2918,6 +2928,14 @@
 				minimumVersion = 2.9.0;
 			};
 		};
+		276096332ECB05170058031A /* XCRemoteSwiftPackageReference "lottie-spm" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/airbnb/lottie-spm.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 4.5.2;
+			};
+		};
 		C04677B72EA006FB00D160DA /* XCRemoteSwiftPackageReference "swift-dependencies" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/pointfreeco/swift-dependencies";
@@ -2942,6 +2960,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 2581FF192EBE21680059678D /* XCRemoteSwiftPackageReference "client-sdk-swift" */;
 			productName = LiveKit;
+		};
+		276096342ECB37BD0058031A /* Lottie */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 276096332ECB05170058031A /* XCRemoteSwiftPackageReference "lottie-spm" */;
+			productName = Lottie;
 		};
 		C04677B82EA006FB00D160DA /* Dependencies */ = {
 			isa = XCSwiftPackageProductDependency;
