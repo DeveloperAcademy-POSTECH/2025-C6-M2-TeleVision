@@ -66,6 +66,7 @@ public struct PatientDisplayModel: Identifiable, Equatable, Sendable {
         status: .planned,
         assets: [],
         assetCount: 0,
+        records: []
     )
 
     static let operation2 = OperationDisplayModel(
@@ -80,6 +81,7 @@ public struct PatientDisplayModel: Identifiable, Equatable, Sendable {
         status: .completed,
         assets: [],
         assetCount: 0,
+        records: []
     )
 
     // SAMPLE
