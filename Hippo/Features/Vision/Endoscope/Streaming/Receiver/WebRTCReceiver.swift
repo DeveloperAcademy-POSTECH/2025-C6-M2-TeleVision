@@ -318,25 +318,41 @@ public final class WebRTCReceiver: NSObject, ObservableObject {
         }
 
         logger.info("WebRTC Receiver stopping...")
-        statsTimer?.invalidate()
-        peerConnection?.close()
-        signalingClient?.disconnect()
 
-        // Cleanup all pipeline resources
+        // 1. Stop timers immediately
+        statsTimer?.invalidate()
+
+        // 2. Cleanup pipeline FIRST (stops frame processing)
         renderPipeline.cleanup()
 
-        // Remove notification observers to prevent memory leaks
+        // 3. Disconnect signaling (fast, non-blocking after our fix)
+        signalingClient?.disconnect()
+
+        // 4. Close peer connection in background with timeout
+        if let pc = peerConnection {
+            Task.detached {
+                pc.close()
+            }
+        }
+
+        // 5. Remove notification observers to prevent memory leaks
         NotificationCenter.default.removeObserver(self, name: .hevcFrameDecoded, object: nil)
 
-        // Release common resources
+        // 6. Release common resources
         i420Converter = nil
+        peerConnection = nil
+        remoteVideoTrack = nil
+        signalingClient = nil
 
+        // 7. Reset state
         isConnected = false
         isInitialized = false
         isRendererSetup = false
         lastPTS = nil
         loggingState = LoggingState()
         videoPlayerFrameCounter = 0
+        pendingRemoteCandidates.removeAll()
+        remoteDescriptionSet = false
 
         logger.info("✅ WebRTC Receiver stopped, all resources released")
     }
@@ -621,9 +637,9 @@ extension WebRTCReceiver: LKRTCVideoRenderer {
         guard let pb = pixelBuffer else { return }
         let sendableBuffer = SendablePixelBuffer(pb)
 
-        // Process frame on background queue to avoid blocking main thread
-        // Heavy processing (VTPixelTransferSession, etc.) runs off main thread
-        Task.detached(priority: .userInitiated) { [weak self, sendableBuffer] in
+        // Process frame using structured concurrency
+        // StereoVideoPlayerHelper's serial queue ensures thread-safe VTPixelTransferSession access
+        Task { [weak self, sendableBuffer] in
             guard let self = self else { return }
             await self.processFrame(sendableBuffer.pixelBuffer, from: frame)
         }

@@ -198,7 +198,9 @@ final class SignalingClient {
 
     func disconnect() {
         cancelReconnection()  // P0.3: Cancel any pending reconnection
-        webSocketTask?.cancel(with: .goingAway, reason: nil)
+        // Immediately cancel WebSocket without waiting for server response
+        // This prevents blocking and timeout issues during shutdown
+        webSocketTask?.cancel()
         webSocketTask = nil
         state = .disconnected
     }
