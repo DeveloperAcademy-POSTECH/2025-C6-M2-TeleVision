@@ -135,28 +135,42 @@ public final class WebRTCManager: NSObject, IVideoTransport {
     public func stop() {
         logger.info("WebRTC stopping...")
 
+        // 1. Stop timers immediately
         statsTimer?.invalidate()
         statsTimer = nil
 
         disconnectionTimer?.invalidate()
         disconnectionTimer = nil
 
+        // 2. Release video components
         videoCapturer = nil
         videoTrack = nil
         videoSource = nil
         videoSender = nil
 
-        peerConnection?.close()
-        peerConnection = nil
-
+        // 3. Disconnect signaling (fast, non-blocking after our fix)
         signalingClient?.disconnect()
         signalingClient = nil
 
+        // 4. Close peer connection in background (may block)
+        if let pc = peerConnection {
+            Task.detached {
+                pc.close()
+            }
+        }
+        peerConnection = nil
+
+        // 5. Reset candidate state
+        pendingRemoteCandidates.removeAll()
+        remoteDescriptionSet = false
+        frameCount = 0
+
+        // 6. Cleanup WebRTC global state
         LKRTCShutdownInternalTracer()
         LKRTCCleanupSSL()
 
         state = .closed
-        logger.info("WebRTC stopped")
+        logger.info("✅ WebRTC stopped")
     }
 
     public func sendControl(_ data: Data) {
