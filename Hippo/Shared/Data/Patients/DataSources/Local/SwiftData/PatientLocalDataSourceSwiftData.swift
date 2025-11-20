@@ -59,8 +59,8 @@ public final class PatientLocalDataSourceSwiftData: PatientLocalDataSource {
             existing.updatedAt = patient.updatedAt
 
             // 기존 Operations 삭제
-            existing.operations.forEach { context.delete($0) }
-            existing.operations.removeAll()
+            (existing.operations)?.forEach { context.delete($0) }
+            existing.operations?.removeAll()
 
             // 새 operations 생성 및 컨텍스트에 삽입
             let newOperations = patient.operations.map { operation in
@@ -68,8 +68,8 @@ public final class PatientLocalDataSourceSwiftData: PatientLocalDataSource {
                 context.insert(sdOperation)
 
                 // 자식 assets와 recordings도 명시적으로 삽입
-                sdOperation.assets.forEach { context.insert($0) }
-                sdOperation.recordings.forEach { context.insert($0) }
+                (sdOperation.assets ?? []).forEach { context.insert($0) }
+                (sdOperation.recordings ?? []).forEach { context.insert($0) }
 
                 return sdOperation
             }
@@ -81,10 +81,10 @@ public final class PatientLocalDataSourceSwiftData: PatientLocalDataSource {
             context.insert(sdPatient)
 
             // 모든 자식 객체들도 삽입
-            for operation in sdPatient.operations {
+            for operation in sdPatient.operations ?? [] {
                 context.insert(operation)
-                operation.assets.forEach { context.insert($0) }
-                operation.recordings.forEach { context.insert($0) }
+                (operation.assets ?? []).forEach { context.insert($0) }
+                (operation.recordings ?? []).forEach { context.insert($0) }
             }
         }
 

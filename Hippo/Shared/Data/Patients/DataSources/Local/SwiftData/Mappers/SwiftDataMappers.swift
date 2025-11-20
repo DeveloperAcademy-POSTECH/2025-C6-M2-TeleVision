@@ -48,7 +48,7 @@ extension SDOperationAsset {
         let sdAsset = SDOperationAsset(
             id: a.id,
             originalFileName: a.originalFileName,
-            bookmarkData: a.bookmarkData,
+            fileData: a.fileData,
             createdAt: a.createdAt,
         )
         sdAsset.operation = op
@@ -82,7 +82,7 @@ extension Patient {
             name: s.name,
             gender: Gender(rawValue: s.genderRaw) ?? .male,
             birthDate: s.birthDate,
-            operations: s.operations.map(Operation.fromSwiftData),
+            operations: (s.operations ?? []).map { Operation.fromSwiftData($0) },
             createdAt: s.createdAt,
             updatedAt: s.updatedAt
         )
@@ -101,8 +101,8 @@ extension Operation {
             surgicalSite: s.surgicalSite,
             date: s.date,
             details: s.details,
-            operationAssets: s.assets.map(OperationAsset.fromSwiftData),
-            recordings: s.recordings.map(OperationRecording.fromSwiftData),
+            operationAssets: (s.assets ?? []).map { OperationAsset.fromSwiftData($0) },
+            recordings: (s.recordings ?? []).map { OperationRecording.fromSwiftData($0) },
             status: OperationStatus(rawValue: s.statusRaw) ?? .planned
         )
     }
@@ -114,7 +114,7 @@ extension OperationAsset {
     static func fromSwiftData(_ s: SDOperationAsset) -> OperationAsset {
         OperationAsset(
             id: s.id,
-            bookmarkData: s.bookmarkData,
+            fileData: s.fileData,
             originalFileName: s.originalFileName,
             createdAt: s.createdAt
         )

@@ -32,7 +32,7 @@ public struct AttachAssetCommand: Sendable {
     public func toOperationAsset() -> OperationAsset {
         OperationAsset(
             id: UUID().uuidString,
-            bookmarkData: Data(),
+            fileData: Data(),
             originalFileName: name,
 //            name: name,
 //            fileURL: fileURL,
