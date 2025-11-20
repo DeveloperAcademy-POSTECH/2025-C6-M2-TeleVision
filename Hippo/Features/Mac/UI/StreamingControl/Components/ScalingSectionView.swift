@@ -17,7 +17,7 @@ struct ScalingSectionView: View {
                 .foregroundColor(.black)
 
             HStack(spacing: 8) {
-                ForEach(ScalingMode.allCases, id: \.self) { mode in
+                ForEach(ScalingMode.allCases.filter { $0 != .third }, id: \.self) { mode in
                     ScalingButton(
                         mode: mode,
                         isSelected: selectedScaling == mode,
@@ -51,9 +51,9 @@ struct ScalingButton: View {
         Button(action: action) {
             Text(mode.rawValue)
                 .font(.system(size: 16, weight: .semibold))
-                .padding(.horizontal, 32)
-                .padding(.vertical, 12)
-                .frame(minWidth: 120)
+                .padding(.horizontal, 28)
+                .padding(.vertical, 8)
+                .frame(minWidth: 95)
                 .background(
                     RoundedRectangle(cornerRadius: 16)
                         .fill(isSelected ?

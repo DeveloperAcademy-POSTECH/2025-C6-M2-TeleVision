@@ -386,7 +386,7 @@ public final class WebRTCReceiver: NSObject, ObservableObject {
                 if self.framesReceived % LoggingInterval.frequentFrames == 0 {
                     self.logger.info("Received HEVC frame via notification workaround")
                 }
-                self.processFrame(sendableBuffer.pixelBuffer, from: frame)
+                await self.processFrame(sendableBuffer.pixelBuffer, from: frame)
             }
         }
 
@@ -610,7 +610,7 @@ extension WebRTCReceiver: LKRTCVideoRenderer {
                 guard let self = self, let converter = self.i420Converter else { return }
 
                 if let converted = await converter.convert(i420Buffer) {
-                    self.processFrame(converted, from: frame)
+                    await self.processFrame(converted, from: frame)
                 }
             }
             return
@@ -621,37 +621,44 @@ extension WebRTCReceiver: LKRTCVideoRenderer {
         guard let pb = pixelBuffer else { return }
         let sendableBuffer = SendablePixelBuffer(pb)
 
-        Task { @MainActor [sendableBuffer] in
-            self.processFrame(sendableBuffer.pixelBuffer, from: frame)
+        // Process frame on background queue to avoid blocking main thread
+        // Heavy processing (VTPixelTransferSession, etc.) runs off main thread
+        Task.detached(priority: .userInitiated) { [weak self, sendableBuffer] in
+            guard let self = self else { return }
+            await self.processFrame(sendableBuffer.pixelBuffer, from: frame)
         }
     }
 
-    private func processFrame(_ pixelBuffer: CVPixelBuffer, from frame: LKRTCVideoFrame) {
-        // Update current frame for debugging
-        self.currentFrame = pixelBuffer
-        self.framesReceived += 1
-
-        // Update stats
-        self.stats = ReceiverStats(framesReceived: self.framesReceived)
+    private func processFrame(_ pixelBuffer: CVPixelBuffer, from frame: LKRTCVideoFrame) async {
+        // Update stats and timing on main actor
+        await MainActor.run {
+            self.currentFrame = pixelBuffer
+            self.framesReceived += 1
+            self.stats = ReceiverStats(framesReceived: self.framesReceived)
+        }
 
         // Compute timing
         let timeStampSeconds = Double(frame.timeStampNs) / 1_000_000_000.0
         let pts = CMTime(seconds: timeStampSeconds, preferredTimescale: 1_000_000_000)
+
         let duration: CMTime
-        if let last = self.lastPTS {
+        let lastPTS = await MainActor.run { self.lastPTS }
+        if let last = lastPTS {
             duration = CMTimeSubtract(pts, last)
         } else {
             duration = CMTime(value: 1, timescale: 60)
         }
-        self.lastPTS = pts
+        await MainActor.run { self.lastPTS = pts }
 
-        // Delegate frame processing to pipeline
+        // Delegate frame processing to pipeline (runs on background)
         // Pipeline will route to appropriate stage based on current mode
-        renderPipeline.processFrame(pixelBuffer, pts: pts, duration: duration)
+        await renderPipeline.processFrame(pixelBuffer, pts: pts, duration: duration)
 
         // Log frames received periodically
-        if self.framesReceived % LoggingInterval.standardFrames == 0 {
-            self.logger.info("Received \(self.framesReceived) frames, mode: \(self.currentViewMode.rawValue)")
+        let framesReceived = await MainActor.run { self.framesReceived }
+        let currentMode = await MainActor.run { self.currentViewMode }
+        if framesReceived % LoggingInterval.standardFrames == 0 {
+            logger.info("Received \(framesReceived) frames, mode: \(currentMode.rawValue)")
         }
     }
 }
