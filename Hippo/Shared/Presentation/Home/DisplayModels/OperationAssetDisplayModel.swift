@@ -20,15 +20,18 @@ public struct OperationAssetDisplayModel: Identifiable, Equatable, Sendable {
 
 public extension OperationAssetDisplayModel {
     func toDomain() -> OperationAsset {
-        let bookmarkData = try? fileURL.bookmarkData(
-            options: .minimalBookmark,
-            includingResourceValuesForKeys: nil,
-            relativeTo: nil
-        )
+        // fileURL에서 실제 파일 데이터를 읽어서 저장
+        let fileData: Data
+        do {
+            fileData = try Data(contentsOf: fileURL)
+        } catch {
+            print("Failed to read file data from \(fileURL): \(error)")
+            fileData = Data()
+        }
 
         return OperationAsset(
             id: id,
-            bookmarkData: bookmarkData ?? Data(),
+            fileData: fileData,
             originalFileName: fileName,
             createdAt: createdAt
         )
