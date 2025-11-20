@@ -99,24 +99,28 @@ public final class EndoscopeRenderPipeline: ObservableObject {
         logger.info("Pipeline configured for: \(mode.rawValue)")
     }
 
-    /// Process frame based on current mode
-    public func processFrame(_ pixelBuffer: CVPixelBuffer, pts: CMTime, duration: CMTime) {
-        framesProcessed += 1
+    /// Process frame based on current mode (async to support background processing)
+    public func processFrame(_ pixelBuffer: CVPixelBuffer, pts: CMTime, duration: CMTime) async {
+        await MainActor.run {
+            framesProcessed += 1
+        }
 
-        switch currentMode {
+        let mode = await MainActor.run { currentMode }
+        switch mode {
         case .rawStream:
-            processRawSBS(pixelBuffer, pts: pts, duration: duration)
+            await processRawSBS(pixelBuffer, pts: pts, duration: duration)
 
         case .splitSBS:
-            processLeftOnlyMono(pixelBuffer, pts: pts, duration: duration)
+            await processLeftOnlyMono(pixelBuffer, pts: pts, duration: duration)
 
         case .stereo3D:
-            processStereo3D(pixelBuffer, pts: pts, duration: duration)
+            await processStereo3D(pixelBuffer, pts: pts, duration: duration)
         }
 
         // Log periodically
-        if framesProcessed % 120 == 0 {
-            logger.debug("Processed \(self.framesProcessed) frames in mode: \(self.currentMode.rawValue)")
+        let frames = await MainActor.run { framesProcessed }
+        if frames % 120 == 0 {
+            logger.debug("Processed \(frames) frames in mode: \(mode.rawValue)")
         }
     }
 
@@ -160,6 +164,9 @@ public final class EndoscopeRenderPipeline: ObservableObject {
             videoPlayer = nil
         }
 
+        // Cleanup helper's cached resources (VTPixelTransferSession)
+        helper.cleanup()
+
         framesProcessed = 0
         logger.info("Resources cleaned up")
     }
@@ -169,9 +176,12 @@ public final class EndoscopeRenderPipeline: ObservableObject {
     /// Process raw SBS frame
     /// Sends SBS frame directly to VideoPlayer without any processing
     /// Supports both full1080 (3840×1080) and half1080 (1920×540)
-    private func processRawSBS(_ pixelBuffer: CVPixelBuffer, pts: CMTime, duration: CMTime) {
-        guard let player = videoPlayer else {
-            if framesProcessed == 1 {
+    private func processRawSBS(_ pixelBuffer: CVPixelBuffer, pts: CMTime, duration: CMTime) async {
+        let player = await MainActor.run { videoPlayer }
+        let frames = await MainActor.run { framesProcessed }
+
+        guard let player = player else {
+            if frames == 1 {
                 logger.error("VideoPlayer not available in Raw SBS mode")
             }
             return
@@ -181,12 +191,14 @@ public final class EndoscopeRenderPipeline: ObservableObject {
         let height = CVPixelBufferGetHeight(pixelBuffer)
 
         // Update frame size (full SBS size)
-        updateFrameSize(width: width, height: height, label: "Raw SBS")
+        await updateFrameSize(width: width, height: height, label: "Raw SBS")
 
-        // Send raw SBS directly to VideoPlayer
-        player.enqueuePixelBuffer(pixelBuffer, pts: pts, duration: duration)
+        // Send raw SBS directly to VideoPlayer (must be on main thread)
+        await MainActor.run {
+            player.enqueuePixelBuffer(pixelBuffer, pts: pts, duration: duration)
+        }
 
-        if framesProcessed == 1 {
+        if frames == 1 {
             logger.info("✅ Raw SBS mode: Sending \(width)×\(height) directly to VideoPlayer")
         }
     }
@@ -197,9 +209,12 @@ public final class EndoscopeRenderPipeline: ObservableObject {
     /// Extracts left eye from SBS:
     /// - full1080: 3840×1080 → 1920×1080
     /// - half1080: 1920×540 → 960×540
-    private func processLeftOnlyMono(_ pixelBuffer: CVPixelBuffer, pts: CMTime, duration: CMTime) {
-        guard let player = videoPlayer else {
-            if framesProcessed == 1 {
+    private func processLeftOnlyMono(_ pixelBuffer: CVPixelBuffer, pts: CMTime, duration: CMTime) async {
+        let player = await MainActor.run { videoPlayer }
+        let frames = await MainActor.run { framesProcessed }
+
+        guard let player = player else {
+            if frames == 1 {
                 logger.error("VideoPlayer not available in Left-only Mono mode")
             }
             return
@@ -208,9 +223,9 @@ public final class EndoscopeRenderPipeline: ObservableObject {
         let srcWidth = CVPixelBufferGetWidth(pixelBuffer)
         let srcHeight = CVPixelBufferGetHeight(pixelBuffer)
 
-        // Extract left eye only
+        // Extract left eye only (runs on background with cached VTPixelTransferSession)
         guard let monoBuffer = helper.makeLeftEyeMono(from: pixelBuffer) else {
-            if framesProcessed == 1 {
+            if frames == 1 {
                 logger.error("Failed to extract left eye from SBS")
             }
             return
@@ -220,12 +235,14 @@ public final class EndoscopeRenderPipeline: ObservableObject {
         let monoHeight = CVPixelBufferGetHeight(monoBuffer)
 
         // Update frame size (mono size)
-        updateFrameSize(width: monoWidth, height: monoHeight, label: "Left-only Mono")
+        await updateFrameSize(width: monoWidth, height: monoHeight, label: "Left-only Mono")
 
-        // Send mono buffer to VideoPlayer
-        player.enqueuePixelBuffer(monoBuffer, pts: pts, duration: duration)
+        // Send mono buffer to VideoPlayer (must be on main thread)
+        await MainActor.run {
+            player.enqueuePixelBuffer(monoBuffer, pts: pts, duration: duration)
+        }
 
-        if framesProcessed == 1 {
+        if frames == 1 {
             logger.info("✅ Left-only Mono: \(srcWidth)×\(srcHeight) → \(monoWidth)×\(monoHeight)")
         }
     }
@@ -235,9 +252,13 @@ public final class EndoscopeRenderPipeline: ObservableObject {
     /// Process stereo 3D frame
     /// Software split: SBS → left/right tagged buffers → stereo sample buffer
     /// Supports both full1080 and half1080
-    private func processStereo3D(_ pixelBuffer: CVPixelBuffer, pts: CMTime, duration: CMTime) {
-        guard let player = videoPlayer else {
-            if framesProcessed == 1 {
+    /// OPTIMIZED: Runs on background thread with cached VTPixelTransferSession
+    private func processStereo3D(_ pixelBuffer: CVPixelBuffer, pts: CMTime, duration: CMTime) async {
+        let player = await MainActor.run { videoPlayer }
+        let frames = await MainActor.run { framesProcessed }
+
+        guard let player = player else {
+            if frames == 1 {
                 logger.error("VideoPlayer not available in Stereo 3D mode")
             }
             return
@@ -248,41 +269,47 @@ public final class EndoscopeRenderPipeline: ObservableObject {
         let perEyeWidth = srcWidth / 2
 
         // Update frame size (per-eye)
-        updateFrameSize(width: perEyeWidth, height: srcHeight, label: "Stereo 3D")
+        await updateFrameSize(width: perEyeWidth, height: srcHeight, label: "Stereo 3D")
 
         // Create stereo sample buffer using software split
+        // CRITICAL: This runs on BACKGROUND thread with cached VTPixelTransferSession
+        // No more creating/destroying session every frame = massive performance gain
         guard let stereoSample = helper.makeStereoSampleBuffer(
             from: pixelBuffer,
             pts: pts,
             duration: duration
         ) else {
-            if framesProcessed == 1 {
+            if frames == 1 {
                 logger.error("Failed to create stereo sample buffer")
             }
             return
         }
 
-        // Enqueue to VideoPlayer
-        player.enqueueSample(stereoSample)
+        // Enqueue to VideoPlayer (must be on main thread)
+        await MainActor.run {
+            player.enqueueSample(stereoSample)
+        }
 
-        if framesProcessed == 1 {
-            logger.info("✅ Stereo 3D: \(srcWidth)×\(srcHeight) → left/right \(perEyeWidth)×\(srcHeight)")
+        if frames == 1 {
+            logger.info("✅ Stereo 3D: \(srcWidth)×\(srcHeight) → left/right \(perEyeWidth)×\(srcHeight) [OPTIMIZED]")
         }
     }
 
     // MARK: - Helpers
 
     /// Update frame size (with logging on change)
-    private func updateFrameSize(width: Int, height: Int, label: String) {
+    private func updateFrameSize(width: Int, height: Int, label: String) async {
         let newSize = CGSize(width: width, height: height)
+        let oldSize = await MainActor.run { currentFrameSize }
 
-        if currentFrameSize != newSize {
-            let oldSize = currentFrameSize
-            currentFrameSize = newSize
-            logger.info("\(label) frame size: \(Int(oldSize.width))×\(Int(oldSize.height)) → \(width)×\(height)")
+        if oldSize != newSize {
+            await MainActor.run {
+                currentFrameSize = newSize
+                logger.info("\(label) frame size: \(Int(oldSize.width))×\(Int(oldSize.height)) → \(width)×\(height)")
 
-            // Notify via callback
-            onFrameSizeChanged?(newSize)
+                // Notify via callback
+                onFrameSizeChanged?(newSize)
+            }
         }
     }
 }

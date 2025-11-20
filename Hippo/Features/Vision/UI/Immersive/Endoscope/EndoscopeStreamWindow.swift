@@ -23,7 +23,7 @@ struct EndoscopeStreamWindow: View {
                 isVisible: viewModel.connectionStatus.isActive,
                 viewMode: $viewMode
             )
-            .frame(minWidth: 600, minHeight: 338)
+            .frame(minWidth: 900, minHeight: 600)
 
             // Connection status overlay (connected 상태가 아닐 때만 표시)
             if viewModel.connectionStatus != .connected {

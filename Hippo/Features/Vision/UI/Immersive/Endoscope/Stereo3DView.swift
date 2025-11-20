@@ -29,7 +29,7 @@ struct Stereo3DView: View {
     // Constants for stable positioning
     private static let entityName = "video-player-entity"
     private static let entityPosition = SIMD3<Float>.zero  // Default position
-    private static let entityScale = SIMD3<Float>(0.2, 0.2, 0.2)  // Original size
+    private static let entityScale = SIMD3<Float>(0.5, 0.5, 0.5)  // Original size
 
     // MARK: - Body
 

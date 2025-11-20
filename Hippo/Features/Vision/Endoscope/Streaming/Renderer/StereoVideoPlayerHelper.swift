@@ -14,10 +14,79 @@ import VideoToolbox
 import os.log
 
 /// Helper class for processing pixel buffers for stereo video rendering
-@MainActor
+/// Thread-safe: Uses serial queue for all operations
 public final class StereoVideoPlayerHelper {
 
     private let logger = Logger(subsystem: "com.television.hippo", category: "StereoHelper")
+
+    // MARK: - Cached Resources (CRITICAL for performance)
+
+    /// Cached VTPixelTransferSession - reused for all frames to avoid GPU overhead
+    /// Creating/destroying this every frame causes severe performance degradation
+    private var cachedTransferSession: VTPixelTransferSession?
+
+    /// Serial queue for thread-safe access to cached resources
+    private let processingQueue = DispatchQueue(
+        label: "com.television.hippo.stereo-helper",
+        qos: .userInteractive
+    )
+
+    // MARK: - Initialization & Cleanup
+
+    public init() {
+        logger.info("StereoVideoPlayerHelper initialized (background processing enabled)")
+    }
+
+    deinit {
+        cleanup()
+        logger.info("StereoVideoPlayerHelper deallocated")
+    }
+
+    /// Cleanup cached resources (thread-safe)
+    public func cleanup() {
+        processingQueue.sync {
+            if let session = cachedTransferSession {
+                VTPixelTransferSessionInvalidate(session)
+                cachedTransferSession = nil
+                logger.info("VTPixelTransferSession cache invalidated")
+            }
+        }
+    }
+
+    /// Get or create VTPixelTransferSession (cached, thread-safe)
+    private func getTransferSession() -> VTPixelTransferSession? {
+        return processingQueue.sync {
+            // Return cached session if available
+            if let session = cachedTransferSession {
+                return session
+            }
+
+            // Create new session
+            var session: VTPixelTransferSession?
+            let status = VTPixelTransferSessionCreate(
+                allocator: kCFAllocatorDefault,
+                pixelTransferSessionOut: &session
+            )
+
+            guard status == kCVReturnSuccess, let newSession = session else {
+                logger.error("Failed to create VTPixelTransferSession: \(status)")
+                return nil
+            }
+
+            // Set scaling mode to crop source to clean aperture
+            VTSessionSetProperty(
+                newSession,
+                key: kVTPixelTransferPropertyKey_ScalingMode,
+                value: kVTScalingMode_CropSourceToCleanAperture
+            )
+
+            // Cache for reuse
+            cachedTransferSession = newSession
+            logger.info("✅ VTPixelTransferSession created and cached for reuse")
+
+            return newSession
+        }
+    }
 
     // MARK: - 2단계: Left-only Mono Mode
 
@@ -38,26 +107,11 @@ public final class StereoVideoPlayerHelper {
         let dstWidth = srcWidth / 2
         let dstHeight = srcHeight
 
-        // 2. Create VTPixelTransferSession
-        var transferSession: VTPixelTransferSession?
-        let status = VTPixelTransferSessionCreate(
-            allocator: kCFAllocatorDefault,
-            pixelTransferSessionOut: &transferSession
-        )
-        guard status == kCVReturnSuccess, let session = transferSession else {
-            logger.error("Failed to create VTPixelTransferSession: \(status)")
+        // 2. Get cached VTPixelTransferSession (reused across frames)
+        guard let session = getTransferSession() else {
+            logger.error("Failed to get VTPixelTransferSession")
             return nil
         }
-        defer {
-            VTPixelTransferSessionInvalidate(session)
-        }
-
-        // Set scaling mode to crop source to clean aperture
-        VTSessionSetProperty(
-            session,
-            key: kVTPixelTransferPropertyKey_ScalingMode,
-            value: kVTScalingMode_CropSourceToCleanAperture
-        )
 
         // 3. Create destination buffer
         guard let dst = createNV12Buffer(width: dstWidth, height: dstHeight, format: format) else {
@@ -115,26 +169,11 @@ public final class StereoVideoPlayerHelper {
         let eyeHeight = srcHeight
         let format = CVPixelBufferGetPixelFormatType(sbs)
 
-        // 2. Create VTPixelTransferSession (if not cached)
-        var transferSession: VTPixelTransferSession?
-        let status = VTPixelTransferSessionCreate(
-            allocator: kCFAllocatorDefault,
-            pixelTransferSessionOut: &transferSession
-        )
-        guard status == kCVReturnSuccess, let session = transferSession else {
-            logger.error("Failed to create VTPixelTransferSession: \(status)")
+        // 2. Get cached VTPixelTransferSession (reused across frames)
+        guard let session = getTransferSession() else {
+            logger.error("Failed to get VTPixelTransferSession")
             return nil
         }
-        defer {
-            VTPixelTransferSessionInvalidate(session)
-        }
-
-        // Set scaling mode to crop source to clean aperture
-        VTSessionSetProperty(
-            session,
-            key: kVTPixelTransferPropertyKey_ScalingMode,
-            value: kVTScalingMode_CropSourceToCleanAperture
-        )
 
         // 3. Process left and right eyes
         var taggedBuffers = [CMTaggedDynamicBuffer]()
