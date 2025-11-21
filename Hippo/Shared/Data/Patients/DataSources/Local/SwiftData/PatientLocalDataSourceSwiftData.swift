@@ -7,12 +7,10 @@ import SwiftData
 /// Implements full CRUD operations on SwiftData models
 @MainActor
 public final class PatientLocalDataSourceSwiftData: PatientLocalDataSource {
-    private let container: ModelContainer
     private let context: ModelContext
 
-    public init(container: ModelContainer) {
-        self.container = container
-        context = ModelContext(container)
+    public init(context: ModelContext) {
+        self.context = context
     }
 
     // MARK: - PatientLocalDataSource Implementation
@@ -20,7 +18,9 @@ public final class PatientLocalDataSourceSwiftData: PatientLocalDataSource {
     public func listPatients() throws -> [Patient] {
         var fetchDescriptor = FetchDescriptor<SDPatient>()
         fetchDescriptor.sortBy = [SortDescriptor(\.updatedAt, order: .reverse)]
+
         let sdPatients = try context.fetch(fetchDescriptor)
+
         return sdPatients.map { Patient.fromSwiftData($0) }
     }
 

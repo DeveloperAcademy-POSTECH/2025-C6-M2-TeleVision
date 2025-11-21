@@ -34,8 +34,6 @@ public struct AttachAssetCommand: Sendable {
             id: UUID().uuidString,
             fileData: Data(),
             originalFileName: name,
-//            name: name,
-//            fileURL: fileURL,
             createdAt: createdAt
         )
     }
