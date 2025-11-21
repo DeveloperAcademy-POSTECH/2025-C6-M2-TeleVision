@@ -10,56 +10,47 @@ import Observation
 import SwiftUI
 
 @Observable
-class SyncMonitor {
+public class SyncMonitor {
     var isSyncing = false
-
-    // 동시에 발생하는 여러 이벤트를 추적하기 위한 Set
-    private var activeEventIdentifiers: Set<UUID> = []
-    // 상태 변경 지연을 위한 Task
-    private var syncTimeoutTask: Task<Void, Error>?
+    var dataDidChange = false // 데이터 변경 플래그
 
     init() {
-        // NSPersistentCloudKitContainer의 동기화 이벤트 알림을 구독합니다.
+        // 1. 네트워크 상태 모니터링 (기존 코드 유지 - 로딩바 표시용)
         NotificationCenter.default.addObserver(
             self,
-            selector: #selector(didReceiveCoreDataEvent(_:)),
+            selector: #selector(didReceiveCloudKitEvent(_:)),
             name: NSPersistentCloudKitContainer.eventChangedNotification,
             object: nil
         )
     }
 
-    @objc private func didReceiveCoreDataEvent(_ notification: Notification) {
+    // 네트워크 이벤트 처리 (인디케이터용 + 상세 로깅)
+    @objc private func didReceiveCloudKitEvent(_ notification: Notification) {
         guard let event = notification.userInfo?[NSPersistentCloudKitContainer.eventNotificationUserInfoKey] as? NSPersistentCloudKitContainer.Event else { return }
 
         Task { @MainActor in
+            let eventType = event.type == .import ? "⬇️ [받기]" : "⬆️ [보내기]"
+
             if event.endDate == nil {
-                // 이벤트 시작: 식별자를 추가
-                activeEventIdentifiers.insert(event.identifier)
-
-                // 새로운 이벤트가 시작되었으므로, '동기화 종료' 대기 중인 작업이 있다면 취소합니다.
-                syncTimeoutTask?.cancel()
-                isSyncing = true
+                self.isSyncing = true
             } else {
-                // 이벤트 종료: 식별자 제거
-                activeEventIdentifiers.remove(event.identifier)
+                // 종료
+                if let error = event.error {
+                    print("\(eventType) CloudKit Sync Failed: \(error.localizedDescription)")
+                } else {
+                    print("\(eventType) CloudKit Sync Finished Successfully")
 
-                // 모든 이벤트가 종료되었는지 확인
-                if activeEventIdentifiers.isEmpty {
-                    // 기존 타이머 취소
-                    syncTimeoutTask?.cancel()
-
-                    // 동기화가 끝났을 때, UI가 너무 빨리 깜빡이는 것을 방지하기 위해
-                    // 1초 정도 대기 후 상태를 변경합니다 (Debounce).
-                    syncTimeoutTask = Task {
-                        try? await Task.sleep(nanoseconds: 1_000_000_000) // 1초 대기
-
-                        // 대기 시간이 끝날 때까지 취소되지 않았다면 동기화 상태 해제
-                        if !Task.isCancelled {
-                            self.isSyncing = false
-                        }
+                    // Import가 성공적으로 끝났다면 데이터가 변경되었을 가능성이 높으므로 리프레시 트리거
+                    if event.type == .import {
+                        self.dataDidChange = true
                     }
                 }
+                self.isSyncing = false
             }
         }
+    }
+
+    func resetDataChangeFlag() {
+        dataDidChange = false
     }
 }

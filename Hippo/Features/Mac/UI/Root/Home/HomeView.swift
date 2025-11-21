@@ -6,10 +6,12 @@
 //
 
 import SwiftUI
+import Dependencies
 
 struct HomeView: View {
     // ViewModel 초기화
     @State private var rootVM = MacRootViewModel()
+    @Dependency(\.syncMonitor) var syncMonitor
 
     // Mock 데이터 (UI 개발용 - 나중에 rootVM.homeViewModel.state.items로 교체)
     var mockData = HomeMockDataModel.mockList
@@ -118,6 +120,15 @@ struct HomeView: View {
         .task {
             // 데이터 로드
             await rootVM.load()
+        }
+        .onChange(of: syncMonitor.dataDidChange) {
+            // CloudKit 동기화로 데이터가 변경되었을 때 자동으로 새로고침
+            if syncMonitor.dataDidChange {
+                Task {
+                    await rootVM.load()
+                    syncMonitor.resetDataChangeFlag()
+                }
+            }
         }
     }
 }

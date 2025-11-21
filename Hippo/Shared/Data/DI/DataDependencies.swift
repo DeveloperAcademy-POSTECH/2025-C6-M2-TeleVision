@@ -42,6 +42,15 @@ extension DependencyValues {
     get { self[OperationRepositoryKey.self] }
     set { self[OperationRepositoryKey.self] = newValue }
   }
+  
+  // MARK: - Sync Monitor
+  
+  /// CloudKit sync monitor
+  public var syncMonitor: SyncMonitor {
+    get { self[SyncMonitorKey.self] }
+    set { self[SyncMonitorKey.self] = newValue }
+  }
+
 }
 
 // MARK: - Dependency Keys
@@ -101,13 +110,13 @@ private enum PatientLocalDataSourceKey: DependencyKey {
   @MainActor
   static let liveValue: PatientLocalDataSource = {
     @Dependency(\.patientModelContainer) var container
-    return PatientLocalDataSourceSwiftData(container: container)
+      return PatientLocalDataSourceSwiftData(context: container.mainContext)
   }()
 
   @MainActor
   static let testValue: PatientLocalDataSource = {
     @Dependency(\.patientModelContainer) var container
-    return PatientLocalDataSourceSwiftData(container: container)
+      return PatientLocalDataSourceSwiftData(context: container.mainContext)
   }()
 }
 
@@ -153,6 +162,15 @@ private enum OperationRepositoryKey: DependencyKey {
     return OperationRepositoryImpl(patientRepository: patientRepository)
   }()
 }
+
+private enum SyncMonitorKey: DependencyKey {
+  @MainActor
+  static let liveValue: SyncMonitor = SyncMonitor()
+  
+  @MainActor
+  static let testValue: SyncMonitor = SyncMonitor()
+}
+
 
 // MARK: - Mock Remote Data Source (for testing)
 
