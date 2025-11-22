@@ -54,18 +54,36 @@ public final class EndoscopeRenderPipeline: ObservableObject {
     // Track if pipeline is being cleaned up (prevents infinite defer loops)
     private var isCleaningUp: Bool = false
 
-    // Frame counter for logging
+    // Track if mode change is in progress (prevents frame enqueue during view transition)
+    private var isModeChanging: Bool = false
+
+    // Frame counter for logging (resets periodically to prevent overflow)
     private var framesProcessed: Int = 0
+    private var framesSkipped: Int = 0  // Track skipped frames for backpressure monitoring
+    private let frameCounterResetInterval: Int = 18000  // Reset every 18000 frames (10 minutes at 30fps)
 
-    // MARK: - Frame Skip State (Real-time Performance)
+    // Synthetic PTS generator (to fix broken LiveKit timestamps)
+    private var syntheticPTS: CMTime? = nil  // Will be initialized to CACurrentMediaTime() on first frame
+    private let frameInterval = CMTime(value: 1, timescale: 30)  // 30 fps = 33.33ms per frame (matches Mac encoder)
 
-    /// Processing state for splitSBS mode
-    private var isProcessingSplitSBS = false
-    private var latestPendingSplitSBSFrame: (CVPixelBuffer, CMTime, CMTime)?
+    // Debug counter for synthetic PTS validation
+    private var debugFrameCount: Int = 0
 
-    /// Processing state for stereo3D mode
-    private var isProcessingStereo3D = false
-    private var latestPendingStereo3DFrame: (CVPixelBuffer, CMTime, CMTime)?
+    // Latency drift monitoring (tracks if rendering is falling behind PTS timeline)
+    private var lastEnqueueRealTime: CFTimeInterval? = nil  // Real wall-clock time of last enqueue
+    private var latencyDriftMs: Double = 0.0  // Current drift between PTS and real time (ms)
+    private let latencyCheckInterval: Int = 300  // Check every 300 frames (10 seconds at 30fps)
+    private let maxAcceptableLatencyMs: Double = 200.0  // Flush if drift exceeds 200ms
+
+    // Live mode correction (aggressive frame dropping for real-time priority)
+    private var consecutiveDriftWarnings: Int = 0  // Track how many checks in a row exceeded threshold
+    private let maxConsecutiveDriftBeforeFlush: Int = 2  // Flush after 2 consecutive drift warnings
+
+    // MARK: - Frame Processing State
+
+    // Note: Frame skip logic removed - AVSampleBufferVideoRenderer handles buffering internally
+    // All frames are now enqueued directly for smoother playback
+    // Backpressure control added via isReadyForMoreMediaData
 
     // MARK: - Initialization
 
@@ -90,9 +108,18 @@ public final class EndoscopeRenderPipeline: ObservableObject {
             logger.info("Initial pipeline configuration: \(mode.rawValue)")
         } else {
             logger.info("Reconfiguring pipeline: \(self.currentMode.rawValue) → \(mode.rawValue)")
+            // Log current PTS before mode switch
+            if let pts = syntheticPTS {
+                let ptsSeconds = CMTimeGetSeconds(pts)
+                logger.info("🎯 Mode switch: Preserving PTS timeline at \(String(format: "%.3f", ptsSeconds))s")
+            }
+            // Log VideoPlayer recreation (to prevent RealityKit conflicts)
+            if videoPlayer != nil {
+                logger.info("🎬 VideoPlayer will be recreated (RealityKit compatibility)")
+            }
         }
 
-        // Cleanup if already initialized
+        // Cleanup if already initialized (preserves VideoPlayer + syntheticPTS + VTSession)
         if isInitialized {
             cleanupResources()
         }
@@ -103,7 +130,7 @@ public final class EndoscopeRenderPipeline: ObservableObject {
         // Reset cleanup flag (ready to process frames again)
         isCleaningUp = false
 
-        // Initialize VideoPlayer (unified for all modes)
+        // Initialize VideoPlayer (unified for all modes - reuses existing if available)
         initializeVideoPlayer()
 
         // Mark as initialized
@@ -117,33 +144,183 @@ public final class EndoscopeRenderPipeline: ObservableObject {
 
     /// Process frame based on current mode (async to support background processing)
     public func processFrame(_ pixelBuffer: CVPixelBuffer, pts: CMTime, duration: CMTime) async {
-        // CRITICAL: Stop processing immediately if cleanup is in progress
-        let cleaningUp = await MainActor.run { isCleaningUp }
-        guard !cleaningUp else {
+        // CRITICAL: Stop processing immediately if cleanup or mode change is in progress
+        let (cleaningUp, modeChanging) = await MainActor.run { (isCleaningUp, isModeChanging) }
+        guard !cleaningUp && !modeChanging else {
+            if modeChanging {
+                await MainActor.run {
+                    framesSkipped += 1
+                    if framesSkipped <= 5 {
+                        logger.debug("⏸️ Frame skipped during mode transition (#\(self.framesSkipped))")
+                    }
+                }
+            }
             return
         }
 
         await MainActor.run {
             framesProcessed += 1
+
+            // Periodic counter reset to prevent unbounded growth
+            if framesProcessed >= frameCounterResetInterval {
+                logger.info("🔄 Resetting frame counters (processed: \(self.framesProcessed), skipped: \(self.framesSkipped))")
+                framesProcessed = 0
+                framesSkipped = 0
+            }
+        }
+
+        // DEBUG: Log timing info for first 10 frames (original timestamps)
+        let frames = await MainActor.run { framesProcessed }
+        if frames <= 10 {
+            let ptsSeconds = CMTimeGetSeconds(pts)
+            let durationSeconds = CMTimeGetSeconds(duration)
+            logger.info("⏱️ Frame #\(frames): LiveKit PTS=\(String(format: "%.3f", ptsSeconds))s, duration=\(String(format: "%.3f", durationSeconds))s")
+        }
+
+        // CRITICAL FIX: Generate synthetic PTS to work around broken LiveKit timestamps
+        // LiveKit often sends PTS discontinuities and negative durations which break AVSampleBufferVideoRenderer
+        // Start from CACurrentMediaTime() to avoid dropping frames as "too old"
+        // IMPORTANT: syntheticPTS is preserved across mode switches to prevent judder
+        let (fixedPTS, fixedDuration) = await MainActor.run { [self] () -> (CMTime, CMTime) in
+            // Initialize on first frame to current media time (only on session start)
+            // Mode switching preserves existing PTS timeline
+            if self.syntheticPTS == nil {
+                let currentMediaTime = CACurrentMediaTime()
+                self.syntheticPTS = CMTime(seconds: currentMediaTime, preferredTimescale: 30)
+                self.logger.info("🎬 Initialized synthetic PTS to CACurrentMediaTime: \(String(format: "%.3f", currentMediaTime))s")
+                self.logger.info("🎯 Frame interval set to \(String(format: "%.3f", CMTimeGetSeconds(self.frameInterval)))s (30 fps)")
+                self.logger.info("✅ PTS timeline will be preserved across mode switches")
+            }
+
+            let currentPTS = self.syntheticPTS!
+            self.syntheticPTS = CMTimeAdd(self.syntheticPTS!, self.frameInterval)
+
+            // Debug log for first 5 frames to verify 30fps interval
+            if self.debugFrameCount < 5 {
+                let ptsSeconds = CMTimeGetSeconds(currentPTS)
+                let intervalSeconds = CMTimeGetSeconds(self.frameInterval)
+                self.logger.info("🎯 Synthetic PTS debug #\(self.debugFrameCount): pts=\(String(format: "%.3f", ptsSeconds))s, interval=\(String(format: "%.3f", intervalSeconds))s")
+                self.debugFrameCount += 1
+            }
+
+            if frames <= 10 {
+                let syntheticSeconds = CMTimeGetSeconds(currentPTS)
+                self.logger.info("   → Using synthetic PTS=\(String(format: "%.3f", syntheticSeconds))s, duration=\(String(format: "%.3f", CMTimeGetSeconds(self.frameInterval)))s")
+            }
+
+            return (currentPTS, self.frameInterval)
         }
 
         let mode = await MainActor.run { currentMode }
         switch mode {
         case .rawStream:
-            await processRawSBS(pixelBuffer, pts: pts, duration: duration)
+            await processRawSBS(pixelBuffer, pts: fixedPTS, duration: fixedDuration)
 
         case .splitSBS:
-            await processLeftOnlyMono(pixelBuffer, pts: pts, duration: duration)
+            await processLeftOnlyMono(pixelBuffer, pts: fixedPTS, duration: fixedDuration)
 
         case .stereo3D:
-            await processStereo3D(pixelBuffer, pts: pts, duration: duration)
+            await processStereo3D(pixelBuffer, pts: fixedPTS, duration: fixedDuration)
         }
 
         // Log periodically
-        let frames = await MainActor.run { framesProcessed }
         if frames % 120 == 0 {
             logger.debug("Processed \(frames) frames in mode: \(mode.rawValue)")
         }
+
+        // Monitor latency drift (check if rendering is falling behind PTS timeline)
+        await checkLatencyDrift(fixedPTS: fixedPTS, frameCount: frames)
+    }
+
+    /// Monitor latency drift between synthetic PTS and real-time processing
+    /// Detects if rendering is falling behind and accumulating delay
+    /// LIVE MODE: Automatically triggers recovery when drift exceeds threshold
+    private func checkLatencyDrift(fixedPTS: CMTime, frameCount: Int) async {
+        await MainActor.run { [self] in
+            let currentRealTime = CACurrentMediaTime()
+
+            // Track enqueue real-time
+            if let lastTime = self.lastEnqueueRealTime {
+                // Calculate expected PTS progression vs actual real-time progression
+                let ptsSeconds = CMTimeGetSeconds(fixedPTS)
+                let realTimeDelta = currentRealTime - lastTime
+                let expectedFrameInterval = CMTimeGetSeconds(self.frameInterval)
+
+                // Drift = how much we're behind (positive = lagging, negative = ahead)
+                let drift = realTimeDelta - expectedFrameInterval
+                self.latencyDriftMs += drift * 1000.0  // Accumulate drift in ms
+
+                // Periodic drift check and reporting
+                if frameCount % self.latencyCheckInterval == 0 {
+                    let isDrifting = abs(self.latencyDriftMs) > self.maxAcceptableLatencyMs
+
+                    if isDrifting {
+                        self.consecutiveDriftWarnings += 1
+                        self.logger.warning("⏱️ Latency drift detected (\(self.consecutiveDriftWarnings)/\(self.maxConsecutiveDriftBeforeFlush)): \(String(format: "%.1f", self.latencyDriftMs))ms (threshold: \(self.maxAcceptableLatencyMs)ms)")
+                        self.logger.warning("   Real-time rendering is falling behind synthetic PTS timeline")
+
+                        // LIVE MODE: Trigger recovery if drift persists
+                        if self.consecutiveDriftWarnings >= self.maxConsecutiveDriftBeforeFlush {
+                            self.logger.warning("🚨 LIVE MODE: Persistent drift detected, triggering recovery...")
+                            self.recoverFromLatencyDrift()
+                            self.consecutiveDriftWarnings = 0  // Reset after recovery
+                        }
+                    } else {
+                        // Drift is within acceptable range - reset warning counter
+                        if self.consecutiveDriftWarnings > 0 {
+                            self.logger.info("✅ Latency recovered: \(String(format: "%.1f", self.latencyDriftMs))ms (drift warnings reset)")
+                        } else {
+                            self.logger.debug("✅ Latency drift: \(String(format: "%.1f", self.latencyDriftMs))ms (within acceptable range)")
+                        }
+                        self.consecutiveDriftWarnings = 0
+                    }
+
+                    // Reset accumulator to prevent unbounded growth
+                    self.latencyDriftMs = 0.0
+                }
+            }
+
+            self.lastEnqueueRealTime = currentRealTime
+        }
+    }
+
+    /// Recover from latency drift by flushing buffers and adjusting PTS timeline
+    /// LIVE MODE STRATEGY: Prioritize real-time display over buffered playback
+    /// - Flush videoRenderer to drop old frames
+    /// - Adjust syntheticPTS to catch up to current time
+    /// This implements "surgical monitor" behavior: always show latest frame, drop old ones
+    private func recoverFromLatencyDrift() {
+        guard let player = videoPlayer else {
+            logger.error("Cannot recover from drift: VideoPlayer not available")
+            return
+        }
+
+        logger.warning("🔧 LIVE MODE RECOVERY:")
+        logger.warning("   Step 1: Flushing videoRenderer buffer (dropping old frames)...")
+
+        // STEP 1: Flush renderer buffer to clear accumulated frames
+        player.videoRenderer.flush()
+
+        logger.warning("   ✓ Buffer flushed")
+
+        // STEP 2: Adjust syntheticPTS to catch up to current real time
+        // This prevents further drift accumulation by resetting baseline
+        let currentMediaTime = CACurrentMediaTime()
+        let oldPTS = syntheticPTS
+        syntheticPTS = CMTime(seconds: currentMediaTime, preferredTimescale: 30)
+
+        if let oldPTS = oldPTS {
+            let oldSeconds = CMTimeGetSeconds(oldPTS)
+            let gap = currentMediaTime - oldSeconds
+            logger.warning("   Step 2: Adjusting PTS baseline:")
+            logger.warning("      Old PTS: \(String(format: "%.3f", oldSeconds))s")
+            logger.warning("      New PTS: \(String(format: "%.3f", currentMediaTime))s")
+            logger.warning("      Gap closed: \(String(format: "%.3f", gap))s (\(String(format: "%.0f", gap * 1000))ms)")
+        }
+
+        logger.warning("   ✓ PTS timeline adjusted to current time")
+        logger.warning("✅ LIVE MODE RECOVERY COMPLETE")
+        logger.warning("   Next frames will be displayed in real-time without buffering delay")
     }
 
     /// Get VideoPlayer renderer (for RealityView attachment)
@@ -151,63 +328,114 @@ public final class EndoscopeRenderPipeline: ObservableObject {
         return videoPlayer
     }
 
-    /// Cleanup all resources
+    /// Begin mode change (blocks frame processing until complete)
+    public func beginModeChange() {
+        isModeChanging = true
+        logger.info("⏸️ Mode change started - frame processing paused")
+    }
+
+    /// Complete mode change (resumes frame processing)
+    public func completeModeChange() {
+        isModeChanging = false
+        logger.info("▶️ Mode change complete - frame processing resumed")
+    }
+
+    /// Cleanup all resources (called when stopping/disconnecting streaming session)
+    /// IMPORTANT: This is for complete session teardown, NOT mode switching
     public func cleanup() {
-        logger.info("Cleaning up all pipeline resources...")
+        logger.info("Cleaning up all pipeline resources (complete session teardown)...")
 
         // CRITICAL: Set cleanup flag FIRST to stop all incoming frames
         isCleaningUp = true
 
-        // Clear pending frames immediately to prevent defer loops
-        latestPendingSplitSBSFrame = nil
-        latestPendingStereo3DFrame = nil
+        // Complete teardown - stop and release VideoPlayer
+        if let player = videoPlayer {
+            logger.info("   ✓ Stopping and releasing VideoPlayer...")
+            player.stop()
+            videoPlayer = nil
+        }
 
-        // Reset processing state
-        isProcessingSplitSBS = false
-        isProcessingStereo3D = false
-
-        // Now cleanup resources
-        cleanupResources()
+        // Complete teardown - cleanup VTPixelTransferSession
+        logger.info("   ✓ Releasing VTPixelTransferSession...")
+        helper.cleanup()
 
         // Reset state
         currentMode = .rawStream
         isInitialized = false
         framesProcessed = 0
+        framesSkipped = 0
         currentFrameSize = .zero
 
-        logger.info("✅ Pipeline cleanup complete")
+        // CRITICAL: Only reset syntheticPTS on complete session teardown
+        // Mode switching should preserve PTS timeline to prevent judder
+        syntheticPTS = nil  // Reset synthetic PTS timeline (complete session end)
+        debugFrameCount = 0  // Reset debug counter
+
+        // Reset latency drift tracking
+        lastEnqueueRealTime = nil
+        latencyDriftMs = 0.0
+        consecutiveDriftWarnings = 0
+
+        logger.info("✅ Pipeline cleanup complete (all resources released)")
     }
 
     // MARK: - Resource Management
 
     /// Initialize VideoPlayer (unified for all modes)
+    /// CRITICAL: Always creates a new VideoPlayer to prevent RealityKit VideoPlayerComponent conflicts
     private func initializeVideoPlayer() {
-        if videoPlayer == nil {
-            logger.info("   ✓ Creating StereoVideoPlayer...")
-            let player = StereoVideoPlayer()
-            player.play()
-            videoPlayer = player
-            logger.info("   ✓ StereoVideoPlayer initialized and playing")
-        } else {
-            logger.info("   ✓ StereoVideoPlayer already exists (reusing)")
-        }
-    }
-
-    /// Cleanup all resources
-    private func cleanupResources() {
-        logger.info("Cleaning up resources...")
-
-        if let player = videoPlayer {
-            logger.info("   ✓ Stopping VideoPlayer...")
-            player.stop()
+        // VideoPlayer should always be nil here (cleaned up in cleanupResources)
+        // But add defensive check just in case
+        if videoPlayer != nil {
+            logger.warning("⚠️ VideoPlayer already exists during initialization - this shouldn't happen!")
+            videoPlayer?.stop()
             videoPlayer = nil
         }
 
-        // Cleanup helper's cached resources (VTPixelTransferSession)
-        helper.cleanup()
+        logger.info("   ✓ Creating new StereoVideoPlayer...")
+        let player = StereoVideoPlayer()
+        player.play()
+        videoPlayer = player
+        logger.info("   ✓ StereoVideoPlayer initialized and playing")
+    }
 
+    /// Cleanup resources for mode switching (called during configure())
+    /// CRITICAL FIX: VideoPlayer must be recreated to avoid RealityKit VideoPlayerComponent conflicts
+    /// VTSession and PTS timeline are preserved for performance and smoothness
+    private func cleanupResources() {
+        logger.info("Cleaning up resources for mode switch...")
+
+        // CRITICAL FIX: Recreate VideoPlayer to prevent RealityKit conflicts
+        // Issue: Same AVSampleBufferVideoRenderer being attached to multiple VideoPlayerComponents
+        // causes FigVideoQueue err=-12080 and prevents rendering to screen
+        // Trade-off: 1-2 frame backpressure on mode switch vs crashes and blank screen
+        if let player = videoPlayer {
+            logger.info("   ✓ Stopping and releasing VideoPlayer for mode switch...")
+            player.stop()
+            videoPlayer = nil  // Will be recreated in initializeVideoPlayer()
+        }
+
+        // ✅ KEEP: VTPixelTransferSession cache (resolution-aware, no conflict with RealityKit)
+        // Keeping cached session prevents:
+        // 1. Session re-creation overhead (first frame 20+ms delay)
+        // 2. GPU resource reallocation
+        // VTPixelTransferSession is reusable across all modes (Raw/Split/Stereo)
+        // helper.cleanup()  // ← DO NOT call this during mode switch
+
+        // Reset frame counters (pipeline + helper debug logging)
         framesProcessed = 0
-        logger.info("Resources cleaned up")
+        debugFrameCount = 0
+        helper.resetFrameCounters()  // Reset helper's mono/stereo frame counters to re-enable debug logs
+
+        // Reset latency drift accumulator and warnings (but keep lastEnqueueRealTime for continuity)
+        latencyDriftMs = 0.0
+        consecutiveDriftWarnings = 0  // Reset warnings on mode switch
+
+        // ✅ KEEP: synthetic PTS timeline preserved across mode switches
+        // Mode switching preserves PTS timeline to prevent discontinuity/judder
+        // syntheticPTS will only be reset in cleanup() (complete session teardown)
+
+        logger.info("✅ Mode switch cleanup complete (VideoPlayer recreated, VTSession + PTS preserved)")
     }
 
     // MARK: - Stage 1: Raw SBS Mode (가장 안전한 fallback)
@@ -229,6 +457,12 @@ public final class EndoscopeRenderPipeline: ObservableObject {
         let width = CVPixelBufferGetWidth(pixelBuffer)
         let height = CVPixelBufferGetHeight(pixelBuffer)
 
+        // DEBUG: Verify source buffer has no CleanAperture (first 3 frames only)
+        if frames <= 3 {
+            let hasCleanAperture = CVBufferGetAttachment(pixelBuffer, kCVImageBufferCleanApertureKey, nil) != nil
+            logger.info("🔍 [Raw Frame #\(frames)] Source buffer CleanAperture exists = \(hasCleanAperture) (should be false)")
+        }
+
         // Update frame size (full SBS size)
         await updateFrameSize(width: width, height: height, label: "Raw SBS")
 
@@ -248,42 +482,7 @@ public final class EndoscopeRenderPipeline: ObservableObject {
     /// Extracts left eye from SBS:
     /// - full1080: 3840×1080 → 1920×1080
     /// - half1080: 1920×540 → 960×540
-    /// Real-time optimized: Skips frames if processing is in progress (latest frame priority)
     private func processLeftOnlyMono(_ pixelBuffer: CVPixelBuffer, pts: CMTime, duration: CMTime) async {
-        // Check if already processing (latest frame priority)
-        let isProcessing = await MainActor.run { isProcessingSplitSBS }
-        guard !isProcessing else {
-            await MainActor.run {
-                latestPendingSplitSBSFrame = (pixelBuffer, pts, duration)
-                logger.debug("[SplitSBS] Frame queued (processing in progress)")
-            }
-            return
-        }
-
-        // Mark as processing
-        await MainActor.run { isProcessingSplitSBS = true }
-
-        defer {
-            Task { @MainActor [weak self] in
-                guard let self = self else { return }
-                self.isProcessingSplitSBS = false
-
-                // CRITICAL: Don't process pending frames if cleanup is in progress
-                guard !self.isCleaningUp else {
-                    self.latestPendingSplitSBSFrame = nil
-                    return
-                }
-
-                // Process pending frame if available
-                if let pending = self.latestPendingSplitSBSFrame {
-                    self.latestPendingSplitSBSFrame = nil
-                    self.logger.debug("[SplitSBS] Processing pending frame")
-                    await self.processLeftOnlyMono(pending.0, pts: pending.1, duration: pending.2)
-                }
-            }
-        }
-
-        // Process frame with performance measurement
         let player = await MainActor.run { videoPlayer }
         let frames = await MainActor.run { framesProcessed }
 
@@ -291,6 +490,21 @@ public final class EndoscopeRenderPipeline: ObservableObject {
             if frames == 1 {
                 await MainActor.run {
                     logger.error("VideoPlayer not available in Left-only Mono mode")
+                }
+            }
+            return
+        }
+
+        // Check if renderer is ready for more data (backpressure control)
+        let isReady = await MainActor.run { player.videoRenderer.isReadyForMoreMediaData }
+        guard isReady else {
+            // Renderer is busy, skip this frame to prevent queue buildup
+            await MainActor.run { [weak self] in
+                guard let self = self else { return }
+                self.framesSkipped += 1
+                if self.framesSkipped % 30 == 0 || self.framesSkipped < 10 {
+                    let skipRate = Double(self.framesSkipped) / Double(frames) * 100
+                    self.logger.warning("[SplitSBS] Renderer backpressure: \(self.framesSkipped) frames skipped (\(String(format: "%.1f", skipRate))%)")
                 }
             }
             return
@@ -304,9 +518,12 @@ public final class EndoscopeRenderPipeline: ObservableObject {
 
         // Extract left eye only (runs on background with cached VTPixelTransferSession)
         guard let monoBuffer = helper.makeLeftEyeMono(from: pixelBuffer) else {
-            if frames == 1 {
-                await MainActor.run {
-                    logger.error("Failed to extract left eye from SBS")
+            await MainActor.run { [weak self] in
+                guard let self = self else { return }
+                self.framesSkipped += 1
+                // Log all failures, not just the first one
+                if self.framesSkipped % 30 == 0 || self.framesSkipped < 10 {
+                    self.logger.error("[SplitSBS] Failed to extract left eye (frame #\(frames), \(self.framesSkipped) failures)")
                 }
             }
             return
@@ -348,49 +565,38 @@ public final class EndoscopeRenderPipeline: ObservableObject {
     /// Software split: SBS → left/right tagged buffers → stereo sample buffer
     /// Supports both full1080 and half1080
     /// OPTIMIZED: Runs on background thread with cached VTPixelTransferSession
-    /// Real-time optimized: Skips frames if processing is in progress (latest frame priority)
     private func processStereo3D(_ pixelBuffer: CVPixelBuffer, pts: CMTime, duration: CMTime) async {
-        // Check if already processing (latest frame priority)
-        let isProcessing = await MainActor.run { isProcessingStereo3D }
-        guard !isProcessing else {
-            await MainActor.run {
-                latestPendingStereo3DFrame = (pixelBuffer, pts, duration)
-                logger.debug("[Stereo3D] Frame queued (processing in progress)")
+        let player = await MainActor.run { videoPlayer }
+        let frames = await MainActor.run { framesProcessed }
+
+        // DEBUG: Log first 10 frames only
+        if frames <= 10 {
+            logger.info("🔍 [Stereo3D] Frame #\(frames) - START processing")
+        }
+
+        guard let player = player else {
+            if frames == 1 {
+                logger.error("❌ [Stereo3D] VideoPlayer not available")
             }
             return
         }
 
-        // Mark as processing
-        await MainActor.run { isProcessingStereo3D = true }
+        // Check if renderer is ready for more data (backpressure control)
+        let isReady = await MainActor.run { player.videoRenderer.isReadyForMoreMediaData }
 
-        defer {
-            Task { @MainActor [weak self] in
-                guard let self = self else { return }
-                self.isProcessingStereo3D = false
-
-                // CRITICAL: Don't process pending frames if cleanup is in progress
-                guard !self.isCleaningUp else {
-                    self.latestPendingStereo3DFrame = nil
-                    return
-                }
-
-                // Process pending frame if available
-                if let pending = self.latestPendingStereo3DFrame {
-                    self.latestPendingStereo3DFrame = nil
-                    self.logger.debug("[Stereo3D] Processing pending frame")
-                    await self.processStereo3D(pending.0, pts: pending.1, duration: pending.2)
-                }
-            }
+        if frames <= 10 {
+            logger.debug("🔍 [Stereo3D] Frame #\(frames) - Renderer ready: \(isReady)")
         }
 
-        // Process frame with performance measurement
-        let player = await MainActor.run { videoPlayer }
-        let frames = await MainActor.run { framesProcessed }
-
-        guard let player = player else {
-            if frames == 1 {
-                await MainActor.run {
-                    logger.error("VideoPlayer not available in Stereo 3D mode")
+        guard isReady else {
+            // Renderer is busy, skip this frame to prevent queue buildup
+            await MainActor.run { [weak self] in
+                guard let self = self else { return }
+                self.framesSkipped += 1
+                // Log backpressure periodically
+                if self.framesSkipped % 30 == 0 || self.framesSkipped < 5 {
+                    let skipRate = Double(self.framesSkipped) / Double(frames) * 100
+                    self.logger.warning("[Stereo3D] Backpressure: \(self.framesSkipped) frames skipped (\(String(format: "%.1f", skipRate))%)")
                 }
             }
             return
@@ -409,14 +615,22 @@ public final class EndoscopeRenderPipeline: ObservableObject {
         // Create stereo sample buffer using software split
         // CRITICAL: This runs on BACKGROUND thread with cached VTPixelTransferSession
         // No more creating/destroying session every frame = massive performance gain
+
+        if frames <= 10 {
+            logger.debug("🔍 [Stereo3D] Frame #\(frames) - Creating stereo sample buffer...")
+        }
+
         guard let stereoSample = helper.makeStereoSampleBuffer(
             from: pixelBuffer,
             pts: pts,
             duration: duration
         ) else {
-            if frames == 1 {
-                await MainActor.run {
-                    logger.error("Failed to create stereo sample buffer")
+            // Log failures periodically
+            await MainActor.run { [weak self] in
+                guard let self = self else { return }
+                self.framesSkipped += 1
+                if self.framesSkipped % 30 == 0 || self.framesSkipped < 5 {
+                    self.logger.error("❌ [Stereo3D] makeStereoSampleBuffer failed (frame #\(frames), \(self.framesSkipped) failures)")
                 }
             }
             return
@@ -428,6 +642,12 @@ public final class EndoscopeRenderPipeline: ObservableObject {
         // Enqueue to VideoPlayer (must be on main thread)
         await MainActor.run {
             player.enqueueSample(stereoSample)
+        }
+
+        if frames == 1 {
+            await MainActor.run {
+                logger.info("✅ [Stereo3D] Frame #\(frames) - First frame enqueued")
+            }
         }
 
         // Performance logging

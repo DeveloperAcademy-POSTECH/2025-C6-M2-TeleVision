@@ -49,8 +49,9 @@ public class HEVCVideoEncoder: NSObject, LKRTCVideoEncoder {
     // Encoder callback
     private var encoderCallback: ((LKRTCEncodedImage, LKRTCCodecSpecificInfo) -> Bool)?
 
-    // Frame counter
+    // Frame counter (resets periodically to prevent overflow)
     private var frameCount: Int = 0
+    private let frameCounterResetInterval: Int = 18000  // Reset every 18000 frames (10 minutes at 30fps)
 
     // Settings
     private var width: Int32 = 0
@@ -191,8 +192,16 @@ public class HEVCVideoEncoder: NSObject, LKRTCVideoEncoder {
         }
 
         frameCount += 1
+
+        // Periodic counter reset
+        if frameCount >= frameCounterResetInterval {
+            logger.info("🔄 Resetting HEVC frame counter (encoded: \(self.frameCount))")
+            frameCount = 0
+        }
+
+        // Log periodically (less frequently)
         if frameCount % LoggingInterval.standardFrames == 0 {
-            logger.info("Encoded \(self.frameCount) HEVC frames")
+            logger.debug("Encoded \(self.frameCount) HEVC frames")
         }
 
         return 0
@@ -371,9 +380,11 @@ public class HEVCVideoEncoder: NSObject, LKRTCVideoEncoder {
         if !success {
             logger.error("Encoder callback failed - frame type: \(isKeyframe ? "KEY" : "DELTA"), size: \(annexBData.count) bytes")
         } else {
-            // Log frame size more frequently to monitor bitrate
-            if frameCount <= LoggingInterval.initialFrames || frameCount % LoggingInterval.warningFrames == 0 {
+            // Log frame size only for initial frames and keyframes
+            if frameCount <= LoggingInterval.initialFrames {
                 logger.info("Frame #\(self.frameCount): \(isKeyframe ? "KEY" : "DELTA"), \(annexBData.count) bytes")
+            } else if isKeyframe {
+                logger.debug("Frame #\(self.frameCount): KEY, \(annexBData.count) bytes")
             }
         }
     }

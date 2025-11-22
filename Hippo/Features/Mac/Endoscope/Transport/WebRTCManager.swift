@@ -20,7 +20,8 @@ public final class WebRTCManager: NSObject, IVideoTransport {
 
     private enum ConnectionConstants {
         static let disconnectionGracePeriod: TimeInterval = 10.0
-        static let statsInterval: TimeInterval = 1.0
+        // OPTIMIZED: Reduced stats polling frequency to minimize overhead
+        static let statsInterval: TimeInterval = 5.0  // Was 1.0s, now 5.0s
         static let statsLogDelay: TimeInterval = 2.0
     }
 
@@ -59,6 +60,9 @@ public final class WebRTCManager: NSObject, IVideoTransport {
 
     private let rtcQueue: DispatchQueue
 
+    /// OPTIMIZED: Background queue for stats collection (low priority)
+    private let statsQueue: DispatchQueue
+
     // MARK: Remote candidate queueing
 
     private var pendingRemoteCandidates: [LKRTCIceCandidate] = []
@@ -78,6 +82,11 @@ public final class WebRTCManager: NSObject, IVideoTransport {
         self.rtcQueue = DispatchQueue(
             label: "com.television.hippo.webrtc",
             qos: .userInteractive
+        )
+        // OPTIMIZED: Stats collection on low-priority background queue
+        self.statsQueue = DispatchQueue(
+            label: "com.television.hippo.webrtc.stats",
+            qos: .utility  // Low priority for non-critical stats
         )
         super.init()
     }
@@ -219,13 +228,20 @@ public final class WebRTCManager: NSObject, IVideoTransport {
 
         frameCount += 1
 
-        // Log periodically
-        if frameCount % LoggingInterval.standardFrames == 0 {
-            logger.info("Sent \(self.frameCount) frames to videoSource, track enabled: \(videoTrack.isEnabled)")
+        // Periodic counter reset
+        if frameCount >= frameCounterResetInterval {
+            logger.info("🔄 Resetting WebRTC frame counter (sent: \(self.frameCount))")
+            frameCount = 0
+        }
+
+        // Log periodically (less frequently)
+        if frameCount % (LoggingInterval.standardFrames * 5) == 0 {
+            logger.debug("Sent \(self.frameCount) frames to videoSource, track enabled: \(videoTrack.isEnabled)")
         }
     }
 
     private var frameCount: Int = 0
+    private let frameCounterResetInterval: Int = 18000  // Reset every 18000 frames (10 minutes at 30fps)
 
     // MARK: - Private: Peer Connection
 
@@ -313,9 +329,15 @@ public final class WebRTCManager: NSObject, IVideoTransport {
 
         let encoding = parameters.encodings[0]
 
+        // OPTIMIZED: Bitrate configuration for medical streaming
         encoding.maxBitrateBps = NSNumber(value: config.maxBitrate)
         encoding.minBitrateBps = NSNumber(value: config.minBitrate)
-        encoding.maxFramerate = NSNumber(value: 60)
+
+        // OPTIMIZED: Cap at 30fps for Half SBS 1/4 mode (balance quality vs bandwidth)
+        encoding.maxFramerate = NSNumber(value: 30)  // Was 60, now 30 for optimization
+
+        // OPTIMIZED: Adaptive bitrate for network fluctuations
+        encoding.networkPriority = .high
 
         // P0.1: Use configurable downsample factor
         let factor = Double(config.resolutionDownsampleFactor)
@@ -327,10 +349,13 @@ public final class WebRTCManager: NSObject, IVideoTransport {
         sender.parameters = parameters
 
         logger.info("""
-        Encoding configured:
+        ⚙️ OPTIMIZED Encoding configured:
            Target: \(self.config.targetBitrate / 1_000_000) Mbps
            Max: \(self.config.maxBitrate / 1_000_000) Mbps
+           Min: \(self.config.minBitrate / 1_000_000) Mbps
+           Max FPS: 30 (optimized for Half SBS 1/4)
            Downsample: \(factor)x
+           Network Priority: High
         """)
     }
 
@@ -384,8 +409,8 @@ extension WebRTCManager: LKRTCPeerConnectionDelegate {
             state = .connected
             cancelDisconnectionTimer()
 
-            // Log stats after connection
-            DispatchQueue.main.asyncAfter(deadline: .now() + ConnectionConstants.statsLogDelay) { [weak self] in
+            // OPTIMIZED: Log stats on background queue after connection
+            statsQueue.asyncAfter(deadline: .now() + ConnectionConstants.statsLogDelay) { [weak self] in
                 self?.peerConnection?.statistics { report in
                     for (key, value) in report.statistics {
                         let valueStr = String(describing: value)
