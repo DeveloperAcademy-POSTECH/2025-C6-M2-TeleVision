@@ -13,15 +13,17 @@ struct EndoscopeStreamWindow: View {
     @Environment(\.dismiss) private var dismiss
     @StateObject private var viewModel = EndoscopeStreamViewModel()
     @State private var showSettings = false
-    @State private var viewMode: EndoscopeViewMode = .rawStream
+
+    // UI state for coordinated mode transitions (shared with view and control bar)
+    @StateObject private var streamUIState = StreamUIState(initialMode: .rawStream)
 
     var body: some View {
         ZStack(alignment: .top) {
-            // Main video view
+            // Main video view (uses shared uiState)
             EndoscopeStreamView(
                 receiver: viewModel.webRTCReceiver,
                 isVisible: viewModel.connectionStatus.isActive,
-                viewMode: $viewMode
+                uiState: streamUIState
             )
             .frame(minWidth: 900, minHeight: 600)
 
@@ -40,8 +42,11 @@ struct EndoscopeStreamWindow: View {
             if viewModel.connectionStatus == .connected {
                 VStack {
                     HStack(spacing: 12) {
-                        // Left: View mode toggle (Raw / SplitSBS / Stereo3D)
-                        ViewModeToggle(mode: $viewMode)
+                        // Left: View mode toggle
+                        ViewModeToggle(
+                            uiState: streamUIState,
+                            pipeline: viewModel.webRTCReceiver.renderPipeline
+                        )
 
                         Spacer()
 
@@ -61,13 +66,13 @@ struct EndoscopeStreamWindow: View {
                         .buttonStyle(.plain)
                         .hoverEffect()
                     }
-                    .padding(.horizontal, 24)
-                    .padding(.vertical, 16)
+                    .padding(.horizontal, 20)
+                    .padding(.vertical, 12)
                     .background(.ultraThinMaterial)
-                    .cornerRadius(16)
-                    .shadow(color: .black.opacity(0.2), radius: 8, y: 4)
-                    .padding(.top, 10)  // Moved closer to top
-                    .padding(.horizontal, 40)
+                    .cornerRadius(12)
+                    .shadow(color: .black.opacity(0.15), radius: 6, y: 2)
+                    .padding(.top, 40)  // Increased from 10 to 40
+                    .padding(.horizontal, 50)  // Increased from 40 to 50
 
                     Spacer()
                 }
