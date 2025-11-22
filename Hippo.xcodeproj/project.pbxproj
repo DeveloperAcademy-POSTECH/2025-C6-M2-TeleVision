@@ -281,6 +281,7 @@
 		2581FF782EC20B030059678D /* ConnectionSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2581FF762EC20B030059678D /* ConnectionSettingsView.swift */; };
 		2581FF7A2EC2753A0059678D /* EndoscopeImmersiveSpace.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2581FF792EC2753A0059678D /* EndoscopeImmersiveSpace.swift */; };
 		25869FF12EC6CD3200882FC5 /* WakeWordListener.swift in Sources */ = {isa = PBXBuildFile; fileRef = 25869FEF2EC6CD3200882FC5 /* WakeWordListener.swift */; };
+		25B5AD982ED1DA83008F1261 /* StreamUIState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 25B5AD972ED1DA83008F1261 /* StreamUIState.swift */; };
 		25B8D6872ECBC07400676A3A /* ScalingMode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 25B8D6862ECBC07400676A3A /* ScalingMode.swift */; };
 		25B8D6892ECBC16100676A3A /* ScalingSectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 25B8D6882ECBC16100676A3A /* ScalingSectionView.swift */; };
 		25E78B602EB90D4600D8CAD2 /* OperationStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = 25E78B5D2EB90D4600D8CAD2 /* OperationStatus.swift */; };
@@ -674,6 +675,7 @@
 		2581FF762EC20B030059678D /* ConnectionSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConnectionSettingsView.swift; sourceTree = "<group>"; };
 		2581FF792EC2753A0059678D /* EndoscopeImmersiveSpace.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EndoscopeImmersiveSpace.swift; sourceTree = "<group>"; };
 		25869FEF2EC6CD3200882FC5 /* WakeWordListener.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WakeWordListener.swift; sourceTree = "<group>"; };
+		25B5AD972ED1DA83008F1261 /* StreamUIState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StreamUIState.swift; sourceTree = "<group>"; };
 		25B8D6862ECBC07400676A3A /* ScalingMode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScalingMode.swift; sourceTree = "<group>"; };
 		25B8D6882ECBC16100676A3A /* ScalingSectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScalingSectionView.swift; sourceTree = "<group>"; };
 		25E78B542EB90D4600D8CAD2 /* Operation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Operation.swift; sourceTree = "<group>"; };
@@ -1989,6 +1991,7 @@
 		E0A1B0012EC5D00000000001 /* Endoscope */ = {
 			isa = PBXGroup;
 			children = (
+				25B5AD972ED1DA83008F1261 /* StreamUIState.swift */,
 				253881C72ECA3C00001442C9 /* EndoscopeViewMode.swift */,
 				253881C82ECA3C00001442C9 /* RawStreamView.swift */,
 				253881C92ECA3C00001442C9 /* SplitSBSView.swift */,
@@ -2295,6 +2298,7 @@
 				25E78B6C2EB90D4600D8CAD2 /* OperationStatus.swift in Sources */,
 				25E78B6D2EB90D4600D8CAD2 /* Operation.swift in Sources */,
 				25E78B6E2EB90D4600D8CAD2 /* OperationAsset.swift in Sources */,
+				25B5AD982ED1DA83008F1261 /* StreamUIState.swift in Sources */,
 				25E78B6F2EB90D4600D8CAD2 /* OperationRecording.swift in Sources */,
 				25E78B702EB90D4600D8CAD2 /* OperationError.swift in Sources */,
 				25E78B712EB90D4600D8CAD2 /* OperationAssetExtension.swift in Sources */,
