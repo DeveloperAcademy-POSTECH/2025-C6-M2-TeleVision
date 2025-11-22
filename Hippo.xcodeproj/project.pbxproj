@@ -33,9 +33,6 @@
 		144254372EAA9FF000583CC3 /* OperationState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 144254362EAA9FEB00583CC3 /* OperationState.swift */; };
 		144254382EAA9FF000583CC3 /* OperationState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 144254362EAA9FEB00583CC3 /* OperationState.swift */; };
 		144254392EAA9FF000583CC3 /* OperationState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 144254362EAA9FEB00583CC3 /* OperationState.swift */; };
-		144254652EAAC44900583CC3 /* StartOperationButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 144254642EAAC44900583CC3 /* StartOperationButton.swift */; };
-		144254662EAAC44900583CC3 /* StartOperationButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 144254642EAAC44900583CC3 /* StartOperationButton.swift */; };
-		144254672EAAC44900583CC3 /* StartOperationButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 144254642EAAC44900583CC3 /* StartOperationButton.swift */; };
 		144254692EAAC61F00583CC3 /* WindowIDs.swift in Sources */ = {isa = PBXBuildFile; fileRef = 144254682EAAC61900583CC3 /* WindowIDs.swift */; };
 		1442546A2EAAC61F00583CC3 /* WindowIDs.swift in Sources */ = {isa = PBXBuildFile; fileRef = 144254682EAAC61900583CC3 /* WindowIDs.swift */; };
 		1442546B2EAAC61F00583CC3 /* WindowIDs.swift in Sources */ = {isa = PBXBuildFile; fileRef = 144254682EAAC61900583CC3 /* WindowIDs.swift */; };
@@ -522,7 +519,6 @@
 		144254302EA9FF7800583CC3 /* OperationContext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OperationContext.swift; sourceTree = "<group>"; };
 		144254322EAA232300583CC3 /* OperationViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OperationViewModel.swift; sourceTree = "<group>"; };
 		144254362EAA9FEB00583CC3 /* OperationState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OperationState.swift; sourceTree = "<group>"; };
-		144254642EAAC44900583CC3 /* StartOperationButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StartOperationButton.swift; sourceTree = "<group>"; };
 		144254682EAAC61900583CC3 /* WindowIDs.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WindowIDs.swift; sourceTree = "<group>"; };
 		1446FB972EAE6906000BCF61 /* CircleIconButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CircleIconButton.swift; sourceTree = "<group>"; };
 		1446FB9D2EAE69A4000BCF61 /* RecordingIndicator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecordingIndicator.swift; sourceTree = "<group>"; };
@@ -884,14 +880,6 @@
 			path = Context;
 			sourceTree = "<group>";
 		};
-		144254632EAAC43600583CC3 /* Buttons */ = {
-			isa = PBXGroup;
-			children = (
-				144254642EAAC44900583CC3 /* StartOperationButton.swift */,
-			);
-			path = Buttons;
-			sourceTree = "<group>";
-		};
 		1446FB9B2EAE6987000BCF61 /* Components */ = {
 			isa = PBXGroup;
 			children = (
@@ -1083,7 +1071,6 @@
 				14DE512F2EB60DA50027D9A0 /* Atoms */,
 				14A17F9A2EB34F51009D16CF /* Molecules */,
 				14A17F9B2EB34F59009D16CF /* Organisms */,
-				144254632EAAC43600583CC3 /* Buttons */,
 			);
 			path = Components;
 			sourceTree = "<group>";
@@ -2178,7 +2165,6 @@
 				27AD7AD42EB5ACD600E84809 /* OpacityControlPanel.swift in Sources */,
 				14F6B0342EAAC73F003F28EB /* ImmersiveSurgeryView.swift in Sources */,
 				2581FF682EC1A9140059678D /* BonjourServiceDiscovery.swift in Sources */,
-				144254662EAAC44900583CC3 /* StartOperationButton.swift in Sources */,
 				144254342EAA232300583CC3 /* OperationViewModel.swift in Sources */,
 				C04678142EA00B1F00D160DA /* Patient.swift in Sources */,
 				27AD7AE52EB5BEA400E84809 /* OpacityControlPanelHeader.swift in Sources */,
@@ -2419,7 +2405,6 @@
 				25E78BB22EB92A2E00D8CAD2 /* UpdateOperationCommand.swift in Sources */,
 				C0F97B2B2EA439080063E159 /* UpdatePatient.swift in Sources */,
 				C04678352EA00B3A00D160DA /* PatientRepositoryImpl.swift in Sources */,
-				144254652EAAC44900583CC3 /* StartOperationButton.swift in Sources */,
 				1446FB992EAE6911000BCF61 /* CircleIconButton.swift in Sources */,
 				1442546B2EAAC61F00583CC3 /* WindowIDs.swift in Sources */,
 				2786232F2EB78F2900F97BE3 /* AssetListScrollView.swift in Sources */,
@@ -2485,7 +2470,6 @@
 				25B8D6872ECBC07400676A3A /* ScalingMode.swift in Sources */,
 				06ADD9D22EB98E730013665B /* PatientInputView.swift in Sources */,
 				0667A54E2EB8961C00D7BDF3 /* TodaysSurgeryView.swift in Sources */,
-				144254672EAAC44900583CC3 /* StartOperationButton.swift in Sources */,
 				C0F97AA92EA401160063E159 /* PatientMapper.swift in Sources */,
 				0667A54C2EB8833D00D7BDF3 /* PatientDetailView.swift in Sources */,
 				2581FF462EBE32200059678D /* SignalingClient.swift in Sources */,
