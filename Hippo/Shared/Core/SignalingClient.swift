@@ -121,6 +121,10 @@ final class SignalingClient {
     /// P0.3: Reconnection state
     private(set) var reconnectionState: ReconnectionState = .idle
 
+    // Keepalive ping timer to prevent WebSocket timeout
+    private var pingTimer: Timer?
+    private let pingInterval: TimeInterval = 15.0  // Send ping every 15 seconds
+
     // MARK: Initialization
 
     init(serverURL: URL, reconnectionPolicy: ReconnectionPolicy = .standard) {
@@ -128,8 +132,9 @@ final class SignalingClient {
         self.reconnectionPolicy = reconnectionPolicy
 
         let config = URLSessionConfiguration.default
-        config.timeoutIntervalForRequest = 30
-        config.timeoutIntervalForResource = 60
+        // WebSocket is a long-lived connection, increase timeouts significantly
+        config.timeoutIntervalForRequest = 120  // 30 → 120 seconds
+        config.timeoutIntervalForResource = 300  // 60 → 300 seconds (5 minutes)
 
         self.session = URLSession(configuration: config)
     }
@@ -190,6 +195,7 @@ final class SignalingClient {
                         self.logger.info("✅ Registered as '\(role)'")
                         self.state = .connected
                         self.resetReconnectionState()  // P0.3: Reset on success
+                        self.startPingTimer()  // Start keepalive pings
                     }
                 }
             }
@@ -198,6 +204,7 @@ final class SignalingClient {
 
     func disconnect() {
         cancelReconnection()  // P0.3: Cancel any pending reconnection
+        stopPingTimer()  // Stop keepalive pings
         // Immediately cancel WebSocket without waiting for server response
         // This prevents blocking and timeout issues during shutdown
         webSocketTask?.cancel()
@@ -324,6 +331,7 @@ final class SignalingClient {
 
     private func handleConnectionFailure(_ error: Error) {
         state = .failed
+        stopPingTimer()  // Stop keepalive pings when connection fails
 
         guard self.reconnectionPolicy.canRetry(currentAttempt: self.currentAttempt) else {
             logger.error("❌ Max reconnection attempts reached (\(self.reconnectionPolicy.maxAttempts))")
@@ -371,5 +379,35 @@ final class SignalingClient {
     private func cancelReconnectionTimer() {
         reconnectionTimer?.invalidate()
         reconnectionTimer = nil
+    }
+
+    // MARK: - Keepalive Ping
+
+    private func startPingTimer() {
+        stopPingTimer()  // Cancel any existing timer
+
+        pingTimer = Timer.scheduledTimer(withTimeInterval: pingInterval, repeats: true) { [weak self] _ in
+            guard let self = self else { return }
+            self.sendPing()
+        }
+
+        logger.debug("⏱️ Started WebSocket keepalive timer (interval: \(self.pingInterval)s)")
+    }
+
+    private func stopPingTimer() {
+        pingTimer?.invalidate()
+        pingTimer = nil
+    }
+
+    private func sendPing() {
+        webSocketTask?.sendPing { [weak self] error in
+            if let error = error {
+                self?.logger.warning("⚠️ Ping failed: \(error.localizedDescription)")
+                // Ping failure indicates connection is broken, trigger reconnection
+                self?.handleConnectionFailure(error)
+            } else {
+                self?.logger.debug("🏓 Ping sent successfully")
+            }
+        }
     }
 }

@@ -26,6 +26,11 @@ public final class StereoVideoPlayer {
     private var framesEnqueued: Int = 0
     private var isRendererReady: Bool = false
 
+    /// Buffer management - flush periodically to prevent memory buildup
+    /// Conservative approach: only periodic flush, no aggressive emergency flush
+    private let baseFlushInterval: Int = 1350  // Flush every 1350 frames (45 seconds at 30fps)
+    private var framesSinceLastFlush: Int = 0
+
     /// Task for observing flush notifications (must be cancelled on cleanup)
     private var notificationTask: Task<Void, Never>?
 
@@ -71,6 +76,7 @@ public final class StereoVideoPlayer {
         notificationTask = nil
 
         framesEnqueued = 0
+        framesSinceLastFlush = 0
         isRendererReady = false
 
         logger.info("Playback stopped and renderer flushed")
@@ -114,11 +120,19 @@ public final class StereoVideoPlayer {
         // Enqueue to renderer
         videoRenderer.enqueue(sample)
         framesEnqueued += 1
+        framesSinceLastFlush += 1
 
         // Log first frame success
         if framesEnqueued == 1 {
             logger.info("✅ First stereo frame enqueued to AVSampleBufferVideoRenderer")
             isRendererReady = true
+        }
+
+        // Conservative periodic buffer flush
+        if framesSinceLastFlush >= baseFlushInterval {
+            videoRenderer.flush()
+            framesSinceLastFlush = 0
+            logger.info("🧹 Periodic buffer flush at frame \(self.framesEnqueued) (45s interval)")
         }
     }
 
@@ -179,13 +193,10 @@ public final class StereoVideoPlayer {
             return
         }
 
-        // Add stereo hint (Hero Eye = Left)
-        CMSetAttachment(
-            formatDesc,
-            key: kCMFormatDescriptionExtension_HeroEye as CFString,
-            value: kCMFormatDescriptionHeroEye_Left as CFTypeRef,
-            attachmentMode: kCMAttachmentMode_ShouldPropagate
-        )
+        // CRITICAL FIX: DO NOT add HeroEye attachment for 2D content (Raw/Split SBS)
+        // HeroEye is ONLY for stereo 3D content (CMTaggedBufferGroup)
+        // Adding HeroEye to 2D mono buffers causes FigVideoQueue err=-12080 crash
+        // Raw SBS and Split SBS are both 2D content and should not have stereo hints
 
         // Create timing info
         var timing = CMSampleTimingInfo(
@@ -209,7 +220,7 @@ public final class StereoVideoPlayer {
             return
         }
 
-        // Set display immediately flag
+        // Set display immediately - synchronizer timing doesn't work with synthetic PTS
         if let attachments = CMSampleBufferGetSampleAttachmentsArray(sb, createIfNecessary: true) {
             let arr = attachments as NSArray
             if let dict = arr.firstObject as? NSMutableDictionary {
@@ -220,11 +231,19 @@ public final class StereoVideoPlayer {
 
         videoRenderer.enqueue(sb)
         framesEnqueued += 1
+        framesSinceLastFlush += 1
 
         if framesEnqueued == 1 {
             logger.info("First frame enqueued")
         } else if framesEnqueued % 60 == 0 {
             logger.debug("Enqueued \(self.framesEnqueued) frames")
+        }
+
+        // Conservative periodic buffer flush
+        if framesSinceLastFlush >= baseFlushInterval {
+            videoRenderer.flush()
+            framesSinceLastFlush = 0
+            logger.info("🧹 Periodic buffer flush at frame \(self.framesEnqueued) (45s interval)")
         }
     }
 }
