@@ -7,12 +7,12 @@ import SwiftData
 /// Primary Key: id (unique)
 @Model
 final class SDOperationRecording {
-    @Attribute(.unique) var id: String
+    var id: String = UUID().uuidString
 
-    @Attribute(.externalStorage) var videoData: Data
+    @Attribute(.externalStorage) var videoData: Data = Data()
     @Attribute(.externalStorage) var thumbnailData: Data?
 
-    var createdAt: Date
+    var createdAt: Date = Date()
 
     var operation: SDOperation?
 
