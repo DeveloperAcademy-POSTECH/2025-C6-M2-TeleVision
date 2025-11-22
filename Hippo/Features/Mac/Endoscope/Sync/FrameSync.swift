@@ -54,19 +54,15 @@ public final class FrameSync: FrameSyncing {
     // MARK: Configuration
 
     /// Maximum time difference for frame matching
-    /// OPTIMIZED: Balanced at 120ms for Mac + iPhone camera combinations
-    /// Handles camera start time differences while maintaining good sync quality
-    private let matchTolerance: CMTime = CMTime(value: 120, timescale: 1000)  // 120ms
+    /// INCREASED: 120ms → 250ms to handle camera start time drift
+    /// Accommodates synthetic PTS offset while maintaining acceptable sync quality
+    private let matchTolerance: CMTime = CMTime(value: 250, timescale: 1000)  // 250ms
 
     /// Maximum age for buffered frames before dropping
-    /// OPTIMIZED: Balanced at 500ms to handle camera initialization delays
-    /// Prevents latency buildup while allowing time for both cameras to start
     private let maxFrameAge: CMTime = CMTime(value: 500, timescale: 1000)  // 500ms
 
     /// Maximum buffer size per source
-    /// OPTIMIZED: Reduced from 10 to 5 frames (balanced for camera start time differences)
-    /// At 1080p (~8MB per frame): 5 frames × 2 sources = ~80MB (was ~160MB)
-    /// Buffer size 5 handles camera start delays while still saving 50% memory
+    /// At 1080p (~8MB per frame): 5 frames × 2 sources = ~80MB
     private let maxBufferSize: Int = 5
 
     // MARK: Properties
@@ -391,14 +387,27 @@ public final class FrameSync: FrameSyncing {
     private func logStatsIfNeeded() {
         let now = Date()
         if now.timeIntervalSince(lastStatsLog) >= 5.0 {  // Every 5 seconds
+
+            // Calculate drop rate
+            let totalFrames = _stats.leftFrameCount + _stats.rightFrameCount
+            let totalDrops = _stats.leftDropCount + _stats.rightDropCount
+            let dropRate = totalFrames > 0 ? Double(totalDrops) / Double(totalFrames) * 100.0 : 0.0
+
             logger.info("""
-            📊 FrameSync Stats:
+            📊 FrameSync Stats (5s):
                Left: \(self._stats.leftFrameCount) frames, \(self._stats.leftDropCount) dropped
                Right: \(self._stats.rightFrameCount) frames, \(self._stats.rightDropCount) dropped
                Synced: \(self._stats.syncedPairCount) pairs
-               Avg delta: \(String(format: "%.2f", self._stats.averageTimeDelta))ms
-               Buffer: L=\(self.leftBuffer.count), R=\(self.rightBuffer.count)
+               Drop rate: \(String(format: "%.1f", dropRate))%
+               Avg delta: \(String(format: "%.1f", self._stats.averageTimeDelta))ms
+               Buffers: L=\(self.leftBuffer.count), R=\(self.rightBuffer.count)
             """)
+
+            // Warning for high drop rate
+            if dropRate > 50.0 {
+                logger.warning("⚠️ High drop rate (\(String(format: "%.1f", dropRate))%) - consider checking PTS synchronization")
+            }
+
             lastStatsLog = now
         }
     }
