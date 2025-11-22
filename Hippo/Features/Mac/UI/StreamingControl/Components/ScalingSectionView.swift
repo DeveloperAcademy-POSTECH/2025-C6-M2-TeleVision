@@ -2,35 +2,60 @@
 //  ScalingSectionView.swift
 //  HippoMac
 //
-//  Resolution scaling selection section component
+//  Resolution scaling and bitrate selection section component
 //
 
 import SwiftUI
 
 struct ScalingSectionView: View {
     @Binding var selectedScaling: ScalingMode
+    @Binding var isHalfBitrateEnabled: Bool
 
     var body: some View {
         VStack(alignment: .leading, spacing: 20) {
-            Text("Resolution Scale")
+            Text("Resolution & Bitrate")
                 .font(.system(size: 28, weight: .bold))
                 .foregroundColor(.black)
 
-            HStack(spacing: 8) {
-                ForEach(ScalingMode.allCases.filter { $0 != .third }, id: \.self) { mode in
-                    ScalingButton(
-                        mode: mode,
-                        isSelected: selectedScaling == mode,
-                        action: { selectedScaling = mode }
+            VStack(alignment: .leading, spacing: 12) {
+                // Resolution Scale
+                VStack(alignment: .leading, spacing: 8) {
+                    Text("Resolution Scale")
+                        .font(.system(size: 14, weight: .medium))
+                        .foregroundColor(.secondary)
+
+                    HStack(spacing: 8) {
+                        ForEach(ScalingMode.allCases.filter { [.none, .half, .quarter].contains($0) }, id: \.self) { mode in
+                            ScalingButton(
+                                mode: mode,
+                                isSelected: selectedScaling == mode,
+                                action: { selectedScaling = mode }
+                            )
+                        }
+                    }
+                    .padding(4)
+                    .background(
+                        RoundedRectangle(cornerRadius: 18, style: .continuous)
+                            .fill(Color.white)
+                            .shadow(color: Color.black.opacity(0.08), radius: 8, x: 0, y: 2)
                     )
                 }
+
+                // Bitrate Toggle
+                HStack {
+                    Toggle(isOn: $isHalfBitrateEnabled) {
+                        HStack(spacing: 8) {
+                            Text("Half Bitrate")
+                                .font(.system(size: 14, weight: .medium))
+                            Text(isHalfBitrateEnabled ? "15 Mbps" : "30 Mbps")
+                                .font(.system(size: 13, weight: .regular))
+                                .foregroundColor(.secondary)
+                        }
+                    }
+                    .toggleStyle(.switch)
+                }
+                .padding(.top, 4)
             }
-            .padding(4)
-            .background(
-                RoundedRectangle(cornerRadius: 18, style: .continuous)
-                    .fill(Color.white)
-                    .shadow(color: Color.black.opacity(0.08), radius: 8, x: 0, y: 2)
-            )
         }
         .padding(28)
         .frame(maxWidth: .infinity, alignment: .leading)
