@@ -5,15 +5,17 @@
 //  Created by Hyeok Cho on 11/2/25.
 //
 
+import Dependencies
 import SwiftUI
 
 struct HomeView: View {
     // ViewModel 초기화
     @State private var rootVM = MacRootViewModel()
+    @Dependency(\.syncMonitor) var syncMonitor
+
     @State private var hoveredPatientID: String? = nil
 
     var body: some View {
-
         NavigationSplitView {
             HomeViewSideBar(rootVM: $rootVM, hoveredPatientID: $hoveredPatientID)
                 .background(Color.white)
@@ -33,7 +35,7 @@ struct HomeView: View {
         }
         .toolbar {
             if !rootVM.isTodaysSurgerySelected {
-                //수술 생성 버튼
+                // 수술 생성 버튼
                 Button {
                     rootVM.openOperationCreateSheet()
                 } label: {
@@ -58,8 +60,7 @@ struct HomeView: View {
                 }
             )
         }
-        .sheet(isPresented: $rootVM.navigationState.isPresentingOperationInput)
-        {
+        .sheet(isPresented: $rootVM.navigationState.isPresentingOperationInput) {
             OperationInputView(
                 isPresentingOperationInput: $rootVM.navigationState
                     .isPresentingOperationInput,
@@ -77,16 +78,16 @@ struct HomeView: View {
             )
         }
         .task {
-            // 데이터 로드 (비어 있으면 목업 주입 후 실제 로드)
+            // 데이터 로드
             await rootVM.load()
-
-            // 비어 있으면 목업 데이터 주입
-            if rootVM.homeViewModel.state.items.isEmpty {
-                rootVM.homeViewModel.state.items = [
-                    PatientDisplayModel.MockData
-                ]
+        }
+        .onChange(of: syncMonitor.dataDidChange) {
+            if syncMonitor.dataDidChange {
+                Task {
+                    await rootVM.load()
+                    syncMonitor.resetDataChangeFlag()
+                }
             }
-
         }
     }
 }

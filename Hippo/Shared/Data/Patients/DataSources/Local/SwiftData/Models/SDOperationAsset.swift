@@ -5,25 +5,28 @@ import SwiftData
 
 /// SwiftData model for OperationAsset entity
 /// Primary Key: id (unique)
+/// CloudKit 동기화를 위해 파일 데이터를 직접 저장
 @Model
 final class SDOperationAsset {
-    @Attribute(.unique) var id: String
-    var originalFileName: String
-    @Attribute(.externalStorage) var bookmarkData: Data
-    var createdAt: Date
+    var id: String = UUID().uuidString
+    var originalFileName: String = ""
+    
+    // CloudKit 동기화를 위해 실제 파일 데이터를 저장
+    @Attribute(.externalStorage) var fileData: Data = Data()
+    var createdAt: Date = Date()
 
     var operation: SDOperation?
 
     init(
         id: String,
         originalFileName: String,
-        bookmarkData: Data,
+        fileData: Data,
         createdAt: Date = Date(),
         operation: SDOperation? = nil
     ) {
         self.id = id
         self.originalFileName = originalFileName
-        self.bookmarkData = bookmarkData
+        self.fileData = fileData
         self.createdAt = createdAt
         self.operation = operation
     }
@@ -32,7 +35,7 @@ final class SDOperationAsset {
     func toDomain() -> OperationAsset {
         OperationAsset(
             id: id,
-            bookmarkData: bookmarkData,
+            fileData: fileData,
             originalFileName: originalFileName,
             createdAt: createdAt
         )

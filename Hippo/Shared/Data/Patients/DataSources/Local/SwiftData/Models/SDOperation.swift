@@ -7,22 +7,22 @@ import SwiftData
 /// Primary Key: id (unique)
 @Model
 final class SDOperation {
-    @Attribute(.unique) var id: String
-    var title: String
-    var diagnosis: String
-    var surgeon: String
-    var surgicalSite: String
-    var date: Date
-    var details: String
-    var statusRaw: String // "planned" | "inProgress" | "completed" | "cancelled"
+    var id: String = UUID().uuidString
+    var title: String = ""
+    var diagnosis: String = ""
+    var surgeon: String = ""
+    var surgicalSite: String = ""
+    var date: Date = Date()
+    var details: String = ""
+    var statusRaw: String = OperationStatus.planned.rawValue // "planned" | "inProgress" | "completed" | "cancelled"
 
     var patient: SDPatient?
 
-    @Relationship(deleteRule: .cascade)
-    var assets: [SDOperationAsset] = []
+    @Relationship(deleteRule: .cascade, inverse: \SDOperationAsset.operation)
+    var assets: [SDOperationAsset]? = []
 
-    @Relationship(deleteRule: .cascade)
-    var recordings: [SDOperationRecording] = []
+    @Relationship(deleteRule: .cascade, inverse: \SDOperationRecording.operation)
+    var recordings: [SDOperationRecording]? = []
 
     init(
         id: String,
@@ -55,7 +55,7 @@ extension SDOperation {
             surgicalSite: surgicalSite,
             date: date,
             details: details,
-            operationAssets: assets.map { $0.toDomain() },
+            operationAssets: (assets ?? []).map { $0.toDomain() },
             recordings: [],
             status: OperationStatus(rawValue: statusRaw) ?? .planned
         )
