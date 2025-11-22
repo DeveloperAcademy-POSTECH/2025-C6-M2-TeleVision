@@ -102,7 +102,6 @@
 		149D92662ECA44CA0043B1A2 /* AddRecordingToOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 149D92652ECA44C60043B1A2 /* AddRecordingToOperation.swift */; };
 		149D92672ECA44CA0043B1A2 /* AddRecordingToOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 149D92652ECA44C60043B1A2 /* AddRecordingToOperation.swift */; };
 		149D92682ECA44CA0043B1A2 /* AddRecordingToOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 149D92652ECA44C60043B1A2 /* AddRecordingToOperation.swift */; };
-		149D926A2ECA71040043B1A2 /* dummy_video.mp4 in Resources */ = {isa = PBXBuildFile; fileRef = 149D92692ECA71040043B1A2 /* dummy_video.mp4 */; };
 		149D926D2ECA78AB0043B1A2 /* RecordingPlayerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 149D926C2ECA78780043B1A2 /* RecordingPlayerView.swift */; };
 		149D926F2ECA78AB0043B1A2 /* RecordingPlayerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 149D926C2ECA78780043B1A2 /* RecordingPlayerView.swift */; };
 		149D927A2ECA8A220043B1A2 /* PathType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 149D92792ECA8A170043B1A2 /* PathType.swift */; };
@@ -207,8 +206,8 @@
 		2523A6CA2EC61D8200842508 /* VoiceCommandParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2523A6A82EC61D8200842508 /* VoiceCommandParser.swift */; };
 		2523A6CC2EC6493900842508 /* VoiceControlManager+Executor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2523A6CB2EC6493900842508 /* VoiceControlManager+Executor.swift */; };
 		2523A6CD2EC6493900842508 /* VoiceControlManager+Executor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2523A6CB2EC6493900842508 /* VoiceControlManager+Executor.swift */; };
-		2523A6CF2EC6496400842508 /* VoiceControlMenuButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2523A6CE2EC6496400842508 /* VoiceControlMenuButton.swift */; };
-		2523A6D02EC6496400842508 /* VoiceControlMenuButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2523A6CE2EC6496400842508 /* VoiceControlMenuButton.swift */; };
+		2523A6CF2EC6496400842508 /* OperationMenuButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2523A6CE2EC6496400842508 /* OperationMenuButton.swift */; };
+		2523A6D02EC6496400842508 /* OperationMenuButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2523A6CE2EC6496400842508 /* OperationMenuButton.swift */; };
 		2523A6D82EC6497B00842508 /* VoiceControlViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2523A6D22EC6497B00842508 /* VoiceControlViewModel.swift */; };
 		2523A6D92EC6497B00842508 /* VoiceControlOverlay.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2523A6D52EC6497B00842508 /* VoiceControlOverlay.swift */; };
 		2523A6DA2EC6497B00842508 /* VoiceControlButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2523A6D42EC6497B00842508 /* VoiceControlButton.swift */; };
@@ -558,7 +557,6 @@
 		1494DEA42EA7C851000CD284 /* Date+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Date+Extension.swift"; sourceTree = "<group>"; };
 		149D925D2ECA23D50043B1A2 /* RecordingManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecordingManager.swift; sourceTree = "<group>"; };
 		149D92652ECA44C60043B1A2 /* AddRecordingToOperation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddRecordingToOperation.swift; sourceTree = "<group>"; };
-		149D92692ECA71040043B1A2 /* dummy_video.mp4 */ = {isa = PBXFileReference; lastKnownFileType = file; path = dummy_video.mp4; sourceTree = "<group>"; };
 		149D926C2ECA78780043B1A2 /* RecordingPlayerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecordingPlayerView.swift; sourceTree = "<group>"; };
 		149D92792ECA8A170043B1A2 /* PathType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PathType.swift; sourceTree = "<group>"; };
 		14A17F862EB3138D009D16CF /* PatientDetailHeader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PatientDetailHeader.swift; sourceTree = "<group>"; };
@@ -628,7 +626,7 @@
 		2523A6AB2EC61D8200842508 /* ParseVoiceCommand.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ParseVoiceCommand.swift; sourceTree = "<group>"; };
 		2523A6AC2EC61D8200842508 /* StartVoiceListening.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StartVoiceListening.swift; sourceTree = "<group>"; };
 		2523A6CB2EC6493900842508 /* VoiceControlManager+Executor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "VoiceControlManager+Executor.swift"; sourceTree = "<group>"; };
-		2523A6CE2EC6496400842508 /* VoiceControlMenuButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VoiceControlMenuButton.swift; sourceTree = "<group>"; };
+		2523A6CE2EC6496400842508 /* OperationMenuButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OperationMenuButton.swift; sourceTree = "<group>"; };
 		2523A6D12EC6497B00842508 /* VoiceControlUIState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VoiceControlUIState.swift; sourceTree = "<group>"; };
 		2523A6D22EC6497B00842508 /* VoiceControlViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VoiceControlViewModel.swift; sourceTree = "<group>"; };
 		2523A6D42EC6497B00842508 /* VoiceControlButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VoiceControlButton.swift; sourceTree = "<group>"; };
@@ -921,7 +919,6 @@
 		1446FBA62EAE6B25000BCF61 /* Molecules */ = {
 			isa = PBXGroup;
 			children = (
-				2523A6CE2EC6496400842508 /* VoiceControlMenuButton.swift */,
 				1446FBB02EAE6C20000BCF61 /* RecordButton.swift */,
 				1446FBAC2EAE6BB8000BCF61 /* EndoscopeToggle.swift */,
 				1446FBA82EAE6B51000BCF61 /* PatientInfoHeader.swift */,
@@ -935,6 +932,7 @@
 		1446FBA72EAE6B3E000BCF61 /* Organisms */ = {
 			isa = PBXGroup;
 			children = (
+				2523A6CE2EC6496400842508 /* OperationMenuButton.swift */,
 				1446FBBC2EAE77B0000BCF61 /* SurgeryBottomMenu.swift */,
 				1446FBB82EAE7705000BCF61 /* SurgeryControlBar.swift */,
 				27AD7AE32EB5BEA400E84809 /* OpacityControlPanelHeader.swift */,
@@ -1649,7 +1647,6 @@
 				14DE51512EB771420027D9A0 /* HIPPO.icon */,
 				C02FFA5A2E9FFF6F00F16742 /* MacAssets.xcassets */,
 				C02FFA5B2E9FFF6F00F16742 /* VisionAssets.xcassets */,
-				149D92692ECA71040043B1A2 /* dummy_video.mp4 */,
 			);
 			path = Resources;
 			sourceTree = "<group>";
@@ -1814,7 +1811,6 @@
 		C050AA172EA80E5700352314 /* UI */ = {
 			isa = PBXGroup;
 			children = (
-				2523A6D72EC6497B00842508 /* VoiceControl */,
 				2581FF772EC20B030059678D /* Settings */,
 				C050AA352EA8175C00352314 /* RootView.swift */,
 				C050AA242EA8150500352314 /* Immersive */,
@@ -1859,6 +1855,7 @@
 		C050AA242EA8150500352314 /* Immersive */ = {
 			isa = PBXGroup;
 			children = (
+				2523A6D72EC6497B00842508 /* VoiceControl */,
 				E0A1B0012EC5D00000000001 /* Endoscope */,
 				1446FB9B2EAE6987000BCF61 /* Components */,
 				14F6B0332EAAC73F003F28EB /* ImmersiveSurgeryView.swift */,
@@ -2118,7 +2115,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				149D926A2ECA71040043B1A2 /* dummy_video.mp4 in Resources */,
 				C02FFA932E9FFF6F00F16742 /* VisionAssets.xcassets in Resources */,
 				14DE51542EB771420027D9A0 /* HIPPO.icon in Resources */,
 			);
@@ -2173,7 +2169,7 @@
 				2523A6F52EC663DB00842508 /* ImmersiveSceneRuntime+VoiceControl.swift in Sources */,
 				27AD7ACD2EB496D900E84809 /* LayerButton.swift in Sources */,
 				14DE51352EB60DEC0027D9A0 /* ModelPreviewCard.swift in Sources */,
-				2523A6D02EC6496400842508 /* VoiceControlMenuButton.swift in Sources */,
+				2523A6D02EC6496400842508 /* OperationMenuButton.swift in Sources */,
 				2523A69F2EC5A40800842508 /* StereoVideoPlayer.swift in Sources */,
 				1494DE7C2EA73205000CD284 /* DetailHeader.swift in Sources */,
 				C046782F2EA00B3A00D160DA /* PatientRepositoryImpl.swift in Sources */,
@@ -2409,7 +2405,7 @@
 				C0F97AD92EA420E10063E159 /* DataDependencies.swift in Sources */,
 				27AD7AE42EB5BEA400E84809 /* OpacityControlPanelHeader.swift in Sources */,
 				C0F97AC02EA41D4B0063E159 /* SwiftDataMappers.swift in Sources */,
-				2523A6CF2EC6496400842508 /* VoiceControlMenuButton.swift in Sources */,
+				2523A6CF2EC6496400842508 /* OperationMenuButton.swift in Sources */,
 				1494DE7E2EA73205000CD284 /* DetailHeader.swift in Sources */,
 				1446FBB32EAE6C23000BCF61 /* RecordButton.swift in Sources */,
 				1476821E2ECF810D0065791C /* SyncMonitor.swift in Sources */,
