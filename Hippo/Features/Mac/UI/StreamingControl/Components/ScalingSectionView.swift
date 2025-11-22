@@ -17,7 +17,7 @@ struct ScalingSectionView: View {
                 .font(.system(size: 28, weight: .bold))
                 .foregroundColor(.black)
 
-            VStack(alignment: .leading, spacing: 12) {
+            HStack(alignment: .top, spacing: 24) {
                 // Resolution Scale
                 VStack(alignment: .leading, spacing: 8) {
                     Text("Resolution Scale")
@@ -42,22 +42,34 @@ struct ScalingSectionView: View {
                 }
 
                 // Bitrate Toggle
-                HStack {
-                    Toggle(isOn: $isHalfBitrateEnabled) {
-                        HStack(spacing: 8) {
-                            Text("Half Bitrate")
-                                .font(.system(size: 14, weight: .medium))
-                            Text(isHalfBitrateEnabled ? "15 Mbps" : "30 Mbps")
-                                .font(.system(size: 13, weight: .regular))
-                                .foregroundColor(.secondary)
+                VStack(alignment: .leading, spacing: 8) {
+                    Text("Bitrate")
+                        .font(.system(size: 14, weight: .medium))
+                        .foregroundColor(.secondary)
+
+                    HStack(spacing: 12) {
+                        Toggle(isOn: $isHalfBitrateEnabled) {
+                            HStack(spacing: 8) {
+                                Text("Half")
+                                    .font(.system(size: 14, weight: .medium))
+                                Text(isHalfBitrateEnabled ? "15 Mbps" : "30 Mbps")
+                                    .font(.system(size: 13, weight: .regular))
+                                    .foregroundColor(.secondary)
+                            }
                         }
+                        .toggleStyle(.switch)
                     }
-                    .toggleStyle(.switch)
+                    .padding(.horizontal, 12)
+                    .padding(.vertical, 8)
+                    .background(
+                        RoundedRectangle(cornerRadius: 18, style: .continuous)
+                            .fill(Color.white)
+                            .shadow(color: Color.black.opacity(0.08), radius: 8, x: 0, y: 2)
+                    )
                 }
-                .padding(.top, 4)
             }
         }
-        .padding(28)
+        .padding(12)
         .frame(maxWidth: .infinity, alignment: .leading)
         .background(
             RoundedRectangle(cornerRadius: 20, style: .continuous)
