@@ -82,33 +82,33 @@ struct OperationDetailView: View {
                             appModel.currentOperationContext = nil
                         }
                     }
-                    .toolbar {
+                    .ornament(attachmentAnchor: .scene(.bottom)) {
                         if !viewModel.isShowingEditInputView {
-                            ToolbarItem(placement: .bottomOrnament) {
-                                StartOperationButton {
-                                    Task { @MainActor in
-                                        // Request voice permissions before starting surgery
-                                        let speechService = AppleSpeechRecognitionService()
-                                        do {
-                                            try await speechService.requestPermissions()
-                                            print("✅ Voice permissions granted")
-                                        } catch {
-                                            print("⚠️ Voice permissions denied: \(error)")
-                                            // Continue anyway - voice control will be unavailable
-                                        }
-
-                                        // Start surgery session
-                                        dismissWindow(id: WindowIDs.home)
-                                        dismissWindow(id: WindowIDs.operationDetail)
-                                        dismissWindow(id: WindowIDs.patientDetail)
-                                        let context = OperationContext(
-                                            patientID: patientID,
-                                            operationID: operationID
-                                        )
-                                        await openImmersiveSpace(id: ImmersiveIDs.surgery, value: context)
+                            OrnamentButton {
+                                Task { @MainActor in
+                                    // Request voice permissions before starting surgery
+                                    let speechService = AppleSpeechRecognitionService()
+                                    do {
+                                        try await speechService.requestPermissions()
+                                        print("✅ Voice permissions granted")
+                                    } catch {
+                                        print("⚠️ Voice permissions denied: \(error)")
+                                        // Continue anyway - voice control will be unavailable
                                     }
+
+                                    // Start surgery session
+                                    dismissWindow(id: WindowIDs.home)
+                                    dismissWindow(id: WindowIDs.operationDetail)
+                                    dismissWindow(id: WindowIDs.patientDetail)
+                                    let context = OperationContext(
+                                        patientID: patientID,
+                                        operationID: operationID
+                                    )
+                                    await openImmersiveSpace(id: ImmersiveIDs.surgery, value: context)
                                 }
                             }
+                            .systemName("scissors")
+                            .content("수술 시작")
                         }
                     }
                 } else {
