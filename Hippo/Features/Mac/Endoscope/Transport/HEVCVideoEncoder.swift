@@ -58,6 +58,11 @@ public class HEVCVideoEncoder: NSObject, LKRTCVideoEncoder {
     private var height: Int32 = 0
     private var targetBitrate: Int = 0
 
+    // Bitrate tracking for monitoring
+    private var frameBytesAccumulator: Int = 0
+    private var encodedFrameCountForStats: Int = 0
+    private var lastBitrateLog: Date = Date()
+
     // Parameter sets (VPS/SPS/PPS) for HEVC
     private var vpsData: Data?
     private var spsData: Data?
@@ -380,11 +385,28 @@ public class HEVCVideoEncoder: NSObject, LKRTCVideoEncoder {
         if !success {
             logger.error("Encoder callback failed - frame type: \(isKeyframe ? "KEY" : "DELTA"), size: \(annexBData.count) bytes")
         } else {
-            // Log frame size only for initial frames and keyframes
-            if frameCount <= LoggingInterval.initialFrames {
+            // Accumulate bytes for bitrate calculation
+            frameBytesAccumulator += annexBData.count
+            encodedFrameCountForStats += 1
+
+            // Log initial frames for debugging
+            if frameCount <= 10 {
                 logger.info("Frame #\(self.frameCount): \(isKeyframe ? "KEY" : "DELTA"), \(annexBData.count) bytes")
-            } else if isKeyframe {
-                logger.debug("Frame #\(self.frameCount): KEY, \(annexBData.count) bytes")
+            }
+
+            // Log average bitrate every 5 seconds
+            let now = Date()
+            if now.timeIntervalSince(lastBitrateLog) >= 5.0 {
+                let elapsed = now.timeIntervalSince(lastBitrateLog)
+                let avgBitrate = Double(frameBytesAccumulator * 8) / elapsed / 1_000_000.0  // Mbps
+                let avgFrameBytes = encodedFrameCountForStats > 0 ? frameBytesAccumulator / encodedFrameCountForStats : 0
+
+                logger.info("📊 Encoder (5s): Avg bitrate: \(String(format: "%.2f", avgBitrate)) Mbps, Avg frame: \(avgFrameBytes / 1024) KB, Frames: \(self.encodedFrameCountForStats)")
+
+                // Reset accumulators
+                frameBytesAccumulator = 0
+                encodedFrameCountForStats = 0
+                lastBitrateLog = now
             }
         }
     }

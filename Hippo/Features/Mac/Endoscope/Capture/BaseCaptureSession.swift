@@ -16,6 +16,13 @@ import os.log
 
 open class BaseCaptureSession: NSObject {
 
+    // MARK: Static Shared State
+
+    /// Shared capture start time across all camera instances
+    /// Ensures synchronized PTS baseline for stereo pair matching
+    private static var sharedCaptureStartTime: CFTimeInterval?
+    private static let startTimeLock = NSLock()
+
     // MARK: Properties
 
     public let source: CaptureSource
@@ -144,7 +151,26 @@ open class BaseCaptureSession: NSObject {
         captureDevice = nil
         isRunning = false
 
+        // Reset instance PTS state
+        captureStartTime = nil
+        frameNumber = 0
+        frameCount = 0
+        lastStatsTime = Date()
+
         logger.info("✅ [\(self.source.rawValue)] Capture session stopped")
+    }
+
+    // MARK: - Static State Management
+
+    /// Reset shared capture start time
+    /// Call this when restarting the entire pipeline (both cameras)
+    public static func resetSharedState() {
+        startTimeLock.lock()
+        defer { startTimeLock.unlock() }
+
+        sharedCaptureStartTime = nil
+        Logger(subsystem: "com.television.hippo", category: "Capture")
+            .info("🔄 Shared capture start time reset")
     }
 
     // MARK: - Private Methods: Device Discovery
@@ -311,25 +337,12 @@ extension BaseCaptureSession: AVCaptureVideoDataOutputSampleBufferDelegate {
             return
         }
 
-        // Initialize start time on first frame
-        if captureStartTime == nil {
-            let hostTime = mach_absolute_time()
-            var timebaseInfo = mach_timebase_info_data_t()
-            mach_timebase_info(&timebaseInfo)
-            let nanoseconds = hostTime * UInt64(timebaseInfo.numer) / UInt64(timebaseInfo.denom)
-            captureStartTime = Double(nanoseconds) / 1_000_000_000.0
-        }
-
-        // Generate synthetic timestamp based on frame number and expected FPS
-        // This ensures perfectly regular intervals regardless of actual capture timing
-        let expectedFrameDuration = 1.0 / 30.0  // 30 fps = 33.33ms per frame
-        let syntheticTimestamp = (captureStartTime ?? 0) + (Double(frameNumber) * expectedFrameDuration)
-        let pts = CMTime(seconds: syntheticTimestamp, preferredTimescale: 1000000)
-        frameNumber += 1
+        // Generate synthetic PTS with shared start time
+        let pts = generateSyntheticPTS()
 
         // Update statistics
         frameCount += 1
-        if frameCount % 300 == 0 {  // Log every 5 seconds at 60fps
+        if frameCount % 300 == 0 {
             let now = Date()
             let elapsed = now.timeIntervalSince(lastStatsTime)
             let fps = Double(frameCount) / elapsed
@@ -350,5 +363,46 @@ extension BaseCaptureSession: AVCaptureVideoDataOutputSampleBufferDelegate {
         from connection: AVCaptureConnection
     ) {
         logger.warning("⚠️ [\(self.source.rawValue)] Dropped frame")
+    }
+
+    // MARK: - Private: Synthetic PTS Generation
+
+    /// Generate synthetic PTS with shared start time across all cameras
+    /// This ensures synchronized baseline for stereo pair matching
+    private func generateSyntheticPTS() -> CMTime {
+        // Initialize shared start time on first frame (thread-safe)
+        if captureStartTime == nil {
+            BaseCaptureSession.startTimeLock.lock()
+            defer { BaseCaptureSession.startTimeLock.unlock() }
+
+            // Check if another camera already initialized the shared time
+            if BaseCaptureSession.sharedCaptureStartTime == nil {
+                let hostTime = mach_absolute_time()
+                var timebaseInfo = mach_timebase_info_data_t()
+                mach_timebase_info(&timebaseInfo)
+                let nanoseconds = hostTime * UInt64(timebaseInfo.numer) / UInt64(timebaseInfo.denom)
+                BaseCaptureSession.sharedCaptureStartTime = Double(nanoseconds) / 1_000_000_000.0
+
+                logger.info("🕐 [\(self.source.rawValue)] Initialized SHARED start time: \(String(format: "%.6f", BaseCaptureSession.sharedCaptureStartTime!))s")
+            } else {
+                logger.info("🕐 [\(self.source.rawValue)] Using existing SHARED start time: \(String(format: "%.6f", BaseCaptureSession.sharedCaptureStartTime!))s")
+            }
+
+            captureStartTime = BaseCaptureSession.sharedCaptureStartTime
+        }
+
+        // Generate synthetic timestamp: startTime + (frameNumber * frameDuration)
+        let expectedFrameDuration = 1.0 / 30.0  // 30 fps = 33.33ms per frame
+        let syntheticTimestamp = (captureStartTime ?? 0) + (Double(frameNumber) * expectedFrameDuration)
+
+        // Debug: Log first 10 frames to verify PTS generation
+        if frameNumber < 10 {
+            let offset = syntheticTimestamp - (captureStartTime ?? 0)
+            logger.info("⏱️ [\(self.source.rawValue)] PTS #\(self.frameNumber): \(String(format: "%.6f", syntheticTimestamp))s (offset: \(String(format: "%.3f", offset * 1000))ms)")
+        }
+
+        frameNumber += 1
+
+        return CMTime(seconds: syntheticTimestamp, preferredTimescale: 1_000_000)
     }
 }
