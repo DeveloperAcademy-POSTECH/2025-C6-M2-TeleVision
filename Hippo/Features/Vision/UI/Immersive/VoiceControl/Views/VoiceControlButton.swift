@@ -25,18 +25,12 @@ import SwiftUI
 /// - Command executes → Success message with color coding
 /// - User looks away → Returns to Idle (clears all text)
 public struct VoiceControlButton: View {
-
     // MARK: - Constants
 
     private enum Constants {
-        static let iconSize: CGFloat = 48
-        static let progressScale: CGFloat = 1.5
-        static let stateIndicatorSize: CGFloat = 16
-        static let horizontalPadding: CGFloat = 32
-        static let verticalPadding: CGFloat = 24
-        static let cornerRadius: CGFloat = 24
-        static let shadowRadius: CGFloat = 12
-        static let shadowY: CGFloat = 6
+        static let buttonSize: CGFloat = 60
+        static let iconSize: CGFloat = 28
+        static let progressScale: CGFloat = 1.2
     }
 
     // MARK: - Properties
@@ -47,39 +41,14 @@ public struct VoiceControlButton: View {
     // MARK: - Body
 
     public var body: some View {
-        Button(action: handleTap) {
-            buttonLabel
-        }
-        .buttonStyle(.borderless)
-        .hoverEffect()
-        .onContinuousHover { phase in
-            handleHover(phase: phase)
-        }
-    }
-
-    // MARK: - Subviews
-
-    /// Button label with icon and state indicator
-    @ViewBuilder
-    private var buttonLabel: some View {
         VStack(spacing: 12) {
-            HStack(spacing: 16) {
-                // Loading indicator or state icon
-                if viewModel.uiState.isProcessing {
-                    ProgressView()
-                        .progressViewStyle(.circular)
-                        .scaleEffect(Constants.progressScale)
-                        .tint(stateColor)
-                } else {
-                    Image(systemName: iconName)
-                        .font(.system(size: Constants.iconSize))
-                        .foregroundStyle(stateColor)
-                }
-
-                // State indicator dot
-                if shouldShowStateIndicator {
-                    stateIndicator
-                }
+            Button(action: handleTap) {
+                buttonView
+            }
+            .buttonStyle(.plain)
+            .hoverEffect()
+            .onContinuousHover { phase in
+                handleHover(phase: phase)
             }
 
             // Real-time STT transcription
@@ -97,11 +66,29 @@ public struct VoiceControlButton: View {
                 statusText(message)
             }
         }
-        .padding(.horizontal, Constants.horizontalPadding)
-        .padding(.vertical, Constants.verticalPadding)
-        .background(backgroundColor)
-        .cornerRadius(Constants.cornerRadius)
-        .shadow(color: shadowColor, radius: Constants.shadowRadius, y: Constants.shadowY)
+    }
+
+    // MARK: - Subviews
+
+    /// Circular button view with glass effect
+    @ViewBuilder
+    private var buttonView: some View {
+        ZStack {
+            // Icon
+            Image(systemName: "microphone")
+                .font(.system(size: Constants.iconSize))
+                .foregroundStyle(stateColor)
+
+            // Loading indicator
+            if viewModel.uiState.isProcessing {
+                ProgressView()
+                    .progressViewStyle(.circular)
+                    .scaleEffect(Constants.progressScale)
+                    .tint(stateColor)
+            }
+        }
+        .frame(width: Constants.buttonSize, height: Constants.buttonSize)
+        .glassBackgroundEffect(in: .circle, displayMode: .always)
     }
 
     // MARK: - Text Components
@@ -146,26 +133,9 @@ public struct VoiceControlButton: View {
             .padding(.horizontal, 8)
     }
 
-    /// State indicator dot
-    @ViewBuilder
-    private var stateIndicator: some View {
-        Circle()
-            .fill(stateColor)
-            .frame(width: Constants.stateIndicatorSize, height: Constants.stateIndicatorSize)
-    }
-
     // MARK: - Computed Properties - State
 
     /// Icon name based on voice control state
-    private var iconName: String {
-        switch viewModel.uiState.state {
-        case .idle: "waveform.circle"
-        case .standby: "waveform.circle.fill"
-        case .listening: "waveform"
-        case .retry: "exclamationmark.circle"
-        }
-    }
-
     /// Unified color for state (icon, indicator dot, shadow)
     private var stateColor: Color {
         switch viewModel.uiState.state {
@@ -176,26 +146,6 @@ public struct VoiceControlButton: View {
         }
     }
 
-    /// Whether to show state indicator dot
-    private var shouldShowStateIndicator: Bool {
-        viewModel.uiState.state != .idle && !viewModel.uiState.isProcessing
-    }
-
-    /// Background color based on state
-    private var backgroundColor: Color {
-        viewModel.uiState.state == .idle ? .clear : Color.primary.opacity(0.1)
-    }
-
-    /// Shadow color with state-based tint
-    private var shadowColor: Color {
-        switch viewModel.uiState.state {
-        case .idle: .clear
-        case .standby: .blue.opacity(0.3)
-        case .listening: .green.opacity(0.4)
-        case .retry: .orange.opacity(0.3)
-        }
-    }
-
     // MARK: - Computed Properties - Messages
 
     /// Status instruction message based on state
@@ -203,16 +153,19 @@ public struct VoiceControlButton: View {
         switch viewModel.uiState.state {
         case .idle:
             nil
+
         case .standby:
             "'Hippo'라고 말하세요"
+
         case .listening:
             if viewModel.uiState.isProcessing {
                 "처리 중..."
             } else if viewModel.uiState.feedbackType == .success {
-                nil  // Hide when showing success feedback
+                nil // Hide when showing success feedback
             } else {
                 "명령을 말씀해주세요"
             }
+
         case .retry:
             viewModel.uiState.lastErrorMessage ?? "다시 시도해주세요"
         }
