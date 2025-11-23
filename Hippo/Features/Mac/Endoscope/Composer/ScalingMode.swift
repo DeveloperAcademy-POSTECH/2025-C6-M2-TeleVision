@@ -13,6 +13,8 @@ public enum ScalingMode: String, Codable, CaseIterable {
     case half = "1/2"
     case third = "1/3"
     case quarter = "1/4"
+    case sixth = "1/6"
+    case eighth = "1/8"
 
     /// Scale factor to apply (1.0 = no scaling, 0.5 = half resolution)
     public var scaleFactor: Double {
@@ -25,6 +27,10 @@ public enum ScalingMode: String, Codable, CaseIterable {
             return 1.0 / 3.0
         case .quarter:
             return 0.25
+        case .sixth:
+            return 1.0 / 6.0
+        case .eighth:
+            return 0.125
         }
     }
 
@@ -38,6 +44,10 @@ public enum ScalingMode: String, Codable, CaseIterable {
             return "1/3"
         case .quarter:
             return "1/4 (Quarter)"
+        case .sixth:
+            return "1/6"
+        case .eighth:
+            return "1/8"
         }
     }
 
@@ -52,6 +62,10 @@ public enum ScalingMode: String, Codable, CaseIterable {
             return "~89%"
         case .quarter:
             return "~94%"
+        case .sixth:
+            return "~97%"
+        case .eighth:
+            return "~98%"
         }
     }
 }

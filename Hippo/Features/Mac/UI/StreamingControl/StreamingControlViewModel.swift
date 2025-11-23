@@ -45,7 +45,7 @@ public final class StreamingControlViewModel {
 
     // MARK: - State: Video & Camera Mode
 
-    var videoMode: VideoMode = .fullSBS {
+    var videoMode: VideoMode = .halfSBS {
         didSet {
             logger.info("Video mode changed: \(oldValue.rawValue) → \(self.videoMode.rawValue)")
 
@@ -73,13 +73,29 @@ public final class StreamingControlViewModel {
         }
     }
 
-    var scalingMode: ScalingMode = .none {
+    var scalingMode: ScalingMode = .quarter {
         didSet {
             logger.info("Scaling mode changed: \(oldValue.rawValue) → \(self.scalingMode.rawValue)")
 
             // 스트리밍 중이면 재시작
             if isStreaming {
                 logger.info("Restarting streaming due to scaling mode change...")
+                Task {
+                    stopStreaming()
+                    try? await Task.sleep(for: .milliseconds(500))
+                    try? await startStreaming()
+                }
+            }
+        }
+    }
+
+    var isHalfBitrateEnabled: Bool = true {
+        didSet {
+            logger.info("Bitrate mode changed: \(oldValue ? "15 Mbps" : "30 Mbps") → \(self.isHalfBitrateEnabled ? "15 Mbps" : "30 Mbps")")
+
+            // 스트리밍 중이면 재시작
+            if isStreaming {
+                logger.info("Restarting streaming due to bitrate change...")
                 Task {
                     stopStreaming()
                     try? await Task.sleep(for: .milliseconds(500))
@@ -299,7 +315,7 @@ public final class StreamingControlViewModel {
         // Initialize components
         let sync = FrameSync()
         let comp = CI_SBSComposer()
-        let webrtc = WebRTCManager(config: .standard)
+        let webrtc = WebRTCManager(config: isHalfBitrateEnabled ? .lowBandwidth : .standard)
 
         self.frameSync = sync
         self.composer = comp
@@ -352,7 +368,7 @@ public final class StreamingControlViewModel {
         logger.info("Starting mono capture...")
 
         // Initialize WebRTC transport
-        let webrtc = WebRTCManager(config: .standard)
+        let webrtc = WebRTCManager(config: isHalfBitrateEnabled ? .lowBandwidth : .standard)
         self.transport = webrtc
 
         // Mono video 시작 - settings를 전달하지 않아 카메라의 네이티브 해상도 사용
@@ -368,6 +384,10 @@ public final class StreamingControlViewModel {
     }
 
     // MARK: - Private Methods: Frame Handling
+
+    /// OPTIMIZED: Preview frame throttling for reduced CPU usage
+    private var lastPreviewTime: CFAbsoluteTime = 0
+    private let previewFrameInterval: CFTimeInterval = 1.0 / 30.0  // 30fps max for preview
 
     private func handleSyncedPair(_ pair: SyncedPair) async {
         guard let composer = self.composer else {
@@ -402,8 +422,8 @@ public final class StreamingControlViewModel {
             // Send via WebRTC
             transport?.send(pixelBuffer: composed, presentationTime: pair.pts)
 
-            // Update preview
-            await updatePreview(composed, pts: pair.pts)
+            // OPTIMIZED: Update preview at reduced framerate (30fps max)
+            await updatePreviewThrottled(composed, pts: pair.pts)
 
         } catch {
             logger.error("Composition failed: \(error.localizedDescription)")
@@ -414,65 +434,82 @@ public final class StreamingControlViewModel {
         // Send directly via WebRTC (no composition needed)
         transport?.send(pixelBuffer: pixelBuffer, presentationTime: pts)
 
-        // Update preview
+        // OPTIMIZED: Update preview at reduced framerate (30fps max)
+        await updatePreviewThrottled(pixelBuffer, pts: pts)
+    }
+
+    /// OPTIMIZED: Throttled preview update to limit to 30fps
+    @MainActor
+    private func updatePreviewThrottled(_ pixelBuffer: CVPixelBuffer, pts: CMTime) async {
+        let now = CFAbsoluteTimeGetCurrent()
+        guard now - lastPreviewTime >= previewFrameInterval else {
+            // Skip frame to maintain 30fps cap
+            return
+        }
+        lastPreviewTime = now
+
         await updatePreview(pixelBuffer, pts: pts)
     }
 
+    /// OPTIMIZED: Preview rendering with autoreleasepool and reduced overhead
     @MainActor
     private func updatePreview(_ pixelBuffer: CVPixelBuffer, pts: CMTime) async {
         guard let layer = previewLayer else { return }
 
-        // Create sample buffer from pixel buffer
-        var sampleBuffer: CMSampleBuffer?
-        var timingInfo = CMSampleTimingInfo(
-            duration: .invalid,
-            presentationTimeStamp: pts,
-            decodeTimeStamp: .invalid
-        )
+        // OPTIMIZED: Use autoreleasepool to prevent memory accumulation
+        autoreleasepool {
+            // Create sample buffer from pixel buffer
+            var sampleBuffer: CMSampleBuffer?
+            var timingInfo = CMSampleTimingInfo(
+                duration: .invalid,
+                presentationTimeStamp: pts,
+                decodeTimeStamp: .invalid
+            )
 
-        var formatDescription: CMFormatDescription?
-        let status = CMVideoFormatDescriptionCreateForImageBuffer(
-            allocator: kCFAllocatorDefault,
-            imageBuffer: pixelBuffer,
-            formatDescriptionOut: &formatDescription
-        )
+            var formatDescription: CMFormatDescription?
+            let status = CMVideoFormatDescriptionCreateForImageBuffer(
+                allocator: kCFAllocatorDefault,
+                imageBuffer: pixelBuffer,
+                formatDescriptionOut: &formatDescription
+            )
 
-        guard status == noErr, let formatDesc = formatDescription else {
-            logger.error("Failed to create format description")
-            return
-        }
-
-        let sampleStatus = CMSampleBufferCreateReadyWithImageBuffer(
-            allocator: kCFAllocatorDefault,
-            imageBuffer: pixelBuffer,
-            formatDescription: formatDesc,
-            sampleTiming: &timingInfo,
-            sampleBufferOut: &sampleBuffer
-        )
-
-        guard sampleStatus == noErr, let sample = sampleBuffer else {
-            logger.error("Failed to create sample buffer")
-            return
-        }
-
-        // Enqueue to display layer
-        if #available(macOS 15.0, *) {
-            layer.sampleBufferRenderer.enqueue(sample)
-
-            // Flush if layer is not ready
-            if layer.sampleBufferRenderer.status == .failed {
-                logger.warning("Display layer failed, flushing...")
-                layer.sampleBufferRenderer.flush()
+            guard status == noErr, let formatDesc = formatDescription else {
+                logger.error("Failed to create format description")
+                return
             }
-        } else {
-            layer.enqueue(sample)
 
-            // Flush if layer is not ready
-            if layer.status == .failed {
-                logger.warning("Display layer failed, flushing...")
-                layer.flush()
+            let sampleStatus = CMSampleBufferCreateReadyWithImageBuffer(
+                allocator: kCFAllocatorDefault,
+                imageBuffer: pixelBuffer,
+                formatDescription: formatDesc,
+                sampleTiming: &timingInfo,
+                sampleBufferOut: &sampleBuffer
+            )
+
+            guard sampleStatus == noErr, let sample = sampleBuffer else {
+                logger.error("Failed to create sample buffer")
+                return
             }
-        }
+
+            // Enqueue to display layer
+            if #available(macOS 15.0, *) {
+                layer.sampleBufferRenderer.enqueue(sample)
+
+                // Flush if layer is not ready
+                if layer.sampleBufferRenderer.status == .failed {
+                    logger.warning("Display layer failed, flushing...")
+                    layer.sampleBufferRenderer.flush()
+                }
+            } else {
+                layer.enqueue(sample)
+
+                // Flush if layer is not ready
+                if layer.status == .failed {
+                    logger.warning("Display layer failed, flushing...")
+                    layer.flush()
+                }
+            }
+        }  // OPTIMIZED: autoreleasepool ensures immediate cleanup
     }
 
     // MARK: - Private Methods: Statistics

@@ -14,86 +14,223 @@ import VideoToolbox
 import os.log
 
 /// Helper class for processing pixel buffers for stereo video rendering
-@MainActor
+/// Thread-safe: Uses serial queue for all operations
 public final class StereoVideoPlayerHelper {
 
     private let logger = Logger(subsystem: "com.television.hippo", category: "StereoHelper")
+
+    // MARK: - Cached Resources (CRITICAL for performance)
+
+    /// Cached VTPixelTransferSession - reused for all frames to avoid GPU overhead
+    /// Creating/destroying this every frame causes severe performance degradation
+    /// IMPORTANT: Session must be recreated when resolution changes
+    private var cachedTransferSession: VTPixelTransferSession?
+
+    /// Track last used resolution to detect when session needs recreation
+    private var lastUsedResolution: CGSize? = nil
+
+    /// Serial queue for thread-safe access to cached resources
+    private let processingQueue = DispatchQueue(
+        label: "com.television.hippo.stereo-helper",
+        qos: .userInteractive
+    )
+
+    // Debug frame counters for CleanAperture logging
+    private var monoFrameCount: Int = 0
+    private var stereoFrameCount: Int = 0
+
+    // MARK: - Initialization & Cleanup
+
+    public init() {
+        logger.info("StereoVideoPlayerHelper initialized (background processing enabled)")
+    }
+
+    deinit {
+        // Cleanup asynchronously to avoid blocking during deallocation
+        // Use barrier to ensure all previous operations complete first
+        let session = cachedTransferSession
+        processingQueue.async(flags: .barrier) {
+            if let session = session {
+                VTPixelTransferSessionInvalidate(session)
+            }
+        }
+        logger.info("StereoVideoPlayerHelper deallocated")
+    }
+
+    /// Cleanup cached resources (thread-safe, async)
+    /// Uses barrier flag to ensure all previous operations complete before cleanup
+    public func cleanup() {
+        processingQueue.async(flags: .barrier) { [weak self] in
+            guard let self = self else { return }
+            if let session = self.cachedTransferSession {
+                VTPixelTransferSessionInvalidate(session)
+                self.cachedTransferSession = nil
+                self.lastUsedResolution = nil
+                self.logger.info("VTPixelTransferSession cache invalidated")
+            }
+            // Reset frame counters
+            self.monoFrameCount = 0
+            self.stereoFrameCount = 0
+        }
+    }
+
+    /// Reset frame counters for mode switching (to re-enable debug logging)
+    /// This is lightweight and doesn't invalidate the VTSession cache
+    public func resetFrameCounters() {
+        processingQueue.async(flags: .barrier) { [weak self] in
+            guard let self = self else { return }
+            self.monoFrameCount = 0
+            self.stereoFrameCount = 0
+            self.logger.info("Frame counters reset (debug logging re-enabled)")
+        }
+    }
+
+    /// Get or create VTPixelTransferSession (cached, but recreated on resolution change)
+    /// MUST be called from within processingQueue.sync to ensure thread safety
+    /// CRITICAL: Resolution changes require session recreation to prevent crashes
+    private func unsafeGetTransferSession(for resolution: CGSize) -> VTPixelTransferSession? {
+        // Check if resolution changed - recreate session if needed
+        if let lastResolution = lastUsedResolution, lastResolution != resolution {
+            logger.warning("⚠️ Resolution changed: \(Int(lastResolution.width))×\(Int(lastResolution.height)) → \(Int(resolution.width))×\(Int(resolution.height))")
+            logger.warning("   Recreating VTPixelTransferSession to prevent crash")
+
+            // Invalidate old session
+            if let oldSession = cachedTransferSession {
+                VTPixelTransferSessionInvalidate(oldSession)
+                cachedTransferSession = nil
+            }
+        }
+
+        // Return cached session if available and resolution matches
+        if let session = cachedTransferSession, lastUsedResolution == resolution {
+            return session
+        }
+
+        // Create new session
+        var session: VTPixelTransferSession?
+        let status = VTPixelTransferSessionCreate(
+            allocator: kCFAllocatorDefault,
+            pixelTransferSessionOut: &session
+        )
+
+        guard status == kCVReturnSuccess, let newSession = session else {
+            logger.error("Failed to create VTPixelTransferSession: \(status)")
+            return nil
+        }
+
+        // Set scaling mode to crop source to clean aperture
+        VTSessionSetProperty(
+            newSession,
+            key: kVTPixelTransferPropertyKey_ScalingMode,
+            value: kVTScalingMode_CropSourceToCleanAperture
+        )
+
+        // Cache for reuse
+        cachedTransferSession = newSession
+        lastUsedResolution = resolution
+        logger.info("✅ VTPixelTransferSession created and cached for resolution: \(Int(resolution.width))×\(Int(resolution.height))")
+
+        return newSession
+    }
 
     // MARK: - 2단계: Left-only Mono Mode
 
     /// Extract left eye only from SBS (Side-by-Side) pixel buffer
     /// Uses VTPixelTransferSession for reliable color handling (same as Stereo 3D)
+    /// Thread-safe: All VTPixelTransferSession operations serialized on processingQueue
     /// - Parameter sbs: Source SBS pixel buffer (e.g., 1920×540)
     /// - Returns: Left-only pixel buffer (e.g., 960×540) in NV12 format
     public func makeLeftEyeMono(from sbs: CVPixelBuffer) -> CVPixelBuffer? {
-        // 1. Validate
-        guard validateSBSBuffer(sbs) else {
-            return nil
+        return processingQueue.sync {
+            // Performance measurement start
+            let startTime = CFAbsoluteTimeGetCurrent()
+
+            // Increment frame counter
+            self.monoFrameCount += 1
+            let frameNum = self.monoFrameCount
+
+            // 1. Validate
+            guard validateSBSBuffer(sbs) else {
+                return nil
+            }
+
+            let srcWidth = CVPixelBufferGetWidth(sbs)
+            let srcHeight = CVPixelBufferGetHeight(sbs)
+            let format = CVPixelBufferGetPixelFormatType(sbs)
+
+            let dstWidth = srcWidth / 2
+            let dstHeight = srcHeight
+            let dstResolution = CGSize(width: dstWidth, height: dstHeight)
+
+            // DEBUG: Check CleanAperture before setting (first 3 frames only)
+            if frameNum <= 3 {
+                let hasCleanAperture = CVBufferGetAttachment(sbs, kCVImageBufferCleanApertureKey, nil) != nil
+                self.logger.info("🔍 [Mono Frame #\(frameNum)] BEFORE: Source buffer CleanAperture exists = \(hasCleanAperture)")
+            }
+
+            // 2. Get cached VTPixelTransferSession (recreated if resolution changes)
+            guard let session = self.unsafeGetTransferSession(for: dstResolution) else {
+                self.logger.error("Failed to get VTPixelTransferSession")
+                return nil
+            }
+
+            // 3. Create destination buffer
+            guard let dst = self.createNV12Buffer(width: dstWidth, height: dstHeight, format: format) else {
+                return nil
+            }
+
+            // 4. Set CleanAperture to crop left half
+            // Left eye offset: -width/4 (to center the left half)
+            let horizontalOffset = CGFloat(dstWidth) * -0.5
+            let cropRectDict: [CFString: Any] = [
+                kCVImageBufferCleanApertureHorizontalOffsetKey: horizontalOffset,
+                kCVImageBufferCleanApertureVerticalOffsetKey: 0,
+                kCVImageBufferCleanApertureWidthKey: dstWidth,
+                kCVImageBufferCleanApertureHeightKey: dstHeight
+            ]
+
+            // CRITICAL FIX: Set CleanAperture on source buffer
+            CVBufferSetAttachment(
+                sbs,
+                kCVImageBufferCleanApertureKey,
+                cropRectDict as CFDictionary,
+                .shouldPropagate
+            )
+
+            // 5. Transfer image using VTPixelTransferSession
+            let transferStatus = VTPixelTransferSessionTransferImage(session, from: sbs, to: dst)
+
+            // CRITICAL FIX: Remove CleanAperture immediately after transfer
+            // This prevents the attachment from leaking into other pipeline stages
+            CVBufferRemoveAttachment(sbs, kCVImageBufferCleanApertureKey)
+
+            // DEBUG: Verify CleanAperture was removed (first 3 frames only)
+            if frameNum <= 3 {
+                let stillHasCleanAperture = CVBufferGetAttachment(sbs, kCVImageBufferCleanApertureKey, nil) != nil
+                self.logger.info("🔍 [Mono Frame #\(frameNum)] AFTER: Source buffer CleanAperture exists = \(stillHasCleanAperture) (should be false)")
+            }
+
+            guard transferStatus == kCVReturnSuccess else {
+                self.logger.error("VTPixelTransferSessionTransferImage failed: \(transferStatus)")
+                return nil
+            }
+
+            // Performance measurement end
+            let elapsedMs = (CFAbsoluteTimeGetCurrent() - startTime) * 1000
+
+            if elapsedMs > 15.0 {
+                self.logger.warning("[StereoHelper] makeLeftEyeMono slow: \(String(format: "%.1f", elapsedMs))ms")
+            }
+
+            return dst
         }
-
-        let srcWidth = CVPixelBufferGetWidth(sbs)
-        let srcHeight = CVPixelBufferGetHeight(sbs)
-        let format = CVPixelBufferGetPixelFormatType(sbs)
-
-        let dstWidth = srcWidth / 2
-        let dstHeight = srcHeight
-
-        // 2. Create VTPixelTransferSession
-        var transferSession: VTPixelTransferSession?
-        let status = VTPixelTransferSessionCreate(
-            allocator: kCFAllocatorDefault,
-            pixelTransferSessionOut: &transferSession
-        )
-        guard status == kCVReturnSuccess, let session = transferSession else {
-            logger.error("Failed to create VTPixelTransferSession: \(status)")
-            return nil
-        }
-        defer {
-            VTPixelTransferSessionInvalidate(session)
-        }
-
-        // Set scaling mode to crop source to clean aperture
-        VTSessionSetProperty(
-            session,
-            key: kVTPixelTransferPropertyKey_ScalingMode,
-            value: kVTScalingMode_CropSourceToCleanAperture
-        )
-
-        // 3. Create destination buffer
-        guard let dst = createNV12Buffer(width: dstWidth, height: dstHeight, format: format) else {
-            return nil
-        }
-
-        // 4. Set CleanAperture to crop left half
-        // Left eye offset: -width/4 (to center the left half)
-        let horizontalOffset = CGFloat(dstWidth) * -0.5
-        let cropRectDict: [CFString: Any] = [
-            kCVImageBufferCleanApertureHorizontalOffsetKey: horizontalOffset,
-            kCVImageBufferCleanApertureVerticalOffsetKey: 0,
-            kCVImageBufferCleanApertureWidthKey: dstWidth,
-            kCVImageBufferCleanApertureHeightKey: dstHeight
-        ]
-        CVBufferSetAttachment(
-            sbs,
-            kCVImageBufferCleanApertureKey,
-            cropRectDict as CFDictionary,
-            .shouldPropagate
-        )
-
-        // 5. Transfer image using VTPixelTransferSession
-        let transferStatus = VTPixelTransferSessionTransferImage(session, from: sbs, to: dst)
-        guard transferStatus == kCVReturnSuccess else {
-            logger.error("VTPixelTransferSessionTransferImage failed: \(transferStatus)")
-            return nil
-        }
-
-        return dst
     }
 
     // MARK: - 3단계: Stereo Mode (VTPixelTransfer + CleanAperture)
 
     /// Create stereo sample buffer from SBS pixel buffer using VTPixelTransferSession
     /// This is Apple's recommended approach (same as official sample)
+    /// Thread-safe: All VTPixelTransferSession operations serialized on processingQueue
     /// - Parameters:
     ///   - sbs: Source SBS pixel buffer (e.g., 1920×540)
     ///   - pts: Presentation timestamp
@@ -104,103 +241,125 @@ public final class StereoVideoPlayerHelper {
         pts: CMTime,
         duration: CMTime
     ) -> CMSampleBuffer? {
-        // 1. Validate
-        guard validateSBSBuffer(sbs) else {
-            return nil
-        }
+        return processingQueue.sync {
+            // Performance measurement start
+            let startTime = CFAbsoluteTimeGetCurrent()
 
-        let srcWidth = CVPixelBufferGetWidth(sbs)
-        let srcHeight = CVPixelBufferGetHeight(sbs)
-        let eyeWidth = srcWidth / 2
-        let eyeHeight = srcHeight
-        let format = CVPixelBufferGetPixelFormatType(sbs)
+            // Increment frame counter
+            self.stereoFrameCount += 1
+            let frameNum = self.stereoFrameCount
 
-        // 2. Create VTPixelTransferSession (if not cached)
-        var transferSession: VTPixelTransferSession?
-        let status = VTPixelTransferSessionCreate(
-            allocator: kCFAllocatorDefault,
-            pixelTransferSessionOut: &transferSession
-        )
-        guard status == kCVReturnSuccess, let session = transferSession else {
-            logger.error("Failed to create VTPixelTransferSession: \(status)")
-            return nil
-        }
-        defer {
-            VTPixelTransferSessionInvalidate(session)
-        }
-
-        // Set scaling mode to crop source to clean aperture
-        VTSessionSetProperty(
-            session,
-            key: kVTPixelTransferPropertyKey_ScalingMode,
-            value: kVTScalingMode_CropSourceToCleanAperture
-        )
-
-        // 3. Process left and right eyes
-        var taggedBuffers = [CMTaggedDynamicBuffer]()
-
-        for (layerID, eye) in [(0, CMStereoViewComponents.leftEye), (1, CMStereoViewComponents.rightEye)] {
-            // Create destination buffer
-            guard let dstBuffer = createNV12Buffer(width: eyeWidth, height: eyeHeight, format: format) else {
-                logger.error("Failed to create buffer for \(eye == .leftEye ? "left" : "right") eye")
+            // 1. Validate
+            guard validateSBSBuffer(sbs) else {
                 return nil
             }
 
-            // Set CleanAperture on source to crop to this eye
-            let horizontalOffset = CGFloat(eyeWidth) * (CGFloat(layerID) - 0.5)
-            let cropRectDict: [CFString: Any] = [
-                kCVImageBufferCleanApertureHorizontalOffsetKey: horizontalOffset,
-                kCVImageBufferCleanApertureVerticalOffsetKey: 0,
-                kCVImageBufferCleanApertureWidthKey: eyeWidth,
-                kCVImageBufferCleanApertureHeightKey: eyeHeight
-            ]
-            CVBufferSetAttachment(
-                sbs,
-                kCVImageBufferCleanApertureKey,
-                cropRectDict as CFDictionary,
-                .shouldPropagate
-            )
+            let srcWidth = CVPixelBufferGetWidth(sbs)
+            let srcHeight = CVPixelBufferGetHeight(sbs)
+            let eyeWidth = srcWidth / 2
+            let eyeHeight = srcHeight
+            let format = CVPixelBufferGetPixelFormatType(sbs)
+            let eyeResolution = CGSize(width: eyeWidth, height: eyeHeight)
 
-            // Transfer image using VTPixelTransferSession
-            let transferStatus = VTPixelTransferSessionTransferImage(session, from: sbs, to: dstBuffer)
-            guard transferStatus == kCVReturnSuccess else {
-                logger.error("VTPixelTransferSessionTransferImage failed for layer \(layerID): \(transferStatus)")
+            // DEBUG: Check CleanAperture before processing (first 3 frames only)
+            if frameNum <= 3 {
+                let hasCleanAperture = CVBufferGetAttachment(sbs, kCVImageBufferCleanApertureKey, nil) != nil
+                self.logger.info("🔍 [Stereo Frame #\(frameNum)] BEFORE: Source buffer CleanAperture exists = \(hasCleanAperture)")
+            }
+
+            // 2. Get cached VTPixelTransferSession (recreated if resolution changes)
+            guard let session = self.unsafeGetTransferSession(for: eyeResolution) else {
+                self.logger.error("Failed to get VTPixelTransferSession")
                 return nil
             }
 
-            // Create tagged buffer
-            let tags: [CMTag] = [
-                .videoLayerID(Int64(layerID)),
-                .stereoView(eye),
-                .mediaType(.video)
-            ]
-            taggedBuffers.append(
-                CMTaggedDynamicBuffer(
-                    tags: tags,
-                    content: .pixelBuffer(CVReadOnlyPixelBuffer(unsafeBuffer: dstBuffer))
+            // 3. Process left and right eyes
+            var taggedBuffers = [CMTaggedDynamicBuffer]()
+
+            for (layerID, eye) in [(0, CMStereoViewComponents.leftEye), (1, CMStereoViewComponents.rightEye)] {
+                // Create destination buffer
+                guard let dstBuffer = self.createNV12Buffer(width: eyeWidth, height: eyeHeight, format: format) else {
+                    self.logger.error("Failed to create buffer for \(eye == .leftEye ? "left" : "right") eye")
+                    return nil
+                }
+
+                // Set CleanAperture on source to crop to this eye
+                let horizontalOffset = CGFloat(eyeWidth) * (CGFloat(layerID) - 0.5)
+                let cropRectDict: [CFString: Any] = [
+                    kCVImageBufferCleanApertureHorizontalOffsetKey: horizontalOffset,
+                    kCVImageBufferCleanApertureVerticalOffsetKey: 0,
+                    kCVImageBufferCleanApertureWidthKey: eyeWidth,
+                    kCVImageBufferCleanApertureHeightKey: eyeHeight
+                ]
+
+                // CRITICAL FIX: Set CleanAperture on source buffer
+                CVBufferSetAttachment(
+                    sbs,
+                    kCVImageBufferCleanApertureKey,
+                    cropRectDict as CFDictionary,
+                    .shouldPropagate
                 )
+
+                // Transfer image using VTPixelTransferSession
+                let transferStatus = VTPixelTransferSessionTransferImage(session, from: sbs, to: dstBuffer)
+
+                // CRITICAL FIX: Remove CleanAperture immediately after each transfer
+                // This ensures the source buffer is always clean for the next eye (or next frame)
+                CVBufferRemoveAttachment(sbs, kCVImageBufferCleanApertureKey)
+
+                // DEBUG: Verify CleanAperture was removed after each eye (first 3 frames only)
+                if frameNum <= 3 {
+                    let stillHasCleanAperture = CVBufferGetAttachment(sbs, kCVImageBufferCleanApertureKey, nil) != nil
+                    let eyeName = (eye == .leftEye) ? "LEFT" : "RIGHT"
+                    self.logger.info("🔍 [Stereo Frame #\(frameNum)] AFTER \(eyeName): Source buffer CleanAperture exists = \(stillHasCleanAperture) (should be false)")
+                }
+
+                guard transferStatus == kCVReturnSuccess else {
+                    self.logger.error("VTPixelTransferSessionTransferImage failed for layer \(layerID): \(transferStatus)")
+                    return nil
+                }
+
+                // Create tagged buffer
+                let tags: [CMTag] = [
+                    .videoLayerID(Int64(layerID)),
+                    .stereoView(eye),
+                    .mediaType(.video)
+                ]
+                taggedBuffers.append(
+                    CMTaggedDynamicBuffer(
+                        tags: tags,
+                        content: .pixelBuffer(CVReadOnlyPixelBuffer(unsafeBuffer: dstBuffer))
+                    )
+                )
+            }
+
+            // 4. Create CMReadySampleBuffer
+            let buffer = CMReadySampleBuffer(
+                taggedBuffers: taggedBuffers,
+                formatDescription: CMTaggedBufferGroupFormatDescription(taggedBuffers: taggedBuffers),
+                presentationTimeStamp: pts,
+                duration: duration
             )
+
+            var outSB: CMSampleBuffer?
+            buffer.withUnsafeSampleBuffer { sb in
+                outSB = sb
+            }
+
+            // 5. Add stereo attachments
+            if let sampleBuffer = outSB {
+                self.addStereoAttachments(to: sampleBuffer)
+            }
+
+            // Performance measurement end
+            let elapsedMs = (CFAbsoluteTimeGetCurrent() - startTime) * 1000
+
+            if elapsedMs > 15.0 {
+                self.logger.warning("[StereoHelper] makeStereoSampleBuffer slow: \(String(format: "%.1f", elapsedMs))ms")
+            }
+
+            return outSB
         }
-
-        // 4. Create CMReadySampleBuffer
-        let buffer = CMReadySampleBuffer(
-            taggedBuffers: taggedBuffers,
-            formatDescription: CMTaggedBufferGroupFormatDescription(taggedBuffers: taggedBuffers),
-            presentationTimeStamp: pts,
-            duration: duration
-        )
-
-        var outSB: CMSampleBuffer?
-        buffer.withUnsafeSampleBuffer { sb in
-            outSB = sb
-        }
-
-        // 5. Add stereo attachments
-        if let sampleBuffer = outSB {
-            addStereoAttachments(to: sampleBuffer)
-        }
-
-        return outSB
     }
 
     // MARK: - Validation
@@ -579,17 +738,16 @@ public final class StereoVideoPlayerHelper {
 
     /// Add stereo attachments to sample buffer
     private func addStereoAttachments(to sampleBuffer: CMSampleBuffer) {
-        guard let attachments = CMSampleBufferGetSampleAttachmentsArray(
+        // Set display immediately - synchronizer timing doesn't work with synthetic PTS
+        if let attachments = CMSampleBufferGetSampleAttachmentsArray(
             sampleBuffer,
             createIfNecessary: true
-        ) else {
-            return
-        }
-
-        let arr = attachments as NSArray
-        if let dict = arr.firstObject as? NSMutableDictionary {
-            dict[kCMSampleAttachmentKey_DisplayImmediately] = true
-            dict[kCMSampleAttachmentKey_DoNotDisplay] = false
+        ) {
+            let arr = attachments as NSArray
+            if let dict = arr.firstObject as? NSMutableDictionary {
+                dict[kCMSampleAttachmentKey_DisplayImmediately] = true
+                dict[kCMSampleAttachmentKey_DoNotDisplay] = false
+            }
         }
 
         // Add HeroEye attachment (Left eye is hero)
