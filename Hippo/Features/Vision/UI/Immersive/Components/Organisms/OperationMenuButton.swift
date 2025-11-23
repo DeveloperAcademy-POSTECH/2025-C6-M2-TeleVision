@@ -60,17 +60,19 @@ struct OperationMenuButton: View {
                 transcriptionText(partialText)
             }
 
-            // Command result feedback
-            if viewModel.uiState.shouldShowFeedback, let feedback = viewModel.uiState.feedbackMessage {
+            // Feedback message OR status message (priority: feedback > status)
+            if let feedback = viewModel.uiState.feedbackMessage {
+                // Show feedback message with higher priority
                 feedbackText(feedback)
-            }
-
-            // Status instruction message
-            if let message = resolvedStatusMessage {
+            } else if let message = resolvedStatusMessage {
+                // Show status message only when no feedback
                 statusText(message)
             }
         }
         .onTapGesture(perform: handleTap)
+        .onContinuousHover { phase in
+            handleHover(phase: phase)
+        }
         .onChange(of: viewModel.uiState.state) { oldValue, newValue in
             switch newValue {
             case .idle:
@@ -249,8 +251,25 @@ struct OperationMenuButton: View {
     // MARK: - Actions
 
     private func handleTap() {
-        action()
-        viewModel.onWakeWordDetected()
+        switch viewModel.uiState.state {
+        case .idle:
+            // Start voice control and toggle menu
+            action()
+            viewModel.onWakeWordDetected()
+        case .standby, .listening, .retry:
+            // Force stop without toggling menu
+            viewModel.onHoverEnded()
+        }
+    }
+
+    /// Handle continuous hover phase changes
+    private func handleHover(phase: HoverPhase) {
+        switch phase {
+        case .active:
+            viewModel.onHoverBegan()
+        case .ended:
+            viewModel.onHoverEnded()
+        }
     }
 }
 

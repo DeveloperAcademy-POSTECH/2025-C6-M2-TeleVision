@@ -144,31 +144,27 @@ public struct VoiceControlOverlay: View {
         }
     }
 
-    /// Icon color based on current state
+    /// Icon color based on feedback type (more accurate than state)
     private var iconColor: Color {
-        switch viewModel.uiState.state {
-        case .idle:
-            return .secondary
-        case .standby:
-            return .blue
-        case .listening:
+        switch viewModel.uiState.feedbackType {
+        case .success:
             return .green
-        case .retry:
+        case .error:
             return .orange
+        case .info:
+            return .blue
         }
     }
 
-    /// Card background based on current state
+    /// Card background based on feedback type
     private var cardBackground: some ShapeStyle {
-        switch viewModel.uiState.state {
-        case .idle:
-            return AnyShapeStyle(Color.primary.opacity(0.05))
-        case .standby:
-            return AnyShapeStyle(Color.blue.opacity(0.1))
-        case .listening:
+        switch viewModel.uiState.feedbackType {
+        case .success:
             return AnyShapeStyle(Color.green.opacity(0.1))
-        case .retry:
+        case .error:
             return AnyShapeStyle(Color.orange.opacity(0.1))
+        case .info:
+            return AnyShapeStyle(Color.blue.opacity(0.1))
         }
     }
 }
