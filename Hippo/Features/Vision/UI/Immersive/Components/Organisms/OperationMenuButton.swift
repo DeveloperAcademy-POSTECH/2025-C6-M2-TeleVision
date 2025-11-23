@@ -101,13 +101,6 @@ struct OperationMenuButton: View {
 
                 LottieView(animation: .named(isMenuOpen ? "hoverIn" : "hoverOut"))
                     .playing(.fromProgress(0, toProgress: 1, loopMode: .playOnce))
-
-                if viewModel.uiState.isProcessing {
-                    ProgressView()
-                        .progressViewStyle(.circular)
-                        .scaleEffect(Constants.progressScale)
-                        .tint(.white)
-                }
             }
             .frame(width: Constants.buttonSize, height: Constants.buttonSize)
             .glassBackgroundEffect(in: .circle, displayMode: .always)
@@ -195,9 +188,9 @@ struct OperationMenuButton: View {
     private var buttonOpacity: Double {
         switch voiceState {
         case .idle: isMenuOpen ? 1.0 : 0.25
-        case .standby: 0.7
+        case .standby: 1.0
         case .listening: 1.0
-        case .retry: 0.6
+        case .retry: 1.0
         }
     }
 
