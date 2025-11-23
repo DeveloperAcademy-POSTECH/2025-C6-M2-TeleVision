@@ -68,7 +68,16 @@ struct EndoscopeStreamView: View {
                     case .stereo3D:
                         Stereo3DView(
                             receiver: receiver,
-                            pipeline: receiver.renderPipeline
+                            pipeline: receiver.renderPipeline,
+                            mode: .stereo3D
+                        )
+
+                    case .fileDemo:
+                        // Demo 모드도 Stereo3D 렌더링 재사용 (mode 명시)
+                        Stereo3DView(
+                            receiver: receiver,
+                            pipeline: receiver.renderPipeline,
+                            mode: .fileDemo
                         )
                     }
                 }
@@ -111,7 +120,15 @@ struct EndoscopeStreamView: View {
             .animation(.easeInOut(duration: 0.3), value: isVisible)
             .animation(.easeInOut(duration: 0.2), value: uiState.isSwitching)
             .onAppear {
-                // Sync pipeline to initial mode
+                // CRITICAL: Demo 모드는 외부에서 configure 호출하므로 여기서는 건너뜀
+                // Demo 모드는 EndoscopeStreamWindow에서 직접 관리됨
+                guard uiState.activeMode != .fileDemo else {
+                    print("⏭️ [EndoscopeStreamView] Skipping configure for Demo mode (handled externally)")
+                    return
+                }
+
+                // Sync pipeline to initial mode (WebRTC modes only)
+                print("🔄 [EndoscopeStreamView] onAppear - configuring pipeline for: \(uiState.activeMode.rawValue)")
                 receiver.renderPipeline.configure(for: uiState.activeMode)
             }
         }
@@ -127,8 +144,10 @@ struct ViewModeToggle: View {
     var body: some View {
         Button {
             // Async mode transition: Pipeline → View
+            // NOTE: This toggle only cycles through WebRTC modes
+            // Demo mode is separate and not part of this cycle
             Task { @MainActor in
-                // Determine next mode
+                // Determine next WebRTC mode (Raw → Split → Stereo3D → Raw)
                 let nextMode: EndoscopeViewMode
                 switch uiState.activeMode {
                 case .rawStream:
@@ -137,6 +156,11 @@ struct ViewModeToggle: View {
                     nextMode = .stereo3D
                 case .stereo3D:
                     nextMode = .rawStream
+                case .fileDemo:
+                    // Demo is not part of WebRTC cycle
+                    // This should never happen (button is hidden in Demo mode)
+                    print("⚠️ [ViewModeToggle] Toggle pressed in Demo mode - ignoring")
+                    return
                 }
 
                 // Switch mode with proper pipeline preparation

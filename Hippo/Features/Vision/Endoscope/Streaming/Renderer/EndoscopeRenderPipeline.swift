@@ -221,6 +221,13 @@ public final class EndoscopeRenderPipeline: ObservableObject {
 
         case .stereo3D:
             await processStereo3D(pixelBuffer, pts: fixedPTS, duration: fixedDuration)
+
+        case .fileDemo:
+            // File demo mode should not call processFrame - it uses enqueue(sampleBuffer:) directly
+            // This case should never be reached in normal operation
+            logger.warning("⚠️ processFrame called in fileDemo mode - this should not happen")
+            logger.warning("   File demo uses enqueue(sampleBuffer:) instead")
+            return
         }
 
         // Log periodically
@@ -326,6 +333,12 @@ public final class EndoscopeRenderPipeline: ObservableObject {
     /// Get VideoPlayer renderer (for RealityView attachment)
     public func getVideoRenderer() -> StereoVideoPlayer? {
         return videoPlayer
+    }
+
+    /// Check if renderer is ready for more data (for back-pressure control)
+    public func isRendererReady() -> Bool {
+        guard let player = videoPlayer else { return false }
+        return player.videoRenderer.isReadyForMoreMediaData
     }
 
     /// Begin mode change (blocks frame processing until complete)
@@ -680,6 +693,52 @@ public final class EndoscopeRenderPipeline: ObservableObject {
 
                 // Notify via callback
                 onFrameSizeChanged?(newSize)
+            }
+        }
+    }
+}
+
+// MARK: - File Playback Support
+
+extension EndoscopeRenderPipeline {
+
+    /// 파일 기반 Demo 모드: 이미 stereo-tagged CMSampleBuffer를 직접 전달
+    /// - Parameter sampleBuffer: SerialProcessor가 생성한 stereo-tagged CMSampleBuffer
+    /// - Note: SerialProcessor가 이미 SBS split + stereo tagging을 완료했으므로
+    ///         추가 변환 없이 VideoPlayer에 직접 전달
+    public func enqueue(sampleBuffer: CMSampleBuffer) async {
+        // Safety check: Drop frames during mode transition
+        let (player, modeChanging, cleaningUp) = await MainActor.run {
+            (videoPlayer, isModeChanging, isCleaningUp)
+        }
+
+        // Drop frames if cleanup or mode change is in progress
+        guard !cleaningUp && !modeChanging else {
+            // Silent drop during mode change (expected behavior)
+            return
+        }
+
+        guard let player = player else {
+            // This should only happen on first few frames before VideoPlayer is ready
+            await MainActor.run {
+                if framesProcessed <= 5 {
+                    logger.debug("⏳ VideoPlayer not ready yet (frame #\(self.framesProcessed)) - buffering")
+                }
+            }
+            return
+        }
+
+        // 🔹 SerialProcessor가 stereo tagging을 이미 끝낸 상태이므로,
+        //    여기서는 추가 변환 없이 바로 VideoPlayer로 전달
+        await MainActor.run {
+            player.enqueueSample(sampleBuffer)
+        }
+
+        // 선택: 모니터링용 카운팅 정도만 유지
+        await MainActor.run {
+            framesProcessed += 1
+            if framesProcessed % 120 == 0 {
+                logger.debug("[FileDemo] Processed \(self.framesProcessed) frames")
             }
         }
     }

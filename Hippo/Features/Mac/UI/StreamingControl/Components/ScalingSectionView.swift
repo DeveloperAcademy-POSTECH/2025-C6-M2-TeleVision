@@ -58,6 +58,7 @@ struct ScalingSectionView: View {
                             }
                         }
                         .toggleStyle(.switch)
+                        .tint(Color("HippoPrimary", bundle: nil))
                     }
                     .padding(.horizontal, 12)
                     .padding(.vertical, 8)
