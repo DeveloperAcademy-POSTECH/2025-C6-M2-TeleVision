@@ -77,7 +77,55 @@ private enum PatientModelContainerKey: DependencyKey {
         configurations: [modelConfiguration]
       )
     } catch {
-      fatalError("Failed to create SwiftData ModelContainer: \(error)")
+      // If migration fails during development, delete the store and try again
+      print("⚠️ ModelContainer creation failed: \(error)")
+      print("🗑️ Attempting to delete and recreate the database...")
+
+      do {
+        // Delete the existing store files
+        let fileManager = FileManager.default
+        let appSupportURL = try fileManager.url(
+          for: .applicationSupportDirectory,
+          in: .userDomainMask,
+          appropriateFor: nil,
+          create: true
+        )
+
+        let storeURL = appSupportURL.appendingPathComponent("default.store")
+        let storeFiles = [
+          storeURL.path,
+          storeURL.path + "-shm",
+          storeURL.path + "-wal"
+        ]
+
+        for file in storeFiles {
+          if fileManager.fileExists(atPath: file) {
+            try? fileManager.removeItem(atPath: file)
+            print("🗑️ Deleted: \(file)")
+          }
+        }
+
+        // Try creating container again with fresh database
+        let schema = Schema([
+          SDPatient.self,
+          SDOperation.self,
+          SDOperationAsset.self,
+          SDOperationRecording.self
+        ])
+
+        let modelConfiguration = ModelConfiguration(
+          schema: schema,
+          isStoredInMemoryOnly: false,
+          cloudKitDatabase: .private("iCloud.com.television.hippo.app")
+        )
+
+        return try ModelContainer(
+          for: schema,
+          configurations: [modelConfiguration]
+        )
+      } catch {
+        fatalError("Failed to create SwiftData ModelContainer even after cleanup: \(error)")
+      }
     }
   }()
 
