@@ -56,13 +56,12 @@ public struct VoiceControlButton: View {
                 transcriptionText(partialText)
             }
 
-            // Command result feedback (success/error messages)
-            if shouldShowFeedback, let feedback = viewModel.uiState.feedbackMessage {
+            // Feedback message OR status message (priority: feedback > status)
+            if let feedback = viewModel.uiState.feedbackMessage {
+                // Show feedback message with higher priority
                 feedbackText(feedback)
-            }
-
-            // Status instruction message
-            if let message = statusMessage {
+            } else if let message = statusMessage {
+                // Show status message only when no feedback
                 statusText(message)
             }
         }
@@ -148,7 +147,7 @@ public struct VoiceControlButton: View {
 
     // MARK: - Computed Properties - Messages
 
-    /// Status instruction message based on state
+    /// Status instruction message based on state (only shown when no feedback message)
     private var statusMessage: String? {
         switch viewModel.uiState.state {
         case .idle:
@@ -159,21 +158,14 @@ public struct VoiceControlButton: View {
 
         case .listening:
             if viewModel.uiState.isProcessing {
-                "처리 중..."
-            } else if viewModel.uiState.feedbackType == .success {
-                nil // Hide when showing success feedback
+                nil  // Hide when processing (feedback message shows instead)
             } else {
-                "명령을 말씀해주세요"
+                nil  // Hide when listening (feedback message shows instead)
             }
 
         case .retry:
             viewModel.uiState.lastErrorMessage ?? "다시 시도해주세요"
         }
-    }
-
-    /// Whether to show feedback message
-    private var shouldShowFeedback: Bool {
-        viewModel.uiState.state == .listening && !viewModel.uiState.isProcessing
     }
 
     /// Feedback text color based on feedback type
@@ -196,10 +188,16 @@ public struct VoiceControlButton: View {
 
     // MARK: - Actions
 
-    /// Handle button tap - activates voice control
+    /// Handle button tap - toggles voice control
     private func handleTap() {
-        guard case .idle = viewModel.uiState.state else { return }
-        viewModel.onHoverBegan()
+        switch viewModel.uiState.state {
+        case .idle:
+            // Start voice control
+            viewModel.onHoverBegan()
+        case .standby, .listening, .retry:
+            // Force stop if already active
+            viewModel.onHoverEnded()
+        }
     }
 
     /// Handle continuous hover phase changes

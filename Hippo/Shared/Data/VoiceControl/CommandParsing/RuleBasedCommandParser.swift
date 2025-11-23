@@ -29,31 +29,37 @@ public struct RuleBasedCommandParser: VoiceCommandParser {
         let normalized = normalize(text)
         print("🔍 [Parser] Normalized: \"\(normalized)\"")
 
-        // 1. Close Menu patterns
+        // 1. Cancel/Stop voice control (highest priority)
+        if matchesCancelVoiceControl(normalized) {
+            print("✅ [Parser] Matched: cancelVoiceControl")
+            return .cancelVoiceControl
+        }
+
+        // 2. Close Menu patterns
         if matchesCloseMenu(normalized) {
             print("✅ [Parser] Matched: closeMenu")
             return .closeMenu
         }
 
-        // 2. Open Menu patterns
+        // 3. Open Menu patterns
         if matchesOpenMenu(normalized) {
             print("✅ [Parser] Matched: openMenu")
             return .openMenu
         }
 
-        // 3. Close Video patterns
+        // 4. Close Video patterns
         if matchesCloseVideo(normalized) {
             print("✅ [Parser] Matched: closeVideo")
             return .closeVideo
         }
 
-        // 4. Show Video patterns
+        // 5. Show Video patterns
         if matchesShowVideo(normalized) {
             print("✅ [Parser] Matched: showVideo")
             return .showVideo
         }
 
-        // 5. Rotation patterns (most complex, check last)
+        // 6. Rotation patterns (most complex, check last)
         if let rotation = parseRotation(normalized) {
             print("✅ [Parser] Matched: \(rotation)")
             return rotation
@@ -91,6 +97,29 @@ private extension RuleBasedCommandParser {
 // MARK: - Pattern Matching Helpers
 
 private extension RuleBasedCommandParser {
+
+    /// Check if text matches "Cancel/Stop Voice Control" command
+    func matchesCancelVoiceControl(_ text: String) -> Bool {
+        let patterns = [
+            // Korean
+            "종료",
+            "중지",
+            "취소",
+            "그만",
+            "멈춰",
+            "정지",
+            "끝",
+            // English
+            "stop",
+            "cancel",
+            "quit",
+            "end",
+            "exit",
+            "abort",
+            "terminate"
+        ]
+        return patterns.contains { text.contains($0) }
+    }
 
     /// Check if text matches "Close Menu" command
     func matchesCloseMenu(_ text: String) -> Bool {

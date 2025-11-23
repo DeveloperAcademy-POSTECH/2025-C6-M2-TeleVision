@@ -87,4 +87,16 @@ private struct MockSpeechRecognitionService: SpeechRecognitionService {
         // Return a fixed command for testing
         return "UI 숨겨줘"
     }
+
+    func recognizeWakeWord(
+        wakeWords: [String],
+        timeout: TimeInterval
+    ) async throws -> String {
+        // Return the first wake word for testing
+        return wakeWords.first ?? "hippo"
+    }
+
+    func forceStop() {
+        // Mock implementation - no-op for testing
+    }
 }
