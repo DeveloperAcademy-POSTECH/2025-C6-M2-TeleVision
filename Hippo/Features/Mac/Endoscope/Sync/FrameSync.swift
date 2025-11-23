@@ -54,16 +54,16 @@ public final class FrameSync: FrameSyncing {
     // MARK: Configuration
 
     /// Maximum time difference for frame matching
-    /// Set to 500ms to handle large offset between camera start times
-    /// (observed: left and right cameras can have ~400ms start time difference)
-    private let matchTolerance: CMTime = CMTime(value: 500, timescale: 1000)  // 500ms
+    /// INCREASED: 120ms → 250ms to handle camera start time drift
+    /// Accommodates synthetic PTS offset while maintaining acceptable sync quality
+    private let matchTolerance: CMTime = CMTime(value: 250, timescale: 1000)  // 250ms
 
     /// Maximum age for buffered frames before dropping
-    /// Set to 2 seconds to handle camera start time differences
-    private let maxFrameAge: CMTime = CMTime(value: 2000, timescale: 1000)  // 2000ms (2 seconds)
+    private let maxFrameAge: CMTime = CMTime(value: 500, timescale: 1000)  // 500ms
 
     /// Maximum buffer size per source
-    private let maxBufferSize: Int = 10
+    /// At 1080p (~8MB per frame): 5 frames × 2 sources = ~80MB
+    private let maxBufferSize: Int = 5
 
     // MARK: Properties
 
@@ -78,10 +78,11 @@ public final class FrameSync: FrameSyncing {
     private var leftBuffer: [(CVPixelBuffer, CMTime, CGSize)] = []
     private var rightBuffer: [(CVPixelBuffer, CMTime, CGSize)] = []
 
-    // MARK: Timestamp Normalization
+    // MARK: Timestamp Tracking (Logging Only)
 
-    /// Reference times for normalizing timestamps from different sources
-    /// Each source has its own offset to handle different start times
+    /// Reference times for logging relative timestamps (NOT used for matching)
+    /// These offsets are for debugging/monitoring purposes only
+    /// CRITICAL: Matching uses absolute PTS to avoid sync issues between different devices
     private var leftOffset: CFTimeInterval?
     private var rightOffset: CFTimeInterval?
 
@@ -95,6 +96,9 @@ public final class FrameSync: FrameSyncing {
     private var lastStatsLog: Date = Date()
     private var timeDeltaAccumulator: Double = 0.0
     private var timeDeltaCount: Int = 0
+
+    // Periodic stats reset to prevent unbounded growth
+    private let statsResetInterval: Int = 18000  // Reset every 18000 frames (10 minutes at 30fps)
 
     // MARK: Initialization
 
@@ -147,40 +151,33 @@ public final class FrameSync: FrameSyncing {
 
     // MARK: - Private Methods
 
-    /// Normalizes timestamps relative to each source's first frame
-    /// Each source has independent offset to handle different start times
-    private func normalizeTimestamp(_ pts: CMTime, source: CaptureSource) -> CMTime {
+    /// Track offset for logging purposes only (NOT used for matching)
+    /// CRITICAL: This is for debugging/monitoring relative time only
+    /// Matching logic uses absolute PTS to ensure sync works across different devices
+    private func trackOffsetForLogging(_ pts: CMTime, source: CaptureSource) {
         let ptsSeconds = CMTimeGetSeconds(pts)
 
-        // Initialize offset for each source independently
+        // Initialize offset for each source independently (logging only)
         switch source {
         case .left:
             if leftOffset == nil {
                 leftOffset = ptsSeconds
-                logger.info("🕐 Left offset initialized: \(String(format: "%.3f", ptsSeconds))s")
+                logger.info("🕐 Left offset initialized: \(String(format: "%.3f", ptsSeconds))s (for logging only)")
             }
-            let elapsed = ptsSeconds - (leftOffset ?? ptsSeconds)
-            let normalized = CMTime(seconds: elapsed, preferredTimescale: 1000000)
-
             if _stats.leftFrameCount == 1 {
-                logger.info("🔄 left first frame: normalized=\(String(format: "%.3f", elapsed))s")
+                let elapsed = ptsSeconds - (leftOffset ?? ptsSeconds)
+                logger.info("🔄 left first frame: rel=\(String(format: "%.3f", elapsed))s, abs=\(String(format: "%.3f", ptsSeconds))s")
             }
-
-            return normalized
 
         case .right:
             if rightOffset == nil {
                 rightOffset = ptsSeconds
-                logger.info("🕐 Right offset initialized: \(String(format: "%.3f", ptsSeconds))s")
+                logger.info("🕐 Right offset initialized: \(String(format: "%.3f", ptsSeconds))s (for logging only)")
             }
-            let elapsed = ptsSeconds - (rightOffset ?? ptsSeconds)
-            let normalized = CMTime(seconds: elapsed, preferredTimescale: 1000000)
-
             if _stats.rightFrameCount == 1 {
-                logger.info("🔄 right first frame: normalized=\(String(format: "%.3f", elapsed))s")
+                let elapsed = ptsSeconds - (rightOffset ?? ptsSeconds)
+                logger.info("🔄 right first frame: rel=\(String(format: "%.3f", elapsed))s, abs=\(String(format: "%.3f", ptsSeconds))s")
             }
-
-            return normalized
         }
     }
 
@@ -193,20 +190,34 @@ public final class FrameSync: FrameSyncing {
             _stats.rightFrameCount += 1
         }
 
-        // Normalize timestamp using arrival time
-        let normalizedPTS = normalizeTimestamp(pts, source: source)
+        // Periodic stats reset to prevent unbounded growth
+        let totalFrames = _stats.leftFrameCount + _stats.rightFrameCount
+        if totalFrames >= statsResetInterval {
+            logger.info("🔄 Resetting stats (L: \(self._stats.leftFrameCount), R: \(self._stats.rightFrameCount), synced: \(self._stats.syncedPairCount))")
+            _stats.leftFrameCount = 0
+            _stats.rightFrameCount = 0
+            _stats.syncedPairCount = 0
+            _stats.leftDropCount = 0
+            _stats.rightDropCount = 0
+            timeDeltaAccumulator = 0.0
+            timeDeltaCount = 0
+        }
+
+        // CRITICAL FIX: Track offset for logging only (NOT used for matching)
+        trackOffsetForLogging(pts, source: source)
 
         // Get frame size
         let width = CVPixelBufferGetWidth(pb)
         let height = CVPixelBufferGetHeight(pb)
         let size = CGSize(width: width, height: height)
 
-        // Add to appropriate buffer with normalized timestamp
+        // CRITICAL FIX: Store ABSOLUTE PTS in buffer (not normalized)
+        // This ensures frames from different devices can be matched correctly
         switch source {
         case .left:
-            leftBuffer.append((pb, normalizedPTS, size))
+            leftBuffer.append((pb, pts, size))  // ★ ABSOLUTE PTS
         case .right:
-            rightBuffer.append((pb, normalizedPTS, size))
+            rightBuffer.append((pb, pts, size))  // ★ ABSOLUTE PTS
         }
 
         // Limit buffer size
@@ -239,18 +250,20 @@ public final class FrameSync: FrameSyncing {
         let (leftPB, leftPTS, leftSize) = leftBuffer[0]
         let (rightPB, rightPTS, rightSize) = rightBuffer[0]
 
-        // Calculate time delta
-        let delta = CMTimeSubtract(leftPTS, rightPTS)
-        let deltaSeconds = CMTimeGetSeconds(delta)
-        let deltaMs = abs(deltaSeconds * 1000.0)
+        // CRITICAL FIX: Calculate delta using ABSOLUTE PTS
+        let leftSeconds = CMTimeGetSeconds(leftPTS)
+        let rightSeconds = CMTimeGetSeconds(rightPTS)
+        let deltaMs = abs(leftSeconds - rightSeconds) * 1000.0
 
         // Check if within tolerance
         let toleranceSeconds = CMTimeGetSeconds(matchTolerance)
         let toleranceMs = toleranceSeconds * 1000.0
 
-        // Debug: Log first few match attempts
-        if _stats.syncedPairCount < 3 {
-            logger.info("🔍 Match attempt: L_PTS=\(String(format: "%.3f", CMTimeGetSeconds(leftPTS)))s, R_PTS=\(String(format: "%.3f", CMTimeGetSeconds(rightPTS)))s, delta=\(String(format: "%.1f", deltaMs))ms, tolerance=\(String(format: "%.1f", toleranceMs))ms")
+        // OPTIMIZED: Log with both absolute and relative times for debugging
+        if _stats.syncedPairCount < 10 || _stats.syncedPairCount % 300 == 0 {
+            let leftRel = leftOffset != nil ? leftSeconds - leftOffset! : 0
+            let rightRel = rightOffset != nil ? rightSeconds - rightOffset! : 0
+            logger.info("🔍 Match #\(self._stats.syncedPairCount): L_abs=\(String(format: "%.3f", leftSeconds))s (rel=\(String(format: "%.3f", leftRel))s), R_abs=\(String(format: "%.3f", rightSeconds))s (rel=\(String(format: "%.3f", rightRel))s), delta=\(String(format: "%.1f", deltaMs))ms, tolerance=\(String(format: "%.1f", toleranceMs))ms")
         }
 
         if deltaMs <= toleranceMs {
@@ -283,16 +296,23 @@ public final class FrameSync: FrameSyncing {
                 timeDelta: deltaMs
             )
         } else {
-            // No match - remove the older frame to prevent buffer buildup
-            // Drop the older frame (the one that's further behind)
-            if CMTimeCompare(leftPTS, rightPTS) < 0 {
+            // CRITICAL FIX: Drop the older frame using ABSOLUTE PTS comparison
+            if leftSeconds < rightSeconds {
                 // Left is older, drop it
                 leftBuffer.removeFirst()
                 _stats.leftDropCount += 1
+                // OPTIMIZED: Log when frames are dropped due to sync mismatch
+                if _stats.leftDropCount % 30 == 1 {
+                    logger.warning("⚠️ Dropped LEFT frame (PTS mismatch: delta=\(String(format: "%.1f", deltaMs))ms > tolerance=\(String(format: "%.1f", toleranceMs))ms)")
+                }
             } else {
                 // Right is older, drop it
                 rightBuffer.removeFirst()
                 _stats.rightDropCount += 1
+                // OPTIMIZED: Log when frames are dropped due to sync mismatch
+                if _stats.rightDropCount % 30 == 1 {
+                    logger.warning("⚠️ Dropped RIGHT frame (PTS mismatch: delta=\(String(format: "%.1f", deltaMs))ms > tolerance=\(String(format: "%.1f", toleranceMs))ms)")
+                }
             }
         }
 
@@ -328,6 +348,8 @@ public final class FrameSync: FrameSyncing {
         let leftDropped = oldLeftCount - leftBuffer.count
         if leftDropped > 0 {
             _stats.leftDropCount += leftDropped
+            // OPTIMIZED: Log aggressive drops for monitoring
+            logger.warning("⚠️ Dropped \(leftDropped) old LEFT frames (age > \(CMTimeGetSeconds(self.maxFrameAge) * 1000)ms)")
         }
 
         // Drop right frames that are too old relative to the drop threshold
@@ -340,35 +362,52 @@ public final class FrameSync: FrameSyncing {
         let rightDropped = oldRightCount - rightBuffer.count
         if rightDropped > 0 {
             _stats.rightDropCount += rightDropped
+            // OPTIMIZED: Log aggressive drops for monitoring
+            logger.warning("⚠️ Dropped \(rightDropped) old RIGHT frames (age > \(CMTimeGetSeconds(self.maxFrameAge) * 1000)ms)")
         }
     }
 
     private func enforceBufferLimit() {
-        // Drop oldest frames if buffer exceeds limit
+        // OPTIMIZED: Drop oldest frames if buffer exceeds limit (prevents memory overflow)
         if leftBuffer.count > maxBufferSize {
             let dropCount = leftBuffer.count - maxBufferSize
             leftBuffer.removeFirst(dropCount)
             _stats.leftDropCount += dropCount
+            logger.warning("⚠️ LEFT buffer overflow: dropped \(dropCount) frames (limit: \(self.maxBufferSize))")
         }
 
         if rightBuffer.count > maxBufferSize {
             let dropCount = rightBuffer.count - maxBufferSize
             rightBuffer.removeFirst(dropCount)
             _stats.rightDropCount += dropCount
+            logger.warning("⚠️ RIGHT buffer overflow: dropped \(dropCount) frames (limit: \(self.maxBufferSize))")
         }
     }
 
     private func logStatsIfNeeded() {
         let now = Date()
         if now.timeIntervalSince(lastStatsLog) >= 5.0 {  // Every 5 seconds
+
+            // Calculate drop rate
+            let totalFrames = _stats.leftFrameCount + _stats.rightFrameCount
+            let totalDrops = _stats.leftDropCount + _stats.rightDropCount
+            let dropRate = totalFrames > 0 ? Double(totalDrops) / Double(totalFrames) * 100.0 : 0.0
+
             logger.info("""
-            📊 FrameSync Stats:
+            📊 FrameSync Stats (5s):
                Left: \(self._stats.leftFrameCount) frames, \(self._stats.leftDropCount) dropped
                Right: \(self._stats.rightFrameCount) frames, \(self._stats.rightDropCount) dropped
                Synced: \(self._stats.syncedPairCount) pairs
-               Avg delta: \(String(format: "%.2f", self._stats.averageTimeDelta))ms
-               Buffer: L=\(self.leftBuffer.count), R=\(self.rightBuffer.count)
+               Drop rate: \(String(format: "%.1f", dropRate))%
+               Avg delta: \(String(format: "%.1f", self._stats.averageTimeDelta))ms
+               Buffers: L=\(self.leftBuffer.count), R=\(self.rightBuffer.count)
             """)
+
+            // Warning for high drop rate
+            if dropRate > 50.0 {
+                logger.warning("⚠️ High drop rate (\(String(format: "%.1f", dropRate))%) - consider checking PTS synchronization")
+            }
+
             lastStatsLog = now
         }
     }

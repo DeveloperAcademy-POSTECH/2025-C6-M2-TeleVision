@@ -1,9 +1,9 @@
 //
-//  RawStreamView.swift
+//  SplitSBSView.swift
 //  Hippo
 //
-//  Stage 1: Raw SBS view (safest fallback)
-//  Displays raw SBS frame directly without processing
+//  Stage 2: Left-only Mono view (OR minimum success line)
+//  Displays left eye only for safe 2D viewing in OR
 //
 
 import SwiftUI
@@ -11,9 +11,9 @@ import RealityKit
 import AVFoundation
 import os.log
 
-/// Stage 1: Raw Stream View (Safest Fallback)
-/// Displays raw SBS video stream as-is (3840×1080 or 1920×540)
-struct RawStreamView: View {
+/// Stage 2: Split SBS View (Left-only Mono for OR)
+/// Extracts and displays left eye only (1920×1080 or 960×540)
+struct SplitSBSView: View {
     // Only observe receiver (pipeline is accessed via receiver)
     @ObservedObject var receiver: WebRTCReceiver
 
@@ -22,13 +22,13 @@ struct RawStreamView: View {
 
     private let logger = Logger(
         subsystem: "com.television.hippo",
-        category: "RawStreamView"
+        category: "SplitSBSView"
     )
 
     // Constants for stable positioning (same as Stereo3DView)
-    private static let entityName = "raw-video-entity"
-    private static let entityPosition = SIMD3<Float>.zero  // 1.5m in front
-    private static let entityScale = SIMD3<Float>(0.12, 0.12, 0.12)  // Much smaller to see full frame
+    private static let entityName = "split-video-entity"
+    private static let entityPosition = SIMD3<Float>.zero  // Default position
+    private static let entityScale = SIMD3<Float>(0.4, 0.4, 0.4)  // Original size
 
     // MARK: - Body
 
@@ -48,16 +48,16 @@ struct RawStreamView: View {
         }
         .frame(depth: 0)
         .onAppear {
-            logger.info("RawStreamView appeared")
+            logger.info("SplitSBSView appeared")
             logger.info("   Current mode: \(receiver.currentViewMode.rawValue)")
         }
         .onDisappear {
-            logger.info("RawStreamView disappeared")
+            logger.info("SplitSBSView disappeared")
         }
         #else
         Color.black
             .overlay(
-                Text("Raw stream view requires visionOS")
+                Text("Split SBS view requires visionOS")
                     .foregroundColor(.white)
             )
         #endif
@@ -67,7 +67,7 @@ struct RawStreamView: View {
 
     /// Log renderer status at setup
     private func logSetup() {
-        logger.info("RawStreamView: Creating RealityView")
+        logger.info("SplitSBSView: Creating RealityView")
 
         if let videoPlayer = pipeline.getVideoRenderer() {
             let renderer = videoPlayer.videoRenderer
@@ -106,7 +106,7 @@ struct RawStreamView: View {
         entity.position = Self.entityPosition
         entity.scale = Self.entityScale
 
-        logger.info("Raw stream entity configured:")
+        logger.info("Split SBS entity configured:")
         logger.info("   Position: \(entity.position)")
         logger.info("   Scale: \(entity.scale)")
 
@@ -115,7 +115,7 @@ struct RawStreamView: View {
 
     /// Log entity creation
     private func logEntityCreated(_ entity: Entity) {
-        logger.info("Raw stream entity created")
+        logger.info("Split SBS entity created")
         logger.info("   Entity name: \(entity.name)")
         logger.info("   Mode: \(receiver.currentViewMode.rawValue)")
     }
@@ -124,7 +124,7 @@ struct RawStreamView: View {
 // MARK: - Preview
 
 @MainActor
-private struct RawStreamView_PreviewWrapper: View {
+private struct SplitSBSView_PreviewWrapper: View {
     @StateObject private var mockPipeline: EndoscopeRenderPipeline
     @StateObject private var mockReceiver: WebRTCReceiver
 
@@ -138,18 +138,18 @@ private struct RawStreamView_PreviewWrapper: View {
     }
 
     var body: some View {
-        RawStreamView(
+        SplitSBSView(
             receiver: mockReceiver,
             pipeline: mockPipeline
         )
         .onAppear {
             // Set mock frame size to default: full1080 (3840×1080)
             mockReceiver.currentFrameSize = CGSize(width: 3840, height: 1080)
-            mockPipeline.configure(for: .rawStream)
+            mockPipeline.configure(for: .splitSBS)
         }
     }
 }
 
 #Preview {
-    RawStreamView_PreviewWrapper()
+    SplitSBSView_PreviewWrapper()
 }

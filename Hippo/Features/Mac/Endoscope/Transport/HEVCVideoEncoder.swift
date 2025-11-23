@@ -49,13 +49,19 @@ public class HEVCVideoEncoder: NSObject, LKRTCVideoEncoder {
     // Encoder callback
     private var encoderCallback: ((LKRTCEncodedImage, LKRTCCodecSpecificInfo) -> Bool)?
 
-    // Frame counter
+    // Frame counter (resets periodically to prevent overflow)
     private var frameCount: Int = 0
+    private let frameCounterResetInterval: Int = 18000  // Reset every 18000 frames (10 minutes at 30fps)
 
     // Settings
     private var width: Int32 = 0
     private var height: Int32 = 0
     private var targetBitrate: Int = 0
+
+    // Bitrate tracking for monitoring
+    private var frameBytesAccumulator: Int = 0
+    private var encodedFrameCountForStats: Int = 0
+    private var lastBitrateLog: Date = Date()
 
     // Parameter sets (VPS/SPS/PPS) for HEVC
     private var vpsData: Data?
@@ -191,8 +197,16 @@ public class HEVCVideoEncoder: NSObject, LKRTCVideoEncoder {
         }
 
         frameCount += 1
+
+        // Periodic counter reset
+        if frameCount >= frameCounterResetInterval {
+            logger.info("🔄 Resetting HEVC frame counter (encoded: \(self.frameCount))")
+            frameCount = 0
+        }
+
+        // Log periodically (less frequently)
         if frameCount % LoggingInterval.standardFrames == 0 {
-            logger.info("Encoded \(self.frameCount) HEVC frames")
+            logger.debug("Encoded \(self.frameCount) HEVC frames")
         }
 
         return 0
@@ -371,9 +385,28 @@ public class HEVCVideoEncoder: NSObject, LKRTCVideoEncoder {
         if !success {
             logger.error("Encoder callback failed - frame type: \(isKeyframe ? "KEY" : "DELTA"), size: \(annexBData.count) bytes")
         } else {
-            // Log frame size more frequently to monitor bitrate
-            if frameCount <= LoggingInterval.initialFrames || frameCount % LoggingInterval.warningFrames == 0 {
+            // Accumulate bytes for bitrate calculation
+            frameBytesAccumulator += annexBData.count
+            encodedFrameCountForStats += 1
+
+            // Log initial frames for debugging
+            if frameCount <= 10 {
                 logger.info("Frame #\(self.frameCount): \(isKeyframe ? "KEY" : "DELTA"), \(annexBData.count) bytes")
+            }
+
+            // Log average bitrate every 5 seconds
+            let now = Date()
+            if now.timeIntervalSince(lastBitrateLog) >= 5.0 {
+                let elapsed = now.timeIntervalSince(lastBitrateLog)
+                let avgBitrate = Double(frameBytesAccumulator * 8) / elapsed / 1_000_000.0  // Mbps
+                let avgFrameBytes = encodedFrameCountForStats > 0 ? frameBytesAccumulator / encodedFrameCountForStats : 0
+
+                logger.info("📊 Encoder (5s): Avg bitrate: \(String(format: "%.2f", avgBitrate)) Mbps, Avg frame: \(avgFrameBytes / 1024) KB, Frames: \(self.encodedFrameCountForStats)")
+
+                // Reset accumulators
+                frameBytesAccumulator = 0
+                encodedFrameCountForStats = 0
+                lastBitrateLog = now
             }
         }
     }

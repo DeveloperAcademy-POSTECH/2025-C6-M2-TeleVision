@@ -142,7 +142,7 @@ struct HippoVisionApp: App {
                 .onDisappear { immersiveViewModel.handleEndoscopeStreamWindowDisappear() }
         }
         .windowStyle(.plain)
-        .defaultSize(width: 600, height: 338)
+        .defaultSize(width: 900, height: 600)
 
         // EndoscopeStereo ImmersiveSpace (CompositorServices - True Stereo)
         if #available(visionOS 2.0, *) {
