@@ -18,12 +18,14 @@ final class EndoscopeStreamViewModel: ObservableObject {
     @Published var connectionStatus: ConnectionStatus = .idle
     @Published var webRTCReceiver: WebRTCReceiver
     @Published var settings = ConnectionSettings()
+    @Published var activeMode: EndoscopeViewMode = .rawStream  // 초기값 (Demo는 .task에서 configure로 전환)
 
     // MARK: - Private Properties
 
     private let bonjourDiscovery = BonjourServiceDiscovery()
     private let logger = Logger(subsystem: "com.television.hippo", category: "EndoscopeStreamViewModel")
     private let renderPipeline: EndoscopeRenderPipeline
+    private var fileDemoSource: FileDemoFrameSource?  // 파일 데모 소스
 
     // MARK: - Connection Status
 
@@ -52,6 +54,10 @@ final class EndoscopeStreamViewModel: ObservableObject {
 
         // Inject pipeline into receiver (DI pattern)
         self.webRTCReceiver = WebRTCReceiver(renderPipeline: self.renderPipeline)
+
+        // NOTE: Pipeline configuration will be done in .task block
+        // This allows configure() to run fully without early return
+        self.logger.info("✅ ViewModel initialized (pipeline configuration deferred)")
     }
 
     // MARK: - Public Methods
@@ -117,6 +123,96 @@ final class EndoscopeStreamViewModel: ObservableObject {
 
         connectionStatus = .idle
         logger.info("✅ Disconnected")
+    }
+
+    // MARK: - Mode Configuration
+
+    /// Endoscope 모드 구성 (WebRTC vs File)
+    /// - Parameter mode: 대상 모드
+    func configure(for mode: EndoscopeViewMode) async {
+        guard activeMode != mode else {
+            logger.info("Already in mode: \(mode.rawValue)")
+            return
+        }
+
+        logger.info("🔄 Configuring Endoscope for mode: \(mode.rawValue)")
+        activeMode = mode
+
+        if mode.requiresWebRTC {
+            // ✅ WebRTC 기반 모드 (Raw / Split / 3D)
+            logger.info("   Mode requires WebRTC - cleaning up file source")
+
+            // 파일 소스 정리
+            fileDemoSource?.stop()
+            fileDemoSource = nil
+
+            // 파이프라인 모드 설정
+            renderPipeline.configure(for: mode)
+
+            // WebRTC 연결은 기존 connect() 메서드 사용
+            // (여기서는 모드만 설정, 실제 연결은 외부에서 호출)
+            logger.info("   Pipeline configured for WebRTC mode: \(mode.rawValue)")
+
+        } else {
+            // ✅ 파일 기반 Demo 모드
+            logger.info("   Mode is file-based Demo - setting up file source")
+
+            // WebRTC 완전히 정리
+            await disconnect()
+
+            // 번들에서 endoscope-demo.mp4 로드
+            guard let url = Bundle.main.url(forResource: "endoscope-demo", withExtension: "mp4") else {
+                logger.error("❌ endoscope-demo.mp4 not found in bundle")
+                logger.error("   Make sure endoscope-demo.mp4 is added to the project with target membership")
+                return
+            }
+
+            logger.info("   Found endoscope-demo.mp4 at: \(url.lastPathComponent)")
+
+            // FileDemoFrameSource 생성
+            let source = FileDemoFrameSource(url: url)
+            self.fileDemoSource = source
+
+            // 프레임 콜백 연결: FileDemoSource → RenderPipeline
+            source.onFrame = { [weak self] sampleBuffer in
+                guard let self else { return }
+                Task { @MainActor in
+                    await self.renderPipeline.enqueue(sampleBuffer: sampleBuffer)
+                }
+            }
+
+            // Back-pressure 제어: Renderer 준비 상태 체크
+            source.isRendererReady = { [weak self] in
+                guard let self else { return false }
+                return self.renderPipeline.isRendererReady()
+            }
+
+            // Demo 모드는 .fileDemo 모드 사용 (옵션 A)
+            logger.info("   Configuring pipeline for fileDemo mode")
+            renderPipeline.configure(for: .fileDemo)
+
+            // 파일 재생 시작
+            do {
+                try await source.start()
+                logger.info("✅ Demo mode activated - playing endoscope-demo.mp4")
+            } catch {
+                logger.error("❌ Failed to start file playback: \(error.localizedDescription)")
+            }
+        }
+    }
+
+    /// 모든 소스 정리 (화면 종료 시)
+    func stopAll() {
+        logger.info("Stopping all sources")
+
+        // 파일 소스 정리
+        fileDemoSource?.stop()
+        fileDemoSource = nil
+
+        // WebRTC 정리
+        Task {
+            await disconnect()
+        }
     }
 
     // MARK: - Private Methods

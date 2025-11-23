@@ -19,10 +19,15 @@ final class StreamUIState: ObservableObject {
     // MARK: - Published Properties
 
     /// Currently active (fully prepared and visible) mode
-    @Published var activeMode: EndoscopeViewMode = .rawStream
+    @Published var activeMode: EndoscopeViewMode = .fileDemo
 
     /// Whether a mode transition is in progress
     @Published var isSwitching: Bool = false
+
+    // MARK: - Callbacks
+
+    /// Called when exiting Demo mode (for cleanup)
+    public var onExitDemoMode: (() -> Void)?
 
     // MARK: - Private Properties
 
@@ -33,7 +38,7 @@ final class StreamUIState: ObservableObject {
 
     // MARK: - Initialization
 
-    init(initialMode: EndoscopeViewMode = .rawStream) {
+    init(initialMode: EndoscopeViewMode = .fileDemo) {
         self.activeMode = initialMode
         logger.info("StreamUIState initialized with mode: \(initialMode.rawValue)")
     }
@@ -56,6 +61,27 @@ final class StreamUIState: ObservableObject {
         }
 
         logger.info("🔄 Mode switch requested: \(self.activeMode.rawValue) → \(newMode.rawValue)")
+
+        // Cleanup Demo mode resources if exiting from Demo
+        if activeMode == .fileDemo && newMode != .fileDemo {
+            logger.info("   Exiting Demo mode - triggering cleanup...")
+            onExitDemoMode?()
+        }
+
+        // CRITICAL: Demo mode is now handled by PrimaryModeToggle
+        // Demo 진입: PrimaryModeToggle → stopAll() → configure(.fileDemo) → update UI
+        // This ensures FileDemoFrameSource is properly initialized
+        if newMode == .fileDemo {
+            logger.info("⚠️ switchMode() called for Demo mode")
+            logger.info("   Note: Demo configuration should be handled by PrimaryModeToggle")
+            logger.info("   Updating UI state only")
+            isSwitching = true
+            activeMode = .fileDemo
+            try? await Task.sleep(for: .milliseconds(50))
+            isSwitching = false
+            logger.info("✅ Mode switch complete (UI updated to Demo)")
+            return
+        }
 
         // Step 1: Mark as switching (shows overlay) and pause frame processing
         isSwitching = true

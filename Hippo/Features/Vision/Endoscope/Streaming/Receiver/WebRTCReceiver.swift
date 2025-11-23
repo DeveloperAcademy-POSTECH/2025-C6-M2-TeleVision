@@ -161,8 +161,10 @@ public final class WebRTCReceiver: NSObject, ObservableObject {
         // Setup pipeline callbacks for data flow: Pipeline → Receiver
         setupPipelineCallbacks()
 
-        // Configure pipeline with initial mode to ensure resources are initialized
-        renderPipeline.configure(for: currentViewMode)
+        // CRITICAL: Do NOT configure pipeline here!
+        // Pipeline will be configured externally based on desired initial mode
+        // This prevents hardcoding .rawStream as the only initial mode
+        logger.info("WebRTCReceiver initialized (pipeline configuration deferred to caller)")
     }
 
     /// Performs global WebRTC initialization in a thread-safe manner (nonisolated for lock usage)

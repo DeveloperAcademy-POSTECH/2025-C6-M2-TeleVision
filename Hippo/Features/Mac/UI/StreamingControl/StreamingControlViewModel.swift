@@ -89,7 +89,7 @@ public final class StreamingControlViewModel {
         }
     }
 
-    var isHalfBitrateEnabled: Bool = false {
+    var isHalfBitrateEnabled: Bool = true {
         didSet {
             logger.info("Bitrate mode changed: \(oldValue ? "15 Mbps" : "30 Mbps") → \(self.isHalfBitrateEnabled ? "15 Mbps" : "30 Mbps")")
 

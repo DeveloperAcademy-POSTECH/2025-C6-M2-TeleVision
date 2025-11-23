@@ -34,6 +34,10 @@ public final class StereoVideoPlayer {
     /// Task for observing flush notifications (must be cancelled on cleanup)
     private var notificationTask: Task<Void, Never>?
 
+    /// Pending samples buffer for Demo mode (when renderer is not ready yet)
+    private var pendingSamples: [CMSampleBuffer] = []
+    private let maxPendingSamples = 10  // Keep only first 10 frames if renderer is slow
+
     // MARK: - Initialization
 
     init() {
@@ -42,13 +46,15 @@ public final class StereoVideoPlayer {
 
         setupRenderer()
 
-        logger.info("StereoVideoPlayer initialized with synchronizer")
+        let instanceID = String(describing: ObjectIdentifier(self))
+        logger.info("StereoVideoPlayer initialized with synchronizer (id=\(instanceID))")
     }
 
     deinit {
         notificationTask?.cancel()
         notificationTask = nil
-        logger.info("StereoVideoPlayer DEINIT - being destroyed!")
+        let instanceID = String(describing: ObjectIdentifier(self))
+        logger.info("StereoVideoPlayer DEINIT (id=\(instanceID)) - being destroyed!")
     }
 
     // MARK: - Public Methods
@@ -74,6 +80,12 @@ public final class StereoVideoPlayer {
         // Cancel notification observer task to prevent memory leak
         notificationTask?.cancel()
         notificationTask = nil
+
+        // Clear pending samples buffer
+        if !pendingSamples.isEmpty {
+            logger.info("   Clearing \(self.pendingSamples.count) pending samples")
+            pendingSamples.removeAll()
+        }
 
         framesEnqueued = 0
         framesSinceLastFlush = 0
@@ -101,9 +113,27 @@ public final class StereoVideoPlayer {
         let isReady = videoRenderer.isReadyForMoreMediaData
         if !isReady {
             if framesEnqueued == 0 {
-                logger.warning("⚠️ Renderer not ready for first frame (will retry)")
+                logger.warning("⚠️ Renderer not ready for first frame (buffering for retry)")
+
+                // Buffer this sample for retry when renderer becomes ready
+                if pendingSamples.count < maxPendingSamples {
+                    pendingSamples.append(sample)
+                    logger.info("   📦 Buffered frame #\(self.pendingSamples.count) (will enqueue when ready)")
+                }
             }
             return
+        }
+
+        // Renderer is ready - flush any pending samples first
+        if !pendingSamples.isEmpty {
+            logger.info("🔄 Renderer ready! Flushing \(self.pendingSamples.count) pending samples...")
+            for (index, pendingSample) in pendingSamples.enumerated() {
+                videoRenderer.enqueue(pendingSample)
+                framesEnqueued += 1
+                logger.info("   ✓ Enqueued pending frame #\(index + 1)")
+            }
+            pendingSamples.removeAll()
+            logger.info("✅ All pending samples flushed")
         }
 
         // Log first frame details
@@ -157,7 +187,8 @@ public final class StereoVideoPlayer {
             // Renderer is now ready
             if !self.isRendererReady {
                 self.isRendererReady = true
-                self.logger.info("AVSampleBufferVideoRenderer is ready")
+                self.logger.info("🎬 AVSampleBufferVideoRenderer is ready (requestMediaDataWhenReady callback)")
+                self.logger.info("   Renderer can now accept frames for display")
             }
         }
 
