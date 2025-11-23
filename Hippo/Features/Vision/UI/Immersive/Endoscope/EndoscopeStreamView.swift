@@ -16,7 +16,9 @@ import AVFoundation
 struct EndoscopeStreamView: View {
     @ObservedObject var receiver: WebRTCReceiver
     let isVisible: Bool
-    @Binding var viewMode: EndoscopeViewMode
+
+    // UI state for coordinated mode transitions (injected from parent)
+    @ObservedObject var uiState: StreamUIState
 
     // Calculate dynamic view size based on frame resolution
     private var viewSize: CGSize {
@@ -24,7 +26,7 @@ struct EndoscopeStreamView: View {
 
         // If no frame size yet, use default 16:9
         guard frameSize.width > 0 && frameSize.height > 0 else {
-            return CGSize(width: 600, height: 338)
+            return CGSize(width: 900, height: 600)
         }
 
         // Maximum display dimensions (fits well in Vision Pro window)
@@ -47,51 +49,87 @@ struct EndoscopeStreamView: View {
 
     var body: some View {
         if isVisible {
-            Group {
-                // Route to appropriate view based on pipeline mode
-                switch viewMode {
-                case .rawStream:
-                    RawStreamView(
-                        receiver: receiver,
-                        pipeline: receiver.renderPipeline
-                    )
+            ZStack {
+                // Main content - route based on activeMode (not viewMode)
+                Group {
+                    switch uiState.activeMode {
+                    case .rawStream:
+                        RawStreamView(
+                            receiver: receiver,
+                            pipeline: receiver.renderPipeline
+                        )
 
-                case .splitSBS:
-                    SplitSBSView(
-                        receiver: receiver,
-                        pipeline: receiver.renderPipeline
-                    )
+                    case .splitSBS:
+                        SplitSBSView(
+                            receiver: receiver,
+                            pipeline: receiver.renderPipeline
+                        )
 
-                case .stereo3D:
-                    Stereo3DView(
-                        receiver: receiver,
-                        pipeline: receiver.renderPipeline
-                    )
+                    case .stereo3D:
+                        Stereo3DView(
+                            receiver: receiver,
+                            pipeline: receiver.renderPipeline,
+                            mode: .stereo3D
+                        )
+
+                    case .fileDemo:
+                        // Demo 모드도 Stereo3D 렌더링 재사용 (mode 명시)
+                        Stereo3DView(
+                            receiver: receiver,
+                            pipeline: receiver.renderPipeline,
+                            mode: .fileDemo
+                        )
+                    }
+                }
+                .id(uiState.activeMode.rawValue)  // Force recreation on mode change
+                .frame(width: viewSize.width, height: viewSize.height)
+                .onChange(of: viewSize) { oldValue, newValue in
+                    if oldValue != newValue {
+                        print("📐 View size changed: \(Int(oldValue.width))×\(Int(oldValue.height)) → \(Int(newValue.width))×\(Int(newValue.height))")
+                    }
+                }
+                .clipShape(RoundedRectangle(cornerRadius: 20))
+                .glassBackgroundEffect(in: .rect(cornerRadius: 20))
+                .shadow(radius: 10)
+                .overlay(
+                    RoundedRectangle(cornerRadius: 20)
+                        .stroke(Color.hippoPrimary.opacity(0.3), lineWidth: 2)
+                )
+
+                // Switching overlay
+                if uiState.isSwitching {
+                    Color.black.opacity(0.4)
+                        .clipShape(RoundedRectangle(cornerRadius: 20))
+                        .overlay {
+                            VStack(spacing: 12) {
+                                ProgressView()
+                                    .scaleEffect(1.2)
+                                    .tint(.white)
+
+                                Text("모드 전환 중...")
+                                    .font(.system(size: 14, weight: .medium))
+                                    .foregroundStyle(.white)
+                            }
+                            .padding(24)
+                            .background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: 16))
+                        }
+                        .transition(.opacity)
                 }
             }
-            .id(viewMode.rawValue)  // Force recreation on mode change
-            .frame(width: viewSize.width, height: viewSize.height)
-            .onChange(of: viewSize) { oldValue, newValue in
-                if oldValue != newValue {
-                    print("📐 View size changed: \(Int(oldValue.width))×\(Int(oldValue.height)) → \(Int(newValue.width))×\(Int(newValue.height))")
-                }
-            }
-            .clipShape(RoundedRectangle(cornerRadius: 20))
-            .glassBackgroundEffect(in: .rect(cornerRadius: 20))
-            .shadow(radius: 10)
-            .overlay(
-                RoundedRectangle(cornerRadius: 20)
-                    .stroke(Color.hippoPrimary.opacity(0.3), lineWidth: 2)
-            )
             .transition(.opacity)
             .animation(.easeInOut(duration: 0.3), value: isVisible)
+            .animation(.easeInOut(duration: 0.2), value: uiState.isSwitching)
             .onAppear {
-                // Sync receiver to current view mode
-                receiver.setViewMode(viewMode)
-            }
-            .onChange(of: viewMode) { oldMode, newMode in
-                // Update receiver when view mode changes
-                receiver.setViewMode(newMode)
+                // CRITICAL: Demo 모드는 외부에서 configure 호출하므로 여기서는 건너뜀
+                // Demo 모드는 EndoscopeStreamWindow에서 직접 관리됨
+                guard uiState.activeMode != .fileDemo else {
+                    print("⏭️ [EndoscopeStreamView] Skipping configure for Demo mode (handled externally)")
+                    return
+                }
+
+                // Sync pipeline to initial mode (WebRTC modes only)
+                print("🔄 [EndoscopeStreamView] onAppear - configuring pipeline for: \(uiState.activeMode.rawValue)")
+                receiver.renderPipeline.configure(for: uiState.activeMode)
             }
         }
     }
@@ -100,28 +138,41 @@ struct EndoscopeStreamView: View {
 // MARK: - View Mode Toggle
 
 struct ViewModeToggle: View {
-    @Binding var mode: EndoscopeViewMode
+    @ObservedObject var uiState: StreamUIState
+    let pipeline: EndoscopeRenderPipeline
 
     var body: some View {
         Button {
-            withAnimation(.easeInOut(duration: 0.2)) {
-                // Cycle through modes: Raw → SplitSBS → Stereo3D → Raw
-                switch mode {
+            // Async mode transition: Pipeline → View
+            // NOTE: This toggle only cycles through WebRTC modes
+            // Demo mode is separate and not part of this cycle
+            Task { @MainActor in
+                // Determine next WebRTC mode (Raw → Split → Stereo3D → Raw)
+                let nextMode: EndoscopeViewMode
+                switch uiState.activeMode {
                 case .rawStream:
-                    mode = .splitSBS
+                    nextMode = .splitSBS
                 case .splitSBS:
-                    mode = .stereo3D
+                    nextMode = .stereo3D
                 case .stereo3D:
-                    mode = .rawStream
+                    nextMode = .rawStream
+                case .fileDemo:
+                    // Demo is not part of WebRTC cycle
+                    // This should never happen (button is hidden in Demo mode)
+                    print("⚠️ [ViewModeToggle] Toggle pressed in Demo mode - ignoring")
+                    return
                 }
+
+                // Switch mode with proper pipeline preparation
+                await uiState.switchMode(to: nextMode, pipeline: pipeline)
             }
         } label: {
             HStack(spacing: 4) {
-                Image(systemName: mode.icon)
+                Image(systemName: uiState.activeMode.icon)
                     .font(.system(size: 11))
                     .foregroundStyle(.primary)
 
-                Text(mode.description)
+                Text(uiState.activeMode.description)
                     .font(.system(size: 10))
                     .foregroundStyle(.secondary)
             }
@@ -131,6 +182,7 @@ struct ViewModeToggle: View {
         }
         .buttonStyle(.plain)
         .hoverEffect()
+        .disabled(uiState.isSwitching)  // Disable during transition
     }
 }
 
@@ -160,9 +212,9 @@ struct ConnectionStatusBadge: View {
 
 @MainActor
 private struct EndoscopeStreamView_PreviewWrapper: View {
-    @State private var viewMode: EndoscopeViewMode = .stereo3D
     @StateObject private var mockPipeline: EndoscopeRenderPipeline
     @StateObject private var mockReceiver: WebRTCReceiver
+    @StateObject private var mockUIState = StreamUIState(initialMode: .stereo3D)
 
     init() {
         // @MainActor 컨텍스트에서 파이프라인 생성
@@ -179,7 +231,7 @@ private struct EndoscopeStreamView_PreviewWrapper: View {
         EndoscopeStreamView(
             receiver: mockReceiver,
             isVisible: true,
-            viewMode: $viewMode
+            uiState: mockUIState
         )
     }
 }

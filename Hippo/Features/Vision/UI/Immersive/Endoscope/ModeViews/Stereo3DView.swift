@@ -21,15 +21,23 @@ struct Stereo3DView: View {
     // Pipeline reference (no observation needed, just access)
     let pipeline: EndoscopeRenderPipeline
 
+    // Optional mode override for explicit logging (used for Demo mode)
+    var mode: EndoscopeViewMode?
+
     private let logger = Logger(
         subsystem: "com.television.hippo",
         category: "Stereo3DView"
     )
 
+    // Computed current mode (use override if provided, otherwise from receiver)
+    private var currentMode: EndoscopeViewMode {
+        mode ?? receiver.currentViewMode
+    }
+
     // Constants for stable positioning
     private static let entityName = "video-player-entity"
     private static let entityPosition = SIMD3<Float>.zero  // Default position
-    private static let entityScale = SIMD3<Float>(0.2, 0.2, 0.2)  // Original size
+    private static let entityScale = SIMD3<Float>(0.5, 0.5, 0.5)  // Original size
 
     // MARK: - Body
 
@@ -38,27 +46,46 @@ struct Stereo3DView: View {
         RealityView { content in
             logSetup()
 
-            // Create entity with VideoPlayerComponent
+            // Create entity (may be empty if VideoPlayer not ready yet)
             let entity = makeVideoPlayerEntity()
             content.add(entity)
 
             logEntityCreated(entity)
 
         } update: { content in
-            // Position and scale are fixed for stability
-            // No dynamic updates needed for OR demo
+            // Check if VideoPlayer became available (for Demo mode late initialization)
+            guard let entity = content.entities.first(where: { $0.name == Self.entityName }) else {
+                return
+            }
+
+            // If entity doesn't have VideoPlayerComponent yet, try to add it
+            if entity.components[VideoPlayerComponent.self] == nil,
+               let videoPlayer = pipeline.getVideoRenderer() {
+                logger.info("🔄 VideoPlayer now available - adding component to existing entity")
+
+                let videoPlayerComponent = VideoPlayerComponent(
+                    videoRenderer: videoPlayer.videoRenderer
+                )
+                entity.components.set(videoPlayerComponent)
+
+                logger.info("✅ VideoPlayerComponent added successfully")
+                logger.info("   Renderer status: \(videoPlayer.videoRenderer.status.rawValue)")
+                logger.info("   Ready for data: \(videoPlayer.videoRenderer.isReadyForMoreMediaData)")
+            }
         }
         .frame(depth: 0)  // RealityView origin on window plane
         .onAppear {
-            logger.info("Stereo3DView appeared")
-            logger.info("   Current mode: \(receiver.currentViewMode.rawValue)")
+            let modeLabel = currentMode == .fileDemo ? " (mode=Demo)" : ""
+            logger.info("Stereo3DView appeared\(modeLabel)")
+            logger.info("   Current mode: \(self.currentMode.rawValue)")
 
             #if DEBUG
             startDebugMonitoring()
             #endif
         }
         .onDisappear {
-            logger.info("Stereo3DView disappeared")
+            let modeLabel = currentMode == .fileDemo ? " (mode=Demo)" : ""
+            logger.info("Stereo3DView disappeared\(modeLabel)")
         }
         #else
         Color.black
@@ -73,7 +100,8 @@ struct Stereo3DView: View {
 
     /// Log renderer status at setup
     private func logSetup() {
-        logger.info("Stereo3DView: Creating RealityView")
+        let modeLabel = currentMode == .fileDemo ? " (mode=Demo)" : ""
+        logger.info("Stereo3DView: Creating RealityView\(modeLabel)")
 
         // Get renderer directly from pipeline
         if let videoPlayer = pipeline.getVideoRenderer() {
@@ -93,44 +121,39 @@ struct Stereo3DView: View {
         }
 
         logger.info("   Current frame size: \(Int(receiver.currentFrameSize.width))×\(Int(receiver.currentFrameSize.height))")
+        logger.info("   Mode: \(self.currentMode.rawValue)")
     }
 
     /// Create VideoPlayerComponent entity with stable position and scale
     private func makeVideoPlayerEntity() -> Entity {
-        // Get VideoPlayer directly from pipeline
-        guard let videoPlayer = pipeline.getVideoRenderer() else {
-            logger.error("CRITICAL: VideoPlayer not found in pipeline!")
-            logger.error("   This should never happen - pipeline should initialize VideoPlayer")
-            logger.error("   Creating empty entity as fallback")
-
-            let entity = Entity()
-            entity.name = Self.entityName
-            return entity
-        }
-
-        logger.info("Creating VideoPlayerComponent with AVSampleBufferVideoRenderer")
-        logger.info("   Renderer: \(videoPlayer.videoRenderer)")
-        logger.info("   Renderer status: \(videoPlayer.videoRenderer.status.rawValue)")
-
-        // Create VideoPlayerComponent with AVSampleBufferVideoRenderer
-        let videoPlayerComponent = VideoPlayerComponent(
-            videoRenderer: videoPlayer.videoRenderer
-        )
-
-        logger.info("VideoPlayerComponent created successfully")
-
-        // Create entity with VideoPlayerComponent
+        // Create entity first
         let entity = Entity()
         entity.name = Self.entityName
-        entity.components.set(videoPlayerComponent)
-
-        // Set stable position and scale for OR demo
         entity.position = Self.entityPosition
         entity.scale = Self.entityScale
 
-        logger.info("VideoPlayer entity configured:")
-        logger.info("   Position: \(entity.position)")
-        logger.info("   Scale: \(entity.scale)")
+        // Try to get VideoPlayer from pipeline
+        if let videoPlayer = pipeline.getVideoRenderer() {
+            logger.info("Creating VideoPlayerComponent with AVSampleBufferVideoRenderer")
+            logger.info("   Renderer: \(videoPlayer.videoRenderer)")
+            logger.info("   Renderer status: \(videoPlayer.videoRenderer.status.rawValue)")
+
+            // Create VideoPlayerComponent with AVSampleBufferVideoRenderer
+            let videoPlayerComponent = VideoPlayerComponent(
+                videoRenderer: videoPlayer.videoRenderer
+            )
+
+            logger.info("VideoPlayerComponent created successfully")
+            entity.components.set(videoPlayerComponent)
+
+            logger.info("VideoPlayer entity configured:")
+            logger.info("   Position: \(entity.position)")
+            logger.info("   Scale: \(entity.scale)")
+        } else {
+            // VideoPlayer not ready yet (Demo mode late initialization)
+            logger.warning("⏳ VideoPlayer not ready yet - will retry in update block")
+            logger.warning("   Creating placeholder entity (component will be added when VideoPlayer is ready)")
+        }
 
         return entity
     }

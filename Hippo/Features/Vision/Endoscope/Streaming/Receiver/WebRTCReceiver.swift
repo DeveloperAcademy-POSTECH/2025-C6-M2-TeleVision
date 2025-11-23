@@ -161,8 +161,10 @@ public final class WebRTCReceiver: NSObject, ObservableObject {
         // Setup pipeline callbacks for data flow: Pipeline → Receiver
         setupPipelineCallbacks()
 
-        // Configure pipeline with initial mode to ensure resources are initialized
-        renderPipeline.configure(for: currentViewMode)
+        // CRITICAL: Do NOT configure pipeline here!
+        // Pipeline will be configured externally based on desired initial mode
+        // This prevents hardcoding .rawStream as the only initial mode
+        logger.info("WebRTCReceiver initialized (pipeline configuration deferred to caller)")
     }
 
     /// Performs global WebRTC initialization in a thread-safe manner (nonisolated for lock usage)
@@ -318,25 +320,41 @@ public final class WebRTCReceiver: NSObject, ObservableObject {
         }
 
         logger.info("WebRTC Receiver stopping...")
-        statsTimer?.invalidate()
-        peerConnection?.close()
-        signalingClient?.disconnect()
 
-        // Cleanup all pipeline resources
+        // 1. Stop timers immediately
+        statsTimer?.invalidate()
+
+        // 2. Cleanup pipeline FIRST (stops frame processing)
         renderPipeline.cleanup()
 
-        // Remove notification observers to prevent memory leaks
+        // 3. Disconnect signaling (fast, non-blocking after our fix)
+        signalingClient?.disconnect()
+
+        // 4. Close peer connection in background with timeout
+        if let pc = peerConnection {
+            Task.detached {
+                pc.close()
+            }
+        }
+
+        // 5. Remove notification observers to prevent memory leaks
         NotificationCenter.default.removeObserver(self, name: .hevcFrameDecoded, object: nil)
 
-        // Release common resources
+        // 6. Release common resources
         i420Converter = nil
+        peerConnection = nil
+        remoteVideoTrack = nil
+        signalingClient = nil
 
+        // 7. Reset state
         isConnected = false
         isInitialized = false
         isRendererSetup = false
         lastPTS = nil
         loggingState = LoggingState()
         videoPlayerFrameCounter = 0
+        pendingRemoteCandidates.removeAll()
+        remoteDescriptionSet = false
 
         logger.info("✅ WebRTC Receiver stopped, all resources released")
     }
@@ -386,7 +404,7 @@ public final class WebRTCReceiver: NSObject, ObservableObject {
                 if self.framesReceived % LoggingInterval.frequentFrames == 0 {
                     self.logger.info("Received HEVC frame via notification workaround")
                 }
-                self.processFrame(sendableBuffer.pixelBuffer, from: frame)
+                await self.processFrame(sendableBuffer.pixelBuffer, from: frame)
             }
         }
 
@@ -610,7 +628,7 @@ extension WebRTCReceiver: LKRTCVideoRenderer {
                 guard let self = self, let converter = self.i420Converter else { return }
 
                 if let converted = await converter.convert(i420Buffer) {
-                    self.processFrame(converted, from: frame)
+                    await self.processFrame(converted, from: frame)
                 }
             }
             return
@@ -621,37 +639,44 @@ extension WebRTCReceiver: LKRTCVideoRenderer {
         guard let pb = pixelBuffer else { return }
         let sendableBuffer = SendablePixelBuffer(pb)
 
-        Task { @MainActor [sendableBuffer] in
-            self.processFrame(sendableBuffer.pixelBuffer, from: frame)
+        // Process frame using structured concurrency
+        // StereoVideoPlayerHelper's serial queue ensures thread-safe VTPixelTransferSession access
+        Task { [weak self, sendableBuffer] in
+            guard let self = self else { return }
+            await self.processFrame(sendableBuffer.pixelBuffer, from: frame)
         }
     }
 
-    private func processFrame(_ pixelBuffer: CVPixelBuffer, from frame: LKRTCVideoFrame) {
-        // Update current frame for debugging
-        self.currentFrame = pixelBuffer
-        self.framesReceived += 1
-
-        // Update stats
-        self.stats = ReceiverStats(framesReceived: self.framesReceived)
+    private func processFrame(_ pixelBuffer: CVPixelBuffer, from frame: LKRTCVideoFrame) async {
+        // Update stats and timing on main actor
+        await MainActor.run {
+            self.currentFrame = pixelBuffer
+            self.framesReceived += 1
+            self.stats = ReceiverStats(framesReceived: self.framesReceived)
+        }
 
         // Compute timing
         let timeStampSeconds = Double(frame.timeStampNs) / 1_000_000_000.0
         let pts = CMTime(seconds: timeStampSeconds, preferredTimescale: 1_000_000_000)
+
         let duration: CMTime
-        if let last = self.lastPTS {
+        let lastPTS = await MainActor.run { self.lastPTS }
+        if let last = lastPTS {
             duration = CMTimeSubtract(pts, last)
         } else {
             duration = CMTime(value: 1, timescale: 60)
         }
-        self.lastPTS = pts
+        await MainActor.run { self.lastPTS = pts }
 
-        // Delegate frame processing to pipeline
+        // Delegate frame processing to pipeline (runs on background)
         // Pipeline will route to appropriate stage based on current mode
-        renderPipeline.processFrame(pixelBuffer, pts: pts, duration: duration)
+        await renderPipeline.processFrame(pixelBuffer, pts: pts, duration: duration)
 
         // Log frames received periodically
-        if self.framesReceived % LoggingInterval.standardFrames == 0 {
-            self.logger.info("Received \(self.framesReceived) frames, mode: \(self.currentViewMode.rawValue)")
+        let framesReceived = await MainActor.run { self.framesReceived }
+        let currentMode = await MainActor.run { self.currentViewMode }
+        if framesReceived % LoggingInterval.standardFrames == 0 {
+            logger.info("Received \(framesReceived) frames, mode: \(currentMode.rawValue)")
         }
     }
 }
