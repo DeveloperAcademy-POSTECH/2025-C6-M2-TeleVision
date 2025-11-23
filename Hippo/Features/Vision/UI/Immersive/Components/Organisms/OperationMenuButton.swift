@@ -71,9 +71,6 @@ struct OperationMenuButton: View {
             }
         }
         .onTapGesture(perform: handleTap)
-        .onContinuousHover { phase in
-            handleHover(phase)
-        }
         .onChange(of: viewModel.uiState.state) { oldValue, newValue in
             switch newValue {
             case .idle:
@@ -88,7 +85,6 @@ struct OperationMenuButton: View {
                 visualState = .starting
             }
         }
-        .help(immersiveViewModel.isMenuActive ? "집중 모드로 전환" : "")
     }
 
     // MARK: - Subviews
@@ -262,15 +258,6 @@ struct OperationMenuButton: View {
     private func handleTap() {
         action()
         viewModel.onWakeWordDetected()
-    }
-
-    private func handleHover(_ phase: HoverPhase) {
-        switch phase {
-        case .active:
-            viewModel.onHoverBegan()
-        case .ended:
-            viewModel.onHoverEnded()
-        }
     }
 }
 
