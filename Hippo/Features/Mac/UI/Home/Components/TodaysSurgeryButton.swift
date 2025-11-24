@@ -15,7 +15,7 @@ struct TodaysSurgeryButton: View {
             rootVM.selectTodaysSurgery()
         } label: {
             HStack {
-                Text("Today's Surgery")
+                Text("Today Surgery")
 
                 Spacer()
             }
@@ -27,10 +27,9 @@ struct TodaysSurgeryButton: View {
             .background(RoundedRectangle(cornerRadius: 8).fill(rootVM.isTodaysSurgerySelected ? .hippoPrimary : .white))
         }
         .buttonStyle(.plain)
-        .listRowInsets(.init(top: 0, leading: 4, bottom: 0, trailing: 4))
     }
 }
 
 #Preview {
-   RootView()
+    RootView()
 }

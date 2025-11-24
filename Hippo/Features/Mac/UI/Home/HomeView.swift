@@ -24,7 +24,6 @@ struct HomeView: View {
                 TodaysSurgeryView(
                     viewModel: TodaysSurgeryViewModel(rootVM: rootVM)
                 )
-                .navigationTitle("Today's Surgery")
             } else {
                 PatientDetailView(
                     viewModel: PatientDetailViewModel(rootVM: rootVM),

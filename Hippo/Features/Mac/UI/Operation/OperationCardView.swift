@@ -39,9 +39,10 @@ struct OperationCardView: View {
                         .font(.title2)
                         .fontWeight(.bold)
                         .foregroundColor(.hippoPrimary)
-                    Text("\(operation.operationDate)")
+                        .padding(.bottom, 2)
+                    Text(operation.operationDate.toOperationDateString())
                         .font(.headline)
-                        .fontWeight(.bold)
+                        .fontWeight(.semibold)
                         .foregroundColor(.hippoGray500)
                 }
 
@@ -87,11 +88,10 @@ struct OperationCardView: View {
 
                 //환자정보/집도의/수술부위/진단(병명)
                 HStack {
-                    
                     if let name = operation.name,
                         let gender = operation.gender {
                         VStack(alignment: .leading) {
-                            Text("Patient Info")
+                            Text("환자 정보")
                                 .padding(.vertical, 4)
                                 .font(.callout)
                                 .foregroundColor(.hippoGray500)
@@ -110,7 +110,7 @@ struct OperationCardView: View {
                     }
                     
                     VStack(alignment: .leading) {
-                        Text("Surgeon")
+                        Text("집도의")
                             .padding(.vertical, 4)
                             .font(.callout)
                             .foregroundColor(.hippoGray500)
@@ -122,7 +122,7 @@ struct OperationCardView: View {
                     Spacer()
 
                     VStack(alignment: .leading) {
-                        Text("Surgical Site")
+                        Text("수술부위")
                             .padding(.vertical, 4)
                             .font(.callout)
                             .foregroundColor(.hippoGray500)
@@ -134,7 +134,7 @@ struct OperationCardView: View {
                     Spacer()
 
                     VStack(alignment: .leading) {
-                        Text("Diagnosis")
+                        Text("진단(병명)")
                             .padding(.vertical, 4)
                             .font(.callout)
                             .foregroundColor(.hippoGray500)
@@ -145,12 +145,13 @@ struct OperationCardView: View {
 
                     Spacer()
                 }
+                .padding(.bottom, 4)
 
                 Divider()
 
                 //상세 내용
                 VStack(alignment: .leading) {
-                    Text("Details")
+                    Text("세부 내용")
                         .padding(.vertical, 4)
                         .font(.callout)
                         .foregroundColor(.hippoGray500)
@@ -158,11 +159,12 @@ struct OperationCardView: View {
                         .font(.headline)
                         .foregroundColor(.hippoGray700)
                 }
+                .padding(.bottom, 4)
 
                 Divider()
 
                 VStack(alignment: .leading) {
-                    Text("3D models")
+                    Text("3D 모델")
                         .padding(.vertical, 4)
                         .font(.callout)
                         .foregroundColor(.hippoGray500)
@@ -189,7 +191,3 @@ struct OperationCardView: View {
         )
     }
 }
-
-//#Preview {
-//    OperationCardView(operation: .sample)
-//}
