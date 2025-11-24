@@ -10,6 +10,12 @@ import SwiftUI
 @MainActor
 @Observable
 final class ImmersiveViewModel {
+    let runtime: ImmersiveSceneRuntime
+
+    init(runtime: ImmersiveSceneRuntime) {
+        self.runtime = runtime
+    }
+
     // MARK: - 수술 중 환경 상태
 
     public var isMenuActive: Bool = true
@@ -57,6 +63,9 @@ final class ImmersiveViewModel {
     // 컨트롤러 on
     func openMenuSetting(windowController: WindowController) {
         ARSessionController.shared.runARSession()
+        
+        runtime.selectedEntity = nil
+        
         if !isSurgeryBottomMenuOpen {
             windowController.openWindow(id: WindowIDs.surgeryBottomMenu)
             isSurgeryBottomMenuOpen = true
@@ -66,6 +75,9 @@ final class ImmersiveViewModel {
     // 컨트롤러 off
     func closeMenuSetting(windowController: WindowController) {
         ARSessionController.shared.stopARSession()
+
+        runtime.selectedEntity = nil
+
         if isSurgeryBottomMenuOpen {
             windowController.dismissWindow(id: WindowIDs.surgeryBottomMenu)
             isSurgeryBottomMenuOpen = false
