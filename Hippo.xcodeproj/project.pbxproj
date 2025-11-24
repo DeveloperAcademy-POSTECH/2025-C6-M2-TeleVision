@@ -286,7 +286,7 @@
 		25B5ADC02ED247B5008F1261 /* FileDemoFrameSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = 25B5ADB92ED247B5008F1261 /* FileDemoFrameSource.swift */; };
 		25B5ADC42ED2DBBB008F1261 /* PrimaryModeToggle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 25B5ADC12ED2DBBB008F1261 /* PrimaryModeToggle.swift */; };
 		25B5ADC52ED2DBBB008F1261 /* WebRTCSubModeToggle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 25B5ADC22ED2DBBB008F1261 /* WebRTCSubModeToggle.swift */; };
-		25B5ADCA2ED2E966008F1261 /* endoscope-demo.mp4 in Resources */ = {isa = PBXBuildFile; fileRef = 25B5ADC92ED2E966008F1261 /* endoscope-demo.mp4 */; };
+		25B5AE0E2ED33672008F1261 /* endoscope-demo.mp4 in Resources */ = {isa = PBXBuildFile; fileRef = 25B5AE0D2ED33672008F1261 /* endoscope-demo.mp4 */; };
 		25B8D6872ECBC07400676A3A /* ScalingMode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 25B8D6862ECBC07400676A3A /* ScalingMode.swift */; };
 		25B8D6892ECBC16100676A3A /* ScalingSectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 25B8D6882ECBC16100676A3A /* ScalingSectionView.swift */; };
 		25E78B602EB90D4600D8CAD2 /* OperationStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = 25E78B5D2EB90D4600D8CAD2 /* OperationStatus.swift */; };
@@ -683,7 +683,7 @@
 		25B5ADBA2ED247B5008F1261 /* SerialProcessor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SerialProcessor.swift; sourceTree = "<group>"; };
 		25B5ADC12ED2DBBB008F1261 /* PrimaryModeToggle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PrimaryModeToggle.swift; sourceTree = "<group>"; };
 		25B5ADC22ED2DBBB008F1261 /* WebRTCSubModeToggle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebRTCSubModeToggle.swift; sourceTree = "<group>"; };
-		25B5ADC92ED2E966008F1261 /* endoscope-demo.mp4 */ = {isa = PBXFileReference; lastKnownFileType = file; path = "endoscope-demo.mp4"; sourceTree = "<group>"; };
+		25B5AE0D2ED33672008F1261 /* endoscope-demo.mp4 */ = {isa = PBXFileReference; lastKnownFileType = file; path = "endoscope-demo.mp4"; sourceTree = "<group>"; };
 		25B8D6862ECBC07400676A3A /* ScalingMode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScalingMode.swift; sourceTree = "<group>"; };
 		25B8D6882ECBC16100676A3A /* ScalingSectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScalingSectionView.swift; sourceTree = "<group>"; };
 		25E78B542EB90D4600D8CAD2 /* Operation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Operation.swift; sourceTree = "<group>"; };
@@ -1679,8 +1679,7 @@
 				14DE51512EB771420027D9A0 /* HIPPO.icon */,
 				C02FFA5A2E9FFF6F00F16742 /* MacAssets.xcassets */,
 				C02FFA5B2E9FFF6F00F16742 /* VisionAssets.xcassets */,
-				149D92692ECA71040043B1A2 /* dummy_video.mp4 */,
-				25B5ADC92ED2E966008F1261 /* endoscope-demo.mp4 */,
+				25B5AE0D2ED33672008F1261 /* endoscope-demo.mp4 */,
 			);
 			path = Resources;
 			sourceTree = "<group>";
@@ -2149,8 +2148,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				C02FFA932E9FFF6F00F16742 /* VisionAssets.xcassets in Resources */,
+				25B5AE0E2ED33672008F1261 /* endoscope-demo.mp4 in Resources */,
 				14DE51542EB771420027D9A0 /* HIPPO.icon in Resources */,
-				25B5ADCA2ED2E966008F1261 /* endoscope-demo.mp4 in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

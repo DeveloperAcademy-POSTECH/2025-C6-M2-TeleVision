@@ -2,6 +2,14 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+	<key>NSSpeechRecognitionUsageDescription</key>
+	<string>음성 명령을 이해하기 위해 음성 인식 권한이 필요합니다.</string>
+	<key>NSMicrophoneUsageDescription</key>
+	<string>음성 명령을 인식하기 위해 마이크 접근 권한이 필요합니다.</string>
+	<key>NSFileProviderDomainUsageDescription</key>
+	<string>3D 모델 파일 접근 권한 필요</string>
+	<key>NSCameraUsageDescription</key>
+	<string>Hippo needs access to your camera for video streaming.</string>
 	<key>NSAppTransportSecurity</key>
 	<dict>
 		<key>NSAllowsArbitraryLoadsInWebContent</key>

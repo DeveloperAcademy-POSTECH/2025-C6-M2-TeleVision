@@ -119,7 +119,7 @@ extension VoiceControlUIState {
             feedbackMessage = nil
 
         case .standby:
-            feedbackMessage = "아이콘을 바라본 상태에서 'Hippo'라고 말하세요"
+            feedbackMessage = "'Hippo'라고 말하세요"
 
         case .listening:
             feedbackMessage = "명령을 말씀해주세요"
