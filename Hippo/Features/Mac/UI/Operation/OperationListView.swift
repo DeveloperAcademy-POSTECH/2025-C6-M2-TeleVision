@@ -34,19 +34,6 @@ struct OperationListView: View {
 
             ScrollView {
                 LazyVStack {
-                    Spacer().frame(height: 12)
-                    
-                    HStack {
-                        Text("오늘의 수술")
-                            .font(.title)
-                            .fontWeight(.bold)
-                            .foregroundStyle(.hippoGray500)
-                        
-                        Spacer()
-                    }
-                    
-                    Spacer().frame(height: 24)
-
                     if !upcoming.isEmpty {
                         Section {
                             ForEach(upcoming) { operation in
@@ -69,6 +56,8 @@ struct OperationListView: View {
 
                         Spacer()
                     }
+
+                    Spacer().frame(height: 12)
 
                     if !finished.isEmpty {
                         // 완료 수술 섹션

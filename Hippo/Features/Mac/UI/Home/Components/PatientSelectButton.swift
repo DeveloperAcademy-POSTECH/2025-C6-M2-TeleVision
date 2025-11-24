@@ -9,15 +9,43 @@ struct PatientSelectButton: View {
             Button {
                 rootVM.selectPatient(data.id)
             } label: {
-                HStack(spacing: 12) {
+                HStack(alignment: .center) {
+                    Spacer()
                     Text(data.patientNumber)
+                    Spacer()
                     Text(data.name)
+                    Spacer()
                     Text(data.genderText)
-                    Text("Age \(data.age)")
+                    Spacer()
+                    Text("\(data.age)세")
+                    Spacer()
+                    Menu {
+                        Button {
+                            rootVM.openPatientEditSheet(patient: data)
+                        } label: {
+                            HStack {
+                                Image(systemName: "pencil")
+                                    .padding(.trailing, 4)
+                                Text("편집")
+                            }
+                        }
+                        Button(role: .destructive) {
+                            Task { await rootVM.deletePatient(data.id) }
+                        } label: {
+                            HStack {
+                                Image(systemName: "trash")
+                                    .padding(.trailing, 4)
+                                Text("삭제")
+                            }
+                        }
+                    } label: {
+                        Image(systemName: "ellipsis.circle.fill")
+                            .foregroundStyle(.hippoGray200)
+                    }
                     Spacer()
                 }
+                .frame(maxWidth: .infinity, alignment: .center)
                 .padding(.vertical, 8)
-                .padding(.horizontal, 12)
                 .font(.body)
                 .foregroundColor(rootVM.navigationState.selectedPatientID == data.id ? .white : .hippoGray700)
                 .background(
@@ -26,20 +54,6 @@ struct PatientSelectButton: View {
                 )
             }
             .buttonStyle(.plain)
-            .contextMenu {
-                Button {
-                    rootVM.openPatientEditSheet(patient: data)
-                } label: {
-                    Text("Edit")
-                        .padding(.horizontal, 8)
-                }
-                Button(role: .destructive) {
-                    Task { await rootVM.deletePatient(data.id) }
-                } label: {
-                    Text("Delete")
-                        .padding(.horizontal, 8)
-                }
-            }
         }
     }
 }

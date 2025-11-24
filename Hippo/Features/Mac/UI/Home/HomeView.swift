@@ -20,26 +20,60 @@ struct HomeView: View {
             HomeViewSideBar(rootVM: $rootVM, hoveredPatientID: $hoveredPatientID)
                 .background(Color.white)
         } detail: {
-            if rootVM.isTodaysSurgerySelected {
-                TodaysSurgeryView(
-                    viewModel: TodaysSurgeryViewModel(rootVM: rootVM)
-                )
-            } else {
-                PatientDetailView(
-                    viewModel: PatientDetailViewModel(rootVM: rootVM),
-                    selectedPatient: rootVM.selectedPatient,
-                    isTodaysSurgerySelected: rootVM.isTodaysSurgerySelected
-                )
-            }
-        }
-        .toolbar {
-            if !rootVM.isTodaysSurgerySelected {
-                // 수술 생성 버튼
-                Button {
-                    rootVM.openOperationCreateSheet()
-                } label: {
-                    Label("Create", systemImage: "plus")
+            VStack {
+                HStack {
+                    if rootVM.isTodaysSurgerySelected {
+                        Text("오늘의 수술")
+                            .font(.title)
+                            .fontWeight(.bold)
+                            .foregroundStyle(.hippoGray700)
+                    } else {
+                        if let patient = rootVM.selectedPatient {
+                            VStack(alignment: .leading) {
+                                Text("\(patient.name) 환자 (\(patient.genderText) / \(patient.age)세)")
+                                    .font(.title2)
+                                    .fontWeight(.bold)
+                                    .foregroundStyle(.hippoGray700)
+                                Text(patient.patientNumber)
+                                    .font(.headline)
+                                    .foregroundStyle(.hippoGray300)
+                            }
+                            .padding(.trailing, 16)
+
+                            Button {
+                                rootVM.openOperationCreateSheet()
+                            } label: {
+                                Image(systemName: "plus.circle.fill")
+                                    .resizable()
+                                    .frame(width: 32, height: 32)
+                                    .foregroundStyle(.hippoPrimary)
+                            }
+                            .buttonStyle(.plain)
+                        }
+                    }
+
+                    Spacer()
                 }
+                .frame(height: 32)
+                .padding(.top, 28)
+                .padding(.horizontal)
+                .padding(.bottom)
+
+                Spacer()
+
+                if rootVM.isTodaysSurgerySelected {
+                    TodaysSurgeryView(
+                        viewModel: TodaysSurgeryViewModel(rootVM: rootVM)
+                    )
+                } else {
+                    PatientDetailView(
+                        viewModel: PatientDetailViewModel(rootVM: rootVM),
+                        selectedPatient: rootVM.selectedPatient,
+                        isTodaysSurgerySelected: rootVM.isTodaysSurgerySelected
+                    )
+                }
+
+                Spacer()
             }
         }
         .sheet(isPresented: $rootVM.navigationState.isPresentingPatientInput) {

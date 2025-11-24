@@ -18,7 +18,7 @@ struct HomeViewSideBar: View {
             } header: {
                 HStack {
                     Text("Patient List")
-                        .font(.title3)
+                        .font(.headline)
                         .fontWeight(.bold)
 
                     Spacer()
