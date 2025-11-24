@@ -41,6 +41,7 @@ struct OperationMenuButton: View {
     // MARK: - Internal State
 
     @State private var visualState: VoiceVisualState = .idle
+    @State private var animationTimeoutTask: Task<Void, Never>?
 
     private enum VoiceVisualState {
         case idle
@@ -60,30 +61,21 @@ struct OperationMenuButton: View {
                 transcriptionText(partialText)
             }
 
-            // Command result feedback
-            if viewModel.uiState.shouldShowFeedback, let feedback = viewModel.uiState.feedbackMessage {
+            // Feedback message OR status message (priority: feedback > status)
+            if let feedback = viewModel.uiState.feedbackMessage {
+                // Show feedback message with higher priority
                 feedbackText(feedback)
-            }
-
-            // Status instruction message
-            if let message = resolvedStatusMessage {
+            } else if let message = resolvedStatusMessage {
+                // Show status message only when no feedback
                 statusText(message)
             }
         }
         .onTapGesture(perform: handleTap)
+        .onContinuousHover { phase in
+            handleHover(phase: phase)
+        }
         .onChange(of: viewModel.uiState.state) { oldValue, newValue in
-            switch newValue {
-            case .idle:
-                if oldValue != .idle {
-                    visualState = .ending
-                }
-
-            case .listening, .retry:
-                visualState = .listening
-
-            case .standby:
-                visualState = .starting
-            }
+            handleVoiceStateChange(from: oldValue, to: newValue)
         }
     }
 
@@ -112,6 +104,8 @@ struct OperationMenuButton: View {
                     LottieView(animation: .named("VC_start"))
                         .playing(loopMode: .playOnce)
                         .animationDidFinish { _ in
+                            // 애니메이션이 정상적으로 끝나면 타임아웃 취소하고 listening으로 전환
+                            animationTimeoutTask?.cancel()
                             visualState = .listening
                         }
 
@@ -123,6 +117,8 @@ struct OperationMenuButton: View {
                     LottieView(animation: .named("VC_end"))
                         .playing(loopMode: .playOnce)
                         .animationDidFinish { _ in
+                            // 애니메이션이 정상적으로 끝나면 타임아웃 취소하고 idle로 전환
+                            animationTimeoutTask?.cancel()
                             visualState = .idle
                         }
 
@@ -246,11 +242,83 @@ struct OperationMenuButton: View {
         }
     }
 
+    // MARK: - State Management
+
+    /// Handle voice state changes and update visual state accordingly
+    private func handleVoiceStateChange(from oldValue: VoiceControlState, to newValue: VoiceControlState) {
+        switch newValue {
+        case .idle:
+            transitionToIdle(from: oldValue)
+
+        case .listening, .retry:
+            transitionToListening()
+
+        case .standby:
+            transitionToStandby()
+        }
+    }
+
+    /// Transition to idle state with ending animation
+    private func transitionToIdle(from previousState: VoiceControlState) {
+        guard previousState != .idle else {
+            visualState = .idle
+            return
+        }
+
+        visualState = .ending
+        startAnimationTimeout(targetState: .ending, fallbackState: .idle, description: "Ending")
+    }
+
+    /// Transition to listening state (skip animation)
+    private func transitionToListening() {
+        animationTimeoutTask?.cancel()
+        visualState = .listening
+    }
+
+    /// Transition to standby state with starting animation
+    private func transitionToStandby() {
+        visualState = .starting
+        startAnimationTimeout(targetState: .starting, fallbackState: .listening, description: "Starting")
+    }
+
+    /// Start animation timeout to prevent visual state from getting stuck
+    private func startAnimationTimeout(
+        targetState: VoiceVisualState,
+        fallbackState: VoiceVisualState,
+        description: String
+    ) {
+        animationTimeoutTask?.cancel()
+        animationTimeoutTask = Task { @MainActor in
+            try? await Task.sleep(for: .seconds(2))
+            if visualState == targetState {
+                print("⚠️ [OperationMenuButton] \(description) animation timeout - forcing \(fallbackState) state")
+                visualState = fallbackState
+            }
+        }
+    }
+
     // MARK: - Actions
 
     private func handleTap() {
-        action()
-        viewModel.onWakeWordDetected()
+        switch viewModel.uiState.state {
+        case .idle:
+            // Start voice control and toggle menu
+            action()
+            viewModel.onWakeWordDetected()
+        case .standby, .listening, .retry:
+            // Force stop without toggling menu
+            viewModel.onHoverEnded()
+        }
+    }
+
+    /// Handle continuous hover phase changes
+    private func handleHover(phase: HoverPhase) {
+        switch phase {
+        case .active:
+            viewModel.onHoverBegan()
+        case .ended:
+            viewModel.onHoverEnded()
+        }
     }
 }
 

@@ -155,6 +155,9 @@ iOSInjectionProject/
 patients.json
 *.log
 
+# Demo video files
+Hippo/Resources/*.mp4
+
 # Backup files
 backup_*/
 *_backup_*/

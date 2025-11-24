@@ -15,11 +15,6 @@ import AVFoundation
 /// This service uses Apple's on-device speech recognition (Speech framework)
 /// to recognize a single utterance and return the transcribed text.
 ///
-/// **Implementation details:**
-/// - Uses `SFSpeechAudioBufferRecognitionRequest` for live audio recognition
-/// - Automatically stops after detecting a complete utterance
-/// - Handles microphone permissions via `AVAudioSession`
-///
 /// **Thread safety:**
 /// This class is `@MainActor` isolated because Speech framework APIs
 /// require main thread access.
@@ -31,13 +26,17 @@ public final class AppleSpeechRecognitionService: SpeechRecognitionService {
     private enum Constants {
         static let audioBufferSize: AVAudioFrameCount = 1024
         static let recognitionTimeoutNanoseconds: UInt64 = 7_000_000_000  // 7 seconds
-        static let errorRetryDelayNanoseconds: UInt64 = 500_000_000  // 0.5 seconds
+        static let wakeWordTimeoutNanoseconds: UInt64 = 3_000_000_000    // 3 seconds
+        static let errorRetryDelayNanoseconds: UInt64 = 500_000_000      // 0.5 seconds
     }
 
     // MARK: - Properties
 
     private let speechRecognizer: SFSpeechRecognizer
     private let audioEngine = AVAudioEngine()
+
+    /// Current active recognition task
+    private var currentRecognitionTask: SFSpeechRecognitionTask?
 
     /// Handler for partial transcription results (real-time feedback)
     public var onPartialResult: (@MainActor (String) -> Void)?
@@ -54,11 +53,58 @@ public final class AppleSpeechRecognitionService: SpeechRecognitionService {
     // MARK: - SpeechRecognitionService
 
     public func recognizeSingleUtterance() async throws -> String {
-        // Step 1: Request permissions
         try await requestPermissions()
-
-        // Step 2: Start recognition and wait for result
         return try await performRecognition()
+    }
+
+    /// Partial results 기반 빠른 wake word 감지 (0.5-1.5초, on-device)
+    public func recognizeWakeWord(
+        wakeWords: [String],
+        timeout: TimeInterval
+    ) async throws -> String {
+        try await requestPermissions()
+        try configureAudioSession()
+
+        let recognitionRequest = createRecognitionRequest(forWakeWord: true)
+        setupAudioTap(for: recognitionRequest)
+
+        if !audioEngine.isRunning {
+            audioEngine.prepare()
+            try audioEngine.start()
+            print("🎤 [Wake Word] Audio engine started")
+        } else {
+            print("🎤 [Wake Word] Audio engine already running")
+        }
+
+        return try await detectWakeWordWithPartialResults(
+            request: recognitionRequest,
+            wakeWords: wakeWords,
+            timeout: timeout
+        )
+    }
+
+    /// Force stop all ongoing speech recognition
+    public func forceStop() {
+        print("🛑 [STT] Force stopping all recognition")
+
+        // Cancel active recognition task
+        currentRecognitionTask?.cancel()
+        currentRecognitionTask = nil
+
+        // Stop audio engine
+        if audioEngine.isRunning {
+            cleanup()
+            audioEngine.stop()
+            print("🛑 [STT] Audio engine stopped")
+        }
+
+        // Deactivate audio session
+        do {
+            try AVAudioSession.sharedInstance().setActive(false, options: .notifyOthersOnDeactivation)
+            print("🛑 [STT] Audio session deactivated")
+        } catch {
+            print("⚠️ [STT] Failed to deactivate audio session: \(error)")
+        }
     }
 }
 
@@ -66,12 +112,8 @@ public final class AppleSpeechRecognitionService: SpeechRecognitionService {
 
 extension AppleSpeechRecognitionService {
 
-    /// Request necessary permissions (Speech + Microphone)
-    ///
-    /// This can be called before starting voice recognition to request permissions early.
-    /// It's recommended to call this when the user starts a surgery session.
+    /// Speech + Microphone 권한 요청
     public func requestPermissions() async throws {
-        // Request speech recognition permission
         let authStatus = await withCheckedContinuation { continuation in
             SFSpeechRecognizer.requestAuthorization { status in
                 continuation.resume(returning: status)
@@ -82,7 +124,6 @@ extension AppleSpeechRecognitionService {
             throw VoiceControlError.permissionDenied
         }
 
-        // Request microphone permission
         let recordPermission = await withCheckedContinuation { continuation in
             AVAudioSession.sharedInstance().requestRecordPermission { granted in
                 continuation.resume(returning: granted)
@@ -99,26 +140,12 @@ extension AppleSpeechRecognitionService {
 
 private extension AppleSpeechRecognitionService {
 
-    /// Perform speech recognition for a single utterance
-    ///
-    /// This method:
-    /// 1. Configures audio session
-    /// 2. Starts audio engine
-    /// 3. Creates recognition request
-    /// 4. Waits for final transcription
-    /// 5. Stops audio engine
-    /// 6. Returns transcribed text
+    /// 단일 발화 음성 인식 (7초 타임아웃, cloud 허용)
     func performRecognition() async throws -> String {
-        // Configure audio session
         try configureAudioSession()
-
-        // Create and configure recognition request
-        let recognitionRequest = createRecognitionRequest()
-
-        // Setup audio tap
+        let recognitionRequest = createRecognitionRequest(forWakeWord: false)
         setupAudioTap(for: recognitionRequest)
 
-        // Start audio engine (only if not already running)
         if !audioEngine.isRunning {
             audioEngine.prepare()
             try audioEngine.start()
@@ -127,28 +154,23 @@ private extension AppleSpeechRecognitionService {
             print("🎤 [STT] Audio engine already running, reusing")
         }
 
-        // Perform recognition and wait for result
         return try await recognizeWithTimeout(request: recognitionRequest)
     }
 
-    /// Create and configure recognition request
-    private func createRecognitionRequest() -> SFSpeechAudioBufferRecognitionRequest {
+    /// Recognition request 생성 (wake word: on-device, command: cloud)
+    func createRecognitionRequest(forWakeWord: Bool) -> SFSpeechAudioBufferRecognitionRequest {
         let request = SFSpeechAudioBufferRecognitionRequest()
         request.shouldReportPartialResults = true
-        // TODO: Make this configurable (on-device vs cloud) based on environment/settings
-        request.requiresOnDeviceRecognition = false  // Allow cloud for better accuracy
+        request.requiresOnDeviceRecognition = forWakeWord
         return request
     }
 
-    /// Setup audio tap to feed audio to recognition request
-    private func setupAudioTap(for request: SFSpeechAudioBufferRecognitionRequest) {
+    /// Audio tap 설정 (기존 tap 제거 후 재설치)
+    func setupAudioTap(for request: SFSpeechAudioBufferRecognitionRequest) {
         let inputNode = audioEngine.inputNode
         let recordingFormat = inputNode.outputFormat(forBus: 0)
 
-        // Remove existing tap if any (prevents errors on retry)
-        if inputNode.numberOfInputs > 0 {
-            inputNode.removeTap(onBus: 0)
-        }
+        inputNode.removeTap(onBus: 0)
 
         inputNode.installTap(
             onBus: 0,
@@ -165,13 +187,13 @@ private extension AppleSpeechRecognitionService {
         var lastPartialResult: String?
     }
 
-    /// Perform recognition with timeout handling
-    private func recognizeWithTimeout(request: SFSpeechAudioBufferRecognitionRequest) async throws -> String {
+    func recognizeWithTimeout(
+        request: SFSpeechAudioBufferRecognitionRequest
+    ) async throws -> String {
         try await withCheckedThrowingContinuation { continuation in
             let state = RecognitionState()
 
-            // Start recognition task
-            speechRecognizer.recognitionTask(with: request) { [weak self] result, error in
+            let task = speechRecognizer.recognitionTask(with: request) { [weak self] result, error in
                 guard let self = self else { return }
 
                 if let error = error {
@@ -192,7 +214,9 @@ private extension AppleSpeechRecognitionService {
                 }
             }
 
-            // Setup timeout handler
+            // Store task for potential force cancellation
+            self.currentRecognitionTask = task
+
             setupTimeoutHandler(
                 state: state,
                 continuation: continuation
@@ -200,7 +224,6 @@ private extension AppleSpeechRecognitionService {
         }
     }
 
-    /// Handle recognition error
     private func handleRecognitionError(
         _ error: Error,
         state: RecognitionState,
@@ -210,20 +233,21 @@ private extension AppleSpeechRecognitionService {
 
         guard !state.hasResumed else { return }
         state.hasResumed = true
+        currentRecognitionTask = nil
         cleanup()
 
-        // Return partial result if available, otherwise throw error
         if let partial = state.lastPartialResult, !partial.isEmpty {
             print("🎤 [STT] Returning partial result on error: \"\(partial)\"")
             continuation.resume(returning: partial)
         } else {
-            continuation.resume(throwing: VoiceControlError.speechRecognitionFailed(
-                reason: error.localizedDescription
-            ))
+            continuation.resume(
+                throwing: VoiceControlError.speechRecognitionFailed(
+                    reason: error.localizedDescription
+                )
+            )
         }
     }
 
-    /// Handle recognition result (partial or final)
     private func handleRecognitionResult(
         _ result: SFSpeechRecognitionResult,
         state: RecognitionState,
@@ -236,20 +260,19 @@ private extension AppleSpeechRecognitionService {
 
             guard !state.hasResumed else { return }
             state.hasResumed = true
+            currentRecognitionTask = nil
             cleanup()
             continuation.resume(returning: transcription)
         } else {
             print("🎤 [STT Partial] \(transcription)")
             state.lastPartialResult = transcription
 
-            // Call partial result handler for real-time UI updates
             Task { @MainActor in
                 self.onPartialResult?(transcription)
             }
         }
     }
 
-    /// Setup timeout handler to return partial result after 7 seconds
     private func setupTimeoutHandler(
         state: RecognitionState,
         continuation: CheckedContinuation<String, Error>
@@ -257,48 +280,143 @@ private extension AppleSpeechRecognitionService {
         Task { @MainActor [weak self] in
             guard let self = self else { return }
 
-            // Wait 7 seconds (increased from 5 to allow full command phrases)
             try? await Task.sleep(nanoseconds: Constants.recognitionTimeoutNanoseconds)
 
             guard !state.hasResumed else { return }
             state.hasResumed = true
+            self.currentRecognitionTask = nil
             self.cleanup()
 
-            // Return last partial result if available
             if let partial = state.lastPartialResult, !partial.isEmpty {
                 print("🎤 [STT] Timeout - Returning partial result: \"\(partial)\"")
                 continuation.resume(returning: partial)
             } else {
                 print("🎤 [STT] Timeout - No speech detected")
-                continuation.resume(throwing: VoiceControlError.speechRecognitionFailed(
-                    reason: "No speech detected"
-                ))
+                continuation.resume(
+                    throwing: VoiceControlError.speechRecognitionFailed(
+                        reason: "No speech detected"
+                    )
+                )
             }
         }
     }
 
-    /// Configure audio session for recording
+    /// Audio session 설정
     func configureAudioSession() throws {
         let audioSession = AVAudioSession.sharedInstance()
         try audioSession.setCategory(.record, mode: .measurement, options: .duckOthers)
-        // It's safe to call setActive(true) multiple times
         try audioSession.setActive(true, options: .notifyOthersOnDeactivation)
     }
 
-    /// Cleanup audio resources
+    /// Audio tap 제거 (audio engine은 계속 실행 - wake word loop 최적화)
     func cleanup() {
-        // Don't stop audio engine! Keep it running for continuous recognition
-        // This is crucial for wake word loop - stopping/starting repeatedly causes issues
-
-        // Remove tap safely (will be re-installed on next recognition)
         let inputNode = audioEngine.inputNode
-        if inputNode.numberOfInputs > 0 {
-            inputNode.removeTap(onBus: 0)
-        }
+        inputNode.removeTap(onBus: 0)
+    }
+}
 
-        // Don't deactivate audio session here!
-        // This allows continuous recognition (e.g., wake word loop)
-        // Audio session will be deactivated when the app goes to background
-        // or when explicitly needed
+// MARK: - Wake Word Detection (Fast Mode)
+
+private extension AppleSpeechRecognitionService {
+
+    /// Partial results 모니터링하여 wake word 감지 시 즉시 반환 (thread-safe)
+    func detectWakeWordWithPartialResults(
+        request: SFSpeechAudioBufferRecognitionRequest,
+        wakeWords: [String],
+        timeout: TimeInterval
+    ) async throws -> String {
+
+        return try await withCheckedThrowingContinuation { continuation in
+            var hasResumed = false
+            var wasCancelledByDetection = false
+            var recognitionTask: SFSpeechRecognitionTask?
+
+            let normalizedWakeWords = wakeWords.map { $0.lowercased() }
+
+            recognitionTask = speechRecognizer.recognitionTask(with: request) { [weak self] result, error in
+                guard let self = self else { return }
+
+                Task { @MainActor in
+                    if let result = result {
+                        let transcription = result.bestTranscription.formattedString
+                        let normalized = transcription.lowercased()
+
+                        if result.isFinal {
+                            print("🎤 [Wake Word Final] \(transcription)")
+                        } else {
+                            print("🎤 [Wake Word Partial] \(transcription)")
+                        }
+
+                        // Partial results에서 wake word 감지 시 즉시 반환
+                        for (index, wakeWord) in normalizedWakeWords.enumerated() {
+                            if normalized.contains(wakeWord) {
+                                guard !hasResumed else { return }
+                                hasResumed = true
+                                wasCancelledByDetection = true
+
+                                let detectedWord = wakeWords[index]
+                                print("🎯 [Wake Word] DETECTED: \"\(detectedWord)\" in \"\(transcription)\"")
+
+                                self.currentRecognitionTask = nil
+                                recognitionTask?.cancel()
+                                self.cleanup()
+
+                                continuation.resume(returning: detectedWord)
+                                return
+                            }
+                        }
+                    }
+
+                    if let error = error {
+                        // 의도된 cancellation은 무시 (wake word 감지 후 cancel)
+                        if wasCancelledByDetection {
+                            return
+                        }
+
+                        let nsError = error as NSError
+                        if nsError.domain == "kAFAssistantErrorDomain" && nsError.code == 216 {
+                            return
+                        }
+
+                        guard !hasResumed else { return }
+                        hasResumed = true
+
+                        print("🎤 [Wake Word Error] \(error.localizedDescription)")
+                        self.currentRecognitionTask = nil
+                        self.cleanup()
+
+                        continuation.resume(
+                            throwing: VoiceControlError.speechRecognitionFailed(
+                                reason: error.localizedDescription
+                            )
+                        )
+                    }
+                }
+            }
+
+            // Store task for potential force cancellation
+            self.currentRecognitionTask = recognitionTask
+
+            // Timeout 설정
+            Task { @MainActor in
+                let timeoutNanoseconds = UInt64(timeout * 1_000_000_000)
+                try? await Task.sleep(nanoseconds: timeoutNanoseconds)
+
+                guard !hasResumed else { return }
+                hasResumed = true
+
+                print("🎤 [Wake Word] Timeout after \(timeout)s - no wake word detected")
+
+                self.currentRecognitionTask = nil
+                recognitionTask?.cancel()
+                self.cleanup()
+
+                continuation.resume(
+                    throwing: VoiceControlError.speechRecognitionFailed(
+                        reason: "No wake word detected within \(timeout) seconds"
+                    )
+                )
+            }
+        }
     }
 }

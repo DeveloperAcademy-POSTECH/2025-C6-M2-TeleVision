@@ -37,6 +37,11 @@ extension VoiceControlManager: VoiceCommandExecutor {
         case let .rotateEntity(direction, angle):
             try await runtime.rotateSelectedEntity(direction: direction, angle: angle)
 
+        case .cancelVoiceControl:
+            // No action needed - ViewModel handles the cancellation
+            // This case should never reach executor as it's handled earlier in the flow
+            break
+
         case .unknown:
             throw VoiceControlError.noIntent
         }

@@ -29,6 +29,9 @@ public enum VoiceCommandIntent: Equatable, Sendable {
     /// Rotate 3D entity
     case rotateEntity(direction: RotationDirection, angle: Double)
 
+    /// Cancel/stop voice control
+    case cancelVoiceControl
+
     /// Unrecognized command
     case unknown(rawText: String)
 }
