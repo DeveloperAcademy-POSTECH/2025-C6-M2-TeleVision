@@ -323,30 +323,30 @@ struct OperationMenuButton: View {
 }
 
 // MARK: - Preview
-
-#if DEBUG
-    #Preview {
-        PreviewContainer()
-    }
-
-    fileprivate struct PreviewContainer: View {
-        @State private var immersiveVM = ImmersiveViewModel()
-        @State private var voiceControlVM = VoiceControlViewModel(
-            commandExecutor: MockVoiceControlManager()
-        )
-
-        var body: some View {
-            OperationMenuButton(viewModel: voiceControlVM) {
-                print("Menu toggled")
-            }
-            .environment(immersiveVM)
-            .padding()
-        }
-    }
-
-    fileprivate struct MockVoiceControlManager: VoiceCommandExecutor {
-        func execute(_ intent: VoiceCommandIntent) async throws {
-            print("Mock execute: \(intent)")
-        }
-    }
-#endif
+//
+//#if DEBUG
+//    #Preview {
+//        PreviewContainer()
+//    }
+//
+//    fileprivate struct PreviewContainer: View {
+//        @State private var immersiveVM = ImmersiveViewModel()
+//        @State private var voiceControlVM = VoiceControlViewModel(
+//            commandExecutor: MockVoiceControlManager()
+//        )
+//
+//        var body: some View {
+//            OperationMenuButton(viewModel: voiceControlVM) {
+//                print("Menu toggled")
+//            }
+//            .environment(immersiveVM)
+//            .padding()
+//        }
+//    }
+//
+//    fileprivate struct MockVoiceControlManager: VoiceCommandExecutor {
+//        func execute(_ intent: VoiceCommandIntent) async throws {
+//            print("Mock execute: \(intent)")
+//        }
+//    }
+//#endif
