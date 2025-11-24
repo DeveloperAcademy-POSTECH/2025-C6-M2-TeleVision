@@ -18,7 +18,7 @@ final class EndoscopeStreamViewModel: ObservableObject {
     @Published var connectionStatus: ConnectionStatus = .idle
     @Published var webRTCReceiver: WebRTCReceiver
     @Published var settings = ConnectionSettings()
-    @Published var activeMode: EndoscopeViewMode = .rawStream  // 초기값 (Demo는 .task에서 configure로 전환)
+    @Published var activeMode: EndoscopeViewMode? = nil  // nil = not configured yet (prevents "Already in mode" bugs)
 
     // MARK: - Private Properties
 
@@ -130,12 +130,15 @@ final class EndoscopeStreamViewModel: ObservableObject {
     /// Endoscope 모드 구성 (WebRTC vs File)
     /// - Parameter mode: 대상 모드
     func configure(for mode: EndoscopeViewMode) async {
-        guard activeMode != mode else {
-            logger.info("Already in mode: \(mode.rawValue)")
-            return
+        // CRITICAL FIX: Don't skip if resources might be missing
+        // activeMode tracks intent, but actual resources (VideoPlayer/FileDemoSource) might be nil
+        // after cleanup/disconnect, so always reconfigure to ensure resources exist
+        if let currentMode = activeMode, currentMode == mode {
+            logger.info("Already in mode: \(mode.rawValue), but reconfiguring to ensure resources exist")
+        } else {
+            logger.info("🔄 Configuring Endoscope for mode: \(mode.rawValue)")
         }
 
-        logger.info("🔄 Configuring Endoscope for mode: \(mode.rawValue)")
         activeMode = mode
 
         if mode.requiresWebRTC {
@@ -208,6 +211,12 @@ final class EndoscopeStreamViewModel: ObservableObject {
         // 파일 소스 정리
         fileDemoSource?.stop()
         fileDemoSource = nil
+
+        // CRITICAL FIX: Reset mode state to nil to force reconfiguration
+        // This prevents "Already in mode" bug when switching back to same mode
+        // (e.g., Demo → WebRTC → Demo would skip Demo setup if activeMode stayed .fileDemo)
+        activeMode = nil
+        logger.info("   Mode state reset to nil (forces reconfiguration on next mode switch)")
 
         // WebRTC 정리
         Task {
