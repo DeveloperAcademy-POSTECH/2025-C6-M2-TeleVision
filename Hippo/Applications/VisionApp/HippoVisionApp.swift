@@ -23,7 +23,7 @@ struct HippoVisionApp: App {
     init() {
         let runtime = ImmersiveSceneRuntime()
         _runtime = State(initialValue: runtime)
-        _immersiveViewModel = State(initialValue: ImmersiveViewModel())
+        _immersiveViewModel = State(initialValue: ImmersiveViewModel(runtime: runtime))
         _dataViewModel = State(initialValue: OperationViewModel())
         _opacityManager = State(initialValue: OpacityManager(runtime: runtime))
     }
