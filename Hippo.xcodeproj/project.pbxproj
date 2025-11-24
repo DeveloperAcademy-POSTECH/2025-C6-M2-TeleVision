@@ -2689,7 +2689,7 @@
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = "$(SRCROOT)/Hippo/Applications/VisionApp/Info.plist";
-				INFOPLIST_KEY_CFBundleDisplayName = Hippo;
+				INFOPLIST_KEY_CFBundleDisplayName = HIPPO;
 				INFOPLIST_KEY_NSFileProviderDomainUsageDescription = "3D 모델 파일 접근 권한 필요";
 				INFOPLIST_KEY_NSLocalNetworkUsageDescription = "Hippo needs local network access to discover and connect to the streaming server.";
 				INFOPLIST_KEY_NSMicrophoneUsageDescription = "음성 명령과 녹화 음성을 인식하기 위해 마이크 접근 권한이 필요합니다.";
@@ -2698,7 +2698,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 0.1.4;
+				MARKETING_VERSION = 0.1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.television.hippo.visionos;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -2727,7 +2727,7 @@
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = "$(SRCROOT)/Hippo/Applications/VisionApp/Info.plist";
-				INFOPLIST_KEY_CFBundleDisplayName = Hippo;
+				INFOPLIST_KEY_CFBundleDisplayName = HIPPO;
 				INFOPLIST_KEY_NSFileProviderDomainUsageDescription = "3D 모델 파일 접근 권한 필요";
 				INFOPLIST_KEY_NSLocalNetworkUsageDescription = "Hippo needs local network access to discover and connect to the streaming server.";
 				INFOPLIST_KEY_NSMicrophoneUsageDescription = "음성 명령과 녹화 음성을 인식하기 위해 마이크 접근 권한이 필요합니다.";
@@ -2736,7 +2736,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 0.1.4;
+				MARKETING_VERSION = 0.1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.television.hippo.visionos;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -2940,13 +2940,15 @@
 				ENABLE_USER_SELECTED_FILES = readonly;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = "$(SRCROOT)/Hippo/Applications/MacApp/Info.plist";
+				INFOPLIST_KEY_CFBundleDisplayName = HIPPO;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.medical";
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/../Frameworks",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 26.0;
-				MARKETING_VERSION = 1.0;
+				MARKETING_VERSION = 0.1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.television.hippo.macos;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				REGISTER_APP_GROUPS = YES;
@@ -2980,13 +2982,15 @@
 				ENABLE_USER_SELECTED_FILES = readonly;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = "$(SRCROOT)/Hippo/Applications/MacApp/Info.plist";
+				INFOPLIST_KEY_CFBundleDisplayName = HIPPO;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.medical";
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/../Frameworks",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 26.0;
-				MARKETING_VERSION = 1.0;
+				MARKETING_VERSION = 0.1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.television.hippo.macos;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				REGISTER_APP_GROUPS = YES;
