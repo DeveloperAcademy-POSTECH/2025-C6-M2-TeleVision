@@ -223,18 +223,17 @@
 		2523A6F32EC649A600842508 /* FallbackVoiceCommandParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2523A6DC2EC649A600842508 /* FallbackVoiceCommandParser.swift */; };
 		2523A6F52EC663DB00842508 /* ImmersiveSceneRuntime+VoiceControl.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2523A6F42EC663DB00842508 /* ImmersiveSceneRuntime+VoiceControl.swift */; };
 		2523A6F62EC663DB00842508 /* ImmersiveSceneRuntime+VoiceControl.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2523A6F42EC663DB00842508 /* ImmersiveSceneRuntime+VoiceControl.swift */; };
-		253207F02ED5785C000C2E72 /* endoscope-demo.mp4 in Resources */ = {isa = PBXBuildFile; fileRef = 253207EF2ED5785C000C2E72 /* endoscope-demo.mp4 */; };
-		253207F12ED5785C000C2E72 /* endoscope-demo.mp4 in Resources */ = {isa = PBXBuildFile; fileRef = 253207EF2ED5785C000C2E72 /* endoscope-demo.mp4 */; };
-		253207F22ED5785C000C2E72 /* endoscope-demo.mp4 in Resources */ = {isa = PBXBuildFile; fileRef = 253207EF2ED5785C000C2E72 /* endoscope-demo.mp4 */; };
 		253207F42ED5786D000C2E72 /* demo-2d.mp4 in Resources */ = {isa = PBXBuildFile; fileRef = 253207F32ED5786D000C2E72 /* demo-2d.mp4 */; };
 		253207F52ED5786D000C2E72 /* demo-2d.mp4 in Resources */ = {isa = PBXBuildFile; fileRef = 253207F32ED5786D000C2E72 /* demo-2d.mp4 */; };
 		253207F62ED5786D000C2E72 /* demo-2d.mp4 in Resources */ = {isa = PBXBuildFile; fileRef = 253207F32ED5786D000C2E72 /* demo-2d.mp4 */; };
+		253207FC2ED5826F000C2E72 /* endoscope-demo.mp4 in Resources */ = {isa = PBXBuildFile; fileRef = 253207FB2ED5826F000C2E72 /* endoscope-demo.mp4 */; };
+		253207FD2ED5826F000C2E72 /* endoscope-demo.mp4 in Resources */ = {isa = PBXBuildFile; fileRef = 253207FB2ED5826F000C2E72 /* endoscope-demo.mp4 */; };
+		253207FE2ED5826F000C2E72 /* endoscope-demo.mp4 in Resources */ = {isa = PBXBuildFile; fileRef = 253207FB2ED5826F000C2E72 /* endoscope-demo.mp4 */; };
 		253881C62ECA1DEE001442C9 /* EndoscopeRenderPipeline.swift in Sources */ = {isa = PBXBuildFile; fileRef = 253881C52ECA1DEE001442C9 /* EndoscopeRenderPipeline.swift */; };
 		253881CB2ECA3C00001442C9 /* SplitSBSView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 253881C92ECA3C00001442C9 /* SplitSBSView.swift */; };
 		253881CC2ECA3C00001442C9 /* EndoscopeViewMode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 253881C72ECA3C00001442C9 /* EndoscopeViewMode.swift */; };
 		253881CD2ECA3C00001442C9 /* RawStreamView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 253881C82ECA3C00001442C9 /* RawStreamView.swift */; };
 		253881CE2ECA3C00001442C9 /* Stereo3DView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 253881CA2ECA3C00001442C9 /* Stereo3DView.swift */; };
-		25DEMO2D012ED60000001442 /* FileDemo2DView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 25DEMO2D002ED60000001442 /* FileDemo2DView.swift */; };
 		253881D02ECB5FCD001442C9 /* StereoVideoPlayerHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 253881CF2ECB5FCD001442C9 /* StereoVideoPlayerHelper.swift */; };
 		2581FCE52EBBC6870059678D /* OperationInputState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2581FCE42EBBC6870059678D /* OperationInputState.swift */; };
 		2581FCE92EBBC6FA0059678D /* MacNavigationState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2581FCE62EBBC6FA0059678D /* MacNavigationState.swift */; };
@@ -295,6 +294,7 @@
 		25B5ADC52ED2DBBB008F1261 /* WebRTCSubModeToggle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 25B5ADC22ED2DBBB008F1261 /* WebRTCSubModeToggle.swift */; };
 		25B8D6872ECBC07400676A3A /* ScalingMode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 25B8D6862ECBC07400676A3A /* ScalingMode.swift */; };
 		25B8D6892ECBC16100676A3A /* ScalingSectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 25B8D6882ECBC16100676A3A /* ScalingSectionView.swift */; };
+		25DEMO2D012ED60000001442 /* FileDemo2DView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 25DEMO2D002ED60000001442 /* FileDemo2DView.swift */; };
 		25E78B602EB90D4600D8CAD2 /* OperationStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = 25E78B5D2EB90D4600D8CAD2 /* OperationStatus.swift */; };
 		25E78B612EB90D4600D8CAD2 /* Operation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 25E78B542EB90D4600D8CAD2 /* Operation.swift */; };
 		25E78B622EB90D4600D8CAD2 /* OperationAsset.swift in Sources */ = {isa = PBXBuildFile; fileRef = 25E78B552EB90D4600D8CAD2 /* OperationAsset.swift */; };
@@ -646,14 +646,13 @@
 		2523A6E02EC649A600842508 /* VoiceControlDependencies.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VoiceControlDependencies.swift; sourceTree = "<group>"; };
 		2523A6E22EC649A600842508 /* AppleSpeechRecognitionService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppleSpeechRecognitionService.swift; sourceTree = "<group>"; };
 		2523A6F42EC663DB00842508 /* ImmersiveSceneRuntime+VoiceControl.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ImmersiveSceneRuntime+VoiceControl.swift"; sourceTree = "<group>"; };
-		253207EF2ED5785C000C2E72 /* endoscope-demo.mp4 */ = {isa = PBXFileReference; lastKnownFileType = file; path = "endoscope-demo.mp4"; sourceTree = "<group>"; };
 		253207F32ED5786D000C2E72 /* demo-2d.mp4 */ = {isa = PBXFileReference; lastKnownFileType = file; path = "demo-2d.mp4"; sourceTree = "<group>"; };
+		253207FB2ED5826F000C2E72 /* endoscope-demo.mp4 */ = {isa = PBXFileReference; lastKnownFileType = file; path = "endoscope-demo.mp4"; sourceTree = "<group>"; };
 		253881C52ECA1DEE001442C9 /* EndoscopeRenderPipeline.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EndoscopeRenderPipeline.swift; sourceTree = "<group>"; };
 		253881C72ECA3C00001442C9 /* EndoscopeViewMode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EndoscopeViewMode.swift; sourceTree = "<group>"; };
 		253881C82ECA3C00001442C9 /* RawStreamView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RawStreamView.swift; sourceTree = "<group>"; };
 		253881C92ECA3C00001442C9 /* SplitSBSView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SplitSBSView.swift; sourceTree = "<group>"; };
 		253881CA2ECA3C00001442C9 /* Stereo3DView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Stereo3DView.swift; sourceTree = "<group>"; };
-		25DEMO2D002ED60000001442 /* FileDemo2DView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FileDemo2DView.swift; sourceTree = "<group>"; };
 		253881CF2ECB5FCD001442C9 /* StereoVideoPlayerHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StereoVideoPlayerHelper.swift; sourceTree = "<group>"; };
 		2581FCE42EBBC6870059678D /* OperationInputState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OperationInputState.swift; sourceTree = "<group>"; };
 		2581FCE62EBBC6FA0059678D /* MacNavigationState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MacNavigationState.swift; sourceTree = "<group>"; };
@@ -694,6 +693,7 @@
 		25B5ADC22ED2DBBB008F1261 /* WebRTCSubModeToggle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebRTCSubModeToggle.swift; sourceTree = "<group>"; };
 		25B8D6862ECBC07400676A3A /* ScalingMode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScalingMode.swift; sourceTree = "<group>"; };
 		25B8D6882ECBC16100676A3A /* ScalingSectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScalingSectionView.swift; sourceTree = "<group>"; };
+		25DEMO2D002ED60000001442 /* FileDemo2DView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FileDemo2DView.swift; sourceTree = "<group>"; };
 		25E78B542EB90D4600D8CAD2 /* Operation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Operation.swift; sourceTree = "<group>"; };
 		25E78B552EB90D4600D8CAD2 /* OperationAsset.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OperationAsset.swift; sourceTree = "<group>"; };
 		25E78B562EB90D4600D8CAD2 /* OperationRecording.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OperationRecording.swift; sourceTree = "<group>"; };
@@ -1688,8 +1688,8 @@
 				14DE51512EB771420027D9A0 /* HIPPO.icon */,
 				C02FFA5A2E9FFF6F00F16742 /* MacAssets.xcassets */,
 				C02FFA5B2E9FFF6F00F16742 /* VisionAssets.xcassets */,
-				253207EF2ED5785C000C2E72 /* endoscope-demo.mp4 */,
 				253207F32ED5786D000C2E72 /* demo-2d.mp4 */,
+				253207FB2ED5826F000C2E72 /* endoscope-demo.mp4 */,
 			);
 			path = Resources;
 			sourceTree = "<group>";
@@ -2157,10 +2157,10 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				253207F02ED5785C000C2E72 /* endoscope-demo.mp4 in Resources */,
 				C02FFA932E9FFF6F00F16742 /* VisionAssets.xcassets in Resources */,
 				14DE51542EB771420027D9A0 /* HIPPO.icon in Resources */,
 				253207F42ED5786D000C2E72 /* demo-2d.mp4 in Resources */,
+				253207FC2ED5826F000C2E72 /* endoscope-demo.mp4 in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2169,8 +2169,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				14DE51532EB771420027D9A0 /* HIPPO.icon in Resources */,
-				253207F22ED5785C000C2E72 /* endoscope-demo.mp4 in Resources */,
 				253207F52ED5786D000C2E72 /* demo-2d.mp4 in Resources */,
+				253207FD2ED5826F000C2E72 /* endoscope-demo.mp4 in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2178,10 +2178,10 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				253207F12ED5785C000C2E72 /* endoscope-demo.mp4 in Resources */,
 				C02FFA8D2E9FFF6F00F16742 /* MacAssets.xcassets in Resources */,
 				14DE51522EB771420027D9A0 /* HIPPO.icon in Resources */,
 				253207F62ED5786D000C2E72 /* demo-2d.mp4 in Resources */,
+				253207FE2ED5826F000C2E72 /* endoscope-demo.mp4 in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2714,7 +2714,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 0.1.0;
+				MARKETING_VERSION = 0.1.1;
 				PRODUCT_BUNDLE_IDENTIFIER = com.television.hippo.visionos;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -2752,7 +2752,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 0.1.0;
+				MARKETING_VERSION = 0.1.1;
 				PRODUCT_BUNDLE_IDENTIFIER = com.television.hippo.visionos;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
