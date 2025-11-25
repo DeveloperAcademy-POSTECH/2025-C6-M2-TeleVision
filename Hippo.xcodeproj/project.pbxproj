@@ -68,7 +68,6 @@
 		1476821E2ECF810D0065791C /* SyncMonitor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1476821D2ECF81080065791C /* SyncMonitor.swift */; };
 		1476821F2ECF810D0065791C /* SyncMonitor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1476821D2ECF81080065791C /* SyncMonitor.swift */; };
 		147682202ECF810D0065791C /* SyncMonitor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1476821D2ECF81080065791C /* SyncMonitor.swift */; };
-		1476822E2ED3FA350065791C /* endoscope-demo.mp4 in Resources */ = {isa = PBXBuildFile; fileRef = 1476822D2ED3FA350065791C /* endoscope-demo.mp4 */; };
 		1479B8AB2ECAC9AE003397B0 /* AppleSpeechRecognitionService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2523A6E22EC649A600842508 /* AppleSpeechRecognitionService.swift */; };
 		1479B8AD2ECB1134003397B0 /* RecordingViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1479B8AC2ECB112D003397B0 /* RecordingViewModel.swift */; };
 		1479B8AE2ECB1134003397B0 /* RecordingViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1479B8AC2ECB112D003397B0 /* RecordingViewModel.swift */; };
@@ -224,11 +223,18 @@
 		2523A6F32EC649A600842508 /* FallbackVoiceCommandParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2523A6DC2EC649A600842508 /* FallbackVoiceCommandParser.swift */; };
 		2523A6F52EC663DB00842508 /* ImmersiveSceneRuntime+VoiceControl.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2523A6F42EC663DB00842508 /* ImmersiveSceneRuntime+VoiceControl.swift */; };
 		2523A6F62EC663DB00842508 /* ImmersiveSceneRuntime+VoiceControl.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2523A6F42EC663DB00842508 /* ImmersiveSceneRuntime+VoiceControl.swift */; };
+		253207F02ED5785C000C2E72 /* endoscope-demo.mp4 in Resources */ = {isa = PBXBuildFile; fileRef = 253207EF2ED5785C000C2E72 /* endoscope-demo.mp4 */; };
+		253207F12ED5785C000C2E72 /* endoscope-demo.mp4 in Resources */ = {isa = PBXBuildFile; fileRef = 253207EF2ED5785C000C2E72 /* endoscope-demo.mp4 */; };
+		253207F22ED5785C000C2E72 /* endoscope-demo.mp4 in Resources */ = {isa = PBXBuildFile; fileRef = 253207EF2ED5785C000C2E72 /* endoscope-demo.mp4 */; };
+		253207F42ED5786D000C2E72 /* demo-2d.mp4 in Resources */ = {isa = PBXBuildFile; fileRef = 253207F32ED5786D000C2E72 /* demo-2d.mp4 */; };
+		253207F52ED5786D000C2E72 /* demo-2d.mp4 in Resources */ = {isa = PBXBuildFile; fileRef = 253207F32ED5786D000C2E72 /* demo-2d.mp4 */; };
+		253207F62ED5786D000C2E72 /* demo-2d.mp4 in Resources */ = {isa = PBXBuildFile; fileRef = 253207F32ED5786D000C2E72 /* demo-2d.mp4 */; };
 		253881C62ECA1DEE001442C9 /* EndoscopeRenderPipeline.swift in Sources */ = {isa = PBXBuildFile; fileRef = 253881C52ECA1DEE001442C9 /* EndoscopeRenderPipeline.swift */; };
 		253881CB2ECA3C00001442C9 /* SplitSBSView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 253881C92ECA3C00001442C9 /* SplitSBSView.swift */; };
 		253881CC2ECA3C00001442C9 /* EndoscopeViewMode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 253881C72ECA3C00001442C9 /* EndoscopeViewMode.swift */; };
 		253881CD2ECA3C00001442C9 /* RawStreamView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 253881C82ECA3C00001442C9 /* RawStreamView.swift */; };
 		253881CE2ECA3C00001442C9 /* Stereo3DView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 253881CA2ECA3C00001442C9 /* Stereo3DView.swift */; };
+		25DEMO2D012ED60000001442 /* FileDemo2DView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 25DEMO2D002ED60000001442 /* FileDemo2DView.swift */; };
 		253881D02ECB5FCD001442C9 /* StereoVideoPlayerHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 253881CF2ECB5FCD001442C9 /* StereoVideoPlayerHelper.swift */; };
 		2581FCE52EBBC6870059678D /* OperationInputState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2581FCE42EBBC6870059678D /* OperationInputState.swift */; };
 		2581FCE92EBBC6FA0059678D /* MacNavigationState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2581FCE62EBBC6FA0059678D /* MacNavigationState.swift */; };
@@ -547,7 +553,6 @@
 		146F102A2EA3ACFD00DDDC35 /* HippoAssets */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = HippoAssets; sourceTree = "<group>"; };
 		146F102E2EA3AF1000DDDC35 /* HomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeView.swift; sourceTree = "<group>"; };
 		1476821D2ECF81080065791C /* SyncMonitor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SyncMonitor.swift; sourceTree = "<group>"; };
-		1476822D2ED3FA350065791C /* endoscope-demo.mp4 */ = {isa = PBXFileReference; lastKnownFileType = file; path = "endoscope-demo.mp4"; sourceTree = "<group>"; };
 		1479B8AC2ECB112D003397B0 /* RecordingViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecordingViewModel.swift; sourceTree = "<group>"; };
 		1479B8B02ECB3769003397B0 /* SceneProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneProvider.swift; sourceTree = "<group>"; };
 		1479B8B22ECB3D0B003397B0 /* RecordCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecordCard.swift; sourceTree = "<group>"; };
@@ -641,11 +646,14 @@
 		2523A6E02EC649A600842508 /* VoiceControlDependencies.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VoiceControlDependencies.swift; sourceTree = "<group>"; };
 		2523A6E22EC649A600842508 /* AppleSpeechRecognitionService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppleSpeechRecognitionService.swift; sourceTree = "<group>"; };
 		2523A6F42EC663DB00842508 /* ImmersiveSceneRuntime+VoiceControl.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ImmersiveSceneRuntime+VoiceControl.swift"; sourceTree = "<group>"; };
+		253207EF2ED5785C000C2E72 /* endoscope-demo.mp4 */ = {isa = PBXFileReference; lastKnownFileType = file; path = "endoscope-demo.mp4"; sourceTree = "<group>"; };
+		253207F32ED5786D000C2E72 /* demo-2d.mp4 */ = {isa = PBXFileReference; lastKnownFileType = file; path = "demo-2d.mp4"; sourceTree = "<group>"; };
 		253881C52ECA1DEE001442C9 /* EndoscopeRenderPipeline.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EndoscopeRenderPipeline.swift; sourceTree = "<group>"; };
 		253881C72ECA3C00001442C9 /* EndoscopeViewMode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EndoscopeViewMode.swift; sourceTree = "<group>"; };
 		253881C82ECA3C00001442C9 /* RawStreamView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RawStreamView.swift; sourceTree = "<group>"; };
 		253881C92ECA3C00001442C9 /* SplitSBSView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SplitSBSView.swift; sourceTree = "<group>"; };
 		253881CA2ECA3C00001442C9 /* Stereo3DView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Stereo3DView.swift; sourceTree = "<group>"; };
+		25DEMO2D002ED60000001442 /* FileDemo2DView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FileDemo2DView.swift; sourceTree = "<group>"; };
 		253881CF2ECB5FCD001442C9 /* StereoVideoPlayerHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StereoVideoPlayerHelper.swift; sourceTree = "<group>"; };
 		2581FCE42EBBC6870059678D /* OperationInputState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OperationInputState.swift; sourceTree = "<group>"; };
 		2581FCE62EBBC6FA0059678D /* MacNavigationState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MacNavigationState.swift; sourceTree = "<group>"; };
@@ -1517,6 +1525,7 @@
 		25B5ADC62ED2DD05008F1261 /* ModeViews */ = {
 			isa = PBXGroup;
 			children = (
+				25DEMO2D002ED60000001442 /* FileDemo2DView.swift */,
 				253881C82ECA3C00001442C9 /* RawStreamView.swift */,
 				253881C92ECA3C00001442C9 /* SplitSBSView.swift */,
 				253881CA2ECA3C00001442C9 /* Stereo3DView.swift */,
@@ -1679,7 +1688,8 @@
 				14DE51512EB771420027D9A0 /* HIPPO.icon */,
 				C02FFA5A2E9FFF6F00F16742 /* MacAssets.xcassets */,
 				C02FFA5B2E9FFF6F00F16742 /* VisionAssets.xcassets */,
-				1476822D2ED3FA350065791C /* endoscope-demo.mp4 */,
+				253207EF2ED5785C000C2E72 /* endoscope-demo.mp4 */,
+				253207F32ED5786D000C2E72 /* demo-2d.mp4 */,
 			);
 			path = Resources;
 			sourceTree = "<group>";
@@ -2147,9 +2157,10 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				253207F02ED5785C000C2E72 /* endoscope-demo.mp4 in Resources */,
 				C02FFA932E9FFF6F00F16742 /* VisionAssets.xcassets in Resources */,
 				14DE51542EB771420027D9A0 /* HIPPO.icon in Resources */,
-				1476822E2ED3FA350065791C /* endoscope-demo.mp4 in Resources */,
+				253207F42ED5786D000C2E72 /* demo-2d.mp4 in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2158,6 +2169,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				14DE51532EB771420027D9A0 /* HIPPO.icon in Resources */,
+				253207F22ED5785C000C2E72 /* endoscope-demo.mp4 in Resources */,
+				253207F52ED5786D000C2E72 /* demo-2d.mp4 in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2165,8 +2178,10 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				253207F12ED5785C000C2E72 /* endoscope-demo.mp4 in Resources */,
 				C02FFA8D2E9FFF6F00F16742 /* MacAssets.xcassets in Resources */,
 				14DE51522EB771420027D9A0 /* HIPPO.icon in Resources */,
+				253207F62ED5786D000C2E72 /* demo-2d.mp4 in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2366,6 +2381,7 @@
 				253881CC2ECA3C00001442C9 /* EndoscopeViewMode.swift in Sources */,
 				253881CD2ECA3C00001442C9 /* RawStreamView.swift in Sources */,
 				253881CE2ECA3C00001442C9 /* Stereo3DView.swift in Sources */,
+				25DEMO2D012ED60000001442 /* FileDemo2DView.swift in Sources */,
 				27AD7AC62EB4948A00E84809 /* LayerEyeButton.swift in Sources */,
 				C04678402EA00B4A00D160DA /* HomeViewModel.swift in Sources */,
 				1442546A2EAAC61F00583CC3 /* WindowIDs.swift in Sources */,
