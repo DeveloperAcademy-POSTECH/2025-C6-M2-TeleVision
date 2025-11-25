@@ -92,7 +92,7 @@ struct PrimaryModeToggle: View {
                 HStack(spacing: 6) {
                     Image(systemName: "play.rectangle.fill")
                         .font(.system(size: 11))
-                    Text("2D Demo")
+                    Text("Demo")
                         .font(.system(size: 12, weight: .semibold))
                 }
                 .padding(.horizontal, 12)
