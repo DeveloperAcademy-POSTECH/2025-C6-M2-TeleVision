@@ -14,16 +14,18 @@ import Combine
 // MARK: - Demo Display Mode
 
 /// Demo 모드 내에서의 표시 방식
-/// UI 라벨: Standard (2D) / 3D
+/// UI 라벨: Standard (2D) / 3D / Image
 enum DemoDisplayMode: String, CaseIterable {
     case standard   // 내부적으로 2D (fileDemo2D)
     case stereo3D   // 내부적으로 3D (fileDemo)
+    case image      // 내부적으로 Image (fileImage)
 
     /// UI 표시용 라벨 (2D 대신 Standard 사용)
     var displayLabel: String {
         switch self {
         case .standard: return "Standard"
         case .stereo3D: return "3D"
+        case .image: return "Image"
         }
     }
 
@@ -32,6 +34,7 @@ enum DemoDisplayMode: String, CaseIterable {
         switch self {
         case .standard: return "rectangle.on.rectangle"
         case .stereo3D: return "cube.fill"
+        case .image: return "photo.fill"
         }
     }
 
@@ -40,6 +43,7 @@ enum DemoDisplayMode: String, CaseIterable {
         switch self {
         case .standard: return .fileDemo2D
         case .stereo3D: return .fileDemo
+        case .image: return .fileImage
         }
     }
 
@@ -48,6 +52,7 @@ enum DemoDisplayMode: String, CaseIterable {
         switch viewMode {
         case .fileDemo2D: self = .standard
         case .fileDemo: self = .stereo3D
+        case .fileImage: self = .image
         default: self = .stereo3D  // 기본값
         }
     }

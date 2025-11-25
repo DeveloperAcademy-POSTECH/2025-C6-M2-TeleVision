@@ -57,6 +57,7 @@ struct WebRTCSubModeToggle: View {
         case .stereo3D:  return "3D 보기"
         case .fileDemo:  return "3D Demo"    // Should not be visible
         case .fileDemo2D: return "2D Demo"   // Should not be visible
+        case .fileImage: return "Image Demo" // Should not be visible
         }
     }
 
@@ -67,6 +68,7 @@ struct WebRTCSubModeToggle: View {
         case .stereo3D:  return "view.3d"
         case .fileDemo:  return "cube"              // Should not be visible
         case .fileDemo2D: return "play.rectangle"   // Should not be visible
+        case .fileImage: return "photo"             // Should not be visible
         }
     }
 }

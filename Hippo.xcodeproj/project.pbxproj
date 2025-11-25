@@ -299,6 +299,7 @@
 		25BF39122ED620E600B797AA /* Demo3DSourceToggle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 25BF39112ED620E600B797AA /* Demo3DSourceToggle.swift */; };
 		25BF39172ED62C8100B797AA /* EndoscopeTopControlBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 25BF39162ED62C8100B797AA /* EndoscopeTopControlBar.swift */; };
 		25BF39192ED633D600B797AA /* DemoDisplayModeToggle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 25BF39182ED633D600B797AA /* DemoDisplayModeToggle.swift */; };
+		25BF391B2ED6386100B797AA /* FileDemoImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 25BF391A2ED6386100B797AA /* FileDemoImageView.swift */; };
 		25DEMO2D012ED60000001442 /* FileDemo2DView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 25DEMO2D002ED60000001442 /* FileDemo2DView.swift */; };
 		25E78B602EB90D4600D8CAD2 /* OperationStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = 25E78B5D2EB90D4600D8CAD2 /* OperationStatus.swift */; };
 		25E78B612EB90D4600D8CAD2 /* Operation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 25E78B542EB90D4600D8CAD2 /* Operation.swift */; };
@@ -704,6 +705,7 @@
 		25BF39112ED620E600B797AA /* Demo3DSourceToggle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Demo3DSourceToggle.swift; sourceTree = "<group>"; };
 		25BF39162ED62C8100B797AA /* EndoscopeTopControlBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EndoscopeTopControlBar.swift; sourceTree = "<group>"; };
 		25BF39182ED633D600B797AA /* DemoDisplayModeToggle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DemoDisplayModeToggle.swift; sourceTree = "<group>"; };
+		25BF391A2ED6386100B797AA /* FileDemoImageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FileDemoImageView.swift; sourceTree = "<group>"; };
 		25DEMO2D002ED60000001442 /* FileDemo2DView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FileDemo2DView.swift; sourceTree = "<group>"; };
 		25E78B542EB90D4600D8CAD2 /* Operation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Operation.swift; sourceTree = "<group>"; };
 		25E78B552EB90D4600D8CAD2 /* OperationAsset.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OperationAsset.swift; sourceTree = "<group>"; };
@@ -1539,6 +1541,7 @@
 		25B5ADC62ED2DD05008F1261 /* ModeViews */ = {
 			isa = PBXGroup;
 			children = (
+				25BF391A2ED6386100B797AA /* FileDemoImageView.swift */,
 				2532082C2ED61287000C2E72 /* FileDemo3DView.swift */,
 				25DEMO2D002ED60000001442 /* FileDemo2DView.swift */,
 				253881C82ECA3C00001442C9 /* RawStreamView.swift */,
@@ -2310,6 +2313,7 @@
 				2523A6B92EC61D8200842508 /* StartVoiceListening.swift in Sources */,
 				2523A6BA2EC61D8200842508 /* SpeechRecognitionService.swift in Sources */,
 				2523A6BB2EC61D8200842508 /* VoiceCommandExecutor.swift in Sources */,
+				25BF391B2ED6386100B797AA /* FileDemoImageView.swift in Sources */,
 				2523A6BC2EC61D8200842508 /* ParseVoiceCommand.swift in Sources */,
 				2523A6BD2EC61D8200842508 /* VoiceControlState.swift in Sources */,
 				2523A6BE2EC61D8200842508 /* VoiceControlError.swift in Sources */,
@@ -2736,7 +2740,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 0.1.1;
+				MARKETING_VERSION = 0.1.2;
 				PRODUCT_BUNDLE_IDENTIFIER = com.television.hippo.visionos;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -2774,7 +2778,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 0.1.1;
+				MARKETING_VERSION = 0.1.2;
 				PRODUCT_BUNDLE_IDENTIFIER = com.television.hippo.visionos;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";

@@ -81,6 +81,10 @@ struct EndoscopeStreamView: View {
                         // demo3DSource가 바뀌면 View 재생성하여 새 VideoPlayer 연결
                         FileDemo3DView(pipeline: receiver.renderPipeline)
                             .id(uiState.demo3DSource.rawValue)
+
+                    case .fileImage:
+                        // Image Demo: 정적 이미지 표시
+                        FileDemoImageView()
                     }
                 }
                 .id(uiState.activeMode.rawValue)  // Force recreation on mode change
@@ -158,7 +162,7 @@ struct ViewModeToggle: View {
                     nextMode = .stereo3D
                 case .stereo3D:
                     nextMode = .rawStream
-                case .fileDemo, .fileDemo2D:
+                case .fileDemo, .fileDemo2D, .fileImage:
                     // Demo modes are not part of WebRTC cycle
                     // This should never happen (button is hidden in Demo mode)
                     print("⚠️ [ViewModeToggle] Toggle pressed in Demo mode - ignoring")
