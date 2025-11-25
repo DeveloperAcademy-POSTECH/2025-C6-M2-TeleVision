@@ -19,8 +19,8 @@ final class StreamUIState: ObservableObject {
     // MARK: - Published Properties
 
     /// Currently active (fully prepared and visible) mode
-    /// Default: fileDemo2D (2D demo for initial showcase)
-    @Published var activeMode: EndoscopeViewMode = .fileDemo2D
+    /// Default: fileDemo (3D demo for initial showcase)
+    @Published var activeMode: EndoscopeViewMode = .fileDemo
 
     /// Whether a mode transition is in progress
     @Published var isSwitching: Bool = false
@@ -39,7 +39,7 @@ final class StreamUIState: ObservableObject {
 
     // MARK: - Initialization
 
-    init(initialMode: EndoscopeViewMode = .fileDemo2D) {
+    init(initialMode: EndoscopeViewMode = .fileDemo) {
         self.activeMode = initialMode
         logger.info("StreamUIState initialized with mode: \(initialMode.rawValue)")
     }

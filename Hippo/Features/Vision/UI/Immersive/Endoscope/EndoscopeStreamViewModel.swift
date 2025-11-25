@@ -194,13 +194,16 @@ final class EndoscopeStreamViewModel: ObservableObject {
             logger.info("   Configuring pipeline for fileDemo mode")
             renderPipeline.configure(for: .fileDemo)
 
-            // 파일 재생 시작
-            do {
-                try await source.start()
-                logger.info("✅ Demo mode activated - playing endoscope-demo.mp4")
-            } catch {
-                logger.error("❌ Failed to start file playback: \(error.localizedDescription)")
+            // 파일 재생 시작 (background Task - configure가 바로 완료되도록)
+            Task { @MainActor in
+                do {
+                    try await source.start()
+                    self.logger.info("✅ Demo mode playback ended")
+                } catch {
+                    self.logger.error("❌ Failed to start file playback: \(error.localizedDescription)")
+                }
             }
+            logger.info("✅ Demo mode activated - playing endoscope-demo.mp4")
         }
     }
 

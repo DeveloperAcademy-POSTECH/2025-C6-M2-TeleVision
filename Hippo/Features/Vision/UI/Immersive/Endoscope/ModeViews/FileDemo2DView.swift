@@ -28,6 +28,7 @@ struct FileDemo2DView: View {
 
     // Entity name for tracking
     private static let entityName = "2d-video-entity"
+    private static let entityScale = SIMD3<Float>(0.4, 0.4, 0.4)
 
     var body: some View {
         #if os(visionOS)
@@ -58,6 +59,7 @@ struct FileDemo2DView: View {
             let planeEntity = ModelEntity(mesh: planeMesh, materials: [material])
             planeEntity.name = Self.entityName
             planeEntity.position = SIMD3<Float>(0, 0, 0)  // Centered at origin
+            planeEntity.scale = Self.entityScale
 
             content.add(planeEntity)
 

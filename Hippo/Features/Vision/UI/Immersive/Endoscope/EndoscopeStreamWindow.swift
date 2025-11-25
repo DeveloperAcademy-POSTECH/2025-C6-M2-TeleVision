@@ -15,8 +15,8 @@ struct EndoscopeStreamWindow: View {
     @State private var showSettings = false
 
     // UI state for coordinated mode transitions (shared with view and control bar)
-    // 기본 모드: 2D Demo (demo-2d.mp4 자동 재생)
-    @StateObject private var streamUIState = StreamUIState(initialMode: .fileDemo2D)
+    // 기본 모드: 3D Demo (endoscope-demo.mp4 자동 재생)
+    @StateObject private var streamUIState = StreamUIState(initialMode: .fileDemo)
 
     var body: some View {
         ZStack(alignment: .top) {
@@ -93,18 +93,17 @@ struct EndoscopeStreamWindow: View {
             }
         }
         .task {
-            // 기본 모드: 2D Demo (demo-2d.mp4 자동 재생)
-            // 2D Demo는 AVPlayer + VideoMaterial을 사용하므로 파이프라인 설정 불필요
-            // WebRTC 또는 3D Demo 모드가 필요하면 상단 토글 버튼으로 전환 가능
-
             // Setup Demo cleanup callback
             streamUIState.onExitDemoMode = { [weak viewModel] in
                 viewModel?.stopAll()
             }
 
-            // 2D Demo는 FileDemo2DView가 자체적으로 AVPlayer를 관리하므로
-            // 파이프라인 설정 없이 바로 UI 모드만 설정
-            // (이미 initialMode: .fileDemo2D로 설정됨)
+            // 기본 모드: 3D Demo - 파이프라인 설정 필요
+            if streamUIState.activeMode == .fileDemo {
+                print("🎬 [WINDOW] Initial 3D Demo setup...")
+                await viewModel.configure(for: .fileDemo)
+            }
+            // 2D Demo는 FileDemo2DView가 자체적으로 AVPlayer를 관리
         }
         .onDisappear {
             Task {

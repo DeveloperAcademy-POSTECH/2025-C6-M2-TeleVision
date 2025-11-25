@@ -29,6 +29,9 @@ final class FileDemoFrameSource: EndoscopeFrameSource {
     /// Renderer 준비 상태 체크 클로저 (back-pressure 제어용)
     public var isRendererReady: (() -> Bool)?
 
+    /// 루프 재생 여부 (기본값: true - 데모용이므로 무한 반복)
+    public var shouldLoop: Bool = true
+
     // MARK: - Initialization
 
     init(url: URL) {
@@ -51,35 +54,37 @@ final class FileDemoFrameSource: EndoscopeFrameSource {
         logger.info("🎬 Starting file playback: \(self.fileURL.lastPathComponent)")
         isPlaying = true
 
-        // CRITICAL: Wait for VideoPlayer renderer to be ready before sending frames
-        // Without this delay, the first frames arrive before AVSampleBufferVideoRenderer
-        // is initialized, causing them to be dropped permanently
         logger.info("⏳ Waiting 150ms for VideoPlayer initialization...")
         try await Task.sleep(nanoseconds: 150_000_000)  // 0.15 seconds
 
-        // SerialProcessor 생성 (Apple 샘플 기반, 콜백 버전)
+        var loopCount = 0
+        repeat {
+            loopCount += 1
+            if loopCount > 1 {
+                logger.info("🔄 Loop #\(loopCount) - restarting playback")
+                try await Task.sleep(nanoseconds: 50_000_000)  // 50ms 자연스러운 전환
+            }
+            try await playOnce()
+        } while shouldLoop && isPlaying
+
+        logger.info("✅ File playback ended (loops: \(loopCount))")
+    }
+
+    // MARK: - Private Methods
+
+    /// 파일을 한 번 재생
+    private func playOnce() async throws {
         let processor = SerialProcessor(
             assetURL: fileURL,
             stereoMetadata: .default,
             frameHandler: { [weak self] sampleBuffer in
                 guard let self else { return }
-                Task { @MainActor in
-                    self.onFrame?(sampleBuffer)
-                }
+                Task { @MainActor in self.onFrame?(sampleBuffer) }
             },
-            isRendererReady: isRendererReady  // Back-pressure 제어를 위한 renderer ready 체크
+            isRendererReady: isRendererReady
         )
-
         self.serialProcessor = processor
-
-        do {
-            try await processor.process()
-            logger.info("✅ File playback started successfully")
-        } catch {
-            logger.error("❌ Failed to start file playback: \(error.localizedDescription)")
-            isPlaying = false
-            throw error
-        }
+        try await processor.process()
     }
 
     func stop() {
