@@ -22,7 +22,7 @@ struct EndoscopeTopControlBar: View {
                 pipeline: viewModel.webRTCReceiver.renderPipeline
             )
 
-            // Center: WebRTC sub-mode toggle (only in WebRTC mode)
+            // Center & Right: WebRTC 전용 (sub-mode + status + settings)
             if uiState.activeMode.isWebRTCMode {
                 Divider()
                     .frame(height: 20)
@@ -34,27 +34,27 @@ struct EndoscopeTopControlBar: View {
                 )
 
                 ConnectionStatusBadge(receiver: viewModel.webRTCReceiver)
-            }
 
-            Divider()
-                .frame(height: 20)
-                .opacity(0.3)
+                Divider()
+                    .frame(height: 20)
+                    .opacity(0.3)
 
-            // Right: Settings button
-            Button {
-                showSettings = true
-            } label: {
-                Image(systemName: "gearshape.fill")
-                    .font(.system(size: 14))
-                    .foregroundStyle(.secondary)
-                    .padding(10)
-                    .background(
-                        Circle()
-                            .fill(Color.white.opacity(0.08))
-                    )
+                // Settings button (WebRTC only)
+                Button {
+                    showSettings = true
+                } label: {
+                    Image(systemName: "gearshape.fill")
+                        .font(.system(size: 14))
+                        .foregroundStyle(.secondary)
+                        .padding(10)
+                        .background(
+                            Circle()
+                                .fill(Color.white.opacity(0.08))
+                        )
+                }
+                .buttonStyle(.plain)
+                .hoverEffect(.highlight)
             }
-            .buttonStyle(.plain)
-            .hoverEffect(.highlight)
         }
         .padding(.horizontal, 16)
         .padding(.vertical, 10)
