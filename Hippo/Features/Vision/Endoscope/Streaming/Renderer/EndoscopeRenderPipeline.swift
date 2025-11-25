@@ -248,6 +248,14 @@ public final class EndoscopeRenderPipeline: ObservableObject {
             logger.warning("⚠️ processFrame called in fileDemo2D mode - this should not happen")
             logger.warning("   2D demo uses AVPlayer directly, not the render pipeline")
             return
+
+        case .fileImage:
+            // Image demo mode does not use the pipeline at all
+            // FileDemoImageView handles display directly via TextureResource
+            // This case should never be reached in normal operation
+            logger.warning("⚠️ processFrame called in fileImage mode - this should not happen")
+            logger.warning("   Image demo uses TextureResource directly, not the render pipeline")
+            return
         }
 
         // Log periodically

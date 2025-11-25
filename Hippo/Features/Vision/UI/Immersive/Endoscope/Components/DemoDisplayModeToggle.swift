@@ -44,12 +44,15 @@ struct DemoDisplayModeToggle: View {
             uiState.demoDisplayMode = mode
 
             // 해당 모드로 전환
-            if mode == .stereo3D {
+            switch mode {
+            case .stereo3D:
                 uiState.resetDemo3DSource()
                 await viewModel.configureDemo3D(with: uiState.demo3DSource)
                 uiState.activeMode = .fileDemo
-            } else {
+            case .standard:
                 uiState.activeMode = .fileDemo2D
+            case .image:
+                uiState.activeMode = .fileImage
             }
 
             print("[DemoDisplayModeToggle] \(mode.displayLabel) mode ready")

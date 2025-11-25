@@ -17,6 +17,12 @@ public enum EndoscopeViewMode: String, CaseIterable, Identifiable {
     /// - Usage: Default demo - Play local 2D file (demo-2d.mp4) as flat screen
     case fileDemo2D = "2D Demo"
 
+    /// Stage 0-C: Image Demo (static image display)
+    /// - Purpose: Display static image from asset catalog
+    /// - Pipeline: Image → TextureResource → UnlitMaterial → Plane Entity
+    /// - Usage: Demo - Display demo-image from VisionAssets
+    case fileImage = "Image Demo"
+
     /// Stage 0-B: 3D File-based Demo (showcase mode)
     /// - Purpose: Demo 3D playback without WebRTC connection
     /// - Pipeline: File → SerialProcessor → Stereo Tagged CMSampleBuffer → VideoPlayerComponent
@@ -48,7 +54,7 @@ public enum EndoscopeViewMode: String, CaseIterable, Identifiable {
         switch self {
         case .rawStream, .splitSBS, .stereo3D:
             return true
-        case .fileDemo, .fileDemo2D:
+        case .fileDemo, .fileDemo2D, .fileImage:
             return false  // File-based modes don't need WebRTC
         }
     }
@@ -61,6 +67,7 @@ public enum EndoscopeViewMode: String, CaseIterable, Identifiable {
         case .stereo3D: return "view.3d"
         case .fileDemo: return "cube.fill"
         case .fileDemo2D: return "play.rectangle.fill"
+        case .fileImage: return "photo.fill"
         }
     }
 
@@ -72,6 +79,7 @@ public enum EndoscopeViewMode: String, CaseIterable, Identifiable {
         case .stereo3D: return "입체 3D (프로덕션)"
         case .fileDemo: return "3D 데모 (파일)"
         case .fileDemo2D: return "2D 데모 (파일)"
+        case .fileImage: return "이미지 데모"
         }
     }
 
@@ -79,7 +87,7 @@ public enum EndoscopeViewMode: String, CaseIterable, Identifiable {
     var usesMetal: Bool {
         switch self {
         case .rawStream, .splitSBS: return true
-        case .stereo3D, .fileDemo, .fileDemo2D: return false
+        case .stereo3D, .fileDemo, .fileDemo2D, .fileImage: return false
         }
     }
 
@@ -87,7 +95,7 @@ public enum EndoscopeViewMode: String, CaseIterable, Identifiable {
     var usesVideoPlayer: Bool {
         switch self {
         case .stereo3D, .fileDemo: return true
-        case .rawStream, .splitSBS, .fileDemo2D: return false  // fileDemo2D uses VideoMaterial instead
+        case .rawStream, .splitSBS, .fileDemo2D, .fileImage: return false  // fileDemo2D uses VideoMaterial, fileImage uses TextureResource
         }
     }
 
@@ -96,7 +104,7 @@ public enum EndoscopeViewMode: String, CaseIterable, Identifiable {
         switch self {
         case .stereo3D: return true  // WebRTC path needs tagging
         case .fileDemo: return false  // SerialProcessor already tagged
-        case .rawStream, .splitSBS, .fileDemo2D: return false
+        case .rawStream, .splitSBS, .fileDemo2D, .fileImage: return false
         }
     }
 
@@ -105,7 +113,7 @@ public enum EndoscopeViewMode: String, CaseIterable, Identifiable {
         switch self {
         case .splitSBS, .stereo3D: return true
         case .fileDemo: return false  // SerialProcessor already split
-        case .rawStream, .fileDemo2D: return false  // fileDemo2D is mono, no split needed
+        case .rawStream, .fileDemo2D, .fileImage: return false  // fileDemo2D is mono, fileImage is static image
         }
     }
 
@@ -115,14 +123,14 @@ public enum EndoscopeViewMode: String, CaseIterable, Identifiable {
     var isWebRTCMode: Bool {
         switch self {
         case .rawStream, .splitSBS, .stereo3D: return true
-        case .fileDemo, .fileDemo2D: return false
+        case .fileDemo, .fileDemo2D, .fileImage: return false
         }
     }
 
     /// Whether this is Demo mode (file-based)
     var isDemoMode: Bool {
         switch self {
-        case .fileDemo, .fileDemo2D: return true
+        case .fileDemo, .fileDemo2D, .fileImage: return true
         case .rawStream, .splitSBS, .stereo3D: return false
         }
     }
@@ -137,6 +145,11 @@ public enum EndoscopeViewMode: String, CaseIterable, Identifiable {
         self == .fileDemo
     }
 
+    /// Whether this is Image Demo mode
+    var isImageDemo: Bool {
+        self == .fileImage
+    }
+
     /// Get next WebRTC sub-mode (cycles within WebRTC modes only)
     /// - Returns: Next WebRTC mode in cycle: raw → split → 3D → raw
     func nextWebRTCMode() -> EndoscopeViewMode {
@@ -144,7 +157,7 @@ public enum EndoscopeViewMode: String, CaseIterable, Identifiable {
         case .rawStream: return .splitSBS
         case .splitSBS:  return .stereo3D
         case .stereo3D:  return .rawStream
-        case .fileDemo, .fileDemo2D:  return .rawStream  // Fallback (should not be called)
+        case .fileDemo, .fileDemo2D, .fileImage:  return .rawStream  // Fallback (should not be called)
         }
     }
 }
@@ -167,6 +180,8 @@ public enum VideoSource {
     case file(url: URL)
     /// WebRTC stream
     case webrtc
+    /// Static image from asset catalog
+    case image(name: String)
 }
 
 /// Render configuration for each mode
@@ -207,6 +222,12 @@ extension EndoscopeViewMode {
             return EndoscopeRenderConfig(
                 layout: .stereoStream,
                 source: .webrtc
+            )
+
+        case .fileImage:
+            return EndoscopeRenderConfig(
+                layout: .monoPlane,
+                source: .image(name: "demo-image")
             )
         }
     }
