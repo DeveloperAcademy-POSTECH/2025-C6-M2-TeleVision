@@ -77,12 +77,8 @@ struct EndoscopeStreamView: View {
                         )
 
                     case .fileDemo:
-                        // 3D Demo 모드도 Stereo3D 렌더링 재사용 (mode 명시)
-                        Stereo3DView(
-                            receiver: receiver,
-                            pipeline: receiver.renderPipeline,
-                            mode: .fileDemo
-                        )
+                        // 3D Demo 전용 뷰 (WebRTC와 분리)
+                        FileDemo3DView(pipeline: receiver.renderPipeline)
                     }
                 }
                 .id(uiState.activeMode.rawValue)  // Force recreation on mode change

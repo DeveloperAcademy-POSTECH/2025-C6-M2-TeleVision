@@ -34,10 +34,10 @@ struct Stereo3DView: View {
         mode ?? receiver.currentViewMode
     }
 
-    // Constants for stable positioning
+    // Constants for stable positioning (WebRTC only - Demo uses FileDemo3DView)
     private static let entityName = "video-player-entity"
-    private static let entityPosition = SIMD3<Float>.zero  // Default position
-    private static let entityScale = SIMD3<Float>(0.5, 0.5, 0.5)  // Original size
+    private static let entityPosition = SIMD3<Float>.zero
+    private static let entityScale = SIMD3<Float>(0.5, 0.5, 0.5)
 
     // MARK: - Body
 
@@ -126,7 +126,6 @@ struct Stereo3DView: View {
 
     /// Create VideoPlayerComponent entity with stable position and scale
     private func makeVideoPlayerEntity() -> Entity {
-        // Create entity first
         let entity = Entity()
         entity.name = Self.entityName
         entity.position = Self.entityPosition

@@ -155,8 +155,9 @@ iOSInjectionProject/
 patients.json
 *.log
 
-# Demo video files
-Hippo/Resources/*.mp4
+# Demo video files (100MB 이상만 제외)
+# Hippo/Resources/endoscope-demo.mp4
+Hippo/Resources/.mp4
 
 # Backup files
 backup_*/

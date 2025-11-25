@@ -77,13 +77,12 @@ struct PrimaryModeToggle: View {
 
                     print("🔄 [PrimaryModeToggle] Switching to 2D Demo")
 
-                    if uiState.activeMode.isWebRTCMode {
-                        // WebRTC → 2D Demo
+                    // 이전 모드 정리 (WebRTC든 3D Demo든)
+                    if uiState.activeMode.isWebRTCMode || uiState.activeMode.is3DDemo {
                         viewModel.stopAll()
                     }
 
                     // 2D Demo는 파이프라인 설정 불필요 (AVPlayer 직접 사용)
-                    // UI 상태만 변경하면 FileDemo2DView가 자체적으로 처리
                     uiState.activeMode = .fileDemo2D
 
                     print("✅ [PrimaryModeToggle] 2D Demo mode ready")
@@ -125,17 +124,16 @@ struct PrimaryModeToggle: View {
 
                     print("🔄 [PrimaryModeToggle] Switching to 3D Demo")
 
-                    if uiState.activeMode.isWebRTCMode {
-                        // WebRTC → 3D Demo
+                    // 이전 모드 정리 (WebRTC든 2D Demo든)
+                    if uiState.activeMode.isWebRTCMode || uiState.activeMode.is2DDemo {
                         viewModel.stopAll()
                     }
 
-                    // CRITICAL: VideoPlayer를 먼저 생성 (UI 전환 전에!)
-                    //    이렇게 해야 Stereo3DView가 생성될 때 이미 VideoPlayer가 준비됨
+                    // VideoPlayer 준비
                     print("   Configuring pipeline for fileDemo mode...")
                     await viewModel.configure(for: .fileDemo)
 
-                    // UI 상태를 3D Demo로 변경 (이제 VideoPlayer가 준비됨)
+                    // UI 상태 변경
                     uiState.activeMode = .fileDemo
 
                     print("✅ [PrimaryModeToggle] 3D Demo mode ready")
