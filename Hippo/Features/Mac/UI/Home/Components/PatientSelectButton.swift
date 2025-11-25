@@ -10,7 +10,6 @@ struct PatientSelectButton: View {
                 rootVM.selectPatient(data.id)
             } label: {
                 HStack(alignment: .center) {
-                    Spacer()
                     Text(data.patientNumber)
                     Spacer()
                     Text(data.name)
@@ -42,10 +41,9 @@ struct PatientSelectButton: View {
                         Image(systemName: "ellipsis.circle.fill")
                             .foregroundStyle(.hippoGray200)
                     }
-                    Spacer()
                 }
                 .frame(maxWidth: .infinity, alignment: .center)
-                .padding(.vertical, 8)
+                .padding(8)
                 .font(.body)
                 .foregroundColor(rootVM.navigationState.selectedPatientID == data.id ? .white : .hippoGray700)
                 .background(
