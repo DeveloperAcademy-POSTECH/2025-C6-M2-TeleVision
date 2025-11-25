@@ -30,7 +30,7 @@ struct LogoHeader: View {
                 .scaledToFit()
                 .padding(.trailing, 8)
 
-            Text("Hippo")
+            Text("HIPPO")
                 .foregroundStyle(.primary)
                 .font(.extraLargeTitle2)
 

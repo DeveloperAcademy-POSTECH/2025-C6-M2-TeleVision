@@ -55,7 +55,9 @@ struct WebRTCSubModeToggle: View {
         case .rawStream: return "원본 스트림"
         case .splitSBS:  return "좌우 분할"
         case .stereo3D:  return "3D 보기"
-        case .fileDemo:  return "Demo"  // Should not be visible
+        case .fileDemo:  return "3D Demo"    // Should not be visible
+        case .fileDemo2D: return "2D Demo"   // Should not be visible
+        case .fileImage: return "Image Demo" // Should not be visible
         }
     }
 
@@ -64,7 +66,9 @@ struct WebRTCSubModeToggle: View {
         case .rawStream: return "rectangle.on.rectangle"
         case .splitSBS:  return "square.split.2x1"
         case .stereo3D:  return "view.3d"
-        case .fileDemo:  return "play.circle"  // Should not be visible
+        case .fileDemo:  return "cube"              // Should not be visible
+        case .fileDemo2D: return "play.rectangle"   // Should not be visible
+        case .fileImage: return "photo"             // Should not be visible
         }
     }
 }

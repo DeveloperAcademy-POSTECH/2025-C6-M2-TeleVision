@@ -53,6 +53,10 @@ struct EndoscopeStreamView: View {
                 // Main content - route based on activeMode (not viewMode)
                 Group {
                     switch uiState.activeMode {
+                    case .fileDemo2D:
+                        // 2D Demo: AVPlayer + VideoMaterial (no pipeline)
+                        FileDemo2DView()
+
                     case .rawStream:
                         RawStreamView(
                             receiver: receiver,
@@ -73,12 +77,14 @@ struct EndoscopeStreamView: View {
                         )
 
                     case .fileDemo:
-                        // Demo 모드도 Stereo3D 렌더링 재사용 (mode 명시)
-                        Stereo3DView(
-                            receiver: receiver,
-                            pipeline: receiver.renderPipeline,
-                            mode: .fileDemo
-                        )
+                        // 3D Demo 전용 뷰 (WebRTC와 분리)
+                        // demo3DSource가 바뀌면 View 재생성하여 새 VideoPlayer 연결
+                        FileDemo3DView(pipeline: receiver.renderPipeline)
+                            .id(uiState.demo3DSource.rawValue)
+
+                    case .fileImage:
+                        // Image Demo: 정적 이미지 표시
+                        FileDemoImageView()
                     }
                 }
                 .id(uiState.activeMode.rawValue)  // Force recreation on mode change
@@ -122,7 +128,7 @@ struct EndoscopeStreamView: View {
             .onAppear {
                 // CRITICAL: Demo 모드는 외부에서 configure 호출하므로 여기서는 건너뜀
                 // Demo 모드는 EndoscopeStreamWindow에서 직접 관리됨
-                guard uiState.activeMode != .fileDemo else {
+                guard !uiState.activeMode.isDemoMode else {
                     print("⏭️ [EndoscopeStreamView] Skipping configure for Demo mode (handled externally)")
                     return
                 }
@@ -156,8 +162,8 @@ struct ViewModeToggle: View {
                     nextMode = .stereo3D
                 case .stereo3D:
                     nextMode = .rawStream
-                case .fileDemo:
-                    // Demo is not part of WebRTC cycle
+                case .fileDemo, .fileDemo2D, .fileImage:
+                    // Demo modes are not part of WebRTC cycle
                     // This should never happen (button is hidden in Demo mode)
                     print("⚠️ [ViewModeToggle] Toggle pressed in Demo mode - ignoring")
                     return

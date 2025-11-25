@@ -32,9 +32,6 @@ final class SerialProcessor {
     /// 처리 중 여부
     private var isProcessing = false
 
-    /// 처리 태스크
-    private var processingTask: Task<Void, Error>?
-
     /// 로거
     private let logger = Logger(subsystem: "com.television.hippo", category: "SerialProcessor")
 
@@ -114,66 +111,49 @@ final class SerialProcessor {
         let videoTrackOutputProvider = assetReader.outputProvider(for: videoTrackOutput)
         try assetReader.start()
 
-        // 비동기 처리 시작
-        processingTask = Task {
-            isProcessing = true
-            var frameCount: Int = 0
+        // 프레임 처리 (완료될 때까지 대기)
+        isProcessing = true
+        var frameCount: Int = 0
 
-            // 모든 프레임 처리
-            while !Task.isCancelled, let sampleBuffer = try await videoTrackOutputProvider.next() {
-                guard isProcessing else {
-                    logger.debug("Processing stopped. Breaking loop.")
-                    break
+        while !Task.isCancelled && isProcessing,
+              let sampleBuffer = try await videoTrackOutputProvider.next() {
+
+            if let transformedBuffer = try transform(
+                from: sampleBuffer,
+                with: pixelBufferPool,
+                in: transferSession
+            ) {
+                // Back-pressure 체크
+                if let readyCheck = isRendererReady {
+                    var waitCount = 0
+                    while !readyCheck() && !Task.isCancelled && isProcessing && waitCount < 30 {
+                        try? await Task.sleep(nanoseconds: 16_000_000)
+                        waitCount += 1
+                    }
+                    if !isProcessing { break }
+                    if waitCount >= 30 { continue }
                 }
 
-                // SBS → Stereo 변환
-                if let transformedBuffer = try transform(
-                    from: sampleBuffer,
-                    with: pixelBufferPool,
-                    in: transferSession
-                ) {
-                    // Back-pressure 체크: Renderer가 준비되지 않았으면 대기
-                    if let readyCheck = isRendererReady {
-                        var waitCount = 0
-                        while !readyCheck() && !Task.isCancelled && waitCount < 30 {
-                            // Renderer 준비 대기 (최대 ~500ms = 30 * 16ms)
-                            try? await Task.sleep(nanoseconds: 16_000_000)  // ~16ms (60fps)
-                            waitCount += 1
-                        }
+                frameHandler(transformedBuffer)
+                frameCount += 1
 
-                        // 타임아웃되면 프레임 drop (계속 쌓이는 것 방지)
-                        if waitCount >= 30 {
-                            logger.debug("⚠️ Frame dropped after 500ms wait (renderer not ready)")
-                            continue
-                        }
-                    }
-
-                    // 콜백으로 전달 (videoRenderer.enqueue 대신)
-                    frameHandler(transformedBuffer)
-                    frameCount += 1
-
-                    // 주기적 로깅 (60프레임마다)
-                    if frameCount % 60 == 0 {
-                        logger.debug("Processed \(frameCount) frames")
-                    }
+                if frameCount % 60 == 0 {
+                    logger.debug("Processed \(frameCount) frames")
                 }
             }
-
-            isProcessing = false
-            logger.info("Processing complete. Total frames: \(frameCount), cancelled: \(Task.isCancelled)")
-
-            // 정리
-            assetReader.cancelReading()
-            VTPixelTransferSessionInvalidate(transferSession)
         }
+
+        isProcessing = false
+        logger.info("Processing complete. Total frames: \(frameCount), cancelled: \(Task.isCancelled)")
+
+        assetReader.cancelReading()
+        VTPixelTransferSessionInvalidate(transferSession)
     }
 
     /// 처리 취소
     func cancel() {
         isProcessing = false
         logger.info("SerialProcessor cancel()")
-        processingTask?.cancel()
-        processingTask = nil
     }
 
     // MARK: - Private Methods

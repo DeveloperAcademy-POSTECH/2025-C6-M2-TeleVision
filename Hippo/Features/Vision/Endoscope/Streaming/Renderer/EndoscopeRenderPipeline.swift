@@ -45,8 +45,8 @@ public final class EndoscopeRenderPipeline: ObservableObject {
     // Helper for pixel buffer processing
     private let helper = StereoVideoPlayerHelper()
 
-    // Current mode
-    private var currentMode: EndoscopeViewMode = .rawStream
+    // Current mode (nil = not configured yet, prevents "Already configured" bugs)
+    private var currentMode: EndoscopeViewMode? = nil
 
     // Track if pipeline has been initialized
     private var isInitialized: Bool = false
@@ -99,15 +99,22 @@ public final class EndoscopeRenderPipeline: ObservableObject {
 
     /// Configure pipeline for a specific mode
     public func configure(for mode: EndoscopeViewMode) {
-        guard currentMode != mode || !isInitialized else {
-            logger.info("Already configured for: \(mode.rawValue)")
-            return
+        // CRITICAL FIX: Don't skip reconfiguration even if mode matches
+        // Resources (VideoPlayer) might be nil after cleanup, causing blank screen
+        let shouldReconfigure = currentMode != mode || !isInitialized
+
+        if !shouldReconfigure {
+            logger.info("Already configured for: \(mode.rawValue), but will reconfigure to ensure resources exist")
         }
 
         if !isInitialized {
             logger.info("Initial pipeline configuration: \(mode.rawValue)")
         } else {
-            logger.info("Reconfiguring pipeline: \(self.currentMode.rawValue) → \(mode.rawValue)")
+            if let prevMode = currentMode {
+                logger.info("Reconfiguring pipeline: \(prevMode.rawValue) → \(mode.rawValue)")
+            } else {
+                logger.info("Reconfiguring pipeline: nil → \(mode.rawValue)")
+            }
             // Log current PTS before mode switch
             if let pts = syntheticPTS {
                 let ptsSeconds = CMTimeGetSeconds(pts)
@@ -212,6 +219,11 @@ public final class EndoscopeRenderPipeline: ObservableObject {
         }
 
         let mode = await MainActor.run { currentMode }
+        guard let mode = mode else {
+            logger.warning("⚠️ processFrame called but currentMode is nil - pipeline not configured")
+            return
+        }
+
         switch mode {
         case .rawStream:
             await processRawSBS(pixelBuffer, pts: fixedPTS, duration: fixedDuration)
@@ -227,6 +239,22 @@ public final class EndoscopeRenderPipeline: ObservableObject {
             // This case should never be reached in normal operation
             logger.warning("⚠️ processFrame called in fileDemo mode - this should not happen")
             logger.warning("   File demo uses enqueue(sampleBuffer:) instead")
+            return
+
+        case .fileDemo2D:
+            // 2D File demo mode does not use the pipeline at all
+            // FileDemo2DView handles playback directly via AVPlayer + VideoMaterial
+            // This case should never be reached in normal operation
+            logger.warning("⚠️ processFrame called in fileDemo2D mode - this should not happen")
+            logger.warning("   2D demo uses AVPlayer directly, not the render pipeline")
+            return
+
+        case .fileImage:
+            // Image demo mode does not use the pipeline at all
+            // FileDemoImageView handles display directly via TextureResource
+            // This case should never be reached in normal operation
+            logger.warning("⚠️ processFrame called in fileImage mode - this should not happen")
+            logger.warning("   Image demo uses TextureResource directly, not the render pipeline")
             return
         }
 
@@ -341,6 +369,18 @@ public final class EndoscopeRenderPipeline: ObservableObject {
         return player.videoRenderer.isReadyForMoreMediaData
     }
 
+    /// Flush renderer buffer and reset timing (for loop restart)
+    public func flushRenderer() {
+        guard let player = videoPlayer else {
+            logger.warning("⚠️ flushRenderer called but VideoPlayer is nil")
+            return
+        }
+
+        logger.info("🔄 Flushing renderer for loop restart...")
+        player.flushAndResetTiming()
+        logger.info("   ✓ Renderer flushed and timing reset")
+    }
+
     /// Begin mode change (blocks frame processing until complete)
     public func beginModeChange() {
         isModeChanging = true
@@ -372,8 +412,8 @@ public final class EndoscopeRenderPipeline: ObservableObject {
         logger.info("   ✓ Releasing VTPixelTransferSession...")
         helper.cleanup()
 
-        // Reset state
-        currentMode = .rawStream
+        // Reset state (currentMode to nil to force reconfiguration)
+        currentMode = nil  // CRITICAL: Reset to nil, not .rawStream
         isInitialized = false
         framesProcessed = 0
         framesSkipped = 0

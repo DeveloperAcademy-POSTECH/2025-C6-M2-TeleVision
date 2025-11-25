@@ -11,6 +11,53 @@ import SwiftUI
 import os.log
 import Combine
 
+// MARK: - Demo Display Mode
+
+/// Demo 모드 내에서의 표시 방식
+/// UI 라벨: Standard (2D) / 3D / Image
+enum DemoDisplayMode: String, CaseIterable {
+    case standard   // 내부적으로 2D (fileDemo2D)
+    case stereo3D   // 내부적으로 3D (fileDemo)
+    case image      // 내부적으로 Image (fileImage)
+
+    /// UI 표시용 라벨 (2D 대신 Standard 사용)
+    var displayLabel: String {
+        switch self {
+        case .standard: return "Standard"
+        case .stereo3D: return "3D"
+        case .image: return "Image"
+        }
+    }
+
+    /// 아이콘
+    var icon: String {
+        switch self {
+        case .standard: return "rectangle.on.rectangle"
+        case .stereo3D: return "cube.fill"
+        case .image: return "photo.fill"
+        }
+    }
+
+    /// EndoscopeViewMode로 변환
+    var viewMode: EndoscopeViewMode {
+        switch self {
+        case .standard: return .fileDemo2D
+        case .stereo3D: return .fileDemo
+        case .image: return .fileImage
+        }
+    }
+
+    /// EndoscopeViewMode에서 생성
+    init(from viewMode: EndoscopeViewMode) {
+        switch viewMode {
+        case .fileDemo2D: self = .standard
+        case .fileDemo: self = .stereo3D
+        case .fileImage: self = .image
+        default: self = .stereo3D  // 기본값
+        }
+    }
+}
+
 /// Manages UI state for stream view mode transitions
 /// Coordinates timing between pipeline preparation and view rendering
 @MainActor
@@ -19,10 +66,27 @@ final class StreamUIState: ObservableObject {
     // MARK: - Published Properties
 
     /// Currently active (fully prepared and visible) mode
+    /// Default: fileDemo (3D demo for initial showcase)
     @Published var activeMode: EndoscopeViewMode = .fileDemo
+
+    /// Demo 모드 내에서의 표시 방식 (Standard/3D)
+    /// activeMode가 Demo일 때만 유효
+    @Published var demoDisplayMode: DemoDisplayMode = .stereo3D
 
     /// Whether a mode transition is in progress
     @Published var isSwitching: Bool = false
+
+    /// 3D Demo 모드에서 현재 재생 중인 영상 소스
+    /// 기본값: Demo3DDefaults.initialSource (bird)
+    @Published var demo3DSource: Demo3DVideoSource = Demo3DDefaults.initialSource
+
+    // MARK: - Computed Properties
+
+    /// Live 모드인지 (WebRTC)
+    var isLiveMode: Bool { activeMode.isWebRTCMode }
+
+    /// Demo 모드인지 (Standard 또는 3D)
+    var isDemoMode: Bool { activeMode.isDemoMode }
 
     // MARK: - Callbacks
 
@@ -40,7 +104,16 @@ final class StreamUIState: ObservableObject {
 
     init(initialMode: EndoscopeViewMode = .fileDemo) {
         self.activeMode = initialMode
-        logger.info("StreamUIState initialized with mode: \(initialMode.rawValue)")
+        self.demo3DSource = Demo3DDefaults.initialSource
+        logger.info("StreamUIState initialized with mode: \(initialMode.rawValue), demo3DSource: \(Demo3DDefaults.initialSource.rawValue)")
+    }
+
+    // MARK: - Demo 3D Source Management
+
+    /// 3D Demo 소스를 기본값으로 리셋
+    func resetDemo3DSource() {
+        demo3DSource = Demo3DDefaults.initialSource
+        logger.info("Demo3DSource reset to default: \(Demo3DDefaults.initialSource.rawValue)")
     }
 
     // MARK: - Public Methods
@@ -63,23 +136,23 @@ final class StreamUIState: ObservableObject {
         logger.info("🔄 Mode switch requested: \(self.activeMode.rawValue) → \(newMode.rawValue)")
 
         // Cleanup Demo mode resources if exiting from Demo
-        if activeMode == .fileDemo && newMode != .fileDemo {
+        if activeMode.isDemoMode && !newMode.isDemoMode {
             logger.info("   Exiting Demo mode - triggering cleanup...")
             onExitDemoMode?()
         }
 
-        // CRITICAL: Demo mode is now handled by PrimaryModeToggle
-        // Demo 진입: PrimaryModeToggle → stopAll() → configure(.fileDemo) → update UI
-        // This ensures FileDemoFrameSource is properly initialized
-        if newMode == .fileDemo {
-            logger.info("⚠️ switchMode() called for Demo mode")
+        // CRITICAL: Demo modes are now handled by PrimaryModeToggle
+        // Demo 진입: PrimaryModeToggle → stopAll() → configure(.fileDemo/.fileDemo2D) → update UI
+        // This ensures proper initialization for file-based modes
+        if newMode.isDemoMode {
+            logger.info("⚠️ switchMode() called for Demo mode: \(newMode.rawValue)")
             logger.info("   Note: Demo configuration should be handled by PrimaryModeToggle")
             logger.info("   Updating UI state only")
             isSwitching = true
-            activeMode = .fileDemo
+            activeMode = newMode
             try? await Task.sleep(for: .milliseconds(50))
             isSwitching = false
-            logger.info("✅ Mode switch complete (UI updated to Demo)")
+            logger.info("✅ Mode switch complete (UI updated to \(newMode.rawValue))")
             return
         }
 

@@ -2,25 +2,34 @@ import Foundation
 import AppKit
 import UniformTypeIdentifiers
 
+/// Showcase용 수술 정보 Mock 데이터
+enum OperationMockData {
+    static let title = "간 종양 절제"
+    static let surgeon = "오남기"
+    static let surgicalSite = "간 S5(5분절), 중앙부"
+    static let diagnosis = "간세포암(Hepatocellular carcinoma, HCC) — 2.1 cm 종양"
+    static let details = "동맥기 조영증강 및 지연기 소실(washout) 소견을 보이는 간 S5 종양으로, 중간간정맥(MHV) 인접하나 혈관 침범은 없음. 약 5 mm 안전거리를 확보한 부분 간절제 예정."
+}
+
 /// 수술 입력 폼의 상태를 관리하는 구조체
 public struct OperationInputState {
     /// 수술 제목
-    public var title: String = ""
+    public var title: String = OperationMockData.title
 
     /// 진단(병명)
-    public var diagnosis: String = ""
+    public var diagnosis: String = OperationMockData.diagnosis
 
     /// 집도의
-    public var surgeon: String = ""
+    public var surgeon: String = OperationMockData.surgeon
 
     /// 수술 부위
-    public var surgicalSite: String = ""
+    public var surgicalSite: String = OperationMockData.surgicalSite
 
     /// 수술 날짜
     public var operationDate: Date = Date()
 
     /// 수술 상세
-    public var details: String = ""
+    public var details: String = OperationMockData.details
 
     /// 3D 모델 에셋 목록
     public var assets: [OperationAssetDisplayModel] = []
@@ -44,14 +53,14 @@ public struct OperationInputState {
         self.assets = operation.assets
     }
 
-    /// 폼 초기화
+    /// 폼 초기화 (showcase 기본값으로 리셋)
     public mutating func reset() {
-        title = ""
-        diagnosis = ""
-        surgeon = ""
-        surgicalSite = ""
+        title = OperationMockData.title
+        diagnosis = OperationMockData.diagnosis
+        surgeon = OperationMockData.surgeon
+        surgicalSite = OperationMockData.surgicalSite
         operationDate = Date()
-        details = ""
+        details = OperationMockData.details
         assets = []
         isShowingFilePicker = false
         errorMessage = nil
