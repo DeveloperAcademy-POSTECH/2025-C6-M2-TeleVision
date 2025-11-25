@@ -26,7 +26,7 @@ struct PrimaryModeToggle: View {
                     guard uiState.activeMode.isDemoMode else { return }
 
                     let targetMode: EndoscopeViewMode = .rawStream
-                    print("🔄 [PrimaryModeToggle] Demo → WebRTC: Switching to \(targetMode.rawValue)")
+                    print("[PrimaryModeToggle] Demo -> WebRTC: Switching to \(targetMode.rawValue)")
 
                     // 1) Demo 소스 정리
                     viewModel.stopAll()
@@ -35,10 +35,10 @@ struct PrimaryModeToggle: View {
                     await uiState.switchMode(to: targetMode, pipeline: pipeline)
 
                     // 3) WebRTC 연결 시작
-                    print("   Initiating WebRTC connection...")
+                    print("[PrimaryModeToggle] Initiating WebRTC connection...")
                     await viewModel.connect()
 
-                    print("✅ [PrimaryModeToggle] WebRTC connection complete")
+                    print("[PrimaryModeToggle] WebRTC connection complete")
                 }
             } label: {
                 HStack(spacing: 6) {
@@ -75,7 +75,7 @@ struct PrimaryModeToggle: View {
                     // 이미 2D Demo면 무시
                     guard !uiState.activeMode.is2DDemo else { return }
 
-                    print("🔄 [PrimaryModeToggle] Switching to 2D Demo")
+                    print("[PrimaryModeToggle] Switching to 2D Demo")
 
                     // 이전 모드 정리 (WebRTC든 3D Demo든)
                     if uiState.activeMode.isWebRTCMode || uiState.activeMode.is3DDemo {
@@ -85,7 +85,7 @@ struct PrimaryModeToggle: View {
                     // 2D Demo는 파이프라인 설정 불필요 (AVPlayer 직접 사용)
                     uiState.activeMode = .fileDemo2D
 
-                    print("✅ [PrimaryModeToggle] 2D Demo mode ready")
+                    print("[PrimaryModeToggle] 2D Demo mode ready")
                 }
             } label: {
                 HStack(spacing: 6) {
@@ -122,21 +122,24 @@ struct PrimaryModeToggle: View {
                     // 이미 3D Demo면 무시
                     guard !uiState.activeMode.is3DDemo else { return }
 
-                    print("🔄 [PrimaryModeToggle] Switching to 3D Demo")
+                    print("[PrimaryModeToggle] Switching to 3D Demo")
 
                     // 이전 모드 정리 (WebRTC든 2D Demo든)
                     if uiState.activeMode.isWebRTCMode || uiState.activeMode.is2DDemo {
                         viewModel.stopAll()
                     }
 
-                    // VideoPlayer 준비
-                    print("   Configuring pipeline for fileDemo mode...")
-                    await viewModel.configure(for: .fileDemo)
+                    // 3D Demo 소스를 기본값으로 리셋 (항상 bird로 시작)
+                    uiState.resetDemo3DSource()
+
+                    // VideoPlayer 준비 (기본 소스로)
+                    print("[PrimaryModeToggle] Configuring pipeline for fileDemo mode with source: \(uiState.demo3DSource.rawValue)")
+                    await viewModel.configureDemo3D(with: uiState.demo3DSource)
 
                     // UI 상태 변경
                     uiState.activeMode = .fileDemo
 
-                    print("✅ [PrimaryModeToggle] 3D Demo mode ready")
+                    print("[PrimaryModeToggle] 3D Demo mode ready")
                 }
             } label: {
                 HStack(spacing: 6) {

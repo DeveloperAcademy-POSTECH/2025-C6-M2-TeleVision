@@ -295,6 +295,9 @@
 		25B5ADC52ED2DBBB008F1261 /* WebRTCSubModeToggle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 25B5ADC22ED2DBBB008F1261 /* WebRTCSubModeToggle.swift */; };
 		25B8D6872ECBC07400676A3A /* ScalingMode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 25B8D6862ECBC07400676A3A /* ScalingMode.swift */; };
 		25B8D6892ECBC16100676A3A /* ScalingSectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 25B8D6882ECBC16100676A3A /* ScalingSectionView.swift */; };
+		25BF39102ED61F7900B797AA /* Demo3DVideoSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = 25BF390F2ED61F7900B797AA /* Demo3DVideoSource.swift */; };
+		25BF39122ED620E600B797AA /* Demo3DSourceToggle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 25BF39112ED620E600B797AA /* Demo3DSourceToggle.swift */; };
+		25BF39172ED62C8100B797AA /* EndoscopeTopControlBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 25BF39162ED62C8100B797AA /* EndoscopeTopControlBar.swift */; };
 		25DEMO2D012ED60000001442 /* FileDemo2DView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 25DEMO2D002ED60000001442 /* FileDemo2DView.swift */; };
 		25E78B602EB90D4600D8CAD2 /* OperationStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = 25E78B5D2EB90D4600D8CAD2 /* OperationStatus.swift */; };
 		25E78B612EB90D4600D8CAD2 /* Operation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 25E78B542EB90D4600D8CAD2 /* Operation.swift */; };
@@ -696,6 +699,9 @@
 		25B5ADC22ED2DBBB008F1261 /* WebRTCSubModeToggle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebRTCSubModeToggle.swift; sourceTree = "<group>"; };
 		25B8D6862ECBC07400676A3A /* ScalingMode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScalingMode.swift; sourceTree = "<group>"; };
 		25B8D6882ECBC16100676A3A /* ScalingSectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScalingSectionView.swift; sourceTree = "<group>"; };
+		25BF390F2ED61F7900B797AA /* Demo3DVideoSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Demo3DVideoSource.swift; sourceTree = "<group>"; };
+		25BF39112ED620E600B797AA /* Demo3DSourceToggle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Demo3DSourceToggle.swift; sourceTree = "<group>"; };
+		25BF39162ED62C8100B797AA /* EndoscopeTopControlBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EndoscopeTopControlBar.swift; sourceTree = "<group>"; };
 		25DEMO2D002ED60000001442 /* FileDemo2DView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FileDemo2DView.swift; sourceTree = "<group>"; };
 		25E78B542EB90D4600D8CAD2 /* Operation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Operation.swift; sourceTree = "<group>"; };
 		25E78B552EB90D4600D8CAD2 /* OperationAsset.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OperationAsset.swift; sourceTree = "<group>"; };
@@ -1518,6 +1524,8 @@
 		25B5ADC32ED2DBBB008F1261 /* Components */ = {
 			isa = PBXGroup;
 			children = (
+				25BF39162ED62C8100B797AA /* EndoscopeTopControlBar.swift */,
+				25BF39112ED620E600B797AA /* Demo3DSourceToggle.swift */,
 				25B5ADC12ED2DBBB008F1261 /* PrimaryModeToggle.swift */,
 				25B5ADC22ED2DBBB008F1261 /* WebRTCSubModeToggle.swift */,
 				2581FF6A2EC1C4640059678D /* ConnectionOverlay.swift */,
@@ -2028,6 +2036,7 @@
 		E0A1B0012EC5D00000000001 /* Endoscope */ = {
 			isa = PBXGroup;
 			children = (
+				25BF390F2ED61F7900B797AA /* Demo3DVideoSource.swift */,
 				25B5ADC62ED2DD05008F1261 /* ModeViews */,
 				25B5ADC32ED2DBBB008F1261 /* Components */,
 				25B5AD972ED1DA83008F1261 /* StreamUIState.swift */,
@@ -2211,6 +2220,7 @@
 				14CC756A2EA6A98700399562 /* OperationDateBadge.swift in Sources */,
 				C0F97AD62EA41FB50063E159 /* PatientLocalDataSource.swift in Sources */,
 				1494DE982EA73359000CD284 /* SectionTitle.swift in Sources */,
+				25BF39122ED620E600B797AA /* Demo3DSourceToggle.swift in Sources */,
 				272BD1B52EADE1E200C83F81 /* HeadPose.swift in Sources */,
 				14CC754F2EA6A77C00399562 /* OrnamentButton.swift in Sources */,
 				C050AA4B2EA81EBE00352314 /* VisionEnvironmentKey.swift in Sources */,
@@ -2355,6 +2365,7 @@
 				1446FBF02EAFAD5C000BCF61 /* PatientInputHeader.swift in Sources */,
 				1494DEA02EA7510A000CD284 /* DetailSubPart.swift in Sources */,
 				C0F97AB02EA401160063E159 /* OperationDisplayModel.swift in Sources */,
+				25BF39172ED62C8100B797AA /* EndoscopeTopControlBar.swift in Sources */,
 				2720B7D72EC6269B00903C7D /* VoiceControlManager.swift in Sources */,
 				1446FBA32EAE6A27000BCF61 /* GlowingCircleButton.swift in Sources */,
 				14A17F8D2EB3146D009D16CF /* OperationCard.swift in Sources */,
@@ -2370,6 +2381,7 @@
 				1494DEA72EA7C851000CD284 /* Date+Extension.swift in Sources */,
 				25E78B792EB9164E00D8CAD2 /* CreateOperationCommand.swift in Sources */,
 				25E78B7A2EB9164E00D8CAD2 /* AttachAssetCommand.swift in Sources */,
+				25BF39102ED61F7900B797AA /* Demo3DVideoSource.swift in Sources */,
 				14A17F9F2EB34FF7009D16CF /* OperationInputForm.swift in Sources */,
 				1446FBAE2EAE6BBD000BCF61 /* EndoscopeToggle.swift in Sources */,
 				C0F97AB22EA401160063E159 /* OperationAssetDisplayModel.swift in Sources */,

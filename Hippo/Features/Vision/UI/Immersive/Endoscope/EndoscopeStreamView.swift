@@ -78,7 +78,9 @@ struct EndoscopeStreamView: View {
 
                     case .fileDemo:
                         // 3D Demo 전용 뷰 (WebRTC와 분리)
+                        // demo3DSource가 바뀌면 View 재생성하여 새 VideoPlayer 연결
                         FileDemo3DView(pipeline: receiver.renderPipeline)
+                            .id(uiState.demo3DSource.rawValue)
                     }
                 }
                 .id(uiState.activeMode.rawValue)  // Force recreation on mode change
