@@ -226,9 +226,9 @@
 		253207F42ED5786D000C2E72 /* demo-2d.mp4 in Resources */ = {isa = PBXBuildFile; fileRef = 253207F32ED5786D000C2E72 /* demo-2d.mp4 */; };
 		253207F52ED5786D000C2E72 /* demo-2d.mp4 in Resources */ = {isa = PBXBuildFile; fileRef = 253207F32ED5786D000C2E72 /* demo-2d.mp4 */; };
 		253207F62ED5786D000C2E72 /* demo-2d.mp4 in Resources */ = {isa = PBXBuildFile; fileRef = 253207F32ED5786D000C2E72 /* demo-2d.mp4 */; };
-		253207FC2ED5826F000C2E72 /* endoscope-demo.mp4 in Resources */ = {isa = PBXBuildFile; fileRef = 253207FB2ED5826F000C2E72 /* endoscope-demo.mp4 */; };
-		253207FD2ED5826F000C2E72 /* endoscope-demo.mp4 in Resources */ = {isa = PBXBuildFile; fileRef = 253207FB2ED5826F000C2E72 /* endoscope-demo.mp4 */; };
-		253207FE2ED5826F000C2E72 /* endoscope-demo.mp4 in Resources */ = {isa = PBXBuildFile; fileRef = 253207FB2ED5826F000C2E72 /* endoscope-demo.mp4 */; };
+		253208042ED5B8FF000C2E72 /* endoscope-demo.mp4 in Resources */ = {isa = PBXBuildFile; fileRef = 253208032ED5B8FF000C2E72 /* endoscope-demo.mp4 */; };
+		253208052ED5B8FF000C2E72 /* endoscope-demo.mp4 in Resources */ = {isa = PBXBuildFile; fileRef = 253208032ED5B8FF000C2E72 /* endoscope-demo.mp4 */; };
+		253208062ED5B8FF000C2E72 /* endoscope-demo.mp4 in Resources */ = {isa = PBXBuildFile; fileRef = 253208032ED5B8FF000C2E72 /* endoscope-demo.mp4 */; };
 		253881C62ECA1DEE001442C9 /* EndoscopeRenderPipeline.swift in Sources */ = {isa = PBXBuildFile; fileRef = 253881C52ECA1DEE001442C9 /* EndoscopeRenderPipeline.swift */; };
 		253881CB2ECA3C00001442C9 /* SplitSBSView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 253881C92ECA3C00001442C9 /* SplitSBSView.swift */; };
 		253881CC2ECA3C00001442C9 /* EndoscopeViewMode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 253881C72ECA3C00001442C9 /* EndoscopeViewMode.swift */; };
@@ -647,7 +647,7 @@
 		2523A6E22EC649A600842508 /* AppleSpeechRecognitionService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppleSpeechRecognitionService.swift; sourceTree = "<group>"; };
 		2523A6F42EC663DB00842508 /* ImmersiveSceneRuntime+VoiceControl.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ImmersiveSceneRuntime+VoiceControl.swift"; sourceTree = "<group>"; };
 		253207F32ED5786D000C2E72 /* demo-2d.mp4 */ = {isa = PBXFileReference; lastKnownFileType = file; path = "demo-2d.mp4"; sourceTree = "<group>"; };
-		253207FB2ED5826F000C2E72 /* endoscope-demo.mp4 */ = {isa = PBXFileReference; lastKnownFileType = file; path = "endoscope-demo.mp4"; sourceTree = "<group>"; };
+		253208032ED5B8FF000C2E72 /* endoscope-demo.mp4 */ = {isa = PBXFileReference; lastKnownFileType = file; path = "endoscope-demo.mp4"; sourceTree = "<group>"; };
 		253881C52ECA1DEE001442C9 /* EndoscopeRenderPipeline.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EndoscopeRenderPipeline.swift; sourceTree = "<group>"; };
 		253881C72ECA3C00001442C9 /* EndoscopeViewMode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EndoscopeViewMode.swift; sourceTree = "<group>"; };
 		253881C82ECA3C00001442C9 /* RawStreamView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RawStreamView.swift; sourceTree = "<group>"; };
@@ -1685,11 +1685,11 @@
 		C02FFA5C2E9FFF6F00F16742 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				253208032ED5B8FF000C2E72 /* endoscope-demo.mp4 */,
 				14DE51512EB771420027D9A0 /* HIPPO.icon */,
 				C02FFA5A2E9FFF6F00F16742 /* MacAssets.xcassets */,
 				C02FFA5B2E9FFF6F00F16742 /* VisionAssets.xcassets */,
 				253207F32ED5786D000C2E72 /* demo-2d.mp4 */,
-				253207FB2ED5826F000C2E72 /* endoscope-demo.mp4 */,
 			);
 			path = Resources;
 			sourceTree = "<group>";
@@ -2160,7 +2160,7 @@
 				C02FFA932E9FFF6F00F16742 /* VisionAssets.xcassets in Resources */,
 				14DE51542EB771420027D9A0 /* HIPPO.icon in Resources */,
 				253207F42ED5786D000C2E72 /* demo-2d.mp4 in Resources */,
-				253207FC2ED5826F000C2E72 /* endoscope-demo.mp4 in Resources */,
+				253208052ED5B8FF000C2E72 /* endoscope-demo.mp4 in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2168,9 +2168,9 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				253208062ED5B8FF000C2E72 /* endoscope-demo.mp4 in Resources */,
 				14DE51532EB771420027D9A0 /* HIPPO.icon in Resources */,
 				253207F52ED5786D000C2E72 /* demo-2d.mp4 in Resources */,
-				253207FD2ED5826F000C2E72 /* endoscope-demo.mp4 in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2181,7 +2181,7 @@
 				C02FFA8D2E9FFF6F00F16742 /* MacAssets.xcassets in Resources */,
 				14DE51522EB771420027D9A0 /* HIPPO.icon in Resources */,
 				253207F62ED5786D000C2E72 /* demo-2d.mp4 in Resources */,
-				253207FE2ED5826F000C2E72 /* endoscope-demo.mp4 in Resources */,
+				253208042ED5B8FF000C2E72 /* endoscope-demo.mp4 in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
