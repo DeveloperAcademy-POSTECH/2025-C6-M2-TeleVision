@@ -2,173 +2,110 @@
 //  PrimaryModeToggle.swift
 //  Hippo
 //
-//  Primary mode toggle: WebRTC vs Demo (2D/3D)
-//  Handles top-level mode switching with proper resource cleanup
+//  1단계 모드 토글: Live (WebRTC) vs Demo (파일 기반)
+//  Live: 실시간 수술 장비 스트리밍
+//  Demo: 녹화된 데모 영상 (Standard/3D)
 //
 
 import SwiftUI
 
-/// 1차 모드 토글: WebRTC 스트림 vs Demo (2D/3D)
-/// - Demo → WebRTC: stopAll() → switchMode() → connect()
-/// - WebRTC → Demo: stopAll() → configure(.fileDemo/.fileDemo2D) → update UI
-/// - 2D Demo ↔ 3D Demo: UI 상태만 전환 (같은 Demo 모드 내 전환)
+/// 1단계 모드 토글: Live / Demo
 struct PrimaryModeToggle: View {
     @ObservedObject var uiState: StreamUIState
     @ObservedObject var viewModel: EndoscopeStreamViewModel
     let pipeline: EndoscopeRenderPipeline
 
     var body: some View {
-        HStack(spacing: 8) {
-            // WebRTC 스트림 버튼
-            Button {
-                Task { @MainActor in
-                    // Demo → WebRTC로 갈 때만 동작
-                    guard uiState.activeMode.isDemoMode else { return }
-
-                    let targetMode: EndoscopeViewMode = .rawStream
-                    print("[PrimaryModeToggle] Demo -> WebRTC: Switching to \(targetMode.rawValue)")
-
-                    // 1) Demo 소스 정리
-                    viewModel.stopAll()
-
-                    // 2) UI 상태 전환 (파이프라인 준비 포함)
-                    await uiState.switchMode(to: targetMode, pipeline: pipeline)
-
-                    // 3) WebRTC 연결 시작
-                    print("[PrimaryModeToggle] Initiating WebRTC connection...")
-                    await viewModel.connect()
-
-                    print("[PrimaryModeToggle] WebRTC connection complete")
-                }
-            } label: {
-                HStack(spacing: 6) {
-                    Image(systemName: "antenna.radiowaves.left.and.right")
-                        .font(.system(size: 11))
-                    Text("WebRTC")
-                        .font(.system(size: 12, weight: .semibold))
-                }
-                .padding(.horizontal, 12)
-                .padding(.vertical, 6)
-                .background(
-                    Capsule().fill(
-                        uiState.activeMode.isWebRTCMode
-                        ? Color.blue.opacity(0.2)
-                        : Color.clear
-                    )
-                )
-                .overlay(
-                    Capsule().stroke(
-                        uiState.activeMode.isWebRTCMode
-                        ? Color.blue
-                        : Color.clear,
-                        lineWidth: 1
-                    )
-                )
+        HStack(spacing: 6) {
+            // Live 버튼
+            ModeButton(
+                title: "Live",
+                icon: "antenna.radiowaves.left.and.right",
+                isSelected: uiState.isLiveMode,
+                isDisabled: uiState.isSwitching
+            ) {
+                switchToLive()
             }
-            .buttonStyle(.plain)
-            .hoverEffect()
-            .disabled(uiState.isSwitching)
 
-            // 2D Demo 버튼
-            Button {
-                Task { @MainActor in
-                    // 이미 2D Demo면 무시
-                    guard !uiState.activeMode.is2DDemo else { return }
-
-                    print("[PrimaryModeToggle] Switching to 2D Demo")
-
-                    // 이전 모드 정리 (WebRTC든 3D Demo든)
-                    if uiState.activeMode.isWebRTCMode || uiState.activeMode.is3DDemo {
-                        viewModel.stopAll()
-                    }
-
-                    // 2D Demo는 파이프라인 설정 불필요 (AVPlayer 직접 사용)
-                    uiState.activeMode = .fileDemo2D
-
-                    print("[PrimaryModeToggle] 2D Demo mode ready")
-                }
-            } label: {
-                HStack(spacing: 6) {
-                    Image(systemName: "play.rectangle.fill")
-                        .font(.system(size: 11))
-                    Text("Demo")
-                        .font(.system(size: 12, weight: .semibold))
-                }
-                .padding(.horizontal, 12)
-                .padding(.vertical, 6)
-                .background(
-                    Capsule().fill(
-                        uiState.activeMode.is2DDemo
-                        ? Color.blue.opacity(0.2)
-                        : Color.clear
-                    )
-                )
-                .overlay(
-                    Capsule().stroke(
-                        uiState.activeMode.is2DDemo
-                        ? Color.blue
-                        : Color.clear,
-                        lineWidth: 1
-                    )
-                )
+            // Demo 버튼
+            ModeButton(
+                title: "Demo",
+                icon: "play.rectangle.fill",
+                isSelected: uiState.isDemoMode,
+                isDisabled: uiState.isSwitching
+            ) {
+                switchToDemo()
             }
-            .buttonStyle(.plain)
-            .hoverEffect()
-            .disabled(uiState.isSwitching)
-
-            // 3D Demo 버튼
-            Button {
-                Task { @MainActor in
-                    // 이미 3D Demo면 무시
-                    guard !uiState.activeMode.is3DDemo else { return }
-
-                    print("[PrimaryModeToggle] Switching to 3D Demo")
-
-                    // 이전 모드 정리 (WebRTC든 2D Demo든)
-                    if uiState.activeMode.isWebRTCMode || uiState.activeMode.is2DDemo {
-                        viewModel.stopAll()
-                    }
-
-                    // 3D Demo 소스를 기본값으로 리셋 (항상 bird로 시작)
-                    uiState.resetDemo3DSource()
-
-                    // VideoPlayer 준비 (기본 소스로)
-                    print("[PrimaryModeToggle] Configuring pipeline for fileDemo mode with source: \(uiState.demo3DSource.rawValue)")
-                    await viewModel.configureDemo3D(with: uiState.demo3DSource)
-
-                    // UI 상태 변경
-                    uiState.activeMode = .fileDemo
-
-                    print("[PrimaryModeToggle] 3D Demo mode ready")
-                }
-            } label: {
-                HStack(spacing: 6) {
-                    Image(systemName: "cube.fill")
-                        .font(.system(size: 11))
-                    Text("3D Demo")
-                        .font(.system(size: 12, weight: .semibold))
-                }
-                .padding(.horizontal, 12)
-                .padding(.vertical, 6)
-                .background(
-                    Capsule().fill(
-                        uiState.activeMode.is3DDemo
-                        ? Color.blue.opacity(0.2)
-                        : Color.clear
-                    )
-                )
-                .overlay(
-                    Capsule().stroke(
-                        uiState.activeMode.is3DDemo
-                        ? Color.blue
-                        : Color.clear,
-                        lineWidth: 1
-                    )
-                )
-            }
-            .buttonStyle(.plain)
-            .hoverEffect()
-            .disabled(uiState.isSwitching)
         }
+        .padding(4)
+    }
+
+    // MARK: - Actions
+
+    private func switchToLive() {
+        Task { @MainActor in
+            guard uiState.isDemoMode else { return }
+
+            print("[PrimaryModeToggle] Demo -> Live")
+            viewModel.stopAll()
+
+            let targetMode: EndoscopeViewMode = .rawStream
+            await uiState.switchMode(to: targetMode, pipeline: pipeline)
+            await viewModel.connect()
+
+            print("[PrimaryModeToggle] Live mode ready")
+        }
+    }
+
+    private func switchToDemo() {
+        Task { @MainActor in
+            guard uiState.isLiveMode else { return }
+
+            print("[PrimaryModeToggle] Live -> Demo")
+            viewModel.stopAll()
+
+            // 현재 demoDisplayMode에 따라 적절한 Demo 모드로 전환
+            if uiState.demoDisplayMode == .stereo3D {
+                uiState.resetDemo3DSource()
+                await viewModel.configureDemo3D(with: uiState.demo3DSource)
+                uiState.activeMode = .fileDemo
+            } else {
+                uiState.activeMode = .fileDemo2D
+            }
+
+            print("[PrimaryModeToggle] Demo mode ready (\(uiState.demoDisplayMode.displayLabel))")
+        }
+    }
+}
+
+// MARK: - Mode Button Component
+
+private struct ModeButton: View {
+    let title: String
+    let icon: String
+    let isSelected: Bool
+    let isDisabled: Bool
+    let action: () -> Void
+
+    var body: some View {
+        Button(action: action) {
+            HStack(spacing: 6) {
+                Image(systemName: icon)
+                    .font(.system(size: 11))
+                Text(title)
+                    .font(.system(size: 12, weight: .semibold))
+            }
+            .foregroundStyle(isSelected ? .white : .secondary)
+            .padding(.horizontal, 14)
+            .padding(.vertical, 8)
+            .background(
+                Capsule().fill(
+                    isSelected ? Color.blue.opacity(0.8) : Color.white.opacity(0.08)
+                )
+            )
+        }
+        .buttonStyle(.plain)
+        .hoverEffect(.highlight)
+        .disabled(isDisabled)
     }
 }

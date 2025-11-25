@@ -298,6 +298,7 @@
 		25BF39102ED61F7900B797AA /* Demo3DVideoSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = 25BF390F2ED61F7900B797AA /* Demo3DVideoSource.swift */; };
 		25BF39122ED620E600B797AA /* Demo3DSourceToggle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 25BF39112ED620E600B797AA /* Demo3DSourceToggle.swift */; };
 		25BF39172ED62C8100B797AA /* EndoscopeTopControlBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 25BF39162ED62C8100B797AA /* EndoscopeTopControlBar.swift */; };
+		25BF39192ED633D600B797AA /* DemoDisplayModeToggle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 25BF39182ED633D600B797AA /* DemoDisplayModeToggle.swift */; };
 		25DEMO2D012ED60000001442 /* FileDemo2DView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 25DEMO2D002ED60000001442 /* FileDemo2DView.swift */; };
 		25E78B602EB90D4600D8CAD2 /* OperationStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = 25E78B5D2EB90D4600D8CAD2 /* OperationStatus.swift */; };
 		25E78B612EB90D4600D8CAD2 /* Operation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 25E78B542EB90D4600D8CAD2 /* Operation.swift */; };
@@ -702,6 +703,7 @@
 		25BF390F2ED61F7900B797AA /* Demo3DVideoSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Demo3DVideoSource.swift; sourceTree = "<group>"; };
 		25BF39112ED620E600B797AA /* Demo3DSourceToggle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Demo3DSourceToggle.swift; sourceTree = "<group>"; };
 		25BF39162ED62C8100B797AA /* EndoscopeTopControlBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EndoscopeTopControlBar.swift; sourceTree = "<group>"; };
+		25BF39182ED633D600B797AA /* DemoDisplayModeToggle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DemoDisplayModeToggle.swift; sourceTree = "<group>"; };
 		25DEMO2D002ED60000001442 /* FileDemo2DView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FileDemo2DView.swift; sourceTree = "<group>"; };
 		25E78B542EB90D4600D8CAD2 /* Operation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Operation.swift; sourceTree = "<group>"; };
 		25E78B552EB90D4600D8CAD2 /* OperationAsset.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OperationAsset.swift; sourceTree = "<group>"; };
@@ -1524,6 +1526,7 @@
 		25B5ADC32ED2DBBB008F1261 /* Components */ = {
 			isa = PBXGroup;
 			children = (
+				25BF39182ED633D600B797AA /* DemoDisplayModeToggle.swift */,
 				25BF39162ED62C8100B797AA /* EndoscopeTopControlBar.swift */,
 				25BF39112ED620E600B797AA /* Demo3DSourceToggle.swift */,
 				25B5ADC12ED2DBBB008F1261 /* PrimaryModeToggle.swift */,
@@ -2390,6 +2393,7 @@
 				2581FF6C2EC1C4640059678D /* EndoscopeStreamViewModel.swift in Sources */,
 				2581FF6D2EC1C4640059678D /* ConnectionOverlay.swift in Sources */,
 				C0F97ADA2EA420E10063E159 /* DataDependencies.swift in Sources */,
+				25BF39192ED633D600B797AA /* DemoDisplayModeToggle.swift in Sources */,
 				14DE513F2EB60E610027D9A0 /* FileAttachmentSection.swift in Sources */,
 				25869FF12EC6CD3200882FC5 /* WakeWordListener.swift in Sources */,
 				1446FBED2EAFA477000BCF61 /* FormSection.swift in Sources */,

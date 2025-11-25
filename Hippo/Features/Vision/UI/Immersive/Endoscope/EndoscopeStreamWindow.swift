@@ -15,7 +15,7 @@ struct EndoscopeStreamWindow: View {
     @State private var showSettings = false
 
     // UI state for coordinated mode transitions (shared with view and control bar)
-    // 기본 모드: 3D Demo (endoscope-demo.mp4 자동 재생)
+    // 기본 상태: Demo + 3D + General (bird-3d.mov)
     @StateObject private var streamUIState = StreamUIState(initialMode: .fileDemo)
 
     var body: some View {
@@ -23,22 +23,22 @@ struct EndoscopeStreamWindow: View {
             // 1) 메인 영상 뷰 (UI 없이 깔끔하게)
             EndoscopeStreamView(
                 receiver: viewModel.webRTCReceiver,
-                isVisible: viewModel.connectionStatus.isActive || streamUIState.activeMode.isDemoMode,
+                isVisible: viewModel.connectionStatus.isActive || streamUIState.isDemoMode,
                 uiState: streamUIState
             )
             .frame(minWidth: 900, minHeight: 600)
 
-            // 2) 연결 상태 오버레이 (WebRTC 모드 & 미연결일 때만)
-            if !streamUIState.activeMode.isDemoMode && viewModel.connectionStatus != .connected {
+            // 2) 연결 상태 오버레이 (Live 모드 & 미연결일 때만)
+            if streamUIState.isLiveMode && viewModel.connectionStatus != .connected {
                 ConnectionOverlay(
                     status: viewModel.connectionStatus,
                     onSettingsPressed: { showSettings = true }
                 )
             }
         }
-        // ───────── 상단 ornament: 모드 전환 + 설정 ─────────
+        // ───────── 상단 ornament: 모드 전환 ─────────
         .ornament(
-            visibility: viewModel.connectionStatus == .connected || streamUIState.activeMode.isDemoMode
+            visibility: viewModel.connectionStatus == .connected || streamUIState.isDemoMode
                 ? .visible : .hidden,
             attachmentAnchor: .scene(.top),
             contentAlignment: .bottom
@@ -52,9 +52,10 @@ struct EndoscopeStreamWindow: View {
             .cornerRadius(16)
             .padding(.bottom, 20)
         }
-        // ───────── 하단 ornament: 3D Demo 소스 토글 ─────────
+        // ───────── 하단 ornament: 3D Demo 소스 토글 (Demo + 3D일 때만) ─────────
         .ornament(
-            visibility: streamUIState.activeMode.is3DDemo ? .visible : .hidden,
+            visibility: streamUIState.isDemoMode && streamUIState.demoDisplayMode == .stereo3D
+                ? .visible : .hidden,
             attachmentAnchor: .scene(.bottom),
             contentAlignment: .top
         ) {
