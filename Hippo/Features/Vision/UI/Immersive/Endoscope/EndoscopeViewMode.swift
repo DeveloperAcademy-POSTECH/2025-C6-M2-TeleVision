@@ -11,11 +11,17 @@ import Foundation
 /// Endoscope streaming pipeline modes
 /// Progressive stages: Demo (file-based) → 1 (debug) → 2 (debug) → 3 (production)
 public enum EndoscopeViewMode: String, CaseIterable, Identifiable {
-    /// Stage 0: File-based Demo (showcase mode) - FIRST
+    /// Stage 0-A: 2D File Demo (default showcase mode)
+    /// - Purpose: Simple 2D video playback without any processing
+    /// - Pipeline: File → AVPlayer → VideoMaterial → Plane Entity
+    /// - Usage: Default demo - Play local 2D file (demo-2d.mp4) as flat screen
+    case fileDemo2D = "2D Demo"
+
+    /// Stage 0-B: 3D File-based Demo (showcase mode)
     /// - Purpose: Demo 3D playback without WebRTC connection
     /// - Pipeline: File → SerialProcessor → Stereo Tagged CMSampleBuffer → VideoPlayerComponent
     /// - Usage: Showcase/Demo - Play local SBS file (endoscope-demo.mp4) in 3D
-    case fileDemo = "Demo"
+    case fileDemo = "3D Demo"
 
     /// Stage 1: Raw stream view (mono or SBS as-is)
     /// - Purpose: Verify incoming video feed before any processing
@@ -42,8 +48,8 @@ public enum EndoscopeViewMode: String, CaseIterable, Identifiable {
         switch self {
         case .rawStream, .splitSBS, .stereo3D:
             return true
-        case .fileDemo:
-            return false  // File-based mode doesn't need WebRTC
+        case .fileDemo, .fileDemo2D:
+            return false  // File-based modes don't need WebRTC
         }
     }
 
@@ -53,7 +59,8 @@ public enum EndoscopeViewMode: String, CaseIterable, Identifiable {
         case .rawStream: return "video.fill"
         case .splitSBS: return "rectangle.split.2x1.fill"
         case .stereo3D: return "view.3d"
-        case .fileDemo: return "play.circle.fill"
+        case .fileDemo: return "cube.fill"
+        case .fileDemo2D: return "play.rectangle.fill"
         }
     }
 
@@ -64,6 +71,7 @@ public enum EndoscopeViewMode: String, CaseIterable, Identifiable {
         case .splitSBS: return "SBS 좌/우 분할 (디버그)"
         case .stereo3D: return "입체 3D (프로덕션)"
         case .fileDemo: return "3D 데모 (파일)"
+        case .fileDemo2D: return "2D 데모 (파일)"
         }
     }
 
@@ -71,7 +79,7 @@ public enum EndoscopeViewMode: String, CaseIterable, Identifiable {
     var usesMetal: Bool {
         switch self {
         case .rawStream, .splitSBS: return true
-        case .stereo3D, .fileDemo: return false
+        case .stereo3D, .fileDemo, .fileDemo2D: return false
         }
     }
 
@@ -79,7 +87,7 @@ public enum EndoscopeViewMode: String, CaseIterable, Identifiable {
     var usesVideoPlayer: Bool {
         switch self {
         case .stereo3D, .fileDemo: return true
-        case .rawStream, .splitSBS: return false
+        case .rawStream, .splitSBS, .fileDemo2D: return false  // fileDemo2D uses VideoMaterial instead
         }
     }
 
@@ -88,7 +96,7 @@ public enum EndoscopeViewMode: String, CaseIterable, Identifiable {
         switch self {
         case .stereo3D: return true  // WebRTC path needs tagging
         case .fileDemo: return false  // SerialProcessor already tagged
-        case .rawStream, .splitSBS: return false
+        case .rawStream, .splitSBS, .fileDemo2D: return false
         }
     }
 
@@ -97,7 +105,7 @@ public enum EndoscopeViewMode: String, CaseIterable, Identifiable {
         switch self {
         case .splitSBS, .stereo3D: return true
         case .fileDemo: return false  // SerialProcessor already split
-        case .rawStream: return false
+        case .rawStream, .fileDemo2D: return false  // fileDemo2D is mono, no split needed
         }
     }
 
@@ -105,11 +113,27 @@ public enum EndoscopeViewMode: String, CaseIterable, Identifiable {
 
     /// Whether this is a WebRTC mode (not file demo)
     var isWebRTCMode: Bool {
-        self != .fileDemo
+        switch self {
+        case .rawStream, .splitSBS, .stereo3D: return true
+        case .fileDemo, .fileDemo2D: return false
+        }
     }
 
-    /// Whether this is Demo mode
+    /// Whether this is Demo mode (file-based)
     var isDemoMode: Bool {
+        switch self {
+        case .fileDemo, .fileDemo2D: return true
+        case .rawStream, .splitSBS, .stereo3D: return false
+        }
+    }
+
+    /// Whether this is 2D Demo mode
+    var is2DDemo: Bool {
+        self == .fileDemo2D
+    }
+
+    /// Whether this is 3D Demo mode
+    var is3DDemo: Bool {
         self == .fileDemo
     }
 
@@ -120,7 +144,70 @@ public enum EndoscopeViewMode: String, CaseIterable, Identifiable {
         case .rawStream: return .splitSBS
         case .splitSBS:  return .stereo3D
         case .stereo3D:  return .rawStream
-        case .fileDemo:  return .rawStream  // Fallback (should not be called)
+        case .fileDemo, .fileDemo2D:  return .rawStream  // Fallback (should not be called)
+        }
+    }
+}
+
+// MARK: - Render Configuration
+
+/// Video layout type for rendering
+public enum VideoLayout {
+    /// 2D plane - same texture for both eyes
+    case monoPlane
+    /// File-based SBS → split to left/right stereo
+    case stereoFromSBS
+    /// WebRTC stereo stream (already split)
+    case stereoStream
+}
+
+/// Video source type
+public enum VideoSource {
+    /// Local file playback
+    case file(url: URL)
+    /// WebRTC stream
+    case webrtc
+}
+
+/// Render configuration for each mode
+public struct EndoscopeRenderConfig {
+    public let layout: VideoLayout
+    public let source: VideoSource
+}
+
+extension EndoscopeViewMode {
+    /// Get render configuration for this mode
+    var renderConfig: EndoscopeRenderConfig {
+        switch self {
+        case .fileDemo2D:
+            return EndoscopeRenderConfig(
+                layout: .monoPlane,
+                source: .file(url: Bundle.main.url(forResource: "demo-2d", withExtension: "mp4")!)
+            )
+
+        case .fileDemo:
+            return EndoscopeRenderConfig(
+                layout: .stereoFromSBS,
+                source: .file(url: Bundle.main.url(forResource: "endoscope-demo", withExtension: "mp4")!)
+            )
+
+        case .rawStream:
+            return EndoscopeRenderConfig(
+                layout: .monoPlane,
+                source: .webrtc
+            )
+
+        case .splitSBS:
+            return EndoscopeRenderConfig(
+                layout: .monoPlane,
+                source: .webrtc
+            )
+
+        case .stereo3D:
+            return EndoscopeRenderConfig(
+                layout: .stereoStream,
+                source: .webrtc
+            )
         }
     }
 }
