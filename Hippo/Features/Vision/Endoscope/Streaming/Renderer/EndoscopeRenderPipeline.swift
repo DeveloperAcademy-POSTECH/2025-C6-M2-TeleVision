@@ -240,6 +240,14 @@ public final class EndoscopeRenderPipeline: ObservableObject {
             logger.warning("⚠️ processFrame called in fileDemo mode - this should not happen")
             logger.warning("   File demo uses enqueue(sampleBuffer:) instead")
             return
+
+        case .fileDemo2D:
+            // 2D File demo mode does not use the pipeline at all
+            // FileDemo2DView handles playback directly via AVPlayer + VideoMaterial
+            // This case should never be reached in normal operation
+            logger.warning("⚠️ processFrame called in fileDemo2D mode - this should not happen")
+            logger.warning("   2D demo uses AVPlayer directly, not the render pipeline")
+            return
         }
 
         // Log periodically

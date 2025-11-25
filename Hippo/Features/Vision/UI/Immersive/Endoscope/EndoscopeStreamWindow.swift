@@ -15,22 +15,22 @@ struct EndoscopeStreamWindow: View {
     @State private var showSettings = false
 
     // UI state for coordinated mode transitions (shared with view and control bar)
-    // 기본 모드: Demo (endoscope-demo.mp4 자동 재생)
-    @StateObject private var streamUIState = StreamUIState(initialMode: .fileDemo)
+    // 기본 모드: 2D Demo (demo-2d.mp4 자동 재생)
+    @StateObject private var streamUIState = StreamUIState(initialMode: .fileDemo2D)
 
     var body: some View {
         ZStack(alignment: .top) {
             // Main video view (uses shared uiState)
-            // CRITICAL: Show view if connected OR in Demo mode
+            // CRITICAL: Show view if connected OR in Demo mode (2D or 3D)
             EndoscopeStreamView(
                 receiver: viewModel.webRTCReceiver,
-                isVisible: viewModel.connectionStatus.isActive || streamUIState.activeMode == .fileDemo,
+                isVisible: viewModel.connectionStatus.isActive || streamUIState.activeMode.isDemoMode,
                 uiState: streamUIState
             )
             .frame(minWidth: 900, minHeight: 600)
 
             // Connection status overlay (Demo 모드가 아니고 connected 상태가 아닐 때만 표시)
-            if streamUIState.activeMode != .fileDemo && viewModel.connectionStatus != .connected {
+            if !streamUIState.activeMode.isDemoMode && viewModel.connectionStatus != .connected {
                 ConnectionOverlay(
                     status: viewModel.connectionStatus,
                     onSettingsPressed: {
@@ -40,8 +40,8 @@ struct EndoscopeStreamWindow: View {
                 .padding(.top, 40)
             }
 
-            // Top control bar overlay - visible when connected OR in demo mode
-            if viewModel.connectionStatus == .connected || viewModel.activeMode == .fileDemo {
+            // Top control bar overlay - visible when connected OR in demo mode (2D or 3D)
+            if viewModel.connectionStatus == .connected || streamUIState.activeMode.isDemoMode {
                 VStack {
                     HStack(spacing: 16) {
                         // Left: Primary mode toggle (WebRTC vs Demo)
@@ -93,22 +93,18 @@ struct EndoscopeStreamWindow: View {
             }
         }
         .task {
-            // 기본 모드: Demo (endoscope-demo.mp4 자동 재생)
-            // WebRTC 모드가 필요하면 상단 토글 버튼으로 전환 가능
+            // 기본 모드: 2D Demo (demo-2d.mp4 자동 재생)
+            // 2D Demo는 AVPlayer + VideoMaterial을 사용하므로 파이프라인 설정 불필요
+            // WebRTC 또는 3D Demo 모드가 필요하면 상단 토글 버튼으로 전환 가능
 
             // Setup Demo cleanup callback
             streamUIState.onExitDemoMode = { [weak viewModel] in
                 viewModel?.stopAll()
             }
 
-            // CRITICAL: 파이프라인을 먼저 구성해서 VideoPlayer를 생성
-            await viewModel.configure(for: .fileDemo)
-
-            // VideoPlayer 초기화 완료 대기 (100ms)
-            try? await Task.sleep(nanoseconds: 100_000_000)
-
-            // 그 다음 UI 모드를 Demo로 전환 → Stereo3DView가 VideoPlayer를 물고 appear
-            streamUIState.activeMode = .fileDemo
+            // 2D Demo는 FileDemo2DView가 자체적으로 AVPlayer를 관리하므로
+            // 파이프라인 설정 없이 바로 UI 모드만 설정
+            // (이미 initialMode: .fileDemo2D로 설정됨)
         }
         .onDisappear {
             Task {

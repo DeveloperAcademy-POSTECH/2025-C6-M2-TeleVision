@@ -12,7 +12,6 @@ struct RecordingPlayerView: View {
     let spacing = 20.0
 
     @Environment(AppModel.self) private var appModel
-    @Environment(SceneProvider.self) private var sceneProvider
     @State private var viewModel = RecordingViewModel()
 
     init(recordings: [OperationRecording]) {
@@ -30,9 +29,5 @@ struct RecordingPlayerView: View {
         .padding(spacing)
         .scrollIndicators(.hidden)
         .environment(viewModel)
-        .onChange(of: sceneProvider.scene, initial: true) { _, newScene in
-            // Update the player model with the new scene.
-            viewModel.scene = newScene
-        }
     }
 }

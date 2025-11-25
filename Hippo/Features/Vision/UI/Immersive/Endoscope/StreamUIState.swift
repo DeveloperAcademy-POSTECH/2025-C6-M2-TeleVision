@@ -19,7 +19,8 @@ final class StreamUIState: ObservableObject {
     // MARK: - Published Properties
 
     /// Currently active (fully prepared and visible) mode
-    @Published var activeMode: EndoscopeViewMode = .fileDemo
+    /// Default: fileDemo2D (2D demo for initial showcase)
+    @Published var activeMode: EndoscopeViewMode = .fileDemo2D
 
     /// Whether a mode transition is in progress
     @Published var isSwitching: Bool = false
@@ -38,7 +39,7 @@ final class StreamUIState: ObservableObject {
 
     // MARK: - Initialization
 
-    init(initialMode: EndoscopeViewMode = .fileDemo) {
+    init(initialMode: EndoscopeViewMode = .fileDemo2D) {
         self.activeMode = initialMode
         logger.info("StreamUIState initialized with mode: \(initialMode.rawValue)")
     }
@@ -63,23 +64,23 @@ final class StreamUIState: ObservableObject {
         logger.info("🔄 Mode switch requested: \(self.activeMode.rawValue) → \(newMode.rawValue)")
 
         // Cleanup Demo mode resources if exiting from Demo
-        if activeMode == .fileDemo && newMode != .fileDemo {
+        if activeMode.isDemoMode && !newMode.isDemoMode {
             logger.info("   Exiting Demo mode - triggering cleanup...")
             onExitDemoMode?()
         }
 
-        // CRITICAL: Demo mode is now handled by PrimaryModeToggle
-        // Demo 진입: PrimaryModeToggle → stopAll() → configure(.fileDemo) → update UI
-        // This ensures FileDemoFrameSource is properly initialized
-        if newMode == .fileDemo {
-            logger.info("⚠️ switchMode() called for Demo mode")
+        // CRITICAL: Demo modes are now handled by PrimaryModeToggle
+        // Demo 진입: PrimaryModeToggle → stopAll() → configure(.fileDemo/.fileDemo2D) → update UI
+        // This ensures proper initialization for file-based modes
+        if newMode.isDemoMode {
+            logger.info("⚠️ switchMode() called for Demo mode: \(newMode.rawValue)")
             logger.info("   Note: Demo configuration should be handled by PrimaryModeToggle")
             logger.info("   Updating UI state only")
             isSwitching = true
-            activeMode = .fileDemo
+            activeMode = newMode
             try? await Task.sleep(for: .milliseconds(50))
             isSwitching = false
-            logger.info("✅ Mode switch complete (UI updated to Demo)")
+            logger.info("✅ Mode switch complete (UI updated to \(newMode.rawValue))")
             return
         }
 
