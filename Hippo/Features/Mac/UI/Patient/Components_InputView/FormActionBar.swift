@@ -12,28 +12,32 @@ struct FormActionBar: View {
             Button {
                 isPresenting = false
             } label: {
-                Text("Cancel")
+                Text("취소")
                     .font(.callout)
-                    .padding(12)
+                    .padding(.horizontal, 32)
+                    .padding(.vertical, 8)
+                    .background(.hippoBackground)
+                    .foregroundColor(.hippoGray500)
+                    .clipShape(RoundedRectangle(cornerRadius: 8))
+                    .contentShape(Rectangle())
             }
-            .background(.hippoBackground)
-            .foregroundColor(.hippoGray500)
-            .clipShape(RoundedRectangle(cornerRadius: 8))
             .buttonStyle(.plain)
 
             Button {
                 if canSave {
                     Task { await onSave() }
                     isPresenting = false
-                } 
+                }
             } label: {
-                Text("Save")
+                Text("저장")
                     .font(.callout)
-                    .padding(12)
+                    .padding(.horizontal, 32)
+                    .padding(.vertical, 8)
+                    .background(.hippoPrimary)
+                    .foregroundColor(.white)
+                    .clipShape(RoundedRectangle(cornerRadius: 8))
+                    .contentShape(Rectangle())
             }
-            .background(.hippoPrimary)
-            .foregroundColor(.white)
-            .clipShape(RoundedRectangle(cornerRadius: 8))
             .buttonStyle(.plain)
         }
     }

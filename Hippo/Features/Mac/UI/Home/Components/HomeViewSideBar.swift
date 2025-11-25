@@ -17,8 +17,8 @@ struct HomeViewSideBar: View {
                 }
             } header: {
                 HStack {
-                    Text("Patient List")
-                        .font(.headline)
+                    Text("환자 목록")
+                        .font(.title2)
                         .fontWeight(.bold)
 
                     Spacer()
@@ -26,8 +26,9 @@ struct HomeViewSideBar: View {
                     Button {
                         rootVM.openPatientCreateSheet()
                     } label: {
-                        Image(systemName: "person.badge.plus")
-                            .font(.title3)
+                        Image(systemName: "person.fill.badge.plus")
+                            .font(.title)
+                            .fontWeight(.bold)
                             .foregroundColor(.hippoPrimary)
                     }
                     .buttonStyle(.plain)
@@ -35,8 +36,8 @@ struct HomeViewSideBar: View {
                 }
                 .padding(8)
             }
-//            .padding(.top, 8)
         }
+        .padding(.bottom, 8)
     }
 }
 

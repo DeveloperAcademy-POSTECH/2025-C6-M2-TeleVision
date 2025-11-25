@@ -5,8 +5,8 @@
 //  Created by Hyeok Cho on 11/3/25.
 //
 
-import SwiftUI
 import AVFoundation
+import SwiftUI
 
 enum VideoMode: String, CaseIterable {
     case fullSBS = "Full SBS"
@@ -21,12 +21,26 @@ enum CameraInputMode: String, CaseIterable {
 
 struct StreamingControlView: View {
     // MARK: - ViewModel
+
     @State private var viewModel = StreamingControlViewModel()
 
     private let videoLayer = AVSampleBufferDisplayLayer()
 
     var body: some View {
         ScrollView {
+            HStack {
+                Text("내시경 영상 관리")
+                    .font(.title)
+                    .fontWeight(.bold)
+                    .foregroundStyle(.hippoGray700)
+
+                Spacer()
+            }
+            .frame(height: 32)
+            .padding(.top, 28)
+            .padding(.horizontal, 32)
+            .padding(.bottom)
+
             VStack(spacing: 20) {
                 HStack(spacing: 20) {
                     ModeSectionView(

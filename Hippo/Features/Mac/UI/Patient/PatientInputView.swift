@@ -18,17 +18,17 @@ struct PatientInputView: View {
     var body: some View {
         VStack {
             Section {
-                Grid(alignment: .leading, horizontalSpacing: 24, verticalSpacing:  16) {
+                Grid(alignment: .leadingFirstTextBaseline, horizontalSpacing: 24, verticalSpacing:  16) {
                     GridRow {
-                        Text("Patient Number")
+                        Text("환자번호")
                         TextField("", text: $state.patientNumber)
                     }
                     GridRow {
-                        Text("Name")
+                        Text("이름")
                         TextField("", text: $state.name)
                     }
                     GridRow {
-                        Text("Gender")
+                        Text("성별")
                         Picker("", selection: $state.selectedGender) {
                             Text("Male").tag(Gender.male)
                             Text("Female").tag(Gender.female)
@@ -37,7 +37,7 @@ struct PatientInputView: View {
                         .tint(.hippoPrimary)
                     }
                     GridRow {
-                        Text("Birth Date")
+                        Text("생년월일")
                         HStack {
                             DatePicker(
                                 "",
@@ -45,7 +45,7 @@ struct PatientInputView: View {
                                 displayedComponents: [.date]
                             )
                             .environment(\.locale, Locale(identifier: "ko_KR"))
-                            Text("Age \(state.age)")
+                            Text("\(state.age)세")
                                 .font(.footnote)
                                 .fontWeight(.medium)
                                 .foregroundColor(.hippoGray500)
@@ -55,13 +55,15 @@ struct PatientInputView: View {
                 .font(.callout)
                 .fontWeight(.semibold)
                 .foregroundColor(.hippoGray900)
-                .padding()
             } header: {
-                Text("Add Patient")
-                    .font(.headline)
+                Text("환자 추가")
+                    .font(.title2)
+                    .fontWeight(.bold)
                     .foregroundColor(.hippoGray500)
                     .frame(maxWidth: .infinity, alignment: .leading)
+                    .padding(.bottom, 8)
             }
+            .padding(.bottom)
 
             Divider()
 

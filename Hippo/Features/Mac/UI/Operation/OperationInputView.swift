@@ -17,59 +17,58 @@ struct OperationInputView: View {
 
     let onSave: () async -> Void
 
-
     var body: some View {
         VStack {
             Section {
                 Grid(
-                    alignment: .leading,
+                    alignment: .leadingFirstTextBaseline,
                     horizontalSpacing: 24,
                     verticalSpacing: 16
                 ) {
                     GridRow {
-                        Text("Title")
+                        Text("수술명")
                         TextField("", text: $state.title)
                     }
 
                     GridRow {
-                        Text("Operation Date")
-                        HStack {
-                            DatePicker(
-                                "",
-                                selection: $state.operationDate
-                            )
-                            .environment(\.locale, Locale(identifier: "ko_KR"))
-                        }
+                        Text("수술일시")
+                        DatePicker(
+                            "",
+                            selection: $state.operationDate
+                        )
+                        .datePickerStyle(.stepperField)
+                        .labelsHidden()
+                        .environment(\.locale, Locale(identifier: "ko_KR"))
                     }
 
                     GridRow {
-                        Text("Surgeon")
+                        Text("집도의")
                         TextField("", text: $state.surgeon)
                     }
 
                     GridRow {
-                        Text("Surgical site")
+                        Text("수술부위")
                         TextField("", text: $state.surgicalSite)
                     }
 
                     GridRow {
-                        Text("Diagnosis")
+                        Text("진단(병명)")
                         TextField("", text: $state.diagnosis)
                     }
 
                     GridRow {
-                        Text("Details")
+                        Text("세부내용")
                         TextField("", text: $state.details, axis: .vertical)
-                            .lineLimit(5...10)
+                            .lineLimit(5 ... 10)
                     }
                 }
                 .font(.callout)
                 .fontWeight(.semibold)
                 .foregroundColor(.hippoGray900)
 
-                //3D 모델링 추가 뷰
+                // 3D 모델링 추가 뷰
                 HStack(alignment: .top) {
-                    Text("3D Models")
+                    Text("3D 모델링 파일")
                         .font(.callout)
                         .fontWeight(.semibold)
                         .foregroundColor(.hippoGray900)
@@ -79,7 +78,7 @@ struct OperationInputView: View {
                     Button {
                         let selections = state.pickAssets()
                         for (url, fileName) in selections {
-                            state.addAsset(fileURL: url, fileName: fileName)  // 한 번에 하나씩 추가
+                            state.addAsset(fileURL: url, fileName: fileName) // 한 번에 하나씩 추가
                         }
                     } label: {
                         Image(systemName: "plus")
@@ -96,7 +95,7 @@ struct OperationInputView: View {
                     .padding()
                 }
 
-                //에셋 횡스크롤 뷰
+                // 에셋 횡스크롤 뷰
                 ScrollView(.horizontal, showsIndicators: false) {
                     HStack(spacing: 12) {
                         ForEach(state.assets) { asset in
@@ -113,55 +112,54 @@ struct OperationInputView: View {
                             .buttonStyle(.plain)
                         }
                     }
-                    .padding(.vertical)
+                    .padding(.bottom)
                 }
             } header: {
                 HStack {
-                    Text("Add Operation")
-                        .font(.headline)
+                    Text("수술 추가")
+                        .font(.title2)
                         .fontWeight(.bold)
                         .foregroundColor(.hippoGray500)
                     Spacer()
                 }
+                .padding(.bottom, 8)
             }
 
             Divider()
 
-            //취소/저장 버튼
+            // 취소/저장 버튼
             HStack {
                 Spacer()
 
                 Button {
                     isPresentingOperationInput = false
                 } label: {
-                    Text("Cancel")
+                    Text("취소")
                         .font(.callout)
-                        .padding(12)
+                        .padding(.horizontal, 32)
+                        .padding(.vertical, 8)
+                        .background(.hippoBackground)
+                        .foregroundColor(.hippoGray500)
+                        .clipShape(RoundedRectangle(cornerRadius: 8))
+                        .contentShape(Rectangle())
                 }
-                .background(.hippoBackground)
-                .foregroundColor(.hippoGray500)
-                .clipShape(RoundedRectangle(cornerRadius: 8))
                 .buttonStyle(.plain)
 
                 Button {
-                    if mode == .create {
-                        print("operation created")
-                    } else {
-                        print("operation edited")
-                    }
-
                     Task {
                         await onSave()
                     }
                     isPresentingOperationInput = false
                 } label: {
-                    Text("Save")
+                    Text("저장")
                         .font(.callout)
-                        .padding(12)
+                        .padding(.horizontal, 32)
+                        .padding(.vertical, 8)
+                        .background(.hippoPrimary)
+                        .foregroundColor(.white)
+                        .clipShape(RoundedRectangle(cornerRadius: 8))
+                        .contentShape(Rectangle())
                 }
-                .background(.hippoPrimary)
-                .foregroundColor(.white)
-                .clipShape(RoundedRectangle(cornerRadius: 8))
                 .buttonStyle(.plain)
             }
         }
