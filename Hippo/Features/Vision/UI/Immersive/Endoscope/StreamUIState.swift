@@ -11,6 +11,48 @@ import SwiftUI
 import os.log
 import Combine
 
+// MARK: - Demo Display Mode
+
+/// Demo 모드 내에서의 표시 방식
+/// UI 라벨: Standard (2D) / 3D
+enum DemoDisplayMode: String, CaseIterable {
+    case standard   // 내부적으로 2D (fileDemo2D)
+    case stereo3D   // 내부적으로 3D (fileDemo)
+
+    /// UI 표시용 라벨 (2D 대신 Standard 사용)
+    var displayLabel: String {
+        switch self {
+        case .standard: return "Standard"
+        case .stereo3D: return "3D"
+        }
+    }
+
+    /// 아이콘
+    var icon: String {
+        switch self {
+        case .standard: return "rectangle.on.rectangle"
+        case .stereo3D: return "cube.fill"
+        }
+    }
+
+    /// EndoscopeViewMode로 변환
+    var viewMode: EndoscopeViewMode {
+        switch self {
+        case .standard: return .fileDemo2D
+        case .stereo3D: return .fileDemo
+        }
+    }
+
+    /// EndoscopeViewMode에서 생성
+    init(from viewMode: EndoscopeViewMode) {
+        switch viewMode {
+        case .fileDemo2D: self = .standard
+        case .fileDemo: self = .stereo3D
+        default: self = .stereo3D  // 기본값
+        }
+    }
+}
+
 /// Manages UI state for stream view mode transitions
 /// Coordinates timing between pipeline preparation and view rendering
 @MainActor
@@ -22,12 +64,24 @@ final class StreamUIState: ObservableObject {
     /// Default: fileDemo (3D demo for initial showcase)
     @Published var activeMode: EndoscopeViewMode = .fileDemo
 
+    /// Demo 모드 내에서의 표시 방식 (Standard/3D)
+    /// activeMode가 Demo일 때만 유효
+    @Published var demoDisplayMode: DemoDisplayMode = .stereo3D
+
     /// Whether a mode transition is in progress
     @Published var isSwitching: Bool = false
 
     /// 3D Demo 모드에서 현재 재생 중인 영상 소스
     /// 기본값: Demo3DDefaults.initialSource (bird)
     @Published var demo3DSource: Demo3DVideoSource = Demo3DDefaults.initialSource
+
+    // MARK: - Computed Properties
+
+    /// Live 모드인지 (WebRTC)
+    var isLiveMode: Bool { activeMode.isWebRTCMode }
+
+    /// Demo 모드인지 (Standard 또는 3D)
+    var isDemoMode: Bool { activeMode.isDemoMode }
 
     // MARK: - Callbacks
 

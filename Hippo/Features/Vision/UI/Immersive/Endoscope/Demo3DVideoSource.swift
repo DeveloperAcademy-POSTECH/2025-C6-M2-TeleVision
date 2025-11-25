@@ -38,16 +38,8 @@ public enum Demo3DVideoSource: String, CaseIterable, Equatable {
         Bundle.main.url(forResource: resourceName, withExtension: fileExtension)
     }
 
-    /// UI 표시용 라벨
+    /// UI 표시용 라벨 (짧게)
     var displayLabel: String {
-        switch self {
-        case .bird: return "General Demo Video"
-        case .endoscope: return "Endoscopic Demo Video"
-        }
-    }
-
-    /// 짧은 라벨 (토글용)
-    var shortLabel: String {
         switch self {
         case .bird: return "General"
         case .endoscope: return "Endoscopic"
