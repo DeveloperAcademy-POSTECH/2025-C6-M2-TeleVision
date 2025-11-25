@@ -361,6 +361,18 @@ public final class EndoscopeRenderPipeline: ObservableObject {
         return player.videoRenderer.isReadyForMoreMediaData
     }
 
+    /// Flush renderer buffer and reset timing (for loop restart)
+    public func flushRenderer() {
+        guard let player = videoPlayer else {
+            logger.warning("⚠️ flushRenderer called but VideoPlayer is nil")
+            return
+        }
+
+        logger.info("🔄 Flushing renderer for loop restart...")
+        player.flushAndResetTiming()
+        logger.info("   ✓ Renderer flushed and timing reset")
+    }
+
     /// Begin mode change (blocks frame processing until complete)
     public func beginModeChange() {
         isModeChanging = true

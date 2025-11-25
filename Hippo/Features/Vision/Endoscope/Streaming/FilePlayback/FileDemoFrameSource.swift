@@ -29,6 +29,9 @@ final class FileDemoFrameSource: EndoscopeFrameSource {
     /// Renderer 준비 상태 체크 클로저 (back-pressure 제어용)
     public var isRendererReady: (() -> Bool)?
 
+    /// 루프 재시작 시 renderer flush 콜백
+    public var onLoopRestart: (() -> Void)?
+
     /// 루프 재생 여부 (기본값: true - 데모용이므로 무한 반복)
     public var shouldLoop: Bool = true
 
@@ -62,7 +65,10 @@ final class FileDemoFrameSource: EndoscopeFrameSource {
             loopCount += 1
             if loopCount > 1 {
                 logger.info("🔄 Loop #\(loopCount) - restarting playback")
-                try await Task.sleep(nanoseconds: 50_000_000)  // 50ms 자연스러운 전환
+                // 루프 재시작 전 renderer flush (버퍼 정리)
+                onLoopRestart?()
+                // flush 후 최소 대기 (너무 길면 버벅임)
+                try await Task.sleep(nanoseconds: 30_000_000)  // 30ms
             }
             try await playOnce()
         } while shouldLoop && isPlaying

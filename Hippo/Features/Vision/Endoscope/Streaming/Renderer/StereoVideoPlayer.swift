@@ -71,6 +71,22 @@ public final class StereoVideoPlayer {
         logger.info("Playback paused")
     }
 
+    /// Flush renderer and reset timing for seamless loop restart
+    /// Resets synchronizer time to zero so new PTS(0) frames are not treated as "old"
+    func flushAndResetTiming() {
+        // 1) Flush pending frames
+        videoRenderer.flush()
+
+        // 2) Reset synchronizer time to zero (CRITICAL for loop restart)
+        // This makes PTS=0 frames appear as "now" instead of "past"
+        synchronizer.setRate(1.0, time: .zero)
+
+        // 3) Reset frame counters
+        framesSinceLastFlush = 0
+
+        logger.info("🔄 Renderer flushed and synchronizer time reset to zero")
+    }
+
     /// Stop playback and flush renderer
     func stop() {
         synchronizer.rate = 0.0

@@ -25,6 +25,10 @@ final class StreamUIState: ObservableObject {
     /// Whether a mode transition is in progress
     @Published var isSwitching: Bool = false
 
+    /// 3D Demo 모드에서 현재 재생 중인 영상 소스
+    /// 기본값: Demo3DDefaults.initialSource (bird)
+    @Published var demo3DSource: Demo3DVideoSource = Demo3DDefaults.initialSource
+
     // MARK: - Callbacks
 
     /// Called when exiting Demo mode (for cleanup)
@@ -41,7 +45,16 @@ final class StreamUIState: ObservableObject {
 
     init(initialMode: EndoscopeViewMode = .fileDemo) {
         self.activeMode = initialMode
-        logger.info("StreamUIState initialized with mode: \(initialMode.rawValue)")
+        self.demo3DSource = Demo3DDefaults.initialSource
+        logger.info("StreamUIState initialized with mode: \(initialMode.rawValue), demo3DSource: \(Demo3DDefaults.initialSource.rawValue)")
+    }
+
+    // MARK: - Demo 3D Source Management
+
+    /// 3D Demo 소스를 기본값으로 리셋
+    func resetDemo3DSource() {
+        demo3DSource = Demo3DDefaults.initialSource
+        logger.info("Demo3DSource reset to default: \(Demo3DDefaults.initialSource.rawValue)")
     }
 
     // MARK: - Public Methods

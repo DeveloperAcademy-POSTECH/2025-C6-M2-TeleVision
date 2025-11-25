@@ -127,6 +127,89 @@ final class EndoscopeStreamViewModel: ObservableObject {
 
     // MARK: - Mode Configuration
 
+    /// 3D Demo 소스 전환
+    /// - Parameters:
+    ///   - source: 전환할 영상 소스
+    ///   - uiState: UI 상태 (소스 저장용)
+    func setDemo3DSource(_ source: Demo3DVideoSource, uiState: StreamUIState) async {
+        logger.info("🎬 Switching Demo3D source to: \(source.rawValue)")
+
+        // 1) 전환 중 상태 표시
+        uiState.isSwitching = true
+
+        // 2) 현재 파일 소스 정리 + timing 리셋
+        fileDemoSource?.stop()
+        fileDemoSource = nil
+        renderPipeline.flushRenderer()  // timing 리셋 (PTS 불일치 방지)
+
+        // 3) 새 소스로 파이프라인 재구성 (VideoPlayer 생성)
+        await configureFileDemo3D(with: source)
+
+        // 4) VideoPlayer 초기화 대기 (RealityView가 새 플레이어를 연결할 시간)
+        try? await Task.sleep(for: .milliseconds(100))
+
+        // 5) UI 상태 업데이트 (View 재생성 트리거)
+        uiState.demo3DSource = source
+
+        // 6) View 재생성 후 VideoPlayer 연결 대기
+        try? await Task.sleep(for: .milliseconds(150))
+
+        // 7) 전환 완료
+        uiState.isSwitching = false
+
+        logger.info("✅ Demo3D source switched to: \(source.rawValue)")
+    }
+
+    /// 3D Demo 파일 재생 설정
+    /// - Parameter source: 재생할 영상 소스
+    private func configureFileDemo3D(with source: Demo3DVideoSource) async {
+        guard let url = source.bundleURL else {
+            logger.error("❌ \(source.resourceName).\(source.fileExtension) not found in bundle")
+            return
+        }
+
+        logger.info("   Loading: \(url.lastPathComponent)")
+
+        // FileDemoFrameSource 생성
+        let fileSource = FileDemoFrameSource(url: url)
+        self.fileDemoSource = fileSource
+
+        // 프레임 콜백 연결: FileDemoSource → RenderPipeline
+        fileSource.onFrame = { [weak self] sampleBuffer in
+            guard let self else { return }
+            Task { @MainActor in
+                await self.renderPipeline.enqueue(sampleBuffer: sampleBuffer)
+            }
+        }
+
+        // Back-pressure 제어: Renderer 준비 상태 체크
+        fileSource.isRendererReady = { [weak self] in
+            guard let self else { return false }
+            return self.renderPipeline.isRendererReady()
+        }
+
+        // 루프 재시작 시 renderer flush
+        fileSource.onLoopRestart = { [weak self] in
+            guard let self else { return }
+            self.renderPipeline.flushRenderer()
+        }
+
+        // 파이프라인 설정
+        renderPipeline.configure(for: .fileDemo)
+
+        // 파일 재생 시작 (background Task)
+        Task { @MainActor in
+            do {
+                try await fileSource.start()
+                self.logger.info("✅ Demo3D playback ended")
+            } catch {
+                self.logger.error("❌ Failed to start Demo3D playback: \(error.localizedDescription)")
+            }
+        }
+
+        logger.info("✅ Demo3D activated - playing \(source.resourceName).\(source.fileExtension)")
+    }
+
     /// Endoscope 모드 구성 (WebRTC vs File)
     /// - Parameter mode: 대상 모드
     func configure(for mode: EndoscopeViewMode) async {
@@ -157,54 +240,29 @@ final class EndoscopeStreamViewModel: ObservableObject {
             logger.info("   Pipeline configured for WebRTC mode: \(mode.rawValue)")
 
         } else {
-            // ✅ 파일 기반 Demo 모드
-            logger.info("   Mode is file-based Demo - setting up file source")
+            // ✅ 파일 기반 Demo 모드 (3D)
+            logger.info("   Mode is file-based 3D Demo - setting up file source")
 
             // WebRTC 완전히 정리
             await disconnect()
 
-            // 번들에서 endoscope-demo.mp4 로드
-            guard let url = Bundle.main.url(forResource: "endoscope-demo", withExtension: "mp4") else {
-                logger.error("❌ endoscope-demo.mp4 not found in bundle")
-                logger.error("   Make sure endoscope-demo.mp4 is added to the project with target membership")
-                return
-            }
-
-            logger.info("   Found endoscope-demo.mp4 at: \(url.lastPathComponent)")
-
-            // FileDemoFrameSource 생성
-            let source = FileDemoFrameSource(url: url)
-            self.fileDemoSource = source
-
-            // 프레임 콜백 연결: FileDemoSource → RenderPipeline
-            source.onFrame = { [weak self] sampleBuffer in
-                guard let self else { return }
-                Task { @MainActor in
-                    await self.renderPipeline.enqueue(sampleBuffer: sampleBuffer)
-                }
-            }
-
-            // Back-pressure 제어: Renderer 준비 상태 체크
-            source.isRendererReady = { [weak self] in
-                guard let self else { return false }
-                return self.renderPipeline.isRendererReady()
-            }
-
-            // Demo 모드는 .fileDemo 모드 사용 (옵션 A)
-            logger.info("   Configuring pipeline for fileDemo mode")
-            renderPipeline.configure(for: .fileDemo)
-
-            // 파일 재생 시작 (background Task - configure가 바로 완료되도록)
-            Task { @MainActor in
-                do {
-                    try await source.start()
-                    self.logger.info("✅ Demo mode playback ended")
-                } catch {
-                    self.logger.error("❌ Failed to start file playback: \(error.localizedDescription)")
-                }
-            }
-            logger.info("✅ Demo mode activated - playing endoscope-demo.mp4")
+            // 기본 소스로 3D Demo 설정 (Demo3DDefaults.initialSource 사용)
+            await configureFileDemo3D(with: Demo3DDefaults.initialSource)
         }
+    }
+
+    /// 3D Demo 모드 구성 (특정 소스 지정)
+    /// - Parameter source: 재생할 영상 소스
+    func configureDemo3D(with source: Demo3DVideoSource) async {
+        logger.info("🔄 Configuring 3D Demo with source: \(source.rawValue)")
+
+        activeMode = .fileDemo
+
+        // WebRTC 완전히 정리
+        await disconnect()
+
+        // 지정된 소스로 3D Demo 설정
+        await configureFileDemo3D(with: source)
     }
 
     /// 모든 소스 정리 (화면 종료 시)
