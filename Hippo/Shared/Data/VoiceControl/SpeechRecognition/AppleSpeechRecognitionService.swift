@@ -25,7 +25,7 @@ public final class AppleSpeechRecognitionService: SpeechRecognitionService {
 
     private enum Constants {
         static let audioBufferSize: AVAudioFrameCount = 1024
-        static let recognitionTimeoutNanoseconds: UInt64 = 7_000_000_000  // 7 seconds
+        static let recognitionTimeoutNanoseconds: UInt64 = 3_000_000_000  // 3 seconds
         static let wakeWordTimeoutNanoseconds: UInt64 = 3_000_000_000    // 3 seconds
         static let errorRetryDelayNanoseconds: UInt64 = 500_000_000      // 0.5 seconds
     }

@@ -153,11 +153,16 @@ struct ConnectionSettingsView: View {
             .navigationTitle("연결 설정")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
+                ToolbarItem(placement: .cancellationAction) {
+                    Button("취소") {
+                        print("[SETTINGS] Cancel button pressed")
+                        dismiss()
+                    }
+                }
                 ToolbarItem(placement: .confirmationAction) {
                     Button("완료") {
-                        print("🔧 [SETTINGS] 완료 버튼 클릭 - dismiss 호출")
+                        print("[SETTINGS] Done button pressed")
                         dismiss()
-                        print("🔧 [SETTINGS] dismiss 호출 완료")
                     }
                 }
             }

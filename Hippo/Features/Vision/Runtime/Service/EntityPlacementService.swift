@@ -39,7 +39,7 @@ struct EntityPlacementService: AnchorServicing {
         }
         
         let entity = try await Entity(contentsOf: url)
-        
+
         // 조명 제거
         if let lightEntity = entity.findEntity(named: "Light") {
             lightEntity.removeFromParent()
