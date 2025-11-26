@@ -20,7 +20,7 @@ struct FileDemoImageView: View {
 
     // Entity name for tracking
     private static let entityName = "image-demo-entity"
-    private static let entityScale = SIMD3<Float>(0.4, 0.4, 0.4)
+    private static let entityScale = SIMD3<Float>(0.53, 0.53, 0.53)
 
     var body: some View {
         #if os(visionOS)

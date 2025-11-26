@@ -26,12 +26,12 @@ struct EndoscopeStreamView: View {
 
         // If no frame size yet, use default 16:9
         guard frameSize.width > 0 && frameSize.height > 0 else {
-            return CGSize(width: 900, height: 600)
+            return CGSize(width: 1200, height: 800)
         }
 
         // Maximum display dimensions (fits well in Vision Pro window)
         let maxWidth: CGFloat = 1200
-        let maxHeight: CGFloat = 900
+        let maxHeight: CGFloat = 800
 
         let aspectRatio = frameSize.width / frameSize.height
 

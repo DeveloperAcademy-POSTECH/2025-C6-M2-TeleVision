@@ -28,7 +28,7 @@ struct FileDemo2DView: View {
 
     // Entity name for tracking
     private static let entityName = "2d-video-entity"
-    private static let entityScale = SIMD3<Float>(0.4, 0.4, 0.4)
+    private static let entityScale = SIMD3<Float>(0.53, 0.53, 0.53)
 
     var body: some View {
         #if os(visionOS)

@@ -28,7 +28,7 @@ struct RawStreamView: View {
     // Constants for stable positioning (same as Stereo3DView)
     private static let entityName = "raw-video-entity"
     private static let entityPosition = SIMD3<Float>.zero  // 1.5m in front
-    private static let entityScale = SIMD3<Float>(0.2, 0.2, 0.2)  // Much smaller to see full frame
+    private static let entityScale = SIMD3<Float>(0.25, 0.25, 0.25)  // Much smaller to see full frame
 
     // MARK: - Body
 

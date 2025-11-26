@@ -26,7 +26,7 @@ struct EndoscopeStreamWindow: View {
                 isVisible: viewModel.connectionStatus.isActive || streamUIState.isDemoMode,
                 uiState: streamUIState
             )
-            .frame(minWidth: 900, minHeight: 600)
+            .frame(minWidth: 1200, minHeight: 800)
 
             // 2) 연결 상태 오버레이 (Live 모드 & 미연결일 때만)
             if streamUIState.isLiveMode && viewModel.connectionStatus != .connected {
