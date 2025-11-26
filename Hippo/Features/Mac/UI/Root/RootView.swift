@@ -14,7 +14,7 @@ enum Tabs {
 
 struct RootView: View {
     @State private var selectedTab: Tabs = .Home
-    
+
     var body: some View {
         NavigationStack {
             ZStack {
@@ -26,17 +26,20 @@ struct RootView: View {
                         HomeView()
                     case .StreamingControl:
                         StreamingControlView()
-                            .navigationTitle("Hippo")
                     }
                 }
+
+                VStack {
+                    HStack {
+                        Spacer()
+                        TabPicker(selectedTab: $selectedTab)
+                            .padding()
+                    }
+                    Spacer()
+                }
             }
-            
         }
-        .toolbar {
-            ToolbarItem(placement: .primaryAction) {  //.primaryAction: 툴바 아이템을 우측정렬
-                TabPicker(selectedTab: $selectedTab)
-            }
-        }
+        .preferredColorScheme(.light)
     }
 }
 

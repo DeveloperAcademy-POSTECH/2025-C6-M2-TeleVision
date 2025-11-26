@@ -77,6 +77,7 @@ extension TodaysSurgeryViewModel {
                 surgicalSite: op.surgicalSite,
                 operationDate: op.date,
                 details: op.details,
+                status: op.status,
                 assets: op.assets
             )
         }

@@ -7,7 +7,7 @@
 
 import Foundation
 
-///OperationCardView용 데이터 모델
+/// OperationCardView용 데이터 모델
 public struct OperationCardDisplayModel: Equatable, Identifiable, Sendable {
     public let id: String
     public let patientId: String
@@ -20,6 +20,7 @@ public struct OperationCardDisplayModel: Equatable, Identifiable, Sendable {
     public let surgicalSite: String
     public let operationDate: Date
     public let details: String
+    public let status: OperationStatus
     public let assets: [OperationAssetDisplayModel]
 
     public var age: String {
@@ -47,6 +48,7 @@ public struct OperationCardDisplayModel: Equatable, Identifiable, Sendable {
         surgicalSite: String,
         operationDate: Date,
         details: String,
+        status: OperationStatus,
         assets: [OperationAssetDisplayModel]
     ) {
         self.id = id
@@ -60,6 +62,7 @@ public struct OperationCardDisplayModel: Equatable, Identifiable, Sendable {
         self.surgicalSite = surgicalSite
         self.operationDate = operationDate
         self.details = details
+        self.status = status
         self.assets = assets
     }
 }

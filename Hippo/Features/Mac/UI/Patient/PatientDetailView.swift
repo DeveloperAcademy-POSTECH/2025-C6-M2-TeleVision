@@ -32,11 +32,11 @@ struct PatientDetailView: View {
                 }
             }
         )
-        .navigationTitle(
-            selectedPatient.map { "\($0.name) \($0.gender) Age\($0.age)" }
-                ?? "환자 상세 정보"
-        )
-        .navigationSubtitle(selectedPatient?.patientNumber ?? "Patient Number")
+//        .navigationTitle(
+//            selectedPatient.map { "\($0.name) \($0.gender) Age\($0.age)" }
+//                ?? "환자 상세 정보"
+//        )
+//        .navigationSubtitle(selectedPatient?.patientNumber ?? "Patient Number")
     }
 }
 
