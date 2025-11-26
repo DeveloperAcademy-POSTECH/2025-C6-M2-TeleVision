@@ -103,6 +103,9 @@ public final class WebRTCManager: NSObject, IVideoTransport {
 
     // MARK: - ITransport
 
+    // Static flag to ensure WebRTC is initialized only once
+    private static var isWebRTCInitialized = false
+
     /// Start WebRTC with external signaling client
     /// - Parameter signalingClient: External SignalingClient managed by ViewModel
     public func start(with signalingClient: SignalingClient) throws {
@@ -112,10 +115,15 @@ public final class WebRTCManager: NSObject, IVideoTransport {
         print("[WebRTCManager] Starting WebRTC transport with external signaling...")
         state = .connecting
 
-        // 1. Initialize WebRTC factory
-        print("[WebRTCManager] Initializing WebRTC SSL and tracer...")
-        LKRTCInitializeSSL()
-        LKRTCSetupInternalTracer()
+        // 1. Initialize WebRTC factory (only once per app lifecycle)
+        if !Self.isWebRTCInitialized {
+            print("[WebRTCManager] Initializing WebRTC SSL and tracer (first time)...")
+            LKRTCInitializeSSL()
+            LKRTCSetupInternalTracer()
+            Self.isWebRTCInitialized = true
+        } else {
+            print("[WebRTCManager] WebRTC already initialized, skipping SSL/tracer setup")
+        }
 
         // Use HEVC encoder factory for better compression
         let encoderFactory = HEVCVideoEncoderFactory()
@@ -176,9 +184,8 @@ public final class WebRTCManager: NSObject, IVideoTransport {
         remoteDescriptionSet = false
         frameCount = 0
 
-        // 6. Cleanup WebRTC global state
-        LKRTCShutdownInternalTracer()
-        LKRTCCleanupSSL()
+        // 6. Don't cleanup WebRTC global state - it's shared and can only be initialized once
+        // LKRTCShutdownInternalTracer() and LKRTCCleanupSSL() cause crash if called before re-init
 
         state = .closed
         logger.info("✅ WebRTC stopped")
@@ -287,7 +294,8 @@ public final class WebRTCManager: NSObject, IVideoTransport {
         }
     }
 
-    private func createOffer() {
+    /// Create and send a new WebRTC offer (public for renegotiation)
+    public func createOffer() {
         print("[WebRTCManager] Creating offer (signaling state: \(signalingClient?.state.self ?? .disconnected))")
 
         let constraints = LKRTCMediaConstraints(

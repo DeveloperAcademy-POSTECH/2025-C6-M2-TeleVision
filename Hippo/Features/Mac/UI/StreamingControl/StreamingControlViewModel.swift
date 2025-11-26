@@ -10,6 +10,7 @@ import AVFoundation
 import Observation
 import CoreVideo
 import CoreMedia
+import Combine
 import os.log
 
 // MARK: - Sendable Wrapper
@@ -40,6 +41,9 @@ public final class StreamingControlViewModel {
 
     // Signaling client for auto-start (always connected, waiting for receiver)
     private var signalingClient: SignalingClient?
+
+    // Bonjour service discovery for auto-detecting signaling server
+    private let bonjourDiscovery = BonjourServiceDiscovery()
 
     // Preview display layer (set from view)
     public var previewLayer: AVSampleBufferDisplayLayer?
@@ -161,6 +165,10 @@ public final class StreamingControlViewModel {
     var isSignalingConnected: Bool = false
     /// Receiver(Vision Pro) 준비 상태
     var isReceiverReady: Bool = false
+    /// Bonjour 탐색 상태
+    var isDiscoveringServer: Bool = false
+    /// 발견된 서버 URL
+    var discoveredServerURL: URL?
 
     // MARK: - State: Inspector Settings
 
@@ -188,17 +196,75 @@ public final class StreamingControlViewModel {
 
     init() {
         loadAvailableDevices()
-        connectToSignalingServer()
+        startBonjourDiscovery()
+    }
+
+    // MARK: - Bonjour Discovery
+
+    /// Bonjour를 사용해 시그널링 서버 자동 탐색 시작
+    private func startBonjourDiscovery() {
+        logger.info("🔍 Starting Bonjour discovery for signaling server...")
+        isDiscoveringServer = true
+
+        // Bonjour 상태 변화 감시
+        Task { @MainActor in
+            for await state in bonjourDiscovery.$discoveryState.values {
+                await handleBonjourStateChange(state)
+            }
+        }
+
+        bonjourDiscovery.startDiscovery()
+    }
+
+    /// Bonjour 탐색 상태 변화 처리
+    private func handleBonjourStateChange(_ state: BonjourDiscoveryState) async {
+        switch state {
+        case .idle:
+            logger.info("Bonjour: idle")
+
+        case .discovering:
+            logger.info("Bonjour: discovering...")
+            isDiscoveringServer = true
+
+        case .resolved(let host, let port):
+            logger.info("✅ Bonjour: Server found at \(host):\(port)")
+            isDiscoveringServer = false
+
+            let serverURL = URL(string: "ws://\(host):\(port)")!
+            discoveredServerURL = serverURL
+            connectToSignalingServer(url: serverURL)
+
+        case .fallbackUsingLastEndpoint(let host, let port):
+            logger.info("⚠️ Bonjour: Using fallback endpoint \(host):\(port)")
+            isDiscoveringServer = false
+
+            let serverURL = URL(string: "ws://\(host):\(port)")!
+            discoveredServerURL = serverURL
+            connectToSignalingServer(url: serverURL)
+
+        case .failed(let error):
+            logger.error("❌ Bonjour discovery failed: \(error)")
+            isDiscoveringServer = false
+            errorMessage = "서버를 찾을 수 없습니다: \(error)"
+
+            // Fallback to localhost
+            logger.info("🔄 Falling back to localhost...")
+            let fallbackURL = URL(string: "ws://127.0.0.1:8080")!
+            discoveredServerURL = fallbackURL
+            connectToSignalingServer(url: fallbackURL)
+        }
     }
 
     // MARK: - Signaling Server Connection
 
-    /// 시그널링 서버에 연결 (앱 시작 시 자동 호출)
-    private func connectToSignalingServer() {
-        let serverURL = URL(string: "ws://127.0.0.1:8080")!
-        logger.info("Connecting to signaling server: \(serverURL.absoluteString)")
+    /// 시그널링 서버에 연결
+    private func connectToSignalingServer(url: URL) {
+        logger.info("Connecting to signaling server: \(url.absoluteString)")
 
-        signalingClient = SignalingClient(serverURL: serverURL)
+        // 기존 연결 해제
+        signalingClient?.disconnect()
+
+        signalingClient = SignalingClient(serverURL: url)
         signalingClient?.delegate = self
 
         do {
@@ -211,16 +277,18 @@ public final class StreamingControlViewModel {
 
     /// 시그널링 서버 연결 해제
     private func disconnectFromSignalingServer() {
+        bonjourDiscovery.stopDiscovery()
         signalingClient?.disconnect()
         signalingClient = nil
         isSignalingConnected = false
         isReceiverReady = false
+        discoveredServerURL = nil
     }
 
-    /// 시그널링 서버 재연결
+    /// 시그널링 서버 재연결 (Bonjour 탐색부터 다시 시작)
     func reconnectToSignalingServer() {
         disconnectFromSignalingServer()
-        connectToSignalingServer()
+        startBonjourDiscovery()
     }
 
     // MARK: - Public Methods: Device Management
@@ -647,11 +715,16 @@ extension StreamingControlViewModel: SignalingDelegate {
 
     nonisolated public func signalingClientDidReceiveReceiverReady(_ client: SignalingClient) {
         Task { @MainActor in
-            self.logger.info("🎉 Receiver (Vision Pro) is ready! Auto-starting streaming...")
+            self.logger.info("🎉 Receiver (Vision Pro) is ready!")
             self.isReceiverReady = true
 
-            // 자동으로 스트리밍 시작
-            if !self.isStreaming {
+            if self.isStreaming {
+                // 이미 스트리밍 중이면 새로운 Offer 생성 (renegotiate)
+                self.logger.info("🔄 Already streaming, creating new offer for receiver...")
+                self.transport?.createOffer()
+            } else {
+                // 스트리밍 중이 아니면 자동으로 시작
+                self.logger.info("▶️ Auto-starting streaming...")
                 do {
                     try await self.startStreaming()
                 } catch {
