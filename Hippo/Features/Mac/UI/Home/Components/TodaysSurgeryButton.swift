@@ -15,7 +15,7 @@ struct TodaysSurgeryButton: View {
             rootVM.selectTodaysSurgery()
         } label: {
             HStack {
-                Text("Today Surgery")
+                Text("오늘의 수술")
 
                 Spacer()
             }
