@@ -27,9 +27,15 @@ fileprivate struct SendablePixelBuffer: @unchecked Sendable {
 // MARK: - StreamingControlViewModel
 
 /// Streaming control view model
+/// Singleton to persist across tab switches
 @MainActor
 @Observable
 public final class StreamingControlViewModel {
+
+    // MARK: - Singleton
+
+    /// Shared instance to persist across tab switches
+    public static let shared = StreamingControlViewModel()
 
     // MARK: - Dependencies
 
@@ -39,14 +45,14 @@ public final class StreamingControlViewModel {
     private var composer: CI_SBSComposer?
     private var transport: WebRTCManager?
 
+    // Embedded signaling server (replaces external node server.js)
+    private let signalingServer = EmbeddedSignalingServer()
+
     // Signaling client for auto-start (always connected, waiting for receiver)
     private var signalingClient: SignalingClient?
 
-    // Bonjour service discovery for auto-detecting signaling server
-    private let bonjourDiscovery = BonjourServiceDiscovery()
-
-    // Preview display layer (set from view)
-    public var previewLayer: AVSampleBufferDisplayLayer?
+    // Preview display layer - owned by ViewModel to persist across tab switches
+    public let previewLayer = AVSampleBufferDisplayLayer()
 
     private let logger = Logger(subsystem: "com.television.hippo", category: "StreamingControl")
 
@@ -161,14 +167,12 @@ public final class StreamingControlViewModel {
 
     // MARK: - State: Signaling Connection
 
+    /// 내장 시그널링 서버 상태
+    var signalingServerState: SignalingServerState = .idle
     /// 시그널링 서버 연결 상태
     var isSignalingConnected: Bool = false
     /// Receiver(Vision Pro) 준비 상태
     var isReceiverReady: Bool = false
-    /// Bonjour 탐색 상태
-    var isDiscoveringServer: Bool = false
-    /// 발견된 서버 URL
-    var discoveredServerURL: URL?
 
     // MARK: - State: Inspector Settings
 
@@ -194,64 +198,52 @@ public final class StreamingControlViewModel {
 
     // MARK: - Initialization
 
-    init() {
+    /// Private init for singleton
+    private init() {
         loadAvailableDevices()
-        startBonjourDiscovery()
+        startEmbeddedServer()
     }
 
-    // MARK: - Bonjour Discovery
+    // MARK: - Embedded Signaling Server
 
-    /// Bonjour를 사용해 시그널링 서버 자동 탐색 시작
-    private func startBonjourDiscovery() {
-        logger.info("🔍 Starting Bonjour discovery for signaling server...")
-        isDiscoveringServer = true
+    /// 내장 시그널링 서버 시작
+    private func startEmbeddedServer() {
+        logger.info("🚀 Starting embedded signaling server...")
 
-        // Bonjour 상태 변화 감시
+        // 서버 상태 변화 감시
         Task { @MainActor in
-            for await state in bonjourDiscovery.$discoveryState.values {
-                await handleBonjourStateChange(state)
+            for await state in signalingServer.$state.values {
+                await handleServerStateChange(state)
             }
         }
 
-        bonjourDiscovery.startDiscovery()
+        signalingServer.start()
     }
 
-    /// Bonjour 탐색 상태 변화 처리
-    private func handleBonjourStateChange(_ state: BonjourDiscoveryState) async {
+    /// 서버 상태 변화 처리
+    private func handleServerStateChange(_ state: SignalingServerState) async {
+        signalingServerState = state
+
         switch state {
         case .idle:
-            logger.info("Bonjour: idle")
+            logger.info("Server: idle")
 
-        case .discovering:
-            logger.info("Bonjour: discovering...")
-            isDiscoveringServer = true
+        case .starting:
+            logger.info("Server: starting...")
 
-        case .resolved(let host, let port):
-            logger.info("✅ Bonjour: Server found at \(host):\(port)")
-            isDiscoveringServer = false
-
-            let serverURL = URL(string: "ws://\(host):\(port)")!
-            discoveredServerURL = serverURL
-            connectToSignalingServer(url: serverURL)
-
-        case .fallbackUsingLastEndpoint(let host, let port):
-            logger.info("⚠️ Bonjour: Using fallback endpoint \(host):\(port)")
-            isDiscoveringServer = false
-
-            let serverURL = URL(string: "ws://\(host):\(port)")!
-            discoveredServerURL = serverURL
+        case .running(let port):
+            logger.info("✅ Server running on port \(port)")
+            // 서버가 시작되면 클라이언트로 연결
+            let serverURL = URL(string: "ws://127.0.0.1:\(port)")!
             connectToSignalingServer(url: serverURL)
 
         case .failed(let error):
-            logger.error("❌ Bonjour discovery failed: \(error)")
-            isDiscoveringServer = false
-            errorMessage = "서버를 찾을 수 없습니다: \(error)"
+            logger.error("❌ Server failed: \(error)")
+            errorMessage = "시그널링 서버 시작 실패: \(error)"
 
-            // Fallback to localhost
-            logger.info("🔄 Falling back to localhost...")
-            let fallbackURL = URL(string: "ws://127.0.0.1:8080")!
-            discoveredServerURL = fallbackURL
-            connectToSignalingServer(url: fallbackURL)
+        case .stopped:
+            logger.info("Server stopped")
+            isSignalingConnected = false
         }
     }
 
@@ -277,18 +269,22 @@ public final class StreamingControlViewModel {
 
     /// 시그널링 서버 연결 해제
     private func disconnectFromSignalingServer() {
-        bonjourDiscovery.stopDiscovery()
         signalingClient?.disconnect()
         signalingClient = nil
         isSignalingConnected = false
         isReceiverReady = false
-        discoveredServerURL = nil
     }
 
-    /// 시그널링 서버 재연결 (Bonjour 탐색부터 다시 시작)
-    func reconnectToSignalingServer() {
+    /// 시그널링 서버 재시작
+    func restartSignalingServer() {
         disconnectFromSignalingServer()
-        startBonjourDiscovery()
+        signalingServer.stop()
+
+        // 잠시 대기 후 재시작
+        Task {
+            try? await Task.sleep(for: .milliseconds(500))
+            signalingServer.start()
+        }
     }
 
     // MARK: - Public Methods: Device Management
@@ -381,12 +377,10 @@ public final class StreamingControlViewModel {
         transport = nil
 
         // Clear preview
-        if let layer = previewLayer {
-            if #available(macOS 15.0, *) {
-                layer.sampleBufferRenderer.flush()
-            } else {
-                layer.flush()
-            }
+        if #available(macOS 15.0, *) {
+            previewLayer.sampleBufferRenderer.flush()
+        } else {
+            previewLayer.flush()
         }
 
         isStreaming = false
@@ -572,7 +566,7 @@ public final class StreamingControlViewModel {
     /// OPTIMIZED: Preview rendering with autoreleasepool and reduced overhead
     @MainActor
     private func updatePreview(_ pixelBuffer: CVPixelBuffer, pts: CMTime) async {
-        guard let layer = previewLayer else { return }
+        let layer = previewLayer
 
         // OPTIMIZED: Use autoreleasepool to prevent memory accumulation
         autoreleasepool {
