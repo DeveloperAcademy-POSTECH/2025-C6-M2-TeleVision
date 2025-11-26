@@ -50,6 +50,7 @@ public final class AppModule: ObservableObject {
     private var frameSync: FrameSync?
     private var composer: CI_SBSComposer?
     private var transport: WebRTCManager?
+    private var signalingClient: SignalingClient?
 
     // P0.2: Actor-based configuration
     private let configManager = PipelineConfigurationManager()
@@ -99,8 +100,15 @@ public final class AppModule: ObservableObject {
         leftCapture?.delegate = self
         rightCapture?.delegate = self
 
-        // 5. Start transport
-        try transport?.start()
+        // 5. Setup signaling and start transport
+        let serverURL = URL(string: "ws://127.0.0.1:8080")!
+        signalingClient = SignalingClient(serverURL: serverURL)
+        try signalingClient?.connect(as: "sender")
+
+        guard let signalingClient = signalingClient else {
+            throw VideoError.invalidConfiguration(reason: "Failed to create signaling client")
+        }
+        try transport?.start(with: signalingClient)
 
         // 6. Start capture sessions
         try leftCapture?.start()
@@ -120,12 +128,14 @@ public final class AppModule: ObservableObject {
         frameSync?.reset()
 
         transport?.stop()
+        signalingClient?.disconnect()
 
         leftCapture = nil
         rightCapture = nil
         frameSync = nil
         composer = nil
         transport = nil
+        signalingClient = nil
 
         isStreaming = false
         logger.info("Streaming pipeline stopped")

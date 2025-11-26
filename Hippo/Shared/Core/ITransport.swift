@@ -15,9 +15,10 @@ import CoreMedia
 /// Abstract transport interface for sending video frames
 /// Implementation: WebRTC with H.264 encoding
 public protocol ITransport: AnyObject {
-    /// Start the transport session
-    /// Initializes peer connection, performs signaling
-    func start() throws
+    /// Start the transport session with external signaling client
+    /// Initializes peer connection, creates offer
+    /// - Parameter signalingClient: External SignalingClient managed by caller
+    func start(with signalingClient: SignalingClient) throws
 
     /// Stop the transport session
     /// Closes peer connection, releases resources

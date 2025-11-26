@@ -22,9 +22,9 @@ enum CameraInputMode: String, CaseIterable {
 struct StreamingControlView: View {
     // MARK: - ViewModel
 
-    @State private var viewModel = StreamingControlViewModel()
-
-    private let videoLayer = AVSampleBufferDisplayLayer()
+    /// Use shared singleton to persist across tab switches
+    /// @Bindable allows $viewModel bindings to work with @Observable
+    @Bindable private var viewModel = StreamingControlViewModel.shared
 
     var body: some View {
         ScrollView {
@@ -62,7 +62,7 @@ struct StreamingControlView: View {
                     availableDevices: viewModel.availableDevices
                 )
 
-                PreviewSectionView(videoLayer: videoLayer)
+                PreviewSectionView(videoLayer: viewModel.previewLayer)
 
                 StreamingButton(
                     isStreaming: viewModel.isStreaming,
@@ -85,11 +85,6 @@ struct StreamingControlView: View {
             .padding(32)
             .inspector(isPresented: $viewModel.isInspectorPresented) {
                 StreamingInspectorView()
-            }
-            .task {
-                // View가 나타날 때 장치 목록 로드 및 preview layer 연결
-                viewModel.loadAvailableDevices()
-                viewModel.previewLayer = videoLayer
             }
         }
     }
