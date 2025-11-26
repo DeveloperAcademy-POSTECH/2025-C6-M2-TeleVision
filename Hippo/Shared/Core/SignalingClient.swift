@@ -65,7 +65,7 @@ enum SignalingMessage: Codable {
 
 // MARK: - Signaling Delegate
 
-protocol SignalingDelegate: AnyObject {
+public protocol SignalingDelegate: AnyObject {
     func signalingClient(_ client: SignalingClient, didReceiveOffer sdp: String)
     func signalingClient(_ client: SignalingClient, didReceiveAnswer sdp: String)
     func signalingClient(_ client: SignalingClient, didReceiveCandidate candidate: String, sdpMid: String?, sdpMLineIndex: Int32)
@@ -74,14 +74,14 @@ protocol SignalingDelegate: AnyObject {
     func signalingClient(_ client: SignalingClient, didChangeState state: SignalingState)
 }
 
-extension SignalingDelegate {
+public extension SignalingDelegate {
     func signalingClientDidReceiveRenegotiate(_ client: SignalingClient) {}
     func signalingClientDidReceiveReceiverReady(_ client: SignalingClient) {}
 }
 
 // MARK: - Signaling State
 
-enum SignalingState {
+public enum SignalingState {
     case disconnected
     case connecting
     case connected
@@ -92,11 +92,11 @@ enum SignalingState {
 
 /// WebSocket-based signaling client
 /// P0.3 Enhancement: Automatic reconnection with exponential backoff
-final class SignalingClient {
+public final class SignalingClient {
 
     // MARK: Properties
 
-    weak var delegate: SignalingDelegate?
+    public weak var delegate: SignalingDelegate?
 
     private let serverURL: URL
     private var webSocketTask: URLSessionWebSocketTask?
@@ -127,7 +127,7 @@ final class SignalingClient {
 
     // MARK: Initialization
 
-    init(serverURL: URL, reconnectionPolicy: ReconnectionPolicy = .standard) {
+    public init(serverURL: URL, reconnectionPolicy: ReconnectionPolicy = .standard) {
         self.serverURL = serverURL
         self.reconnectionPolicy = reconnectionPolicy
 
@@ -145,7 +145,7 @@ final class SignalingClient {
 
     // MARK: - Public Methods
 
-    func connect(as role: String) throws {
+    public func connect(as role: String) throws {
         guard state == .disconnected else {
             logger.warning("⚠️ Already connected or connecting")
             return
@@ -202,7 +202,7 @@ final class SignalingClient {
         }
     }
 
-    func disconnect() {
+    public func disconnect() {
         cancelReconnection()  // P0.3: Cancel any pending reconnection
         stopPingTimer()  // Stop keepalive pings
         // Immediately cancel WebSocket without waiting for server response
@@ -214,17 +214,17 @@ final class SignalingClient {
 
     // MARK: - Sending Messages
 
-    func send(offer sdp: String, to targetId: String = "receiver") {
+    public func send(offer sdp: String, to targetId: String = "receiver") {
         let message = SignalingMessage.offer(sdp: sdp)
         sendMessage(message, to: targetId)
     }
 
-    func send(answer sdp: String, to targetId: String = "sender") {
+    public func send(answer sdp: String, to targetId: String = "sender") {
         let message = SignalingMessage.answer(sdp: sdp)
         sendMessage(message, to: targetId)
     }
 
-    func send(iceCandidate candidate: LKRTCIceCandidate, to targetId: String? = nil) {
+    public func send(iceCandidate candidate: LKRTCIceCandidate, to targetId: String? = nil) {
         // Auto-detect targetId based on role
         let target = targetId ?? (currentRole == "sender" ? "receiver" : "sender")
         let message = SignalingMessage.iceCandidate(

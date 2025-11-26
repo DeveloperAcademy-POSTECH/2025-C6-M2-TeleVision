@@ -682,17 +682,17 @@ extension WebRTCReceiver: LKRTCVideoRenderer {
 }
 
 extension WebRTCReceiver: SignalingDelegate {
-    nonisolated func signalingClient(_ client: SignalingClient, didReceiveOffer sdp: String) {
+    nonisolated public func signalingClient(_ client: SignalingClient, didReceiveOffer sdp: String) {
         handleOffer(sdp)
     }
 
-    nonisolated func signalingClient(_ client: SignalingClient, didReceiveAnswer sdp: String) {
+    nonisolated public func signalingClient(_ client: SignalingClient, didReceiveAnswer sdp: String) {
         Task { @MainActor in
             self.logger.warning("Received unexpected answer (Vision Pro is receiver)")
         }
     }
 
-    nonisolated func signalingClient(_ client: SignalingClient, didReceiveCandidate candidate: String, sdpMid: String?, sdpMLineIndex: Int32) {
+    nonisolated public func signalingClient(_ client: SignalingClient, didReceiveCandidate candidate: String, sdpMid: String?, sdpMLineIndex: Int32) {
         Task { @MainActor [weak self] in
             guard let self = self else { return }
 
@@ -715,7 +715,7 @@ extension WebRTCReceiver: SignalingDelegate {
         }
     }
 
-    nonisolated func signalingClient(_ client: SignalingClient, didChangeState state: SignalingState) {
+    nonisolated public func signalingClient(_ client: SignalingClient, didChangeState state: SignalingState) {
         Task { @MainActor in
             self.logger.info("Signaling state: \(String(describing: state))")
         }
