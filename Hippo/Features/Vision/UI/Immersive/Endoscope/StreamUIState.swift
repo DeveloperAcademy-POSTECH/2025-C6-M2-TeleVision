@@ -66,12 +66,12 @@ final class StreamUIState: ObservableObject {
     // MARK: - Published Properties
 
     /// Currently active (fully prepared and visible) mode
-    /// Default: fileDemo (3D demo for initial showcase)
-    @Published var activeMode: EndoscopeViewMode = .fileDemo
+    /// Default: fileDemo2D (2D/Standard demo mode)
+    @Published var activeMode: EndoscopeViewMode = .fileDemo2D
 
     /// Demo 모드 내에서의 표시 방식 (Standard/3D)
     /// activeMode가 Demo일 때만 유효
-    @Published var demoDisplayMode: DemoDisplayMode = .stereo3D
+    @Published var demoDisplayMode: DemoDisplayMode = .standard
 
     /// Whether a mode transition is in progress
     @Published var isSwitching: Bool = false
@@ -102,7 +102,7 @@ final class StreamUIState: ObservableObject {
 
     // MARK: - Initialization
 
-    init(initialMode: EndoscopeViewMode = .fileDemo) {
+    init(initialMode: EndoscopeViewMode = .fileDemo2D) {
         self.activeMode = initialMode
         self.demo3DSource = Demo3DDefaults.initialSource
         logger.info("StreamUIState initialized with mode: \(initialMode.rawValue), demo3DSource: \(Demo3DDefaults.initialSource.rawValue)")

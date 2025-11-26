@@ -15,8 +15,8 @@ struct EndoscopeStreamWindow: View {
     @State private var showSettings = false
 
     // UI state for coordinated mode transitions (shared with view and control bar)
-    // 기본 상태: Demo + 3D + General (bird-3d.mov)
-    @StateObject private var streamUIState = StreamUIState(initialMode: .fileDemo)
+    // 기본 상태: Demo + 2D (Standard)
+    @StateObject private var streamUIState = StreamUIState(initialMode: .fileDemo2D)
 
     var body: some View {
         ZStack {
@@ -78,7 +78,10 @@ struct EndoscopeStreamWindow: View {
                 viewModel?.stopAll()
             }
 
-            if streamUIState.activeMode == .fileDemo {
+            if streamUIState.activeMode == .fileDemo2D {
+                print("[WINDOW] Initial 2D Demo (Standard) setup")
+                // 2D Demo 모드는 별도 설정 불필요 - EndoscopeStreamView에서 자동 처리
+            } else if streamUIState.activeMode == .fileDemo {
                 print("[WINDOW] Initial 3D Demo setup with source: \(streamUIState.demo3DSource.rawValue)")
                 await viewModel.configureDemo3D(with: streamUIState.demo3DSource)
             }
