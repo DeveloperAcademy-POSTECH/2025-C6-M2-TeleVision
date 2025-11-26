@@ -53,5 +53,5 @@ public enum Demo3DVideoSource: String, CaseIterable, Equatable {
 /// 기본 영상을 변경하려면 initialSource 값만 수정하면 됨
 public enum Demo3DDefaults {
     /// 3D Demo 모드 진입 시 기본 재생 소스
-    public static let initialSource: Demo3DVideoSource = .bird
+    public static let initialSource: Demo3DVideoSource = .endoscope
 }

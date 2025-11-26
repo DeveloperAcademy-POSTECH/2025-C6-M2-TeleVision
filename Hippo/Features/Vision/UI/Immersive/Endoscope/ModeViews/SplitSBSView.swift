@@ -28,7 +28,7 @@ struct SplitSBSView: View {
     // Constants for stable positioning (same as Stereo3DView)
     private static let entityName = "split-video-entity"
     private static let entityPosition = SIMD3<Float>.zero  // Default position
-    private static let entityScale = SIMD3<Float>(0.4, 0.4, 0.4)  // Original size
+    private static let entityScale = SIMD3<Float>(0.54, 0.54, 0.54)  // Original size
 
     // MARK: - Body
 
