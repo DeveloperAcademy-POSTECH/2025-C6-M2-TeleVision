@@ -13,17 +13,21 @@ struct DevicePreview: NSViewRepresentable {
 
     func makeNSView(context: Context) -> PreviewLayerView {
         let view = PreviewLayerView()
-        view.displayLayer = preview
 
         // Configure the display layer
         preview.videoGravity = .resizeAspect
         preview.backgroundColor = NSColor.black.cgColor
 
+        view.displayLayer = preview
         return view
     }
 
     func updateNSView(_ nsView: PreviewLayerView, context: Context) {
-        // Update if needed
+        // Re-attach layer when view is updated (e.g., after tab switch)
+        // This is needed because the layer may have been removed from its superlayer
+        if preview.superlayer == nil {
+            nsView.displayLayer = preview
+        }
     }
 }
 
@@ -39,15 +43,22 @@ final class PreviewLayerView: NSView {
     override init(frame frameRect: NSRect) {
         super.init(frame: frameRect)
         wantsLayer = true
+        // Disable implicit animations to prevent layout jumps
+        layer?.actions = ["sublayers": NSNull(), "bounds": NSNull(), "position": NSNull()]
     }
 
     required init?(coder: NSCoder) {
         super.init(coder: coder)
         wantsLayer = true
+        layer?.actions = ["sublayers": NSNull(), "bounds": NSNull(), "position": NSNull()]
     }
 
     private func setupLayer() {
         guard let layer = layer, let displayLayer = displayLayer else { return }
+
+        // Disable animations during setup
+        CATransaction.begin()
+        CATransaction.setDisableActions(true)
 
         // Remove old sublayer if exists
         layer.sublayers?.forEach { $0.removeFromSuperlayer() }
@@ -55,14 +66,17 @@ final class PreviewLayerView: NSView {
         // Add display layer as sublayer
         layer.addSublayer(displayLayer)
         displayLayer.frame = layer.bounds
+
+        CATransaction.commit()
     }
 
     override func layout() {
         super.layout()
 
         // Update display layer frame when view bounds change
-        if let layer = layer {
-            displayLayer?.frame = layer.bounds
-        }
+        CATransaction.begin()
+        CATransaction.setDisableActions(true)
+        displayLayer?.frame = bounds
+        CATransaction.commit()
     }
 }

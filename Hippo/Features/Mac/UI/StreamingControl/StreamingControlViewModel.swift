@@ -10,6 +10,7 @@ import AVFoundation
 import Observation
 import CoreVideo
 import CoreMedia
+import Combine
 import os.log
 
 // MARK: - Sendable Wrapper
@@ -26,9 +27,15 @@ fileprivate struct SendablePixelBuffer: @unchecked Sendable {
 // MARK: - StreamingControlViewModel
 
 /// Streaming control view model
+/// Singleton to persist across tab switches
 @MainActor
 @Observable
 public final class StreamingControlViewModel {
+
+    // MARK: - Singleton
+
+    /// Shared instance to persist across tab switches
+    public static let shared = StreamingControlViewModel()
 
     // MARK: - Dependencies
 
@@ -38,8 +45,14 @@ public final class StreamingControlViewModel {
     private var composer: CI_SBSComposer?
     private var transport: WebRTCManager?
 
-    // Preview display layer (set from view)
-    public var previewLayer: AVSampleBufferDisplayLayer?
+    // Embedded signaling server (replaces external node server.js)
+    private let signalingServer = EmbeddedSignalingServer()
+
+    // Signaling client for auto-start (always connected, waiting for receiver)
+    private var signalingClient: SignalingClient?
+
+    // Preview display layer - owned by ViewModel to persist across tab switches
+    public let previewLayer = AVSampleBufferDisplayLayer()
 
     private let logger = Logger(subsystem: "com.television.hippo", category: "StreamingControl")
 
@@ -152,6 +165,15 @@ public final class StreamingControlViewModel {
     var isStreaming: Bool = false
     var errorMessage: String?
 
+    // MARK: - State: Signaling Connection
+
+    /// 내장 시그널링 서버 상태
+    var signalingServerState: SignalingServerState = .idle
+    /// 시그널링 서버 연결 상태
+    var isSignalingConnected: Bool = false
+    /// Receiver(Vision Pro) 준비 상태
+    var isReceiverReady: Bool = false
+
     // MARK: - State: Inspector Settings
 
     var normalizationPolicy: NormalizePolicy = .cropToMatchAspect
@@ -176,8 +198,93 @@ public final class StreamingControlViewModel {
 
     // MARK: - Initialization
 
-    init() {
+    /// Private init for singleton
+    private init() {
         loadAvailableDevices()
+        startEmbeddedServer()
+    }
+
+    // MARK: - Embedded Signaling Server
+
+    /// 내장 시그널링 서버 시작
+    private func startEmbeddedServer() {
+        logger.info("🚀 Starting embedded signaling server...")
+
+        // 서버 상태 변화 감시
+        Task { @MainActor in
+            for await state in signalingServer.$state.values {
+                await handleServerStateChange(state)
+            }
+        }
+
+        signalingServer.start()
+    }
+
+    /// 서버 상태 변화 처리
+    private func handleServerStateChange(_ state: SignalingServerState) async {
+        signalingServerState = state
+
+        switch state {
+        case .idle:
+            logger.info("Server: idle")
+
+        case .starting:
+            logger.info("Server: starting...")
+
+        case .running(let port):
+            logger.info("✅ Server running on port \(port)")
+            // 서버가 시작되면 클라이언트로 연결
+            let serverURL = URL(string: "ws://127.0.0.1:\(port)")!
+            connectToSignalingServer(url: serverURL)
+
+        case .failed(let error):
+            logger.error("❌ Server failed: \(error)")
+            errorMessage = "시그널링 서버 시작 실패: \(error)"
+
+        case .stopped:
+            logger.info("Server stopped")
+            isSignalingConnected = false
+        }
+    }
+
+    // MARK: - Signaling Server Connection
+
+    /// 시그널링 서버에 연결
+    private func connectToSignalingServer(url: URL) {
+        logger.info("Connecting to signaling server: \(url.absoluteString)")
+
+        // 기존 연결 해제
+        signalingClient?.disconnect()
+
+        signalingClient = SignalingClient(serverURL: url)
+        signalingClient?.delegate = self
+
+        do {
+            try signalingClient?.connect(as: "sender")
+        } catch {
+            logger.error("Failed to connect to signaling server: \(error.localizedDescription)")
+            errorMessage = "시그널링 서버 연결 실패"
+        }
+    }
+
+    /// 시그널링 서버 연결 해제
+    private func disconnectFromSignalingServer() {
+        signalingClient?.disconnect()
+        signalingClient = nil
+        isSignalingConnected = false
+        isReceiverReady = false
+    }
+
+    /// 시그널링 서버 재시작
+    func restartSignalingServer() {
+        disconnectFromSignalingServer()
+        signalingServer.stop()
+
+        // 잠시 대기 후 재시작
+        Task {
+            try? await Task.sleep(for: .milliseconds(500))
+            signalingServer.start()
+        }
     }
 
     // MARK: - Public Methods: Device Management
@@ -270,15 +377,14 @@ public final class StreamingControlViewModel {
         transport = nil
 
         // Clear preview
-        if let layer = previewLayer {
-            if #available(macOS 15.0, *) {
-                layer.sampleBufferRenderer.flush()
-            } else {
-                layer.flush()
-            }
+        if #available(macOS 15.0, *) {
+            previewLayer.sampleBufferRenderer.flush()
+        } else {
+            previewLayer.flush()
         }
 
         isStreaming = false
+        isReceiverReady = false  // Reset receiver ready state
 
         // 통계 초기화
         resetStatistics()
@@ -340,8 +446,11 @@ public final class StreamingControlViewModel {
         try rightSession.start(settings: captureSettings)
         self.rightCapture = rightSession
 
-        // Start WebRTC transport
-        try webrtc.start()
+        // Start WebRTC transport with external signaling client
+        guard let signalingClient = signalingClient else {
+            throw StreamingError.networkError("시그널링 서버에 연결되지 않았습니다")
+        }
+        try webrtc.start(with: signalingClient)
 
         logger.info("Dual camera capture started")
     }
@@ -377,8 +486,11 @@ public final class StreamingControlViewModel {
         try leftSession.start()  // No settings = use native resolution
         self.leftCapture = leftSession
 
-        // Start WebRTC transport
-        try webrtc.start()
+        // Start WebRTC transport with external signaling client
+        guard let signalingClient = signalingClient else {
+            throw StreamingError.networkError("시그널링 서버에 연결되지 않았습니다")
+        }
+        try webrtc.start(with: signalingClient)
 
         logger.info("Mono capture started with native resolution")
     }
@@ -454,7 +566,7 @@ public final class StreamingControlViewModel {
     /// OPTIMIZED: Preview rendering with autoreleasepool and reduced overhead
     @MainActor
     private func updatePreview(_ pixelBuffer: CVPixelBuffer, pts: CMTime) async {
-        guard let layer = previewLayer else { return }
+        let layer = previewLayer
 
         // OPTIMIZED: Use autoreleasepool to prevent memory accumulation
         autoreleasepool {
@@ -567,6 +679,75 @@ extension StreamingControlViewModel: CaptureOutputDelegate {
             self.logger.error("Capture error [\(source.rawValue)]: \(error.localizedDescription)")
             self.errorMessage = error.localizedDescription
         }
+    }
+}
+
+// MARK: - SignalingDelegate
+
+extension StreamingControlViewModel: SignalingDelegate {
+    nonisolated public func signalingClient(_ client: SignalingClient, didChangeState state: SignalingState) {
+        Task { @MainActor in
+            switch state {
+            case .connected:
+                self.logger.info("✅ Signaling server connected")
+                self.isSignalingConnected = true
+                self.errorMessage = nil
+            case .disconnected:
+                self.logger.info("Signaling server disconnected")
+                self.isSignalingConnected = false
+                self.isReceiverReady = false
+            case .connecting:
+                self.logger.info("Connecting to signaling server...")
+            case .failed:
+                self.logger.error("❌ Signaling server connection failed")
+                self.isSignalingConnected = false
+                self.isReceiverReady = false
+                self.errorMessage = "시그널링 서버 연결 실패"
+            }
+        }
+    }
+
+    nonisolated public func signalingClientDidReceiveReceiverReady(_ client: SignalingClient) {
+        Task { @MainActor in
+            self.logger.info("🎉 Receiver (Vision Pro) is ready!")
+            self.isReceiverReady = true
+
+            if self.isStreaming {
+                // 이미 스트리밍 중이면 새로운 Offer 생성 (renegotiate)
+                self.logger.info("🔄 Already streaming, creating new offer for receiver...")
+                self.transport?.createOffer()
+            } else {
+                // 스트리밍 중이 아니면 자동으로 시작
+                self.logger.info("▶️ Auto-starting streaming...")
+                do {
+                    try await self.startStreaming()
+                } catch {
+                    self.logger.error("Failed to auto-start streaming: \(error.localizedDescription)")
+                    self.errorMessage = error.localizedDescription
+                }
+            }
+        }
+    }
+
+    // WebRTC signaling messages - forward to WebRTCManager
+    nonisolated public func signalingClient(_ client: SignalingClient, didReceiveOffer sdp: String) {
+        // Sender doesn't receive offers
+    }
+
+    nonisolated public func signalingClient(_ client: SignalingClient, didReceiveAnswer sdp: String) {
+        Task { @MainActor in
+            self.transport?.handleAnswer(sdp: sdp)
+        }
+    }
+
+    nonisolated public func signalingClient(_ client: SignalingClient, didReceiveCandidate candidate: String, sdpMid: String?, sdpMLineIndex: Int32) {
+        Task { @MainActor in
+            self.transport?.handleRemoteCandidate(candidate: candidate, sdpMid: sdpMid, sdpMLineIndex: sdpMLineIndex)
+        }
+    }
+
+    nonisolated public func signalingClientDidReceiveRenegotiate(_ client: SignalingClient) {
+        // Handle renegotiation if needed
     }
 }
 

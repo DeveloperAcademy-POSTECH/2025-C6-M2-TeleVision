@@ -19,15 +19,16 @@ struct RootView: View {
         NavigationStack {
             ZStack {
                 Color(.hippoBackground).ignoresSafeArea()
-                // 메인 컨텐츠는 선택된 탭에 따라 전환
-                Group {
-                    switch selectedTab {
-                    case .Home:
-                        HomeView()
-                    case .StreamingControl:
-                        StreamingControlView()
-                    }
-                }
+
+                // Keep both views alive, show/hide with opacity
+                // This prevents StreamingControlView from being recreated on tab switch
+                HomeView()
+                    .opacity(selectedTab == .Home ? 1 : 0)
+                    .allowsHitTesting(selectedTab == .Home)
+
+                StreamingControlView()
+                    .opacity(selectedTab == .StreamingControl ? 1 : 0)
+                    .allowsHitTesting(selectedTab == .StreamingControl)
 
                 VStack {
                     HStack {
