@@ -82,12 +82,6 @@ struct StreamingControlView: View {
                 }
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity)
-//            .toolbar {
-//                //우측 인스펙터 버튼
-//                Button {
-//                    viewModel.toggleInspector()
-//                } label: { Label("Debug", systemImage: "sidebar.right") }
-//            }
             .padding(32)
             .inspector(isPresented: $viewModel.isInspectorPresented) {
                 StreamingInspectorView()
