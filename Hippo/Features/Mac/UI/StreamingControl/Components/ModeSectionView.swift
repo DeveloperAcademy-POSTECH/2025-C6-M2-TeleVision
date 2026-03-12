@@ -24,8 +24,8 @@ struct ModeSectionView: View {
                         isSelected: selectedMode == mode,
                         action: { selectedMode = mode }
                     )
-                    .disabled(cameraInputMode == .single && mode != .mono)
-                    .opacity(cameraInputMode == .single && mode != .mono ? 0.5 : 1.0)
+                    .disabled(isModeDisabled(mode))
+                    .opacity(isModeDisabled(mode) ? 0.5 : 1.0)
                 }
             }
             .padding(4)
@@ -42,5 +42,20 @@ struct ModeSectionView: View {
                 .fill(Color.white)
                 .shadow(color: Color.black.opacity(0.08), radius: 12, x: 0, y: 4)
         )
+    }
+
+    /// 카메라 입력 모드에 따라 비디오 모드 비활성화 여부 결정
+    /// - Single: Mono만 허용
+    /// - Single SBS: Full SBS, Half SBS만 허용 (Mono 비활성화)
+    /// - Dual: 모든 모드 허용 (Mono 선택 시 didSet에서 Single로 전환)
+    private func isModeDisabled(_ mode: VideoMode) -> Bool {
+        switch cameraInputMode {
+        case .single:
+            return mode != .mono
+        case .singleSBS:
+            return mode == .mono
+        case .dual:
+            return false
+        }
     }
 }

@@ -17,6 +17,7 @@ enum VideoMode: String, CaseIterable {
 enum CameraInputMode: String, CaseIterable {
     case dual = "Dual"
     case single = "Single"
+    case singleSBS = "Single SBS"
 }
 
 struct StreamingControlView: View {

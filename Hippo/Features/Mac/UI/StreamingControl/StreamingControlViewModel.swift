@@ -128,6 +128,12 @@ public final class StreamingControlViewModel {
                     videoMode = .mono
                     return  // videoMode didSet에서 재시작하므로 여기서는 return
                 }
+            } else if cameraInputMode == .singleSBS {
+                // Single SBS: SBS 모드 필요 (Mono면 Full SBS로 변경)
+                if videoMode == .mono {
+                    videoMode = .fullSBS
+                    return  // videoMode didSet에서 재시작하므로 여기서는 return
+                }
             } else {
                 // Dual로 변경되면 stereo 모드로 설정
                 if videoMode == .mono {
@@ -400,6 +406,8 @@ public final class StreamingControlViewModel {
             try await startDualInputCapture()
         case .single:
             try await startSingleInputCapture()
+        case .singleSBS:
+            try await startSingleSBSCapture()
         }
     }
 
@@ -493,6 +501,36 @@ public final class StreamingControlViewModel {
         try webrtc.start(with: signalingClient)
 
         logger.info("Mono capture started with native resolution")
+    }
+
+    /// Single SBS 카메라 스트리밍 시작 (SVPRO 등 네이티브 SBS 출력 카메라)
+    /// FrameSync와 CI_SBSComposer를 우회하고, 카메라의 네이티브 SBS 프레임을 직접 WebRTC로 전송
+    private func startSingleSBSCapture() async throws {
+        guard let device = selectedSingleDevice else {
+            throw StreamingError.noDeviceSelected
+        }
+
+        logger.info("Starting single SBS capture (stereo camera: \(device.localizedName))...")
+
+        // Initialize WebRTC transport
+        let webrtc = WebRTCManager(config: isHalfBitrateEnabled ? .lowBandwidth : .standard)
+        self.transport = webrtc
+
+        // Single SBS camera: use native resolution (e.g., 3840×1080 for SVPRO)
+        // No FrameSync needed — single camera source
+        // No CI_SBSComposer needed — camera outputs SBS natively
+        let leftSession = LeftCaptureSession(preferredDeviceUniqueID: device.uniqueID)
+        leftSession.delegate = self
+        try leftSession.start()  // No settings = use native resolution (auto-selects highest, e.g., 3840×1080)
+        self.leftCapture = leftSession
+
+        // Start WebRTC transport with external signaling client
+        guard let signalingClient = signalingClient else {
+            throw StreamingError.networkError("시그널링 서버에 연결되지 않았습니다")
+        }
+        try webrtc.start(with: signalingClient)
+
+        logger.info("Single SBS capture started with native resolution")
     }
 
     // MARK: - Private Methods: Frame Handling
@@ -658,13 +696,15 @@ extension StreamingControlViewModel: CaptureOutputDelegate {
             // Ignore frames when not streaming (during shutdown)
             guard self.isStreaming else { return }
 
-            if self.videoMode == .mono {
-                // Mono mode: send frame directly
-                if source == .left {  // Only process left camera in mono mode
+            if self.videoMode == .mono || self.cameraInputMode == .singleSBS {
+                // Direct send: mono mode or single SBS camera
+                // Both bypass FrameSync & Composer — send frames directly to WebRTC
+                // For singleSBS: camera outputs native SBS (e.g., 3840×1080), Vision Pro splits into stereo
+                if source == .left {
                     await self.handleMonoFrame(sendableBuffer.pixelBuffer, pts: pts)
                 }
             } else {
-                // Stereo mode: push to frame sync
+                // Dual camera stereo mode: push to frame sync for left/right pairing
                 if self.frameSync == nil {
                     self.logger.error("FrameSync is nil in stereo mode! Mode: \(self.videoMode.rawValue), Source: \(source.rawValue)")
                 } else {
